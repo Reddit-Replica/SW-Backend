@@ -1,0 +1,36 @@
+version: 2.1
+
+commands:
+  install_nodejs:
+    description: Install Node.js 13.8.0
+    steps:
+      - run:
+          name: Install Node.js 13.8.0
+          command: |
+            # Install Node.js LTS version as our base Node.js version
+            curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+            sudo apt install -y nodejs
+            # Use n version manager to use Node.js v13.8.0
+            sudo npm install --global n
+            sudo n 13.8.0
+jobs:
+  build-frontend:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Build , tag , push front-end
+          command: |
+            docker build -t backend:v1 .
+            docker tag backend:v1  waer/backend
+            docker push waer/backend
+
+workflows:
+  default:
+    jobs:
+      - lint-app
+      - build-frontend:
+          requires: [lint-app]
