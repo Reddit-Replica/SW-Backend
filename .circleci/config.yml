@@ -12,25 +12,46 @@ commands:
             sudo apt install -y nodejs
             # Use n version manager to use Node.js v13.8.0
             sudo npm install --global n
-            sudo n 13.8.0
+            sudo n 13.8.
+  
+  configure_docker:
+    description: login with my dockerhub
+    steps:
+      - run:
+          name: Install Node.js 13.8.0
+          command: |
+            docker login -u $DOCKERNAME -p $DOCKERPASS
+
+  install_docker:
+    description: Install docker
+    steps:
+      - setup_remote_docker
+      - configure_docker
+      - run:
+          name: install docker
+          command: |
+            apk add --no-cache \
+            py-pip=9.0.0-r1
+            pip install \
+            docker-compose==1.12.0 \
+
+
 jobs:
-  build-frontend:
+  build-tag-push-backend:
     docker:
-      - image: circleci/node:lts
+      - image: docker:17.05.0-ce-git
     steps:
       - checkout
-      - restore_cache:
-          keys: [frontend-build]
+      - install_docker
       - run:
-          name: Build , tag , push front-end
+          name: Build , tag , push backend
           command: |
             docker build -t backend:v1 .
             docker tag backend:v1  waer/backend
-            docker push waer/backend
+            docker push  waer/backend
+
 
 workflows:
   default:
     jobs:
-      - lint-app
-      - build-frontend:
-          requires: [lint-app]
+      - build-tag-push-backend
