@@ -45,13 +45,19 @@ jobs:
     - run:
         name: Install npm dependencies
         command: |
-          npm install
+          npm install --save
+    - run:
+        name: Start node server
+        command: |
+          npm start
+        background: true
     - run:
         name: Run Unit Tests
         command: |
           ls
           sleep 1m
           npm run test
+
 
   integration-testing:
     docker:
