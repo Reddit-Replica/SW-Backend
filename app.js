@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
-
+import swaggerUI from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
 const app = express();
 
 dotenv.config();
@@ -17,14 +18,14 @@ app.use((req, res, next) => {
 
 var monngoURL = "mongodb://mongo-service/database";
 
-mongoose
-  .connect(monngoURL, { useNewUrlParser: true })
-  .then(() => {
-    console.log("connected to mongo");
-  })
-  .catch((error) => {
-    console.log("unable to connect to mongoDB : ", error);
-  });
+// mongoose
+//   .connect(monngoURL, { useNewUrlParser: true })
+//   .then(() => {
+//     console.log("connected to mongo");
+//   })
+//   .catch((error) => {
+//     console.log("unable to connect to mongoDB : ", error);
+//   });
 
 app.get("/api", (req, res, next) => {
   const data = process.env.DATA_TO_SEND || "Data Added Automatically";
@@ -32,6 +33,21 @@ app.get("/api", (req, res, next) => {
     text: data,
   });
 });
+
+// swagger options
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Read-it",
+      version: "1.0.0",
+      description: "API-Documentation",
+    },
+  },
+  apis: ["./routes/*.js"],
+};
+const specs = swaggerJsDoc(options);
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
