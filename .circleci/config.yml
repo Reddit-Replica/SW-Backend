@@ -37,21 +37,55 @@ commands:
 
 
 jobs:
-  build-tag-push-backend:
+  unit-testing:
+    docker:
+      - image: circleci/node:12
+    steps:
+    - checkout
+    - run:
+        name: Install npm dependencies
+        command: |
+          npm install
+    - run:
+        name: Run Unit Tests
+        command: |
+          sleep 1m
+          npm run test
+
+  integration-testing:
+    docker:
+      - image: circleci/node:12
+    steps:
+    - checkout
+    - run:
+        name: Install npm dependencies
+        command: |
+          npm i
+    - run:
+        name: Run Unit Tests
+        command: |
+          ls
+
+  build-backend:
     docker:
       - image: docker:17.05.0-ce-git
     steps:
       - checkout
       - install_docker
       - run:
-          name: Build , tag , push backend
+          name: Build , tag , push front-end
           command: |
             docker build -t backend:v1 .
             docker tag backend:v1  waer/backend
             docker push  waer/backend
 
-
 workflows:
-  default:
+  main:
     jobs:
-      - build-tag-push-backend
+      - unit-testing
+      - integration-testing:
+          requires: 
+            - unit-testing
+      - build-backend:
+          requires: 
+            - integration-testing
