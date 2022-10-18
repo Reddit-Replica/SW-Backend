@@ -5,7 +5,7 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "dev":"nodemon app.js",
+    "dev": "nodemon app.js",
     "start": "node app.js",
     "test": "jasmine"
   },
@@ -22,7 +22,9 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
-    "mongoose": "^6.6.4"
+    "mongoose": "^6.6.4",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-ui-express": "^4.5.0"
   },
   "devDependencies": {
     "jasmine": "^4.4.0",
