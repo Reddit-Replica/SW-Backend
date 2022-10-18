@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "test": "jasmine"
+    "test": "jasmine",
+    "lint": "eslint ./**/*.js",
+    "prettier": "prettier ./**/*.js --write"
   },
   "repository": {
     "type": "git",
@@ -27,8 +29,11 @@
     "swagger-ui-express": "^4.5.0"
   },
   "devDependencies": {
+    "eslint": "^8.25.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "jasmine": "^4.4.0",
     "jasmine-spec-reporter": "^7.0.0",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "prettier": "2.7.1"
   }
 }
