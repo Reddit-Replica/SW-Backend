@@ -28,6 +28,10 @@
   },
   "parserOptions": {
     "sourceType": "module",
+<<<<<<< HEAD
     "ecmaVersion": 8
+=======
+    "ecmaVersion": 2015
+>>>>>>> refs/remotes/origin/master
   }
 }
