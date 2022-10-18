@@ -1,11 +1,13 @@
 {
-  "name": "test-deploy",
+  "name": "backend",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "type": "module",
   "scripts": {
+    "dev":"nodemon app.js",
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine"
   },
   "repository": {
     "type": "git",
@@ -21,5 +23,10 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "mongoose": "^6.6.4"
+  },
+  "devDependencies": {
+    "jasmine": "^4.4.0",
+    "jasmine-spec-reporter": "^7.0.0",
+    "nodemon": "^2.0.20"
   }
 }
