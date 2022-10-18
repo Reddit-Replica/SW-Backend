@@ -1,7 +1,10 @@
-require("dotenv").config();
-const express = require("express");
+import dotenv from "dotenv";
+import express from "express";
+import mongoose from "mongoose";
+
 const app = express();
-const mongoose = require('mongoose');
+
+dotenv.config();
 
 const port = process.env.PORT || 3000;
 
@@ -12,18 +15,16 @@ app.use((req, res, next) => {
   next();
 });
 
-var monngoURL = 'mongodb://mongo-service/database'
+var monngoURL = "mongodb://mongo-service/database";
 
-mongoose.connect(monngoURL, { useNewUrlParser: true })
-    .then(
-        () => {
-            console.log("connected to mongo");
-        }
-    ).catch((error) => {
-        console.log("unable to connect to mongoDB : ", error);
-});
-
-
+mongoose
+  .connect(monngoURL, { useNewUrlParser: true })
+  .then(() => {
+    console.log("connected to mongo");
+  })
+  .catch((error) => {
+    console.log("unable to connect to mongoDB : ", error);
+  });
 
 app.get("/api", (req, res, next) => {
   const data = process.env.DATA_TO_SEND || "Data Added Automatically";
@@ -31,7 +32,6 @@ app.get("/api", (req, res, next) => {
     text: data,
   });
 });
-
 
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
