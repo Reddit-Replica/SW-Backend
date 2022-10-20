@@ -6,6 +6,15 @@ const router = express.Router();
  * @swagger
  * components:
  *   schemas:
+ *     Category:
+ *       type: string
+ *       description: A category name
+ *     SR:
+ *       type: string
+ *       description: A subbreddit name
+ *     ID:
+ *       type: string
+ *       description: The fullname of a thing
  *     Comment:
  *       type: object
  *       properties:
@@ -226,9 +235,7 @@ router.post("/follow_post", (req, res, next) => {});
  *           schema:
  *              type: array
  *              items:
- *                  id:
- *                    type: string
- *                    description: A comma-separated list of link fullnames
+ *                  $ref: '#/components/schemas/ID'
  *      responses:
  *          200:
  *              description: Link hidden successfully
@@ -237,9 +244,7 @@ router.post("/follow_post", (req, res, next) => {});
  *                      schema:
  *                        type: array
  *                        items:
- *                           id:
- *                              type: string
- *                              description: A comma-separated list of link fullnames
+ *                           $ref: '#/components/schemas/ID'
  *          500:
  *              description: Server Error
  */
@@ -261,10 +266,12 @@ router.post("/hide", (req, res, next) => {});
  *                        properties:
  *                           id:
  *                              type: array
- *                              description: A comma-separated list of thing fullnames
+ *                              items:
+ *                                  $ref: '#/components/schemas/ID'
  *                           sr_name:
  *                              type: array
- *                              description: comma-delimited list of subreddit names
+ *                              items:
+ *                                  $ref: '#/components/schemas/SR'
  *                           url:
  *                              type: string
  *                              description: A valid url
@@ -294,11 +301,12 @@ router.get("/info", (req, res, next) => {});
  *              content:
  *                  application/json:
  *                      schema:
- *                        type: array
- *                        items:
+ *                        type: object
+ *                        properties:
  *                           id:
- *                              type: string
- *                              description: A comma-separated list of thing fullnames
+ *                              type: array
+ *                              items:
+ *                                  $ref: '#/components/schemas/ID'
  *                           url:
  *                              type: string
  *                              description: A valid url
@@ -425,9 +433,7 @@ router.post("/save", (req, res, next) => {});
  *                      schema:
  *                        type: array
  *                        items:
- *                           category:
- *                              type: string
- *                              description: A category name
+ *                           $ref: '#/components/schemas/Category'
  *          404:
  *              description: Categories not found
  *          500:
@@ -580,9 +586,7 @@ router.post("/submit", (req, res, next) => {});
  *           schema:
  *             type: array
  *             items:
- *               id:
- *                 type: string
- *                 description: A comma-separated list of link fullnames
+ *               $ref: '#/components/schemas/ID'
  *      responses:
  *          200:
  *              description: Post unhidden successfully
@@ -591,9 +595,7 @@ router.post("/submit", (req, res, next) => {});
  *                      schema:
  *                        type: array
  *                        items:
- *                          id:
- *                            type: string
- *                            description: A comma-separated list of link fullnames
+ *                          $ref: '#/components/schemas/ID'
  *          500:
  *              description: Server Error
  */
