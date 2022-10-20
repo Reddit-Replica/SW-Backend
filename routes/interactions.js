@@ -61,7 +61,9 @@ const router = express.Router();
  *           type: string
  *           maxLength: 64
  *           description: Flair text
- *
+ *         resubmit:
+ *           type: boolean
+ *           description: Resubmit a post
  */
 
 /**
@@ -194,7 +196,7 @@ router.post("/editusertext", (req, res, next) => {});
  *                      description: fullname of a link
  *      responses:
  *          200:
- *              description: Followed post successfully
+ *              description: Followed/Unfollowed post successfully
  *              content:
  *                  application/json:
  *                      schema:
@@ -263,6 +265,9 @@ router.post("/hide", (req, res, next) => {});
  *                           sr_name:
  *                              type: array
  *                              description: comma-delimited list of subreddit names
+ *                           url:
+ *                              type: string
+ *                              description: A valid url
  *          404:
  *              description: Page not found
  *          500:
@@ -294,6 +299,9 @@ router.get("/info", (req, res, next) => {});
  *                           id:
  *                              type: string
  *                              description: A comma-separated list of thing fullnames
+ *                           url:
+ *                              type: string
+ *                              description: A valid url
  *          404:
  *              description: Page not found
  *          500:
@@ -541,12 +549,6 @@ router.post("/spoiler", (req, res, next) => {});
  *  post:
  *      summary: Submit a link to a subreddit
  *      tags: [Posts]
- *      parameters:
- *          - in: path
- *            name: resubmit
- *            schema:
- *              type: boolean
- *            description: Resubmit a post
  *      requestBody:
  *       required: true
  *       content:
@@ -769,6 +771,7 @@ router.post("/unspoiler", (req, res, next) => {});
  */
 router.post("/vote", (req, res, next) => {});
 
+// ????
 router.get("/insights_counts", (req, res, next) => {});
 
 export default router;
