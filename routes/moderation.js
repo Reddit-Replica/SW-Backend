@@ -171,6 +171,6 @@ moderationRouter.get("/about/spam", (req, res, next) => {});
  *     description: Internal Server Error
  */
 
-moderationRouter.get("/about/spam", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
 
 export default moderationRouter;
