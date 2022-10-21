@@ -3,7 +3,10 @@ import express from "express";
 import mongoose from "mongoose";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
-import interactionsRoutes from "./routes/interactions.js";
+import actionRoutes from "./routes/actions.js";
+import postRoutes from "./routes/posts.js";
+import commentRoutes from "./routes/comments.js";
+import categoryRoutes from "./routes/categories.js";
 import searchRoutes from "./routes/search.js";
 const app = express();
 
@@ -49,8 +52,13 @@ const options = {
   apis: ["./routes/*.js"],
 };
 const specs = swaggerJsDoc(options);
-app.use(interactionsRoutes);
+
+app.use(postRoutes);
+app.use(commentRoutes);
+app.use(actionRoutes);
+app.use(categoryRoutes);
 app.use(searchRoutes);
+
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.listen(port, () => {
