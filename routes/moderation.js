@@ -90,6 +90,8 @@ const moderationRouter = express.Router();
  *        $ref: '#/components/schemas/Listing'
  *    401:
  *     description: Unauthorized access
+ *    403:
+ *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
@@ -157,6 +159,8 @@ moderationRouter.get("/about/spam", (req, res, next) => {});
  *        $ref: '#/components/schemas/Listing'
  *    401:
  *     description: Unauthorized access
+ *    403:
+ *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
@@ -218,6 +222,8 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *        $ref: '#/components/schemas/Listing'
  *    401:
  *     description: Unauthorized access
+ *    403:
+ *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
@@ -285,6 +291,8 @@ moderationRouter.get("/about/edited", (req, res, next) => {});
  *        $ref: '#/components/schemas/Listing'
  *    401:
  *     description: Unauthorized access
+ *    403:
+ *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
@@ -346,6 +354,8 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *        $ref: '#/components/schemas/Listing'
  *    401:
  *     description: Unauthorized access
+ *    403:
+ *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
@@ -413,6 +423,8 @@ moderationRouter.get("/about/unmoderated", (req, res, next) => {});
  *        $ref: '#/components/schemas/Listing'
  *    401:
  *     description: Unauthorized access
+ *    403:
+ *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
