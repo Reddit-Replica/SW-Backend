@@ -84,6 +84,16 @@ const router = express.Router();
  *            schema:
  *                  type: string
  *          - in: query
+ *            name: after
+ *            description: fullname of the last post in a collection
+ *            schema:
+ *                  type: string
+ *          - in: query
+ *            name: before
+ *            description: fullname of a thing
+ *            schema:
+ *                  type: string
+ *          - in: query
  *            name: type
  *            description: one of (sr, user, comment, link)
  *            schema:
@@ -111,6 +121,16 @@ const router = express.Router();
  *          - in: query
  *            name: include_facets
  *            description: A boolean value
+ *            schema:
+ *                  type: string
+ *          - in: query
+ *            name: show
+ *            description: Get all posts (no exceptions)
+ *            schema:
+ *                  type: string
+ *          - in: query
+ *            name: restrict_sr
+ *            description: Boolean value
  *            schema:
  *                  type: string
  *      responses:
@@ -149,6 +169,16 @@ router.get("/search", (req, res, next) => {});
  *            schema:
  *                  type: string
  *          - in: query
+ *            name: after
+ *            description: fullname of the last post in a collection
+ *            schema:
+ *                  type: string
+ *          - in: query
+ *            name: before
+ *            description: fullname of a thing
+ *            schema:
+ *                  type: string
+ *          - in: query
  *            name: type
  *            description: one of (sr, user, comment, link)
  *            schema:
@@ -176,6 +206,16 @@ router.get("/search", (req, res, next) => {});
  *          - in: query
  *            name: include_facets
  *            description: A boolean value
+ *            schema:
+ *                  type: string
+ *          - in: query
+ *            name: show
+ *            description: Get all posts (no exceptions)
+ *            schema:
+ *                  type: string
+ *          - in: query
+ *            name: restrict_sr
+ *            description: Boolean value
  *            schema:
  *                  type: string
  *      responses:
