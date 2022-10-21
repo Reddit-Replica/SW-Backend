@@ -449,6 +449,6 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
  *     description: Internal Server Error
  */
 
-moderationRouter.get("/r/:subreddit/api/accept_moderator_invite", (req, res, next) => {});
+moderationRouter.post("/r/:subreddit/api/accept_moderator_invite", (req, res, next) => {});
 
 export default moderationRouter;
