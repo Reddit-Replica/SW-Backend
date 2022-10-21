@@ -65,7 +65,7 @@ const moderationRouter = express.Router();
  *      required: false
  *    - in: query
  *      name: only
- *      description: one of (links, comments, chat_comments)
+ *      description: one of (posts, comments)
  *      schema:
  *       type: enum
  *      required: true
@@ -132,7 +132,7 @@ moderationRouter.get("/about/spam", (req, res, next) => {});
  *      required: false
  *    - in: query
  *      name: only
- *      description: one of (links, comments, chat_comments)
+ *      description: one of (posts, comments)
  *      schema:
  *       type: enum
  *      required: true
@@ -193,7 +193,7 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *      required: false
  *    - in: query
  *      name: only
- *      description: one of (links, comments, chat_comments)
+ *      description: one of (posts, comments)
  *      schema:
  *       type: enum
  *      required: true
@@ -260,7 +260,7 @@ moderationRouter.get("/about/edited", (req, res, next) => {});
  *      required: false
  *    - in: query
  *      name: only
- *      description: one of (links, comments, chat_comments)
+ *      description: one of (posts, comments)
  *      schema:
  *       type: enum
  *      required: true
