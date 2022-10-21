@@ -293,4 +293,65 @@ moderationRouter.get("/about/edited", (req, res, next) => {});
 
 moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
 
+/**
+ * @swagger
+ * /about/unmoderated:
+ *  get:
+ *   summary:
+ *    Return a listing of required items relevant to moderators with things that have yet to be approved/removed by a mod. (This endpoint is a listing)
+ *   tags: [Moderation]
+ *   parameters:
+ *    - in: query
+ *      name: after
+ *      description: fullname of a thing.
+ *      schema:
+ *       type: fullname
+ *      required: false
+ *    - in: query
+ *      name: before
+ *      description: fullname of a thing. one of after/before should be specified
+ *      schema:
+ *       type: fullname
+ *      required: false
+ *    - in: query
+ *      name: limit
+ *      description: the maximum number of items desired (default 25, maximum 100)
+ *      schema:
+ *       type: integers
+ *      required: false
+ *    - in: query
+ *      name: only
+ *      description: one of (posts, comments)
+ *      schema:
+ *       type: enum
+ *      required: true
+ *    - in: query
+ *      name: show
+ *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
+ *      schema:
+ *       type: enum
+ *      required: false
+ *    - in: query
+ *      name: show
+ *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
+ *      schema:
+ *       type: enum
+ *      required: false
+ *   responses:
+ *    200:
+ *     description: Listing of required items relevant to moderators.
+ *     content:
+ *      application/json:
+ *       schema:
+ *        $ref: '#/components/schemas/Listing'
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ */
+
+moderationRouter.get("/about/unmoderated", (req, res, next) => {});
+
 export default moderationRouter;
