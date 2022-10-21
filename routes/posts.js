@@ -349,4 +349,36 @@ router.post("/unmarknsfw", (req, res, next) => {});
  */
 router.post("/unspoiler", (req, res, next) => {});
 
+/**
+ * @swagger
+ * /insights_counts:
+ *  get:
+ *      summary: Get the number of views on a post
+ *      tags: [Posts]
+ *      parameters:
+ *          - in: query
+ *            required: true
+ *            name: id
+ *            schema:
+ *              type: string
+ *            description: fullname of the post
+ *      responses:
+ *          200:
+ *              description: Number of insights returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: number
+ *                        description: Number of insights
+ *          404:
+ *              description: Post not found
+ *          401:
+ *              description: Unauthorized to view the number of insights on this post
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - api_key: []
+ */
+router.get("/insights_counts", (req, res, next) => {});
+
 export default router;
