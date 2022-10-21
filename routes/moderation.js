@@ -421,4 +421,22 @@ moderationRouter.get("/about/unmoderated", (req, res, next) => {});
 
 moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
 
+/**
+ * @swagger
+ * /r/{subreddit}/api/accept_moderator_invite:
+ *  post:
+ *   summary:
+ *    Accept an invite to moderate the specified subreddit. The authenticated user must have been invited to moderate the subreddit by one of its current moderators or the admin.
+ *   tags: [Moderation]
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    401:
+ *     description: Unauthorized access
+ *    500:
+ *     description: Internal Server Error
+ */
+
+moderationRouter.get("/r/:subreddit/api/accept_moderator_invite", (req, res, next) => {});
+
 export default moderationRouter;
