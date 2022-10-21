@@ -451,4 +451,30 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
 
 moderationRouter.post("/r/:subreddit/api/accept_moderator_invite", (req, res, next) => {});
 
+
+/**
+ * @swagger
+ * /api/leavemoderator:
+ *  post:
+ *   summary:
+ *    Abdicate moderator status in a subreddit.
+ *   tags: [Moderation]
+ *   parameters:
+ *    - in: body
+ *      name: subreddit
+ *      description: name of the subreddit to leave it's moderation.
+ *      required: true
+ *      schema:
+ *       type: string
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    401:
+ *     description: Unauthorized access
+ *    500:
+ *     description: Internal Server Error
+ */
+
+moderationRouter.post("/api/leavemoderator", (req, res, next) => {});
+
 export default moderationRouter;
