@@ -42,7 +42,7 @@ const moderationRouter = express.Router();
  * /about/spam:
  *  get:
  *   summary:
- *    Return a listing of posts relevant to moderators. (This endpoint is a listing)
+ *    Return a listing of required items relevant to moderators. (This endpoint is a listing)
  *   tags: [Moderation]
  *   parameters:
  *    - in: query
@@ -83,7 +83,7 @@ const moderationRouter = express.Router();
  *      required: false
  *   responses:
  *    200:
- *     description: Listing of posts relevant to moderators.
+ *     description: Listing of required items relevant to moderators.
  *     content:
  *      application/json:
  *       schema:
@@ -103,7 +103,7 @@ moderationRouter.get("/about/spam", (req, res, next) => {});
  * /r/{subreddit}/about/spam:
  *  get:
  *   summary:
- *    Return a listing of posts relevant to moderators in that subreddit. (This endpoint is a listing)
+ *    Return a listing of required items relevant to moderators in that subreddit. (This endpoint is a listing)
  *   tags: [Moderation]
  *   parameters:
  *    - in: path
@@ -150,7 +150,7 @@ moderationRouter.get("/about/spam", (req, res, next) => {});
  *      required: false
  *   responses:
  *    200:
- *     description: Listing of posts relevant to moderators.
+ *     description: Listing of required items relevant to moderators.
  *     content:
  *      application/json:
  *       schema:
@@ -170,7 +170,7 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  * /about/edited:
  *  get:
  *   summary:
- *    Return a listing of required items relevant to moderators with things that have been edited recently.. (This endpoint is a listing)
+ *    Return a listing of required items relevant to moderators with things that have been edited recently. (This endpoint is a listing)
  *   tags: [Moderation]
  *   parameters:
  *    - in: query
@@ -231,7 +231,7 @@ moderationRouter.get("/about/edited", (req, res, next) => {});
  * /r/{subreddit}/about/edited:
  *  get:
  *   summary:
- *    Return a listing of required items relevant to moderators with things that have been edited recently. in that subreddit. (This endpoint is a listing)
+ *    Return a listing of required items relevant to moderators with things that have been edited recently in that subreddit. (This endpoint is a listing)
  *   tags: [Moderation]
  *   parameters:
  *    - in: path
