@@ -398,4 +398,60 @@ router.post("/profile_picture", (req, res) => {});
  */
 router.delete("/profile_picture", (req, res) => {});
 
+/**
+ * @swagger
+ * /banner_image:
+ *   post:
+ *     summary: Add a banner to the logged in user
+ *     tags: [User settings]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - banner
+ *             properties:
+ *               banner:
+ *                 type: string
+ *                 description: Path of the banner image
+ *     responses:
+ *       200:
+ *         description: Banner image has been added successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post("/banner_image", (req, res) => {});
+
+/**
+ * @swagger
+ * /banner_image:
+ *   delete:
+ *     summary: Delete the banner image
+ *     tags: [User settings]
+ *     responses:
+ *       204:
+ *         description: Banner image deleted successfully
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.delete("/banner_image", (req, res) => {});
+
 export default router;
