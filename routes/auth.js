@@ -130,6 +130,49 @@ router.get("/email_available", (req, res) => {});
 
 /**
  * @swagger
+ * /verify_email/{id}/{token}:
+ *   post:
+ *     summary: Verify the email
+ *     tags: [Sign Up]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: User's id
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: token
+ *         description: The token created by the server to verify the email
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Email verified successfully
+ *         headers:
+ *           Authorization:
+ *             description: The jwt that will be used for authorization
+ *             schema:
+ *               type: string
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       403:
+ *         description: Invalid token
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/verify_email/:id/:token", (req, res) => {});
+
+/**
+ * @swagger
  * tags:
  *   name: Login
  */
