@@ -421,7 +421,7 @@ router.get("/api/insights_counts", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.get("/api/spam", (req, res, next) => {});
+router.post("/api/spam", (req, res, next) => {});
 
 /**
  * @swagger
@@ -455,6 +455,6 @@ router.get("/api/spam", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.get("/api/unmarkspam", (req, res, next) => {});
+router.post("/api/unmarkspam", (req, res, next) => {});
 
 export default router;
