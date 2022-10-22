@@ -263,4 +263,64 @@ router.get("/user/:username/about", (req, res) => {});
  */
 router.get("/user/:username/overview", (req, res) => {});
 
+/**
+ * @swagger
+ * /user/{username}/posts:
+ *   get:
+ *     summary: Return a list of user's posts
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         description: The username of the user to get
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - in: query
+ *         name: sort
+ *         description: The sorting algorithm used
+ *         schema:
+ *           type: string
+ *           default: new
+ *           enum:
+ *             - new
+ *             - hot
+ *             - top
+ *       - in: query
+ *         name: time
+ *         description: The time interval for the results (used with top only)
+ *         schema:
+ *           type: string
+ *           default: all
+ *           enum:
+ *             - hour
+ *             - day
+ *             - week
+ *             - month
+ *             - year
+ *             - all
+ *       - in: query
+ *         name: after / before
+ *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ListedPost"
+ *       404:
+ *         description: Didn't find a user with that username
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/user/:username/posts", (req, res) => {});
+
 export default router;
