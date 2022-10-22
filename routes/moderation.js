@@ -588,19 +588,21 @@ moderationRouter.post("/api/remove", (req, res, next) => {});
  *   summary:
  *    Lock a post or comment. Prevents a post or new child comments from receiving new comments.
  *   tags: [Moderation]
- *   parameters:
- *    - in: body
- *      name: id
- *      description: id of a thing.
- *      required: true
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
  *      schema:
- *       type: string
- *    - in: body
- *      name: type
- *      description: type of that thing (post, comment,..).
- *      required: true
- *      schema:
- *       type: string
+ *       required:
+ *        - id
+ *        - type
+ *       properties:
+ *        id:
+ *         type: string
+ *         description: id of a thing.
+ *        type:
+ *         type: string
+ *         description: type of that thing (post, comment,..).
  *   responses:
  *    200:
  *     description: Accepted
