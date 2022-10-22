@@ -37,6 +37,17 @@ const moderationRouter = express.Router();
  *  description: The Moderation endpoints API
  */
 
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
 /**
  * @swagger
  * /about/spam:
@@ -459,13 +470,17 @@ moderationRouter.post("/r/:subreddit/api/accept_moderator_invite", (req, res, ne
  *   summary:
  *    Abdicate moderator status in a subreddit.
  *   tags: [Moderation]
- *   parameters:
- *    - in: body
- *      name: subreddit
- *      description: name of the subreddit to leave it's moderation.
- *      required: true
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
  *      schema:
- *       type: string
+ *       required:
+ *        - subreddit
+ *       properties:
+ *        subreddit:
+ *         type: string
+ *         description: name of the subreddit to leave it's moderation.
  *   responses:
  *    200:
  *     description: Accepted
@@ -473,6 +488,8 @@ moderationRouter.post("/r/:subreddit/api/accept_moderator_invite", (req, res, ne
  *     description: Unauthorized access
  *    500:
  *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
  */
 
 moderationRouter.post("/api/leavemoderator", (req, res, next) => {});
