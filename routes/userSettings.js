@@ -257,4 +257,87 @@ router.put("/change_password", (req, res) => {});
  */
 router.delete("/delete_account", (req, res) => {});
 
+/**
+ * @swagger
+ * /social_link:
+ *   post:
+ *     summary: Add a social link to the logged in user
+ *     tags: [User settings]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - type
+ *               - displayText
+ *               - link
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 description: Type of the link [facebook, youtube, ...etc]
+ *               displayText:
+ *                 type: string
+ *                 description: Display text for the link
+ *               link:
+ *                 type: string
+ *                 description: The link
+ *     responses:
+ *       200:
+ *         description: Link has been added successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post("/social_link", (req, res) => {});
+
+/**
+ * @swagger
+ * /social_link:
+ *   delete:
+ *     summary: Delete the social link
+ *     tags: [User settings]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - type
+ *               - displayText
+ *               - link
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 description: Type of the link [facebook, youtube, ...etc]
+ *               displayText:
+ *                 type: string
+ *                 description: Display text for the link
+ *               link:
+ *                 type: string
+ *                 description: The link
+ *     responses:
+ *       204:
+ *         description: Link deleted successfully
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.delete("/social_link", (req, res) => {});
+
 export default router;
