@@ -243,7 +243,7 @@ router.get("/user/:username/about", (req, res) => {});
  *                         commentBy:
  *                           type: string
  *                           description: The username of the comment owner
- *                         commentTitle:
+ *                         commentBody:
  *                           type: string
  *                           description: The comment itself
  *                         points:
@@ -322,5 +322,224 @@ router.get("/user/:username/overview", (req, res) => {});
  *         description: Internal server error
  */
 router.get("/user/:username/posts", (req, res) => {});
+
+/**
+ * @swagger
+ * /user/{username}/comments:
+ *   get:
+ *     summary: Return a list of user's comments
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         description: The username of the user to get
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - in: query
+ *         name: sort
+ *         description: The sorting algorithm used
+ *         schema:
+ *           type: string
+ *           default: new
+ *           enum:
+ *             - new
+ *             - hot
+ *             - top
+ *       - in: query
+ *         name: time
+ *         description: The time interval for the results (used with top only)
+ *         schema:
+ *           type: string
+ *           default: all
+ *           enum:
+ *             - hour
+ *             - day
+ *             - week
+ *             - month
+ *             - year
+ *             - all
+ *       - in: query
+ *         name: after / before
+ *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 properties:
+ *                   subreddit:
+ *                     type: string
+ *                     description: Name of subreddit which contain the post or the comment
+ *                   postedBy:
+ *                     type: string
+ *                     description: The username for the publisher of the post
+ *                   title:
+ *                     type: string
+ *                     description: Title of the post
+ *                   content:
+ *                     type: string
+ *                     description: Content of the post [text, video, image, link]
+ *                   comment:
+ *                     type: array
+ *                     description: The comments and the reply of the user to it
+ *                     items:
+ *                       properties:
+ *                         commentBy:
+ *                           type: string
+ *                           description: The username of the comment owner
+ *                         commentBody:
+ *                           type: string
+ *                           description: The comment itself
+ *                         points:
+ *                           type: integer
+ *                           description: The points to that comment [up votes - down votes]
+ *                         publishTime:
+ *                           type: string
+ *                           format: date-time
+ *                           description: Publish time for the comment
+ *                         level:
+ *                           type: integer
+ *                           description: The level of the comment [level of nesting]
+ *       404:
+ *         description: Didn't find a user with that username
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/user/:username/comments", (req, res) => {});
+
+/**
+ * @swagger
+ * /user/{username}/upvoted:
+ *   get:
+ *     summary: Return a list of user's upvoted posts
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         description: The username of the user to get
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - in: query
+ *         name: sort
+ *         description: The sorting algorithm used
+ *         schema:
+ *           type: string
+ *           default: new
+ *           enum:
+ *             - new
+ *             - hot
+ *             - top
+ *       - in: query
+ *         name: time
+ *         description: The time interval for the results (used with top only)
+ *         schema:
+ *           type: string
+ *           default: all
+ *           enum:
+ *             - hour
+ *             - day
+ *             - week
+ *             - month
+ *             - year
+ *             - all
+ *       - in: query
+ *         name: after / before
+ *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ListedPost"
+ *       404:
+ *         description: Didn't find a user with that username
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get("/user/:username/upvoted", (req, res) => {});
+
+/**
+ * @swagger
+ * /user/{username}/downvoted:
+ *   get:
+ *     summary: Return a list of user's downvoted posts
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         description: The username of the user to get
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - in: query
+ *         name: sort
+ *         description: The sorting algorithm used
+ *         schema:
+ *           type: string
+ *           default: new
+ *           enum:
+ *             - new
+ *             - hot
+ *             - top
+ *       - in: query
+ *         name: time
+ *         description: The time interval for the results (used with top only)
+ *         schema:
+ *           type: string
+ *           default: all
+ *           enum:
+ *             - hour
+ *             - day
+ *             - week
+ *             - month
+ *             - year
+ *             - all
+ *       - in: query
+ *         name: after / before
+ *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ListedPost"
+ *       404:
+ *         description: Didn't find a user with that username
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get("/user/:username/downvoted", (req, res) => {});
 
 export default router;
