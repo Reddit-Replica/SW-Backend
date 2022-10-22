@@ -686,4 +686,40 @@ moderationRouter.post("/api/unlock", (req, res, next) => {});
 
 moderationRouter.post("/api/ban", (req, res, next) => {});
 
+
+/**
+ * @swagger
+ * /api/unban:
+ *  post:
+ *   summary:
+ *    Remove a ban from a user.
+ *   tags: [Moderation]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - userId
+ *        - subreddit
+ *       properties:
+ *        userId:
+ *         type: string
+ *         description: id of the user to remove the ban.
+ *        subreddit:
+ *         type: string
+ *         description: The name of the subreddit.
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    401:
+ *     description: Unauthorized access
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post("/api/unban", (req, res, next) => {});
+
 export default moderationRouter;
