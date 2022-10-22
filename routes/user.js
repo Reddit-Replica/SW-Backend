@@ -106,7 +106,6 @@ router.post("/follow_user", (req, res) => {});
  *         description: The username of the user to get
  *     responses:
  *       200:
- *         description: ''
  *         content:
  *           application/json:
  *             schema:
@@ -141,6 +140,23 @@ router.post("/follow_user", (req, res) => {});
  *                       link:
  *                         type: string
  *                         description: The link
+ *                 nsfw:
+ *                   type: boolean
+ *                   description: If true, then this profile is NSFW
+ *                 moderatorOf:
+ *                   type: array
+ *                   description: List of subreddits in which this user is moderator
+ *                   items:
+ *                     properties:
+ *                       subredditName:
+ *                         type: string
+ *                         description: Name of the subreddit
+ *                       numOfMembers:
+ *                         type: integer
+ *                         description: Number of members for that subreddit
+ *                       nsfw:
+ *                         type: boolean
+ *                         description: If true, this subreddit will be marked as NSFW
  *       404:
  *         description: Didn't find a user with that username
  *       500:
