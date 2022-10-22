@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import messageRouter from "./routes/message.js";
+import categoriesRouter from "./routes/communities.js";
 const app = express();
 
 dotenv.config();
@@ -51,6 +52,7 @@ const specs = swaggerJsDoc(options);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use("/api",messageRouter);
+app.use("/api",categoriesRouter);
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
 });
