@@ -477,4 +477,36 @@ moderationRouter.post("/r/:subreddit/api/accept_moderator_invite", (req, res, ne
 
 moderationRouter.post("/api/leavemoderator", (req, res, next) => {});
 
+
+/**
+ * @swagger
+ * /api/approve:
+ *  post:
+ *   summary:
+ *    Approve a post or comment. for spam reports, approving means that this post / comment is not a spam.
+ *   tags: [Moderation]
+ *   parameters:
+ *    - in: body
+ *      name: id
+ *      description: id of a thing.
+ *      required: true
+ *      schema:
+ *       type: string
+ *    - in: body
+ *      name: type
+ *      description: type of that thing (post, comment,..).
+ *      required: true
+ *      schema:
+ *       type: string
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    401:
+ *     description: Unauthorized access
+ *    500:
+ *     description: Internal Server Error
+ */
+
+moderationRouter.post("/api/approve", (req, res, next) => {});
+
 export default moderationRouter;
