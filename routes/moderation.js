@@ -573,4 +573,35 @@ moderationRouter.post("/api/remove", (req, res, next) => {});
 
 moderationRouter.post("/api/lock", (req, res, next) => {});
 
+/**
+ * @swagger
+ * /api/unlock:
+ *  post:
+ *   summary:
+ *    Unlock a post or comment. Allow a post or comment to receive new comments.
+ *   tags: [Moderation]
+ *   parameters:
+ *    - in: body
+ *      name: id
+ *      description: id of a thing.
+ *      required: true
+ *      schema:
+ *       type: string
+ *    - in: body
+ *      name: type
+ *      description: type of that thing (post, comment,..).
+ *      required: true
+ *      schema:
+ *       type: string
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    401:
+ *     description: Unauthorized access
+ *    500:
+ *     description: Internal Server Error
+ */
+
+moderationRouter.post("/api/unlock", (req, res, next) => {});
+
 export default moderationRouter;
