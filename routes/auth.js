@@ -223,11 +223,17 @@ router.post("/login/forget", (req, res) => {});
 
 /**
  * @swagger
- * /reset_password/{token}:
+ * /reset_password/{id}/{token}:
  *   post:
  *     summary: Reset the password
  *     tags: [Login]
  *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: User's id
+ *         required: true
+ *         schema:
+ *           type: string
  *       - in: path
  *         name: token
  *         description: The token created by the server to reset the password
@@ -271,6 +277,6 @@ router.post("/login/forget", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/reset_password/:token", (req, res) => {});
+router.post("/reset_password/:id/:token", (req, res) => {});
 
 export default router;
