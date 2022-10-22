@@ -151,4 +151,92 @@ router.get("/account_settings", (req, res) => {});
  */
 router.patch("/account_settings", (req, res) => {});
 
+/**
+ * @swagger
+ * /change_email:
+ *   put:
+ *     summary: Change the email of the logged in user
+ *     tags: [User settings]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - currentPassword
+ *               - newEmail
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 description: The current password
+ *               newEmail:
+ *                 type: string
+ *                 description: The new email
+ *     responses:
+ *       200:
+ *         description: Email has been changed successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.put("/change_email", (req, res) => {});
+
+/**
+ * @swagger
+ * /change_password:
+ *   put:
+ *     summary: Change the password of the logged in user
+ *     tags: [User settings]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *               - confirmNewPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 description: The current password
+ *               newPassword:
+ *                 type: string
+ *                 description: The new password
+ *               confirmNewPassword:
+ *                 type: string
+ *                 description: Confirm the new password
+ *     responses:
+ *       200:
+ *         description: Password has been changed successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.put("/change_password", (req, res) => {});
+
 export default router;
