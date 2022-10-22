@@ -333,6 +333,8 @@ router.post("/social_link", (req, res) => {});
  *         description: Link deleted successfully
  *       401:
  *         description: Access Denied
+ *       404:
+ *         description: Link doesn't exist
  *       500:
  *         description: Internal server error
  *     security:
