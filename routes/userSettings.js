@@ -239,4 +239,22 @@ router.put("/change_email", (req, res) => {});
  */
 router.put("/change_password", (req, res) => {});
 
+/**
+ * @swagger
+ * /delete_account:
+ *   delete:
+ *     summary: Delete the account
+ *     tags: [User settings]
+ *     responses:
+ *       204:
+ *         description: Account deleted successfully
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.delete("/delete_account", (req, res) => {});
+
 export default router;
