@@ -61,12 +61,6 @@ const router = express.Router();
  *                 allowToFollowYou:
  *                   type: boolean
  *                   description: If true, Other users can follow you
- *                 contentVisibility:
- *                   type: boolean
- *                   description: If true, Posts to this profile can appear in r/all
- *                 activeInCommunitiesVisibility:
- *                   type: boolean
- *                   description: If true, Show which communities I am active in on my profile
  *                 adultContent:
  *                   type: boolean
  *                   description: If true, View adult and NSFW (not safe for work) content in your feed and search results
@@ -121,12 +115,6 @@ router.get("/account_settings", (req, res) => {});
  *               allowToFollowYou:
  *                 type: boolean
  *                 description: If true, Other users can follow you
- *               contentVisibility:
- *                 type: boolean
- *                 description: If true, Posts to this profile can appear in r/all
- *               activeInCommunitiesVisibility:
- *                 type: boolean
- *                 description: If true, Show which communities I am active in on my profile
  *               adultContent:
  *                 type: boolean
  *                 description: If true, View adult and NSFW (not safe for work) content in your feed and search results
