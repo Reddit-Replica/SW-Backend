@@ -53,4 +53,36 @@ const router = express.Router();
  */
 router.post("/create_subreddit", (req, res) => {});
 
+/**
+ * @swagger
+ * /subreddit_name_available:
+ *   get:
+ *     summary: Check if the username is used before
+ *     tags: [Subreddit]
+ *     parameters:
+ *       - in: query
+ *         required: true
+ *         name: subredditName
+ *         description: Subreddit's name to check
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: The subreddit's name is available
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       409:
+ *         description: Subreddit's name is already taken
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/subreddit_name_available", (req, res) => {});
+
 export default router;
