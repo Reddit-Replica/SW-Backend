@@ -81,7 +81,7 @@ router.get("/subreddits/leaderboard",(req,res)=>{});
  * @swagger
  * api/subreddits/leaderboard/{categoryName}:
  *  get:
- *      summary: Return a listing of a specific category of category Name
+ *      summary: Return a listing of communities of a specific category
  *      tags: [Communities]
  *      parameters:
  *        - in: path
@@ -127,7 +127,7 @@ router.get("/subreddits/leaderboard/:categoryName",(req,res)=>{});
  * @swagger
  * api/random_category:
  *  get:
- *      summary: Return a listing of a random category communities
+ *      summary: Return a listing of communities with random category
  *      tags: [Communities]
  *      requestBody:
  *       required: true
