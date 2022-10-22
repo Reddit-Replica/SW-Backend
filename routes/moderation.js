@@ -688,7 +688,7 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  * /r/{subreddit}/about/banned:
  *  get:
  *   summary:
- *    Return a listing of required items relevant to moderators in that subreddit with banned users. (This endpoint is a listing)
+ *    Return a listing relevant to moderators in that subreddit with banned users. (This endpoint is a listing)
  *   tags: [Moderation]
  *   parameters:
  *    - in: path
