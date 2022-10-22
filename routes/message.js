@@ -46,7 +46,7 @@ const router=express.Router();
 
 /**
  * @swagger
- * /message/compose:
+ * api/message/compose:
  *  post:
  *      summary: Send a message to a specific user with its subject
  *      tags: [Messages]
@@ -70,7 +70,7 @@ router.post("/message/compose",(req,res)=>{});
 
 /**
  * @swagger
- * /del_msg:
+ * api/del_msg:
  *  post:
  *      summary: Delete a Message
  *      tags: [Messages]
@@ -100,7 +100,7 @@ router.post("/del_msg",(req,res)=>{});
 
 /**
  * @swagger
- * /spam_msg:
+ * api/spam_msg:
  *  post:
  *      summary: spam a Message
  *      tags: [Messages]
@@ -128,24 +128,34 @@ router.post("/spam_msg",(req,res)=>{});
 
 /**
  * @swagger
- * /message/:type:
+ * api/message/sent:
  *  get:
- *      summary: Return a listing of messages sorted by time of sending the msg  
+ *      summary: Return a listing of messages that you sent sorted by time of sending the msg  
  *      tags: [Messages]
- *      parameters:
- *       - in: path
- *         name: type
- *         schema:
- *           type: string
- *         required: true
- *         description: Defines which kind of messages to retrieve it has five possible values (sent , inbox , unread, selfreply, mentions)
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              limit:
+ *                type: number
+ *                description: the maximum number of items desired (default-> 25, maximum-> 100)
+ *                default: 25
+ *              after:
+ *                type: number
+ *                description: the starting index to get messages
+ *                required: true
  *      responses:
  *          200:
  *              description: Returned successfully
  *              content:
  *                  application/json:
  *                      schema:
- *                        $ref: '#/components/schemas/Message'
+ *                        type: array
+ *                        items: 
+ *                              $ref: '#/components/schemas/Message'
  *          404:
  *              description: Page not found
  *          401:
@@ -155,22 +165,170 @@ router.post("/spam_msg",(req,res)=>{});
  *      security:
  *       - api_key: []
  */
-router.get("/message/:type",(req,res)=>{
-    if(req.params.type==="sent"){
-
-    }else if(req.params.type==="inbox"){
-
-    }else if(req.params.type==="unread"){
-
-    }else if(req.params.type==="selfreply"){
-
-    }else if(req.params.type==="mentions"){
-
-    }
-});
+router.get("/message/sent",(req,res)=>{});
 /**
  * @swagger
- * /unread_message:
+ * api/message/inbox:
+ *  get:
+ *      summary: Return a listing of all the messages that you sent or received sorted by time of sending the msg  
+ *      tags: [Messages]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              limit:
+ *                type: number
+ *                description: the maximum number of items desired (default-> 25, maximum-> 100)
+ *                default: 25
+ *              after:
+ *                type: number
+ *                description: the starting index to get messages
+ *                required: true
+ *      responses:
+ *          200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: array
+ *                        items: 
+ *                              $ref: '#/components/schemas/Message'
+ *          404:
+ *              description: Page not found
+ *          401:
+ *              description: User unauthorized to view this info
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - api_key: []
+ */
+router.get("/message/inbox",(req,res)=>{});
+/**
+ * @swagger
+ * api/message/unread:
+ *  get:
+ *      summary: Return a listing of unread messages that you received sorted by time of sending the msg  
+ *      tags: [Messages]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              limit:
+ *                type: number
+ *                description: the maximum number of items desired (default-> 25, maximum-> 100)
+ *                default: 25
+ *              after:
+ *                type: number
+ *                description: the starting index to get messages
+ *                required: true
+ *      responses:
+ *          200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: array
+ *                        items: 
+ *                              $ref: '#/components/schemas/Message'
+ *          404:
+ *              description: Page not found
+ *          401:
+ *              description: User unauthorized to view this info
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - api_key: []
+ */
+router.get("/message/unread",(req,res)=>{});
+/**
+ * @swagger
+ * api/message/selfreply:
+ *  get:
+ *      summary: Return a listing of post replies that you made sorted by time of adding the reply  
+ *      tags: [Messages]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              limit:
+ *                type: number
+ *                description: the maximum number of items desired (default-> 25, maximum-> 100)
+ *                default: 25
+ *              after:
+ *                type: number
+ *                description: the starting index to get messages
+ *                required: true
+ *      responses:
+ *          200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: array
+ *                        items: 
+ *                              $ref: '#/components/schemas/Message'
+ *          404:
+ *              description: Page not found
+ *          401:
+ *              description: User unauthorized to view this info
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - api_key: []
+ */
+router.get("/message/selfreply",(req,res)=>{});
+/**
+ * @swagger
+ * api/message/mentions:
+ *  get:
+ *      summary: Return a listing of mentions that you made sorted by time of adding the mention  
+ *      tags: [Messages]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              limit:
+ *                type: number
+ *                description: the maximum number of items desired (default-> 25, maximum-> 100)
+ *                default: 25
+ *              after:
+ *                type: number
+ *                description: the starting index to get messages
+ *                required: true
+ *      responses:
+ *          200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: array
+ *                        items: 
+ *                              $ref: '#/components/schemas/Message'
+ *          404:
+ *              description: Page not found
+ *          401:
+ *              description: User unauthorized to view this info
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - api_key: []
+ */
+router.get("/message/mentions",(req,res)=>{});
+/**
+ * @swagger
+ * api/unread_message:
  *  post:
  *      summary: Unread a Message
  *      tags: [Messages]
@@ -195,7 +353,6 @@ router.get("/message/:type",(req,res)=>{
  *       - api_key: []
  */
 router.post("/unread_message",(req,res)=>{});
-
 
 
 export default router;
