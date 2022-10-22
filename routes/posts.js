@@ -64,7 +64,7 @@ const router = express.Router();
  * @swagger
  * tags:
  *  - name: Posts
- *    description: Post and comment interactions-related API
+ *    description: Only post-related actions
  */
 
 /**

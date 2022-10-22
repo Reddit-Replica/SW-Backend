@@ -17,8 +17,8 @@ const router = express.Router();
 /**
  * @swagger
  * tags:
- *  - name: Actions
- *    description: User actions
+ *  - name: Post and comment actions
+ *    description: User actions that are allowed on a comment or a post
  */
 
 /**
@@ -26,7 +26,7 @@ const router = express.Router();
  * /del:
  *  post:
  *      summary: Delete a Link or Comment
- *      tags: [Actions]
+ *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
  *       content:
@@ -56,7 +56,7 @@ router.post("/del", (req, res, next) => {});
  * /editusertext:
  *  post:
  *      summary: Edit the body text of a comment or self-post
- *      tags: [Actions]
+ *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
  *       content:
@@ -100,7 +100,7 @@ router.post("/editusertext", (req, res, next) => {});
  * /info:
  *  get:
  *      summary: Return a listing of things specified by their fullnames (Only Links, Comments, and Subreddits)
- *      tags: [Actions]
+ *      tags: [Post and comment actions]
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -136,7 +136,7 @@ router.get("/info", (req, res, next) => {});
  * /r/{sr}/info:
  *  get:
  *      summary: Return a listing of things specified by their fullnames in a subreddit
- *      tags: [Actions]
+ *      tags: [Post and comment actions]
  *      parameters:
  *          - in: path
  *            name: sr
@@ -175,7 +175,7 @@ router.get("/r/:sr/info", (req, res, next) => {});
  * /lock:
  *  post:
  *      summary: Lock a link or comment (Prevents a post or new child comments from receiving new comments)
- *      tags: [Actions]
+ *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
  *       content:
@@ -205,7 +205,7 @@ router.post("/lock", (req, res, next) => {});
  * /save:
  *  post:
  *      summary: Save a link or comment
- *      tags: [Actions]
+ *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
  *       content:
@@ -240,7 +240,7 @@ router.post("/save", (req, res, next) => {});
  * /sendreplies:
  *  post:
  *      summary: Enable or disable inbox replies for a link or comment
- *      tags: [Actions]
+ *      tags: [Post and comment actions]
  *      requestBody:
  *        required: true
  *        content:
@@ -273,7 +273,7 @@ router.post("/sendreplies", (req, res, next) => {});
  * /unlock:
  *  post:
  *      summary: Unlock a link or comment
- *      tags: [Actions]
+ *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
  *       content:
@@ -305,7 +305,7 @@ router.post("/unlock", (req, res, next) => {});
  * /unsave:
  *  post:
  *      summary: Unsave a link or comment (This removes the thing from the user's saved listings)
- *      tags: [Actions]
+ *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
  *       content:
@@ -337,7 +337,7 @@ router.post("/unsave", (req, res, next) => {});
  * /vote:
  *  post:
  *      summary: Cast a vote on a thing
- *      tags: [Actions]
+ *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
  *       content:

@@ -21,7 +21,7 @@ const router = express.Router();
  * @swagger
  * tags:
  *  - name: Comments
- *    description: Post comments and replies
+ *    description: Comments and replies on a post
  */
 
 /**
