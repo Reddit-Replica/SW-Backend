@@ -37,7 +37,6 @@ const moderationRouter = express.Router();
  *  description: The Moderation endpoints API
  */
 
-
 /**
  * @swagger
  * components:
@@ -53,7 +52,7 @@ const moderationRouter = express.Router();
  * /about/spam:
  *  get:
  *   summary:
- *    Return a listing of required items relevant to moderators. (This endpoint is a listing)
+ *    Return a listing of required items relevant to moderators with things that have been marked as spam. (This endpoint is a listing)
  *   tags: [Moderation]
  *   parameters:
  *    - in: query
@@ -80,12 +79,6 @@ const moderationRouter = express.Router();
  *      schema:
  *       type: enum
  *      required: true
- *    - in: query
- *      name: show
- *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
- *      schema:
- *       type: enum
- *      required: false
  *    - in: query
  *      name: show
  *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
@@ -118,7 +111,7 @@ moderationRouter.get("/about/spam", (req, res, next) => {});
  * /r/{subreddit}/about/spam:
  *  get:
  *   summary:
- *    Return a listing of required items relevant to moderators in that subreddit. (This endpoint is a listing)
+ *    Return a listing of required items relevant to moderators with things that have been marked as spam in that subreddit. (This endpoint is a listing)
  *   tags: [Moderation]
  *   parameters:
  *    - in: path
@@ -151,12 +144,6 @@ moderationRouter.get("/about/spam", (req, res, next) => {});
  *      schema:
  *       type: enum
  *      required: true
- *    - in: query
- *      name: show
- *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
- *      schema:
- *       type: enum
- *      required: false
  *    - in: query
  *      name: show
  *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
@@ -216,12 +203,6 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *      schema:
  *       type: enum
  *      required: true
- *    - in: query
- *      name: show
- *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
- *      schema:
- *       type: enum
- *      required: false
  *    - in: query
  *      name: show
  *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
@@ -293,12 +274,6 @@ moderationRouter.get("/about/edited", (req, res, next) => {});
  *      schema:
  *       type: enum
  *      required: false
- *    - in: query
- *      name: show
- *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
- *      schema:
- *       type: enum
- *      required: false
  *   responses:
  *    200:
  *     description: Listing of required items relevant to moderators.
@@ -352,12 +327,6 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *      schema:
  *       type: enum
  *      required: true
- *    - in: query
- *      name: show
- *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
- *      schema:
- *       type: enum
- *      required: false
  *    - in: query
  *      name: show
  *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
@@ -429,12 +398,6 @@ moderationRouter.get("/about/unmoderated", (req, res, next) => {});
  *      schema:
  *       type: enum
  *      required: false
- *    - in: query
- *      name: show
- *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
- *      schema:
- *       type: enum
- *      required: false
  *   responses:
  *    200:
  *     description: Listing of required items relevant to moderators.
@@ -474,8 +437,10 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/r/:subreddit/api/accept_moderator_invite", (req, res, next) => {});
-
+moderationRouter.post(
+  "/r/:subreddit/api/accept_moderator_invite",
+  (req, res, next) => {}
+);
 
 /**
  * @swagger
@@ -507,7 +472,6 @@ moderationRouter.post("/r/:subreddit/api/accept_moderator_invite", (req, res, ne
  */
 
 moderationRouter.post("/api/leavemoderator", (req, res, next) => {});
-
 
 /**
  * @swagger
@@ -544,7 +508,6 @@ moderationRouter.post("/api/leavemoderator", (req, res, next) => {});
 
 moderationRouter.post("/api/approve", (req, res, next) => {});
 
-
 /**
  * @swagger
  * /api/remove:
@@ -579,7 +542,6 @@ moderationRouter.post("/api/approve", (req, res, next) => {});
  */
 
 moderationRouter.post("/api/remove", (req, res, next) => {});
-
 
 /**
  * @swagger
@@ -686,7 +648,6 @@ moderationRouter.post("/api/unlock", (req, res, next) => {});
 
 moderationRouter.post("/api/ban", (req, res, next) => {});
 
-
 /**
  * @swagger
  * /api/unban:
@@ -721,5 +682,64 @@ moderationRouter.post("/api/ban", (req, res, next) => {});
  */
 
 moderationRouter.post("/api/unban", (req, res, next) => {});
+
+/**
+ * @swagger
+ * /r/{subreddit}/about/banned:
+ *  get:
+ *   summary:
+ *    Return a listing of required items relevant to moderators in that subreddit with banned users. (This endpoint is a listing)
+ *   tags: [Moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
+ *    - in: query
+ *      name: after
+ *      description: fullname of a thing.
+ *      schema:
+ *       type: fullname
+ *      required: false
+ *    - in: query
+ *      name: before
+ *      description: fullname of a thing. one of after/before should be specified
+ *      schema:
+ *       type: fullname
+ *      required: false
+ *    - in: query
+ *      name: limit
+ *      description: the maximum number of items desired (default 25, maximum 100)
+ *      schema:
+ *       type: integers
+ *      required: false
+ *    - in: query
+ *      name: show
+ *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
+ *      schema:
+ *       type: enum
+ *      required: false
+ *   responses:
+ *    200:
+ *     description: Listing of required items relevant to moderators.
+ *     content:
+ *      application/json:
+ *       schema:
+ *        $ref: '#/components/schemas/Listing'
+ *    401:
+ *     description: Unauthorized access
+ *    403:
+ *     description: Bad request
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.get("/r/:subreddit/about/banned", (req, res, next) => {});
 
 export default moderationRouter;
