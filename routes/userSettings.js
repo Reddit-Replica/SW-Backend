@@ -342,4 +342,60 @@ router.post("/social_link", (req, res) => {});
  */
 router.delete("/social_link", (req, res) => {});
 
+/**
+ * @swagger
+ * /profile_picture:
+ *   post:
+ *     summary: Add a profile picture to the logged in user
+ *     tags: [User settings]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - picture
+ *             properties:
+ *               picture:
+ *                 type: string
+ *                 description: Path of the profile picture
+ *     responses:
+ *       200:
+ *         description: Profile picture has been added successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post("/profile_picture", (req, res) => {});
+
+/**
+ * @swagger
+ * /profile_picture:
+ *   delete:
+ *     summary: Delete the profile picture
+ *     tags: [User settings]
+ *     responses:
+ *       204:
+ *         description: Profile picture deleted successfully
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.delete("/profile_picture", (req, res) => {});
+
 export default router;
