@@ -454,4 +454,49 @@ router.post("/banner_image", (req, res) => {});
  */
 router.delete("/banner_image", (req, res) => {});
 
+/**
+ * @swagger
+ * /blocked_users:
+ *   get:
+ *     summary: Get a list of blocked users by the logged in user
+ *     tags: [User settings]
+ *     parameters:
+ *       - in: query
+ *         name: after / before
+ *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         description: ''
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 properties:
+ *                   username:
+ *                     type: string
+ *                     description: Username of the blocked user
+ *                   blockDate:
+ *                     type: string
+ *                     format: date
+ *                     description: The date on which this user has been blocked
+ *       401:
+ *         description: Access Denied
+ *       404:
+ *         description: No blocked users found
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get("/blocked_users", (req, res) => {});
+
 export default router;
