@@ -107,6 +107,8 @@ const moderationRouter = express.Router();
  *     description: Not Found
  *    500:
  *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
  */
 
 moderationRouter.get("/about/spam", (req, res, next) => {});
@@ -176,6 +178,8 @@ moderationRouter.get("/about/spam", (req, res, next) => {});
  *     description: Not Found
  *    500:
  *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
  */
 
 moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
@@ -239,6 +243,8 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *     description: Not Found
  *    500:
  *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
  */
 
 moderationRouter.get("/about/edited", (req, res, next) => {});
@@ -308,6 +314,8 @@ moderationRouter.get("/about/edited", (req, res, next) => {});
  *     description: Not Found
  *    500:
  *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
  */
 
 moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
@@ -371,6 +379,8 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *     description: Not Found
  *    500:
  *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
  */
 
 moderationRouter.get("/about/unmoderated", (req, res, next) => {});
@@ -440,6 +450,8 @@ moderationRouter.get("/about/unmoderated", (req, res, next) => {});
  *     description: Not Found
  *    500:
  *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
  */
 
 moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
@@ -458,6 +470,8 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
  *     description: Unauthorized access
  *    500:
  *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
  */
 
 moderationRouter.post("/r/:subreddit/api/accept_moderator_invite", (req, res, next) => {});
@@ -522,6 +536,8 @@ moderationRouter.post("/api/leavemoderator", (req, res, next) => {});
  *     description: Unauthorized access
  *    500:
  *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
  */
 
 moderationRouter.post("/api/approve", (req, res, next) => {});
@@ -554,6 +570,8 @@ moderationRouter.post("/api/approve", (req, res, next) => {});
  *     description: Unauthorized access
  *    500:
  *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
  */
 
 moderationRouter.post("/api/remove", (req, res, next) => {});
@@ -586,6 +604,8 @@ moderationRouter.post("/api/remove", (req, res, next) => {});
  *     description: Unauthorized access
  *    500:
  *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
  */
 
 moderationRouter.post("/api/lock", (req, res, next) => {});
@@ -617,6 +637,8 @@ moderationRouter.post("/api/lock", (req, res, next) => {});
  *     description: Unauthorized access
  *    500:
  *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
  */
 
 moderationRouter.post("/api/unlock", (req, res, next) => {});
