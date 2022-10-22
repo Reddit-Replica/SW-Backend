@@ -18,7 +18,6 @@ const router = express.Router();
  *         - kind
  *         - sr
  *         - title
- *         - text
  *       properties:
  *         kind:
  *           type: string
@@ -43,6 +42,7 @@ const router = express.Router();
  *           description: Blur the content of the post
  *         title:
  *           type: string
+ *           maxlength: 300
  *           description: title of the submission. up to 300 characters long
  *         url:
  *           type: string
@@ -58,6 +58,9 @@ const router = express.Router();
  *         resubmit:
  *           type: boolean
  *           description: Resubmit a post
+ *         g-recaptcha-response	:
+ *           type: boolean
+ *           description: Captcha result
  */
 
 /**
@@ -69,7 +72,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /follow_post:
+ * /api/follow_post:
  *  post:
  *      summary: Follow or unfollow a post.
  *      tags: [Posts]
@@ -98,11 +101,11 @@ const router = express.Router();
  *      security:
  *       - api_key: []
  */
-router.post("/follow_post", (req, res, next) => {});
+router.post("/api/follow_post", (req, res, next) => {});
 
 /**
  * @swagger
- * /hide:
+ * /api/hide:
  *  post:
  *      summary: Hide a link (This removes it from the user's default view of subreddit listings)
  *      tags: [Posts]
@@ -134,11 +137,11 @@ router.post("/follow_post", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/hide", (req, res, next) => {});
+router.post("/api/hide", (req, res, next) => {});
 
 /**
  * @swagger
- * /marknsfw:
+ * /api/marknsfw:
  *  post:
  *      summary: Mark a link NSFW (Not Safe For Work)
  *      tags: [Posts]
@@ -166,11 +169,11 @@ router.post("/hide", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/marknsfw", (req, res, next) => {});
+router.post("/api/marknsfw", (req, res, next) => {});
 
 /**
  * @swagger
- * /set_suggested_sort:
+ * /api/set_suggested_sort:
  *  post:
  *      summary: Set a suggested sort for a link
  *      tags: [Posts]
@@ -199,11 +202,11 @@ router.post("/marknsfw", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/set_suggested_sort", (req, res, next) => {});
+router.post("/api/set_suggested_sort", (req, res, next) => {});
 
 /**
  * @swagger
- * /spoiler:
+ * /api/spoiler:
  *  post:
  *      summary: Blur the content of the post and unblur when opening it
  *      tags: [Posts]
@@ -227,11 +230,11 @@ router.post("/set_suggested_sort", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/spoiler", (req, res, next) => {});
+router.post("/api/spoiler", (req, res, next) => {});
 
 /**
  * @swagger
- * /submit:
+ * /api/submit:
  *  post:
  *      summary: Submit a link to a subreddit
  *      tags: [Posts]
@@ -253,11 +256,11 @@ router.post("/spoiler", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/submit", (req, res, next) => {});
+router.post("/api/submit", (req, res, next) => {});
 
 /**
  * @swagger
- * /unhide:
+ * /api/unhide:
  *  post:
  *      summary: Unhide a link
  *      tags: [Posts]
@@ -283,11 +286,11 @@ router.post("/submit", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/unhide", (req, res, next) => {});
+router.post("/api/unhide", (req, res, next) => {});
 
 /**
  * @swagger
- * /unmarknsfw:
+ * /api/unmarknsfw:
  *  post:
  *      summary: Remove the NSFW marking from a link
  *      tags: [Posts]
@@ -315,11 +318,11 @@ router.post("/unhide", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/unmarknsfw", (req, res, next) => {});
+router.post("/api/unmarknsfw", (req, res, next) => {});
 
 /**
  * @swagger
- * /unspoiler:
+ * /api/unspoiler:
  *  post:
  *      summary: Remove ability to blur the content of the post
  *      tags: [Posts]
@@ -347,11 +350,11 @@ router.post("/unmarknsfw", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/unspoiler", (req, res, next) => {});
+router.post("/api/unspoiler", (req, res, next) => {});
 
 /**
  * @swagger
- * /insights_counts:
+ * /api/insights_counts:
  *  get:
  *      summary: Get the number of views on a post
  *      tags: [Posts]
@@ -362,6 +365,11 @@ router.post("/unspoiler", (req, res, next) => {});
  *            schema:
  *              type: string
  *            description: fullname of the post
+ *          - in: query
+ *            name: sr_name
+ *            schema:
+ *              type: string
+ *            description: Subreddit name containing the post
  *      responses:
  *          200:
  *              description: Number of insights returned successfully
@@ -379,6 +387,74 @@ router.post("/unspoiler", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.get("/insights_counts", (req, res, next) => {});
+router.get("/api/insights_counts", (req, res, next) => {});
+
+/**
+ * @swagger
+ * /api/spam:
+ *  post:
+ *      summary: Mark a post as spam
+ *      tags: [Posts]
+ *      parameters:
+ *          - in: query
+ *            required: true
+ *            name: id
+ *            schema:
+ *              type: string
+ *            description: fullname of the post
+ *          - in: query
+ *            name: sr_name
+ *            schema:
+ *              type: string
+ *            description: Subreddit name containing the post
+ *      responses:
+ *          200:
+ *              description: Post marked as spam successfully
+ *          404:
+ *              description: Post not found
+ *          401:
+ *              description: Unauthorized to mark this post as spam
+ *          409:
+ *              description: Post already marked as spam
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - api_key: []
+ */
+router.get("/api/spam", (req, res, next) => {});
+
+/**
+ * @swagger
+ * /api/unmarkspam:
+ *  post:
+ *      summary: Unmark a post as spam
+ *      tags: [Posts]
+ *      parameters:
+ *          - in: query
+ *            required: true
+ *            name: id
+ *            schema:
+ *              type: string
+ *            description: fullname of the post
+ *          - in: query
+ *            name: sr_name
+ *            schema:
+ *              type: string
+ *            description: Subreddit name containing the post
+ *      responses:
+ *          200:
+ *              description: Post unmarked as spam successfully
+ *          404:
+ *              description: Post not found
+ *          401:
+ *              description: Unauthorized to unmark this post as spam
+ *          409:
+ *              description: Post already unmarked as spam
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - api_key: []
+ */
+router.get("/api/unmarkspam", (req, res, next) => {});
 
 export default router;

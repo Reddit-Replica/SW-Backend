@@ -23,7 +23,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /del:
+ * /api/del:
  *  post:
  *      summary: Delete a Link or Comment
  *      tags: [Post and comment actions]
@@ -49,11 +49,11 @@ const router = express.Router();
  *      security:
  *       - api_key: []
  */
-router.post("/del", (req, res, next) => {});
+router.post("/api/del", (req, res, next) => {});
 
 /**
  * @swagger
- * /editusertext:
+ * /api/editusertext:
  *  post:
  *      summary: Edit the body text of a comment or self-post
  *      tags: [Post and comment actions]
@@ -93,11 +93,11 @@ router.post("/del", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/editusertext", (req, res, next) => {});
+router.post("/api/editusertext", (req, res, next) => {});
 
 /**
  * @swagger
- * /info:
+ * /api/info:
  *  get:
  *      summary: Return a listing of things specified by their fullnames (Only Links, Comments, and Subreddits)
  *      tags: [Post and comment actions]
@@ -129,11 +129,11 @@ router.post("/editusertext", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.get("/info", (req, res, next) => {});
+router.get("/api/info", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{sr}/info:
+ * /api/r/{sr}/info:
  *  get:
  *      summary: Return a listing of things specified by their fullnames in a subreddit
  *      tags: [Post and comment actions]
@@ -168,11 +168,11 @@ router.get("/info", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.get("/r/:sr/info", (req, res, next) => {});
+router.get("/api/r/:sr/info", (req, res, next) => {});
 
 /**
  * @swagger
- * /lock:
+ * /api/lock:
  *  post:
  *      summary: Lock a link or comment (Prevents a post or new child comments from receiving new comments)
  *      tags: [Post and comment actions]
@@ -198,11 +198,11 @@ router.get("/r/:sr/info", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/lock", (req, res, next) => {});
+router.post("/api/lock", (req, res, next) => {});
 
 /**
  * @swagger
- * /save:
+ * /api/save:
  *  post:
  *      summary: Save a link or comment
  *      tags: [Post and comment actions]
@@ -233,11 +233,11 @@ router.post("/lock", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/save", (req, res, next) => {});
+router.post("/api/save", (req, res, next) => {});
 
 /**
  * @swagger
- * /sendreplies:
+ * /api/sendreplies:
  *  post:
  *      summary: Enable or disable inbox replies for a link or comment
  *      tags: [Post and comment actions]
@@ -266,11 +266,11 @@ router.post("/save", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/sendreplies", (req, res, next) => {});
+router.post("/api/sendreplies", (req, res, next) => {});
 
 /**
  * @swagger
- * /unlock:
+ * /api/unlock:
  *  post:
  *      summary: Unlock a link or comment
  *      tags: [Post and comment actions]
@@ -298,11 +298,11 @@ router.post("/sendreplies", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/unlock", (req, res, next) => {});
+router.post("/api/unlock", (req, res, next) => {});
 
 /**
  * @swagger
- * /unsave:
+ * /api/unsave:
  *  post:
  *      summary: Unsave a link or comment (This removes the thing from the user's saved listings)
  *      tags: [Post and comment actions]
@@ -330,11 +330,11 @@ router.post("/unlock", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/unsave", (req, res, next) => {});
+router.post("/api/unsave", (req, res, next) => {});
 
 /**
  * @swagger
- * /vote:
+ * /api/vote:
  *  post:
  *      summary: Cast a vote on a thing
  *      tags: [Post and comment actions]
@@ -366,6 +366,6 @@ router.post("/unsave", (req, res, next) => {});
  *      security:
  *       - api_key: []
  */
-router.post("/vote", (req, res, next) => {});
+router.post("/api/vote", (req, res, next) => {});
 
 export default router;

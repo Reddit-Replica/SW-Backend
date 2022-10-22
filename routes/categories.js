@@ -20,7 +20,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /saved_categories:
+ * /api/saved_categories:
  *  get:
  *      summary: Get a list of categories in which things are currently saved
  *      tags: [Categories]
@@ -42,6 +42,6 @@ const router = express.Router();
  *      security:
  *       - api_key: []
  */
-router.get("/saved_categories", (req, res, next) => {});
+router.get("/api/saved_categories", (req, res, next) => {});
 
 export default router;

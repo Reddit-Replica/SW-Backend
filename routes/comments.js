@@ -26,7 +26,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /comment:
+ * /api/comment:
  *  post:
  *      summary: Submit a new comment or reply to a message
  *      tags: [Comments]
@@ -51,6 +51,6 @@ const router = express.Router();
  *       - api_key: []
  */
 
-router.post("/comment", (req, res, next) => {});
+router.post("/api/comment", (req, res, next) => {});
 
 export default router;

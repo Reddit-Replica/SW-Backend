@@ -12,7 +12,6 @@ const router = express.Router();
  *         - kind
  *         - sr
  *         - title
- *         - text
  *       properties:
  *         kind:
  *           type: string
@@ -72,7 +71,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /search:
+ * /api/search:
  *  get:
  *      summary: Search links page
  *      tags: [Search]
@@ -147,11 +146,11 @@ const router = express.Router();
  *          500:
  *              description: Server Error
  */
-router.get("/search", (req, res, next) => {});
+router.get("/api/search", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{sr}/search:
+ * /api/r/{sr}/search:
  *  get:
  *      summary: Search links page
  *      tags: [Search]
@@ -232,6 +231,6 @@ router.get("/search", (req, res, next) => {});
  *          500:
  *              description: Server Error
  */
-router.get("/r/:sr/search", (req, res, next) => {});
+router.get("/api/r/:sr/search", (req, res, next) => {});
 
 export default router;
