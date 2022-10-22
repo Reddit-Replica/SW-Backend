@@ -3,7 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
-import actionRoutes from "./routes/actions.js";
+import postCommentActionRoutes from "./routes/post-and-comment-actions.js";
 import postRoutes from "./routes/posts.js";
 import commentRoutes from "./routes/comments.js";
 import categoryRoutes from "./routes/categories.js";
@@ -55,7 +55,7 @@ const specs = swaggerJsDoc(options);
 
 app.use(postRoutes);
 app.use(commentRoutes);
-app.use(actionRoutes);
+app.use(postCommentActionRoutes);
 app.use(categoryRoutes);
 app.use(searchRoutes);
 
