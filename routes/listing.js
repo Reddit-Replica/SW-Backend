@@ -71,4 +71,70 @@ const router = express.Router();
  */
 router.get("/best", (req, res) => {});
 
+/**
+ * @swagger
+ * /hot:
+ *   get:
+ *     summary: Return the hot posts based on [time, votes, comments]
+ *     tags: [Listing]
+ *     parameters:
+ *       - in: query
+ *         name: after / before
+ *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: "#/components/schemas/ListedPost"
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/hot", (req, res) => {});
+
+/**
+ * @swagger
+ * /r/{subreddit}/hot:
+ *   get:
+ *     summary: Return the hot posts in a specific subreddit based on [time, votes, comments]
+ *     tags: [Listing]
+ *     parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: The name of the subreddit
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after / before
+ *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: "#/components/schemas/ListedPost"
+ *       404:
+ *         description: Didn't find a subreddit with that name
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/r/:subreddit/hot", (req, res) => {});
+
 export default router;
