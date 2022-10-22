@@ -204,4 +204,70 @@ router.get("/new", (req, res) => {});
  */
 router.get("/r/:subreddit/new", (req, res) => {});
 
+/**
+ * @swagger
+ * /random:
+ *   get:
+ *     summary: Return a random post
+ *     tags: [Listing]
+ *     parameters:
+ *       - in: query
+ *         name: after / before
+ *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: "#/components/schemas/ListedPost"
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/random", (req, res) => {});
+
+/**
+ * @swagger
+ * /r/{subreddit}/random:
+ *   get:
+ *     summary: Return a random post from a specific subreddit
+ *     tags: [Listing]
+ *     parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: The name of the subreddit
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after / before
+ *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: "#/components/schemas/ListedPost"
+ *       404:
+ *         description: Didn't find a subreddit with that name
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/r/:subreddit/random", (req, res) => {});
+
 export default router;
