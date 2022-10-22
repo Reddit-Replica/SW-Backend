@@ -509,4 +509,36 @@ moderationRouter.post("/api/leavemoderator", (req, res, next) => {});
 
 moderationRouter.post("/api/approve", (req, res, next) => {});
 
+
+/**
+ * @swagger
+ * /api/remove:
+ *  post:
+ *   summary:
+ *    Remove  a post or comment. for spam reports, removing means that this post / comment is a spam so it is removed.
+ *   tags: [Moderation]
+ *   parameters:
+ *    - in: body
+ *      name: id
+ *      description: id of a thing.
+ *      required: true
+ *      schema:
+ *       type: string
+ *    - in: body
+ *      name: type
+ *      description: type of that thing (post, comment,..).
+ *      required: true
+ *      schema:
+ *       type: string
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    401:
+ *     description: Unauthorized access
+ *    500:
+ *     description: Internal Server Error
+ */
+
+moderationRouter.post("/api/remove", (req, res, next) => {});
+
 export default moderationRouter;
