@@ -651,4 +651,39 @@ moderationRouter.post("/api/lock", (req, res, next) => {});
 
 moderationRouter.post("/api/unlock", (req, res, next) => {});
 
+/**
+ * @swagger
+ * /api/ban:
+ *  post:
+ *   summary:
+ *    Ban a user from a subreddit. Banned users can't post or comment on that subreddit.
+ *   tags: [Moderation]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - userId
+ *        - subreddit
+ *       properties:
+ *        userId:
+ *         type: string
+ *         description: id of the user to ban.
+ *        subreddit:
+ *         type: string
+ *         description: The name of the subreddit.
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    401:
+ *     description: Unauthorized access
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post("/api/ban", (req, res, next) => {});
+
 export default moderationRouter;
