@@ -40,7 +40,7 @@ const router = express.Router();
  *           description: title of the submission. up to 300 characters long
  *         url:
  *           type: string
- *           description: Post url if type is link
+ *           description: Post url (should be valid)
  *         flair_id:
  *           type: string
  *           maxLength: 36
