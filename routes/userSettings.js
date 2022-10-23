@@ -462,20 +462,32 @@ router.delete("/banner_image", (req, res) => {});
  *           default: 25
  *     responses:
  *       200:
- *         description: ''
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 properties:
- *                   username:
- *                     type: string
- *                     description: Username of the blocked user
- *                   blockDate:
- *                     type: string
- *                     format: date
- *                     description: The date on which this user has been blocked
+ *               type: object
+ *               properties:
+ *                 after / before:
+ *                   type: string
+ *                   description: The id of last item in the listing to use as the anchor point of the slice.
+ *                 children:
+ *                   type: array
+ *                   description: List of [Things] to return
+ *                   items:
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         description: Id of the [Thing]
+ *                       data:
+ *                         type: object
+ *                         properties:
+ *                           username:
+ *                             type: string
+ *                             description: Username of the blocked user
+ *                           blockDate:
+ *                             type: string
+ *                             format: date-time
+ *                             description: The date on which this user has been blocked
  *       401:
  *         description: Access Denied
  *       404:
