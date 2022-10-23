@@ -15,6 +15,11 @@ const router = express.Router();
  *         thing_id:
  *           type: string
  *           description: fullname of the thing being replied to (parent)
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 
 /**
@@ -48,7 +53,7 @@ const router = express.Router();
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 
 router.post("/api/comment", (req, res, next) => {});

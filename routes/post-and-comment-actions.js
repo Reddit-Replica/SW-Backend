@@ -12,6 +12,11 @@ const router = express.Router();
  *     ID:
  *       type: string
  *       description: The fullname of a thing
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 
 /**
@@ -47,7 +52,7 @@ const router = express.Router();
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/del", (req, res, next) => {});
 
@@ -91,7 +96,7 @@ router.post("/api/del", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/editusertext", (req, res, next) => {});
 
@@ -127,7 +132,7 @@ router.post("/api/editusertext", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.get("/api/info", (req, res, next) => {});
 
@@ -166,7 +171,7 @@ router.get("/api/info", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.get("/api/r/:sr/info", (req, res, next) => {});
 
@@ -196,7 +201,7 @@ router.get("/api/r/:sr/info", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/lock", (req, res, next) => {});
 
@@ -231,7 +236,7 @@ router.post("/api/lock", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/save", (req, res, next) => {});
 
@@ -264,7 +269,7 @@ router.post("/api/save", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/sendreplies", (req, res, next) => {});
 
@@ -296,7 +301,7 @@ router.post("/api/sendreplies", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/unlock", (req, res, next) => {});
 
@@ -328,7 +333,7 @@ router.post("/api/unlock", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/unsave", (req, res, next) => {});
 
@@ -364,7 +369,7 @@ router.post("/api/unsave", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/vote", (req, res, next) => {});
 

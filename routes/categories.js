@@ -9,6 +9,11 @@ const router = express.Router();
  *     Category:
  *       type: string
  *       description: A category name
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 
 /**
@@ -40,7 +45,7 @@ const router = express.Router();
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.get("/api/saved_categories", (req, res, next) => {});
 

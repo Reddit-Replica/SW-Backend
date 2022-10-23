@@ -64,6 +64,11 @@ const router = express.Router();
  *         g-recaptcha-response	:
  *           type: boolean
  *           description: Captcha result
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 
 /**
@@ -102,7 +107,7 @@ const router = express.Router();
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/follow_post", (req, res, next) => {});
 
@@ -138,7 +143,7 @@ router.post("/api/follow_post", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/hide", (req, res, next) => {});
 
@@ -170,7 +175,7 @@ router.post("/api/hide", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/marknsfw", (req, res, next) => {});
 
@@ -203,7 +208,7 @@ router.post("/api/marknsfw", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/set_suggested_sort", (req, res, next) => {});
 
@@ -231,7 +236,7 @@ router.post("/api/set_suggested_sort", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/spoiler", (req, res, next) => {});
 
@@ -257,7 +262,7 @@ router.post("/api/spoiler", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/submit", (req, res, next) => {});
 
@@ -287,7 +292,7 @@ router.post("/api/submit", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/unhide", (req, res, next) => {});
 
@@ -319,7 +324,7 @@ router.post("/api/unhide", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/unmarknsfw", (req, res, next) => {});
 
@@ -351,7 +356,7 @@ router.post("/api/unmarknsfw", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/unspoiler", (req, res, next) => {});
 
@@ -388,7 +393,7 @@ router.post("/api/unspoiler", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.get("/api/insights_counts", (req, res, next) => {});
 
@@ -422,7 +427,7 @@ router.get("/api/insights_counts", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/spam", (req, res, next) => {});
 
@@ -456,7 +461,7 @@ router.post("/api/spam", (req, res, next) => {});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/api/unmarkspam", (req, res, next) => {});
 
