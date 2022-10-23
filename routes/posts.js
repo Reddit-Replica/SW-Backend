@@ -58,6 +58,9 @@ const router = express.Router();
  *         resubmit:
  *           type: boolean
  *           description: Resubmit a post
+ *         share_post_id:
+ *           type: string
+ *           description: fullname of a post (given in case of sharing a post)
  *         g-recaptcha-response	:
  *           type: boolean
  *           description: Captcha result
