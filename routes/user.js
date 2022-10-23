@@ -216,62 +216,74 @@ router.get("/user/:username/about", (req, res) => {});
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 properties:
- *                   type:
- *                     type: string
- *                     enum:
- *                       - post
- *                       - comment
- *                     description: The type of the [Thing] to show
- *                   subreddit:
- *                     type: string
- *                     description: Name of subreddit which contain the post or the comment
- *                   postedBy:
- *                     type: string
- *                     description: The username for the publisher of the post
- *                   title:
- *                     type: string
- *                     description: Title of the post
- *                   content:
- *                     type: string
- *                     description: Content of the post [text, video, image, link]
- *                   post:
- *                     type: object
- *                     description: Post data
+ *               type: object
+ *               properties:
+ *                 after / before:
+ *                   type: string
+ *                   description: The id of last item in the listing to use as the anchor point of the slice.
+ *                 children:
+ *                   type: array
+ *                   description: List of [Things] to return
+ *                   items:
  *                     properties:
- *                       upVotes:
- *                         type: integer
- *                         description: Up votes to that post
- *                       downVotes:
- *                         type: integer
- *                         description: Down votes to that post
- *                       publishTime:
+ *                       id:
  *                         type: string
- *                         format: date-time
- *                         description: Publish time of the post
- *                   comment:
- *                     type: array
- *                     description: The comments and the reply of the user to it
- *                     items:
- *                       properties:
- *                         commentBy:
- *                           type: string
- *                           description: The username of the comment owner
- *                         commentBody:
- *                           type: string
- *                           description: The comment itself
- *                         points:
- *                           type: integer
- *                           description: The points to that comment [up votes - down votes]
- *                         publishTime:
- *                           type: string
- *                           format: date-time
- *                           description: Publish time for the comment
- *                         level:
- *                           type: integer
- *                           description: The level of the comment [level of nesting]
+ *                         description: Id of the [Thing]
+ *                       type:
+ *                         type: string
+ *                         enum:
+ *                           - post
+ *                           - comment
+ *                         description: The type of the [Thing] to show
+ *                       data:
+ *                         properties:
+ *                           subreddit:
+ *                             type: string
+ *                             description: Name of subreddit which contain the post or the comment
+ *                           postedBy:
+ *                             type: string
+ *                             description: The username for the publisher of the post
+ *                           title:
+ *                             type: string
+ *                             description: Title of the post
+ *                           content:
+ *                             type: string
+ *                             description: Content of the post [text, video, image, link]
+ *                           post:
+ *                             type: object
+ *                             description: Post data
+ *                             properties:
+ *                               upVotes:
+ *                                 type: integer
+ *                                 description: Up votes to that post
+ *                               downVotes:
+ *                                 type: integer
+ *                                 description: Down votes to that post
+ *                               publishTime:
+ *                                 type: string
+ *                                 format: date-time
+ *                                 description: Publish time of the post
+ *                           comment:
+ *                             type: array
+ *                             description: The comments and the reply of the user to it
+ *                             items:
+ *                               properties:
+ *                                 commentBy:
+ *                                   type: string
+ *                                   description: The username of the comment owner
+ *                                 commentBody:
+ *                                   type: string
+ *                                   description: The comment itself
+ *                                 points:
+ *                                   type: integer
+ *                                   description: The points to that comment [up votes - down votes]
+ *                                 publishTime:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   description: Publish time for the comment
+ *                                 level:
+ *                                   type: integer
+ *                                   description: The level of the comment [level of nesting]
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -391,42 +403,55 @@ router.get("/user/:username/posts", (req, res) => {});
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 properties:
- *                   subreddit:
- *                     type: string
- *                     description: Name of subreddit which contain the post or the comment
- *                   postedBy:
- *                     type: string
- *                     description: The username for the publisher of the post
- *                   title:
- *                     type: string
- *                     description: Title of the post
- *                   content:
- *                     type: string
- *                     description: Content of the post [text, video, image, link]
- *                   comment:
- *                     type: array
- *                     description: The comments and the reply of the user to it
- *                     items:
- *                       properties:
- *                         commentBy:
- *                           type: string
- *                           description: The username of the comment owner
- *                         commentBody:
- *                           type: string
- *                           description: The comment itself
- *                         points:
- *                           type: integer
- *                           description: The points to that comment [up votes - down votes]
- *                         publishTime:
- *                           type: string
- *                           format: date-time
- *                           description: Publish time for the comment
- *                         level:
- *                           type: integer
- *                           description: The level of the comment [level of nesting]
+ *               type: object
+ *               properties:
+ *                 after / before:
+ *                   type: string
+ *                   description: The id of last item in the listing to use as the anchor point of the slice.
+ *                 children:
+ *                   type: array
+ *                   description: List of [Things] to return
+ *                   items:
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         description: Id of the [Thing]
+ *                       data:
+ *                         type: object
+ *                         properties:
+ *                           subreddit:
+ *                             type: string
+ *                             description: Name of subreddit which contain the post or the comment
+ *                           postedBy:
+ *                             type: string
+ *                             description: The username for the publisher of the post
+ *                           title:
+ *                             type: string
+ *                             description: Title of the post
+ *                           content:
+ *                               type: string
+ *                               description: Content of the post [text, video, image, link]
+ *                           comment:
+ *                             type: array
+ *                             description: The comments and the reply of the user to it
+ *                             items:
+ *                               properties:
+ *                                 commentBy:
+ *                                   type: string
+ *                                   description: The username of the comment owner
+ *                                 commentBody:
+ *                                   type: string
+ *                                   description: The comment itself
+ *                                 points:
+ *                                   type: integer
+ *                                   description: The points to that comment [up votes - down votes]
+ *                                 publishTime:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   description: Publish time for the comment
+ *                                 level:
+ *                                   type: integer
+ *                                   description: The level of the comment [level of nesting]
  *       404:
  *         description: Didn't find a user with that username
  *       500:
