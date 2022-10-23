@@ -12,34 +12,47 @@ const router = express.Router();
  *  components:
  *    schemas:
  *     ListedPost:
- *       type: array
- *       items:
- *         properties:
- *           subreddit:
- *             type: string
- *             description: Name of subreddit which contain the post
- *           postBy:
- *             type: string
- *             description: The username for the publisher of the post
- *           title:
- *             type: string
- *             description: Title of the post
- *           content:
- *             type: string
- *             description: Content of the post [text, video, image, link]
- *           upVotes:
- *             type: integer
- *             description: Number of Up votes to that post
- *           downVotes:
- *                 type: integer
- *                 description: Number of Down votes to that post
- *           numOfComments:
- *                 type: integer
- *                 description: Total number of comments
- *           publishTime:
- *             type: string
- *             format: date-time
- *             description: Publish time of the post
+ *       type: object
+ *       properties:
+ *         after / before:
+ *           type: string
+ *           description: The id of last item in the listing to use as the anchor point of the slice.
+ *         children:
+ *           type: array
+ *           description: List of [Things] to return
+ *           items:
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: Id of the [Thing]
+ *               data:
+ *                 type: object
+ *                 properties:
+ *                   subreddit:
+ *                     type: string
+ *                     description: Name of subreddit which contain the post
+ *                   postBy:
+ *                     type: string
+ *                     description: The username for the publisher of the post
+ *                   title:
+ *                     type: string
+ *                     description: Title of the post
+ *                   content:
+ *                     type: string
+ *                     description: Content of the post [text, video, image, link]
+ *                   upVotes:
+ *                     type: integer
+ *                     description: Number of Up votes to that post
+ *                   downVotes:
+ *                         type: integer
+ *                         description: Number of Down votes to that post
+ *                   numOfComments:
+ *                         type: integer
+ *                         description: Total number of comments
+ *                   publishTime:
+ *                     type: string
+ *                     format: date-time
+ *                     description: Publish time of the post
  */
 
 /**
