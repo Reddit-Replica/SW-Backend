@@ -35,6 +35,11 @@ const router=express.Router();
  *           type: number
  *           description: Number of the spams this comment took
  *           default: 0
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 
 /**
@@ -64,7 +69,7 @@ const router=express.Router();
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/message/compose",(req,res)=>{});
 
@@ -94,7 +99,7 @@ router.post("/message/compose",(req,res)=>{});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/del_msg",(req,res)=>{});
 
@@ -122,7 +127,7 @@ router.post("/del_msg",(req,res)=>{});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/spam_msg",(req,res)=>{});
 
@@ -144,9 +149,13 @@ router.post("/spam_msg",(req,res)=>{});
  *                description: the maximum number of items desired (default-> 25, maximum-> 100)
  *                default: 25
  *              after:
- *                type: number
- *                description: the starting index to get messages
+ *                type: string
+ *                description: the starting index to get the messages
  *                required: true
+ *              count: 
+ *                type: number
+ *                description: the number of items desired
+ *                default: 0
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -163,7 +172,7 @@ router.post("/spam_msg",(req,res)=>{});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.get("/message/sent",(req,res)=>{});
 /**
@@ -184,9 +193,13 @@ router.get("/message/sent",(req,res)=>{});
  *                description: the maximum number of items desired (default-> 25, maximum-> 100)
  *                default: 25
  *              after:
- *                type: number
- *                description: the starting index to get messages
+ *                type: string
+ *                description: the starting index to get the messages
  *                required: true
+ *              count: 
+ *                type: number
+ *                description: the number of items desired
+ *                default: 0
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -203,7 +216,7 @@ router.get("/message/sent",(req,res)=>{});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.get("/message/inbox",(req,res)=>{});
 /**
@@ -224,9 +237,13 @@ router.get("/message/inbox",(req,res)=>{});
  *                description: the maximum number of items desired (default-> 25, maximum-> 100)
  *                default: 25
  *              after:
- *                type: number
- *                description: the starting index to get messages
+ *                type: string
+ *                description: the starting index to get the messages
  *                required: true
+ *              count: 
+ *                type: number
+ *                description: the number of items desired
+ *                default: 0
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -243,7 +260,7 @@ router.get("/message/inbox",(req,res)=>{});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.get("/message/unread",(req,res)=>{});
 /**
@@ -264,9 +281,13 @@ router.get("/message/unread",(req,res)=>{});
  *                description: the maximum number of items desired (default-> 25, maximum-> 100)
  *                default: 25
  *              after:
- *                type: number
- *                description: the starting index to get messages
+ *                type: string
+ *                description: the starting index to get the messages
  *                required: true
+ *              count: 
+ *                type: number
+ *                description: the number of items desired
+ *                default: 0
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -283,7 +304,7 @@ router.get("/message/unread",(req,res)=>{});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.get("/message/selfreply",(req,res)=>{});
 /**
@@ -304,9 +325,13 @@ router.get("/message/selfreply",(req,res)=>{});
  *                description: the maximum number of items desired (default-> 25, maximum-> 100)
  *                default: 25
  *              after:
- *                type: number
- *                description: the starting index to get messages
+ *                type: string
+ *                description: the starting index to get the messages
  *                required: true
+ *              count: 
+ *                type: number
+ *                description: the number of items desired
+ *                default: 0
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -323,7 +348,7 @@ router.get("/message/selfreply",(req,res)=>{});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.get("/message/mentions",(req,res)=>{});
 /**
@@ -350,7 +375,7 @@ router.get("/message/mentions",(req,res)=>{});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.post("/unread_message",(req,res)=>{});
 

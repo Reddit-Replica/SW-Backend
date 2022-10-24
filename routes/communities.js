@@ -27,12 +27,17 @@ const router=express.Router();
  *         isMember:
  *           type: boolean
  *           description: True if you are a member of the community , False if you are not a member of the community 
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 
 /**
  * @swagger
  * tags:
- *  - name: Communities 
+ *  - name: communities 
  *    description: group of people share the same interest, they also called "subreddits"
  */
 
@@ -41,7 +46,7 @@ const router=express.Router();
  * api/subreddits/leaderboard:
  *  get:
  *      summary: Return a listing of all the Communities
- *      tags: [Communities]
+ *      tags: [communities]
  *      requestBody:
  *       required: true
  *       content:
@@ -54,9 +59,13 @@ const router=express.Router();
  *                description: the maximum number of items desired (default-> 25, maximum-> 100)
  *                default: 25
  *              after:
- *                type: number
- *                description: the starting index to get the communities
+ *                type: string
+ *                description: the starting index to get the messages
  *                required: true
+ *              count: 
+ *                type: number
+ *                description: the number of items desired
+ *                default: 0
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -73,7 +82,7 @@ const router=express.Router();
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.get("/subreddits/leaderboard",(req,res)=>{});
 
@@ -82,7 +91,7 @@ router.get("/subreddits/leaderboard",(req,res)=>{});
  * api/subreddits/leaderboard/{categoryName}:
  *  get:
  *      summary: Return a listing of communities of a specific category
- *      tags: [Communities]
+ *      tags: [communities]
  *      parameters:
  *        - in: path
  *          name: categoryName
@@ -101,9 +110,13 @@ router.get("/subreddits/leaderboard",(req,res)=>{});
  *                description: the maximum number of items desired (default-> 25, maximum-> 100)
  *                default: 25
  *              after:
- *                type: number
- *                description: the starting index to get the communities
+ *                type: string
+ *                description: the starting index to get the messages
  *                required: true
+ *              count: 
+ *                type: number
+ *                description: the number of items desired
+ *                default: 0
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -120,7 +133,7 @@ router.get("/subreddits/leaderboard",(req,res)=>{});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 router.get("/subreddits/leaderboard/:categoryName",(req,res)=>{});
 /**
@@ -128,7 +141,7 @@ router.get("/subreddits/leaderboard/:categoryName",(req,res)=>{});
  * api/random_category:
  *  get:
  *      summary: Return a listing of communities with random category
- *      tags: [Communities]
+ *      tags: [communities]
  *      requestBody:
  *       required: true
  *       content:
@@ -141,9 +154,13 @@ router.get("/subreddits/leaderboard/:categoryName",(req,res)=>{});
  *                description: the maximum number of items desired (default-> 25, maximum-> 100)
  *                default: 25
  *              after:
- *                type: number
- *                description: the starting index to get the communities
+ *                type: string
+ *                description: the starting index to get the messages
  *                required: true
+ *              count: 
+ *                type: number
+ *                description: the number of items desired
+ *                default: 0
  *              random_Category:
  *                type: string
  *                description: the name of the random category
@@ -164,7 +181,7 @@ router.get("/subreddits/leaderboard/:categoryName",(req,res)=>{});
  *          500:
  *              description: Server Error
  *      security:
- *       - api_key: []
+ *       - bearerAuth: []
  */
 
 router.get("/api/random_category",(req,res)=>{})
