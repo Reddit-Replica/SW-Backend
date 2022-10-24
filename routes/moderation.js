@@ -92,10 +92,10 @@ const moderationRouter = express.Router();
  *      application/json:
  *       schema:
  *        $ref: '#/components/schemas/Listing'
+ *    400:
+ *     description: Bad request
  *    401:
  *     description: Unauthorized access
- *    403:
- *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
@@ -157,10 +157,10 @@ moderationRouter.get("/about/spam", (req, res, next) => {});
  *      application/json:
  *       schema:
  *        $ref: '#/components/schemas/Listing'
+ *    400:
+ *     description: Bad request
  *    401:
  *     description: Unauthorized access
- *    403:
- *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
@@ -216,10 +216,10 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *      application/json:
  *       schema:
  *        $ref: '#/components/schemas/Listing'
+ *    400:
+ *     description: Bad request
  *    401:
  *     description: Unauthorized access
- *    403:
- *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
@@ -281,10 +281,10 @@ moderationRouter.get("/about/edited", (req, res, next) => {});
  *      application/json:
  *       schema:
  *        $ref: '#/components/schemas/Listing'
+ *    400:
+ *     description: Bad request
  *    401:
  *     description: Unauthorized access
- *    403:
- *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
@@ -340,10 +340,10 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *      application/json:
  *       schema:
  *        $ref: '#/components/schemas/Listing'
+ *    400:
+ *     description: Bad request
  *    401:
  *     description: Unauthorized access
- *    403:
- *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
@@ -405,10 +405,10 @@ moderationRouter.get("/about/unmoderated", (req, res, next) => {});
  *      application/json:
  *       schema:
  *        $ref: '#/components/schemas/Listing'
+ *    400:
+ *     description: Bad request
  *    401:
  *     description: Unauthorized access
- *    403:
- *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
@@ -728,10 +728,10 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  *      application/json:
  *       schema:
  *        $ref: '#/components/schemas/Listing'
+ *    400:
+ *     description: Bad request
  *    401:
  *     description: Unauthorized access
- *    403:
- *     description: Bad request
  *    404:
  *     description: Not Found
  *    500:
