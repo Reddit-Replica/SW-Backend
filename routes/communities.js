@@ -60,7 +60,7 @@ const router=express.Router();
  *                default: 25
  *              after:
  *                type: string
- *                description: the starting index to get the messages
+ *                description: the starting index to get the communities
  *                required: true
  *              count: 
  *                type: number
@@ -111,7 +111,7 @@ router.get("/subreddits/leaderboard",(req,res)=>{});
  *                default: 25
  *              after:
  *                type: string
- *                description: the starting index to get the messages
+ *                description: the starting index to get the communities
  *                required: true
  *              count: 
  *                type: number
@@ -155,7 +155,7 @@ router.get("/subreddits/leaderboard/:categoryName",(req,res)=>{});
  *                default: 25
  *              after:
  *                type: string
- *                description: the starting index to get the messages
+ *                description: the starting index to get the communities
  *                required: true
  *              count: 
  *                type: number
