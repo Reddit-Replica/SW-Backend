@@ -22,6 +22,7 @@ const router = express.Router();
  *               - subredditName
  *               - type
  *               - nsfw
+ *               - category
  *             properties:
  *               subredditName:
  *                 type: string
@@ -34,8 +35,11 @@ const router = express.Router();
  *                   - Restricted
  *                   - Private
  *               nsfw:
- *                 type: string
+ *                 type: boolean
  *                 description: If true, this subreddit will be NSFW
+ *               category:
+ *                 type: string
+ *                 description: The category of that subreddit
  *     responses:
  *       201:
  *         description: The subreddit has been successfully created
