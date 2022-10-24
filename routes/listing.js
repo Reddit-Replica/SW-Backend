@@ -589,4 +589,110 @@ router.get("/r/:subreddit/comments/:post", (req, res) => {});
  */
 router.get("/r/:subreddit/comments/:post/:comment_id", (req, res) => {});
 
+/**
+ * @swagger
+ * /r/{subreddit}/comments/{post}/{comment_id}/parent_comments:
+ *   get:
+ *     summary: Return the parents of a specific comment
+ *     tags: [Listing]
+ *     parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: The name of the subreddit
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: post
+ *         description: The post id
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: comment_id
+ *         description: The comment id to show its tree
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: sort
+ *         description: Comments sorting algorithm
+ *         schema:
+ *           type: string
+ *           default: best
+ *           enum:
+ *             - best
+ *             - top
+ *             - new
+ *             - old
+ *       - in: query
+ *         name: depth
+ *         description: Maximum depth of subtrees of comments (optional)
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: comment
+ *         description: Id of a comment in the comment tree to be the highlighted (optional)
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 commentTree:
+ *                   type: array
+ *                   description: The comment tree for the post
+ *                   items:
+ *                     properties:
+ *                       commentId:
+ *                         type: string
+ *                         description: The id of the comment
+ *                       commentBy:
+ *                         type: string
+ *                         description: The author of the comment
+ *                       edited:
+ *                         type: boolean
+ *                         description: If true, then this comment was edited
+ *                       editTime:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Edit time of the comment
+ *                       publishTime:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Publish time of the comment
+ *                       commentBody:
+ *                         type: string
+ *                         description: The comment itself
+ *                       upVotes:
+ *                         type: integer
+ *                         description: Number of Up votes to that post
+ *                       downVotes:
+ *                         type: integer
+ *                         description: Number of Down votes to that post
+ *                       parent:
+ *                         type: string
+ *                         description: The id of the parent comment in the tree
+ *                       level:
+ *                         type: integer
+ *                         description: The level of the comment [level of nesting]
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       500:
+ *         description: Internal server error
+ */
+router.get(
+  "/r/:subreddit/comments/:post/:comment_id/parent_comments",
+  (req, res) => {}
+);
+
 export default router;
