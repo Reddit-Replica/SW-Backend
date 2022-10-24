@@ -84,12 +84,12 @@ const router = express.Router();
  *                  type: string
  *          - in: query
  *            name: after
- *            description: fullname of the last post in a collection
+ *            description: id of the last post in a collection
  *            schema:
  *                  type: string
  *          - in: query
  *            name: before
- *            description: fullname of a thing
+ *            description: id of a thing
  *            schema:
  *                  type: string
  *          - in: query
@@ -114,9 +114,11 @@ const router = express.Router();
  *                  type: string
  *          - in: query
  *            name: limit
+ *            default: 25
+ *            max: 100
  *            description: the maximum number of items desired (default 25, maximum 100)
  *            schema:
- *                  type: string
+ *                  type: number
  *          - in: query
  *            name: include_facets
  *            description: A boolean value
@@ -138,9 +140,23 @@ const router = express.Router();
  *              content:
  *                  application/json:
  *                      schema:
- *                         type: array
- *                         items:
- *                              $ref: '#/components/schemas/Post'
+ *                         type: object
+ *                         properties:
+ *                           before:
+ *                              type: string
+ *                              description: The id of the listing that follows before this page. Null if there is no previous page.
+ *                           after:
+ *                              type: string
+ *                              description: The id of the listing that follows after this page. Null if there is no next page.
+ *                           limit:
+ *                              type: number
+ *                              default: 25
+ *                              max: 100
+ *                              description: the maximum number of items desired (default 25, maximum 100)
+ *                           children:
+ *                              type: array
+ *                              items:
+ *                                  $ref: '#/components/schemas/Post'
  *          400:
  *              description: Bad Request
  *          404:
@@ -171,12 +187,12 @@ router.get("/api/search", (req, res, next) => {});
  *                  type: string
  *          - in: query
  *            name: after
- *            description: fullname of the last post in a collection
+ *            description: id of the last post in a collection
  *            schema:
  *                  type: string
  *          - in: query
  *            name: before
- *            description: fullname of a thing
+ *            description: id of a thing
  *            schema:
  *                  type: string
  *          - in: query
@@ -201,9 +217,11 @@ router.get("/api/search", (req, res, next) => {});
  *                  type: string
  *          - in: query
  *            name: limit
+ *            default: 25
+ *            max: 100
  *            description: the maximum number of items desired (default 25, maximum 100)
  *            schema:
- *                  type: string
+ *                  type: number
  *          - in: query
  *            name: include_facets
  *            description: A boolean value
@@ -225,11 +243,25 @@ router.get("/api/search", (req, res, next) => {});
  *              content:
  *                  application/json:
  *                      schema:
- *                         type: array
- *                         items:
- *                              $ref: '#/components/schemas/Post'
+ *                         type: object
+ *                         properties:
+ *                           before:
+ *                              type: string
+ *                              description: The id of the listing that follows before this page. Null if there is no previous page.
+ *                           after:
+ *                              type: string
+ *                              description: The id of the listing that follows after this page. Null if there is no next page.
+ *                           limit:
+ *                              type: number
+ *                              default: 25
+ *                              max: 100
+ *                              description: the maximum number of items desired (default 25, maximum 100)
+ *                           children:
+ *                              type: array
+ *                              items:
+ *                                  $ref: '#/components/schemas/Post'
  *          400:
- *              description: Bad request
+ *              description: Bad Request
  *          404:
  *              description: No Results found
  *          500:
