@@ -138,7 +138,7 @@ moderationRouter.get("/about/spam", (req, res, next) => {});
  *      name: limit
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
- *       type: integers
+ *       type: integer
  *       maximum: 100
  *       default: 25
  *      required: false
@@ -199,7 +199,7 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *      name: limit
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
- *       type: integers
+ *       type: integer
  *       maximum: 100
  *       default: 25
  *      required: false
@@ -266,7 +266,7 @@ moderationRouter.get("/about/edited", (req, res, next) => {});
  *      name: limit
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
- *       type: integers
+ *       type: integer
  *       maximum: 100
  *       default: 25
  *      required: false
@@ -327,7 +327,7 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *      name: limit
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
- *       type: integers
+ *       type: integer
  *       maximum: 100
  *       default: 25
  *      required: false
@@ -394,7 +394,7 @@ moderationRouter.get("/about/unmoderated", (req, res, next) => {});
  *      name: limit
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
- *       type: integers
+ *       type: integer
  *       maximum: 100
  *       default: 25
  *      required: false
@@ -725,7 +725,7 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  *      name: limit
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
- *       type: integers
+ *       type: integer
  *       maximum: 100
  *       default: 25
  *      required: false
