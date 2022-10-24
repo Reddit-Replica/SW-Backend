@@ -71,7 +71,9 @@ const moderationRouter = express.Router();
  *      name: limit
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
- *       type: integers
+ *       type: integer
+ *       maximum: 100
+ *       default: 25
  *      required: false
  *    - in: query
  *      name: only
@@ -137,6 +139,8 @@ moderationRouter.get("/about/spam", (req, res, next) => {});
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
  *       type: integers
+ *       maximum: 100
+ *       default: 25
  *      required: false
  *    - in: query
  *      name: only
@@ -196,6 +200,8 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
  *       type: integers
+ *       maximum: 100
+ *       default: 25
  *      required: false
  *    - in: query
  *      name: only
@@ -261,6 +267,8 @@ moderationRouter.get("/about/edited", (req, res, next) => {});
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
  *       type: integers
+ *       maximum: 100
+ *       default: 25
  *      required: false
  *    - in: query
  *      name: only
@@ -320,6 +328,8 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
  *       type: integers
+ *       maximum: 100
+ *       default: 25
  *      required: false
  *    - in: query
  *      name: only
@@ -385,6 +395,8 @@ moderationRouter.get("/about/unmoderated", (req, res, next) => {});
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
  *       type: integers
+ *       maximum: 100
+ *       default: 25
  *      required: false
  *    - in: query
  *      name: only
@@ -714,6 +726,8 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  *      description: the maximum number of items desired (default 25, maximum 100)
  *      schema:
  *       type: integers
+ *       maximum: 100
+ *       default: 25
  *      required: false
  *    - in: query
  *      name: show
