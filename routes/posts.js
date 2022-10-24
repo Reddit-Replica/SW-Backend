@@ -6,12 +6,6 @@ const router = express.Router();
  * @swagger
  * components:
  *   schemas:
- *     SR:
- *       type: string
- *       description: A subbreddit name
- *     ID:
- *       type: string
- *       description: id of a post
  *     Post:
  *       type: object
  *       required:

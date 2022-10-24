@@ -391,6 +391,7 @@ router.post("/api/unsave", (req, res, next) => {});
  *                 description: Vote direction.. one of (1, 0, -1)
  *               rank:
  *                 type: integer
+ *                 default: 1
  *                 description: an integer greater than 1
  *      responses:
  *          200:
