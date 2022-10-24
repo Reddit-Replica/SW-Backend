@@ -40,6 +40,8 @@ const router = express.Router();
  *                           $ref: '#/components/schemas/Category'
  *          404:
  *              description: Page not found
+ *          400:
+ *              description: Bad Request
  *          401:
  *              description: Unauthorized to view saved categories
  *          500:
