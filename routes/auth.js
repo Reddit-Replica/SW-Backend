@@ -32,6 +32,7 @@ const router = express.Router();
  *               - username
  *               - email
  *               - password
+ *               - ReCAPTCHAs
  *             properties:
  *               email:
  *                 type: string
@@ -42,6 +43,9 @@ const router = express.Router();
  *               password:
  *                 type: string
  *                 description: Password
+ *               ReCAPTCHAs:
+ *                 type: string
+ *                 description: ReCAPTCHAs response
  *     responses:
  *       201:
  *         description: The account has been successfully created
@@ -63,6 +67,55 @@ const router = express.Router();
  *         description: Internal server error
  */
 router.post("/signup", (req, res) => {});
+
+/**
+ * @swagger
+ * /signup/{type}:
+ *   post:
+ *     summary: Create a new account to the user
+ *     tags: [Sign Up]
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         description: Type of sign up
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - google
+ *             - facebook
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - accessToken
+ *             properties:
+ *               accessToken:
+ *                 type: string
+ *                 description: Access token from the response of google or facebook
+ *     responses:
+ *       201:
+ *         description: The account has been successfully created
+ *         headers:
+ *           Authorization:
+ *             description: The jwt that will be used for authorization
+ *             schema:
+ *               type: string
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/signup/:type", (req, res) => {});
 
 /**
  * @swagger
@@ -173,6 +226,27 @@ router.post("/verify_email/:id/:token", (req, res) => {});
 
 /**
  * @swagger
+ * /random_username:
+ *   get:
+ *     summary: Get an available random username used to create a new account
+ *     tags: [Sign Up]
+ *     responses:
+ *       200:
+ *         description: The email is available
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                   description: Random username
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/random_username", (req, res) => {});
+
+/**
+ * @swagger
  * tags:
  *   name: Login
  */
@@ -219,6 +293,55 @@ router.post("/verify_email/:id/:token", (req, res) => {});
  *         description: Internal server error
  */
 router.post("/login", (req, res) => {});
+
+/**
+ * @swagger
+ * /login/{type}:
+ *   post:
+ *     summary: Login with google or facebook
+ *     tags: [Login]
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         description: Type of sign up
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - google
+ *             - facebook
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - accessToken
+ *             properties:
+ *               accessToken:
+ *                 type: string
+ *                 description: Access token from the response of google or facebook
+ *     responses:
+ *       200:
+ *         description: User logged in successfully
+ *         headers:
+ *           Authorization:
+ *             description: The jwt that will be used for authorization
+ *             schema:
+ *               type: string
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/login/:type", (req, res) => {});
 
 /**
  * @swagger
