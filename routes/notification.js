@@ -152,19 +152,15 @@ router.get("live/by_id/names",(req,res)=>{})
  *      summary: Create a new live thread.
 *       Once created, the initial settings can be modified with /api/live/thread/edit and new updates can be posted with /api/live/thread/update.
  *      tags: [Threads]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              id:
- *                type: string
- *                description: Full name of the spammed message
  *      responses:
  *          200:
- *              description: Message has been created
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: array
+ *                        items: 
+ *                              $ref: '#/components/schemas/Threads'
  *          201:
  *              description: Created successfully
  *          401:
@@ -215,12 +211,12 @@ router.get("/live/thread/about",(req,res)=>{});
  *             properties:
  *              id:
  *                type: string
- *                description: Full name of the spammed message
+ *                description: Full name of the thread that you want to edit
  *      responses:
  *          200:
- *              description: Message has just been spammed
+ *              description: thread has just been edited
  *          401:
- *              description: Unauthorized to spam this message
+ *              description: Unauthorized to spam this thread
  *          500:
  *              description: Server Error
  *      security:
@@ -269,12 +265,12 @@ router.post("/live/thread/update",(req,res)=>{});
  *             properties:
  *              id:
  *                type: string
- *                description: Full name of the spammed message
+ *                description: Full name of the thread that you want to close
  *      responses:
  *          200:
- *              description: Message has just been spammed
+ *              description: thread has just been closed successfully
  *          401:
- *              description: Unauthorized to spam this message
+ *              description: Unauthorized to close this thread
  *          500:
  *              description: Server Error
  *      security:
@@ -308,7 +304,7 @@ router.post("/live/thread/close_thread",(req,res)=>{});
  *                        items: 
  *                              $ref: '#/components/schemas/notifications'
  *          404:
- *              description: Page not found
+ *              description: notifications not found
  *          401:
  *              description: User unauthorized to view this info
  *          500:
