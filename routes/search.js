@@ -15,7 +15,7 @@ const router = express.Router();
  *       properties:
  *         kind:
  *           type: string
- *           description: one of (link, self, image, video, videogif)
+ *           description: one of (post, self, image, video, videogif)
  *         sr:
  *           type: string
  *           description: Subreddit name
@@ -73,7 +73,7 @@ const router = express.Router();
  * @swagger
  * /api/search:
  *  get:
- *      summary: Search links page
+ *      summary: Search posts page
  *      tags: [Search]
  *      parameters:
  *          - in: query
@@ -94,7 +94,7 @@ const router = express.Router();
  *                  type: string
  *          - in: query
  *            name: type
- *            description: one of (sr, user, comment, link)
+ *            description: one of (sr, user, comment, post)
  *            schema:
  *                  type: string
  *          - in: query
@@ -141,6 +141,8 @@ const router = express.Router();
  *                         type: array
  *                         items:
  *                              $ref: '#/components/schemas/Post'
+ *          400:
+ *              description: Bad Request
  *          404:
  *              description: No Results found
  *          500:
@@ -152,7 +154,7 @@ router.get("/api/search", (req, res, next) => {});
  * @swagger
  * /api/r/{sr}/search:
  *  get:
- *      summary: Search links page
+ *      summary: Search posts page
  *      tags: [Search]
  *      parameters:
  *          - in: path
@@ -179,7 +181,7 @@ router.get("/api/search", (req, res, next) => {});
  *                  type: string
  *          - in: query
  *            name: type
- *            description: one of (sr, user, comment, link)
+ *            description: one of (sr, user, comment, post)
  *            schema:
  *                  type: string
  *          - in: query
@@ -226,6 +228,8 @@ router.get("/api/search", (req, res, next) => {});
  *                         type: array
  *                         items:
  *                              $ref: '#/components/schemas/Post'
+ *          400:
+ *              description: Bad request
  *          404:
  *              description: No Results found
  *          500:
