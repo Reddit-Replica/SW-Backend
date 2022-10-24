@@ -143,6 +143,12 @@ router.post("/follow_user", (req, res) => {});
  *                 nsfw:
  *                   type: boolean
  *                   description: If true, then this profile is NSFW
+ *                 followed:
+ *                   type: boolean
+ *                   description: If true, then that user is followed by the logged in user
+ *                 blocked:
+ *                   type: boolean
+ *                   description: If true, then that user is blocked by the logged in user
  *                 moderatorOf:
  *                   type: array
  *                   description: List of subreddits in which this user is moderator
@@ -201,8 +207,13 @@ router.get("/user/:username/about", (req, res) => {});
  *             - year
  *             - all
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -218,9 +229,12 @@ router.get("/user/:username/about", (req, res) => {});
  *             schema:
  *               type: object
  *               properties:
- *                 after / before:
+ *                 before:
  *                   type: string
- *                   description: The id of last item in the listing to use as the anchor point of the slice.
+ *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                 after:
+ *                   type: string
+ *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                 children:
  *                   type: array
  *                   description: List of [Things] to return
@@ -228,13 +242,13 @@ router.get("/user/:username/about", (req, res) => {});
  *                     properties:
  *                       id:
  *                         type: string
- *                         description: Id of the [Thing]
+ *                         description: Id of the post or the post containing the comments
  *                       type:
  *                         type: string
  *                         enum:
- *                           - post
- *                           - comment
- *                         description: The type of the [Thing] to show
+ *                           - fullPost
+ *                           - summaryPost
+ *                         description: The type of the show [full post with its comments, summary of the post with its comments]
  *                       data:
  *                         properties:
  *                           subreddit:
@@ -263,11 +277,21 @@ router.get("/user/:username/about", (req, res) => {});
  *                                 type: string
  *                                 format: date-time
  *                                 description: Publish time of the post
- *                           comment:
+ *                               edited:
+ *                                 type: boolean
+ *                                 description: If true, then this post was edited
+ *                               editTime:
+ *                                 type: string
+ *                                 format: date-time
+ *                                 description: Edit time of the post
+ *                           comments:
  *                             type: array
  *                             description: The comments and the reply of the user to it
  *                             items:
  *                               properties:
+ *                                 commentId:
+ *                                   type: string
+ *                                   description: The id of the comment
  *                                 commentBy:
  *                                   type: string
  *                                   description: The username of the comment owner
@@ -281,6 +305,16 @@ router.get("/user/:username/about", (req, res) => {});
  *                                   type: string
  *                                   format: date-time
  *                                   description: Publish time for the comment
+ *                                 edited:
+ *                                   type: boolean
+ *                                   description: If true, then this post was edited
+ *                                 editTime:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   description: Edit time for the comment
+ *                                 parent:
+ *                                   type: string
+ *                                   description: The id of the parent comment in the tree
  *                                 level:
  *                                   type: integer
  *                                   description: The level of the comment [level of nesting]
@@ -328,8 +362,13 @@ router.get("/user/:username/overview", (req, res) => {});
  *             - year
  *             - all
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -388,8 +427,13 @@ router.get("/user/:username/posts", (req, res) => {});
  *             - year
  *             - all
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -496,8 +540,13 @@ router.get("/user/:username/comments", (req, res) => {});
  *             - year
  *             - all
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -558,8 +607,13 @@ router.get("/user/:username/upvoted", (req, res) => {});
  *             - year
  *             - all
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -582,5 +636,273 @@ router.get("/user/:username/upvoted", (req, res) => {});
  *       - bearerAuth: []
  */
 router.get("/user/:username/downvoted", (req, res) => {});
+
+/**
+ * @swagger
+ * /user/{username}/saved:
+ *   get:
+ *     summary: Return a list of user's saved [posts, comments]
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         description: The username of the user to get
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 before:
+ *                   type: string
+ *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                 after:
+ *                   type: string
+ *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *                 children:
+ *                   type: array
+ *                   description: List of [Things] to return
+ *                   items:
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         description: Id of the post or the post containing the comments
+ *                       type:
+ *                         type: string
+ *                         enum:
+ *                           - fullPost
+ *                           - summaryPost
+ *                         description: The type of the show [full post only, summary of the post with its comments]
+ *                       data:
+ *                         properties:
+ *                           subreddit:
+ *                             type: string
+ *                             description: Name of subreddit which contain the post or the comment
+ *                           postedBy:
+ *                             type: string
+ *                             description: The username for the publisher of the post
+ *                           title:
+ *                             type: string
+ *                             description: Title of the post
+ *                           content:
+ *                             type: string
+ *                             description: Content of the post [text, video, image, link]
+ *                           post:
+ *                             type: object
+ *                             description: Post data
+ *                             properties:
+ *                               upVotes:
+ *                                 type: integer
+ *                                 description: Up votes to that post
+ *                               downVotes:
+ *                                 type: integer
+ *                                 description: Down votes to that post
+ *                               publishTime:
+ *                                 type: string
+ *                                 format: date-time
+ *                                 description: Publish time of the post
+ *                               edited:
+ *                                 type: boolean
+ *                                 description: If true, then this post was edited
+ *                               editTime:
+ *                                 type: string
+ *                                 format: date-time
+ *                                 description: Edit time of the post
+ *                           comments:
+ *                             type: array
+ *                             description: The comments and the reply of the user to it
+ *                             items:
+ *                               properties:
+ *                                 commentId:
+ *                                   type: string
+ *                                   description: The id of the comment
+ *                                 commentBy:
+ *                                   type: string
+ *                                   description: The username of the comment owner
+ *                                 commentBody:
+ *                                   type: string
+ *                                   description: The comment itself
+ *                                 points:
+ *                                   type: integer
+ *                                   description: The points to that comment [up votes - down votes]
+ *                                 publishTime:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   description: Publish time for the comment
+ *                                 edited:
+ *                                   type: boolean
+ *                                   description: If true, then this post was edited
+ *                                 editTime:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   description: Edit time for the comment
+ *                                 parent:
+ *                                   type: string
+ *                                   description: The id of the parent comment in the tree
+ *                                 level:
+ *                                   type: integer
+ *                                   description: The level of the comment [level of nesting]
+ *       404:
+ *         description: Didn't find a user with that username
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get("/user/:username/saved", (req, res) => {});
+
+/**
+ * @swagger
+ * /user/{username}/hidden:
+ *   get:
+ *     summary: Return a list of user's hidden [posts, comments]
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         description: The username of the user to get
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 before:
+ *                   type: string
+ *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                 after:
+ *                   type: string
+ *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *                 children:
+ *                   type: array
+ *                   description: List of [Things] to return
+ *                   items:
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         description: Id of the post or the post containing the comments
+ *                       type:
+ *                         type: string
+ *                         enum:
+ *                           - fullPost
+ *                           - summaryPost
+ *                         description: The type of the show [full post only, summary of the post with its comments]
+ *                       data:
+ *                         properties:
+ *                           subreddit:
+ *                             type: string
+ *                             description: Name of subreddit which contain the post or the comment
+ *                           postedBy:
+ *                             type: string
+ *                             description: The username for the publisher of the post
+ *                           title:
+ *                             type: string
+ *                             description: Title of the post
+ *                           content:
+ *                             type: string
+ *                             description: Content of the post [text, video, image, link]
+ *                           post:
+ *                             type: object
+ *                             description: Post data
+ *                             properties:
+ *                               upVotes:
+ *                                 type: integer
+ *                                 description: Up votes to that post
+ *                               downVotes:
+ *                                 type: integer
+ *                                 description: Down votes to that post
+ *                               publishTime:
+ *                                 type: string
+ *                                 format: date-time
+ *                                 description: Publish time of the post
+ *                               edited:
+ *                                 type: boolean
+ *                                 description: If true, then this post was edited
+ *                               editTime:
+ *                                 type: string
+ *                                 format: date-time
+ *                                 description: Edit time of the post
+ *                           comments:
+ *                             type: array
+ *                             description: The comments and the reply of the user to it
+ *                             items:
+ *                               properties:
+ *                                 commentId:
+ *                                   type: string
+ *                                   description: The id of the comment
+ *                                 commentBy:
+ *                                   type: string
+ *                                   description: The username of the comment owner
+ *                                 commentBody:
+ *                                   type: string
+ *                                   description: The comment itself
+ *                                 points:
+ *                                   type: integer
+ *                                   description: The points to that comment [up votes - down votes]
+ *                                 publishTime:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   description: Publish time for the comment
+ *                                 edited:
+ *                                   type: boolean
+ *                                   description: If true, then this post was edited
+ *                                 editTime:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   description: Edit time for the comment
+ *                                 parent:
+ *                                   type: string
+ *                                   description: The id of the parent comment in the tree
+ *                                 level:
+ *                                   type: integer
+ *                                   description: The level of the comment [level of nesting]
+ *       404:
+ *         description: Didn't find a user with that username
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get("/user/:username/hidden", (req, res) => {});
 
 export default router;
