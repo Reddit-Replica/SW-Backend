@@ -11,7 +11,7 @@ const router = express.Router();
  *       description: A subbreddit name
  *     ID:
  *       type: string
- *       description: The fullname of a thing
+ *       description: id of a post
  *     Post:
  *       type: object
  *       required:
@@ -21,7 +21,7 @@ const router = express.Router();
  *       properties:
  *         kind:
  *           type: string
- *           description: one of (link, self, image, video, videogif)
+ *           description: one of (post, self, image, video, videogif)
  *         sr:
  *           type: string
  *           description: Subreddit name
@@ -42,25 +42,25 @@ const router = express.Router();
  *           description: Blur the content of the post
  *         title:
  *           type: string
- *           maxlength: 300
+ *           max: 300
  *           description: title of the submission. up to 300 characters long
  *         url:
  *           type: string
  *           description: Post url (should be valid)
  *         flair_id:
  *           type: string
- *           maxLength: 36
+ *           max: 36
  *           description: Flair ID
  *         flair_text:
  *           type: string
- *           maxLength: 64
+ *           max: 64
  *           description: Flair text
  *         resubmit:
  *           type: boolean
  *           description: Resubmit a post
  *         share_post_id:
  *           type: string
- *           description: fullname of a post (given in case of sharing a post)
+ *           description: id of a post (given in case of sharing a post)
  *         g-recaptcha-response	:
  *           type: boolean
  *           description: Captcha result
@@ -94,14 +94,16 @@ const router = express.Router();
  *                  follow:
  *                      type: boolean
  *                      description: True to follow or False to unfollow
- *                  fullname:
+ *                  id:
  *                      type: string
- *                      description: fullname of a link
+ *                      description: id of a post
  *      responses:
  *          200:
  *              description: Followed/Unfollowed post successfully
+ *          400:
+ *              description: Bad Request
  *          401:
- *              description: User doesn't have access to the subreddit to be able to follow a post within it
+ *              description: User unauthorized to follow/unfollow this post
  *          404:
  *              description: Post not found
  *          500:
@@ -115,31 +117,29 @@ router.post("/api/follow_post", (req, res, next) => {});
  * @swagger
  * /api/hide:
  *  post:
- *      summary: Hide a link (This removes it from the user's default view of subreddit listings)
+ *      summary: Hide a post (This removes it from the user's default view of subreddit listings)
  *      tags: [Posts]
  *      requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *              type: array
- *              items:
- *                  $ref: '#/components/schemas/ID'
+ *               type: object
+ *               properties:
+ *                  id:
+ *                    type: string
+ *                    description: id of a post
  *      responses:
  *          200:
- *              description: Link hidden successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: array
- *                        items:
- *                           $ref: '#/components/schemas/ID'
+ *              description: Post hidden successfully
+ *          400:
+ *              description: Bad Request
  *          401:
- *              description: User unauthorized to hide this link
+ *              description: User unauthorized to hide this post
  *          404:
- *              description: Link not found
+ *              description: Post not found
  *          409:
- *              description: Link already hidden
+ *              description: Post already hidden
  *          500:
  *              description: Server Error
  *      security:
@@ -151,7 +151,7 @@ router.post("/api/hide", (req, res, next) => {});
  * @swagger
  * /api/marknsfw:
  *  post:
- *      summary: Mark a link NSFW (Not Safe For Work)
+ *      summary: Mark a post NSFW (Not Safe For Work)
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -162,16 +162,18 @@ router.post("/api/hide", (req, res, next) => {});
  *              properties:
  *                  id:
  *                    type: string
- *                    description: fullname of a thing
+ *                    description: id of a post
  *      responses:
  *          200:
- *              description: Marked NSFW successfully
+ *              description: Post marked NSFW successfully
+ *          400:
+ *              description: Bad Request
  *          404:
- *              description: Link not found
+ *              description: Post not found
  *          401:
- *              description: User unauthorized to mark link as NSFW
+ *              description: User unauthorized to mark post as NSFW
  *          409:
- *              description: Link already marked NSFW
+ *              description: Post already marked NSFW
  *          500:
  *              description: Server Error
  *      security:
@@ -183,7 +185,7 @@ router.post("/api/marknsfw", (req, res, next) => {});
  * @swagger
  * /api/set_suggested_sort:
  *  post:
- *      summary: Set a suggested sort for a link
+ *      summary: Set suggested sort for a post
  *      tags: [Posts]
  *      requestBody:
  *        required: true
@@ -194,13 +196,15 @@ router.post("/api/marknsfw", (req, res, next) => {});
  *                properties:
  *                  id:
  *                    type: string
- *                    description: fullname of a link
+ *                    description: id of a post
  *                  sort:
  *                    type: string
  *                    description: one of (top, new, random, best, hot)
  *      responses:
  *          200:
  *              description: Suggested sort successfully set
+ *          400:
+ *              description: Bad Request
  *          401:
  *              description: User unauthorized to set suggested sort of this post
  *          404:
@@ -227,10 +231,16 @@ router.post("/api/set_suggested_sort", (req, res, next) => {});
  *                properties:
  *                  id:
  *                    type: string
- *                    description: fullname of a link
+ *                    description: id of a post
  *      responses:
  *          200:
  *              description: Spoiler set successfully
+ *          400:
+ *              description: Bad Request
+ *          401:
+ *              description: User unauthorized to set post spoiler
+ *          409:
+ *              description: Post content already blurred
  *          404:
  *              description: Post not found
  *          500:
@@ -244,7 +254,7 @@ router.post("/api/spoiler", (req, res, next) => {});
  * @swagger
  * /api/submit:
  *  post:
- *      summary: Submit a link to a subreddit
+ *      summary: Submit a post to a subreddit
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -255,6 +265,8 @@ router.post("/api/spoiler", (req, res, next) => {});
  *      responses:
  *          200:
  *              description: Post submitted
+ *          400:
+ *              description: Bad Request
  *          404:
  *              description: Subreddit not found
  *          401:
@@ -270,19 +282,23 @@ router.post("/api/submit", (req, res, next) => {});
  * @swagger
  * /api/unhide:
  *  post:
- *      summary: Unhide a link
+ *      summary: Unhide a post
  *      tags: [Posts]
  *      requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: array
- *             items:
- *               $ref: '#/components/schemas/ID'
+ *             type: object
+ *             properties:
+ *               id:
+ *                  type: string
+ *                  description: id of a post
  *      responses:
  *          200:
  *              description: Post unhidden successfully
+ *          400:
+ *              description: Bad request
  *          404:
  *              description: Post not found
  *          401:
@@ -300,7 +316,7 @@ router.post("/api/unhide", (req, res, next) => {});
  * @swagger
  * /api/unmarknsfw:
  *  post:
- *      summary: Remove the NSFW marking from a link
+ *      summary: Remove the NSFW marking from a post
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -311,14 +327,16 @@ router.post("/api/unhide", (req, res, next) => {});
  *             properties:
  *               id:
  *                 type: string
- *                 description: fullname of a thing
+ *                 description: id of a post
  *      responses:
  *          200:
  *              description: NSFW unmarked successfully
+ *          400:
+ *              description: Bad request
  *          404:
  *              description: Post not found
  *          401:
- *              description: User unauthorized remove nsfw marking
+ *              description: User unauthorized to remove nsfw marking
  *          409:
  *              description: NSFW mark already removed
  *          500:
@@ -343,10 +361,12 @@ router.post("/api/unmarknsfw", (req, res, next) => {});
  *             properties:
  *               id:
  *                 type: string
- *                 description: fullname of a link
+ *                 description: id of a post
  *      responses:
  *          200:
  *              description: Post spoiler turned off successfully
+ *          400:
+ *              description: Bad Request
  *          404:
  *              description: Post not found
  *          401:
@@ -372,7 +392,7 @@ router.post("/api/unspoiler", (req, res, next) => {});
  *            name: id
  *            schema:
  *              type: string
- *            description: fullname of the post
+ *            description: id of the post
  *          - in: query
  *            name: sr_name
  *            schema:
@@ -386,6 +406,8 @@ router.post("/api/unspoiler", (req, res, next) => {});
  *                      schema:
  *                        type: number
  *                        description: Number of insights
+ *          400:
+ *              description: Bad Request
  *          404:
  *              description: Post not found
  *          401:
@@ -409,7 +431,7 @@ router.get("/api/insights_counts", (req, res, next) => {});
  *            name: id
  *            schema:
  *              type: string
- *            description: fullname of the post
+ *            description: id of the post
  *          - in: query
  *            name: sr_name
  *            schema:
@@ -418,6 +440,8 @@ router.get("/api/insights_counts", (req, res, next) => {});
  *      responses:
  *          200:
  *              description: Post marked as spam successfully
+ *          400:
+ *              description: Bad Request
  *          404:
  *              description: Post not found
  *          401:
@@ -443,7 +467,7 @@ router.post("/api/spam", (req, res, next) => {});
  *            name: id
  *            schema:
  *              type: string
- *            description: fullname of the post
+ *            description: id of the post
  *          - in: query
  *            name: sr_name
  *            schema:
@@ -452,6 +476,8 @@ router.post("/api/spam", (req, res, next) => {});
  *      responses:
  *          200:
  *              description: Post unmarked as spam successfully
+ *          400:
+ *              description: Bad Request
  *          404:
  *              description: Post not found
  *          401:

@@ -12,9 +12,12 @@ const router = express.Router();
  *         text:
  *           type: string
  *           description: Comment content (raw markdown text)
- *         thing_id:
+ *         id:
  *           type: string
- *           description: fullname of the thing being replied to (parent)
+ *           description: id of the thing being replied to (parent)
+ *         type:
+ *           type: string
+ *           description: one of (Post/Comment)
  *   securitySchemes:
  *     bearerAuth:
  *       type: http
@@ -43,11 +46,7 @@ const router = express.Router();
  *             $ref: '#/components/schemas/Comment'
  *      responses:
  *          200:
- *              description: Comment published
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/Comment'
+ *              description: Comment published successfully
  *          401:
  *              description: Unauthorized to write a comment
  *          500:

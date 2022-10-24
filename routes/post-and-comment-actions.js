@@ -10,8 +10,14 @@ const router = express.Router();
  *       type: string
  *       description: A subbreddit name
  *     ID:
- *       type: string
- *       description: The fullname of a thing
+ *       type: object
+ *       properties:
+ *          id:
+ *              type: string
+ *              description: id of a thing
+ *          type:
+ *              type: string
+ *              description: one of (Post/Comment/Subreddit)
  *   securitySchemes:
  *     bearerAuth:
  *       type: http
@@ -29,8 +35,8 @@ const router = express.Router();
 /**
  * @swagger
  * /api/del:
- *  post:
- *      summary: Delete a Link or Comment
+ *  delete:
+ *      summary: Delete a Post or Comment
  *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
@@ -41,26 +47,31 @@ const router = express.Router();
  *             properties:
  *              id:
  *                type: string
- *                description: fullname of a thing created by the user
+ *                description: id of a thing created by the user
+ *              type:
+ *                type: string
+ *                description: one of (Post/Comment)
  *      responses:
  *          200:
- *              description: Link or comment successfully deleted
+ *              description: Post or comment successfully deleted
  *          401:
- *              description: Unauthorized to delete this link/comment
+ *              description: Unauthorized to delete this post/comment
+ *          400:
+ *              description: Bad Request
  *          404:
- *              description: Item already deleted
+ *              description: Item already deleted (Not Found)
  *          500:
  *              description: Server Error
  *      security:
  *       - bearerAuth: []
  */
-router.post("/api/del", (req, res, next) => {});
+router.delete("/api/del", (req, res, next) => {});
 
 /**
  * @swagger
  * /api/editusertext:
- *  post:
- *      summary: Edit the body text of a comment or self-post
+ *  put:
+ *      summary: Edit the body text of a comment or post
  *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
@@ -72,23 +83,17 @@ router.post("/api/del", (req, res, next) => {});
  *                  text:
  *                      type: string
  *                      description: New text entered
- *                  thing_id:
+ *                  id:
  *                      type: string
- *                      description: fullname of the thing being edited
+ *                      description: id of the thing being edited
+ *                  type:
+ *                      type: string
+ *                      description: one of (Post/Comment)
  *      responses:
  *          200:
  *              description: Post/Comment edited successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: object
- *                        properties:
- *                           text:
- *                              type: string
- *                              description: New text
- *                           thing_id:
- *                              type: string
- *                              description: fullname of the thing being edited
+ *          400:
+ *              description: Bad Request
  *          401:
  *              description: Unauthorized to edit this post/comment
  *          404:
@@ -98,13 +103,13 @@ router.post("/api/del", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/api/editusertext", (req, res, next) => {});
+router.put("/api/editusertext", (req, res, next) => {});
 
 /**
  * @swagger
  * /api/info:
  *  get:
- *      summary: Return a listing of things specified by their fullnames (Only Links, Comments, and Subreddits)
+ *      summary: Return a listing of things specified by their fullnames (Only Posts, Comments, and Subreddits)
  *      tags: [Post and comment actions]
  *      responses:
  *          200:
@@ -179,7 +184,7 @@ router.get("/api/r/:sr/info", (req, res, next) => {});
  * @swagger
  * /api/lock:
  *  post:
- *      summary: Lock a link or comment (Prevents a post or new child comments from receiving new comments)
+ *      summary: Lock a post or comment (Prevents a post or new child comments from receiving replies)
  *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
@@ -190,10 +195,15 @@ router.get("/api/r/:sr/info", (req, res, next) => {});
  *              properties:
  *                  id:
  *                    type: string
- *                    description: fullname of a thing
+ *                    description: id of a thing
+ *                  type:
+ *                    type: string
+ *                    description: one of (Post/Comment)
  *      responses:
  *          200:
  *              description: Post/Comment Locked successfully
+ *          400:
+ *              description: Bad Request
  *          401:
  *              description: User unauthorized to lock this thing
  *          409:
@@ -209,7 +219,7 @@ router.post("/api/lock", (req, res, next) => {});
  * @swagger
  * /api/save:
  *  post:
- *      summary: Save a link or comment
+ *      summary: Save a post or comment
  *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
@@ -220,19 +230,24 @@ router.post("/api/lock", (req, res, next) => {});
  *              properties:
  *                  id:
  *                    type: string
- *                    description: fullname of a thing
+ *                    description: id of a thing
+ *                  type:
+ *                    type: string
+ *                    description: one of (Post/Comment)
  *                  category:
  *                    type: string
  *                    description: A category name
  *      responses:
  *          200:
- *              description: Link/Comment Saved successfully
+ *              description: Post/Comment Saved successfully
+ *          400:
+ *              description: Bad Request
  *          404:
- *              description: Link/Comment not found
+ *              description: Post/Comment not found
  *          401:
  *              description: Can't save this thing
  *          409:
- *              description: Link/Comment already saved
+ *              description: Post/Comment already saved
  *          500:
  *              description: Server Error
  *      security:
@@ -244,7 +259,7 @@ router.post("/api/save", (req, res, next) => {});
  * @swagger
  * /api/sendreplies:
  *  post:
- *      summary: Enable or disable inbox replies for a link or comment
+ *      summary: Enable or disable inbox replies for a Post or comment
  *      tags: [Post and comment actions]
  *      requestBody:
  *        required: true
@@ -255,15 +270,20 @@ router.post("/api/save", (req, res, next) => {});
  *                properties:
  *                  id:
  *                    type: string
- *                    description: fullname of a thing created by the user
+ *                    description: id of a thing created by the user
+ *                  type:
+ *                    type: string
+ *                    description: one of (Post/Comment)
  *                  state:
  *                    type: boolean
- *                    description: indicates whether you are enabling or disabling inbox replies
+ *                    description: True for enabling replies and false for disabling it
  *      responses:
  *          200:
  *              description: Send replies settings successfully set
+ *          400:
+ *              description: Bad Request
  *          404:
- *              description: Link/Comment not found
+ *              description: Post/Comment not found
  *          401:
  *              description: Access denied when trying to set replies settings
  *          500:
@@ -277,7 +297,7 @@ router.post("/api/sendreplies", (req, res, next) => {});
  * @swagger
  * /api/unlock:
  *  post:
- *      summary: Unlock a link or comment
+ *      summary: Unlock a Post or comment
  *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
@@ -288,10 +308,15 @@ router.post("/api/sendreplies", (req, res, next) => {});
  *             properties:
  *               id:
  *                 type: string
- *                 description: fullname of a thing
+ *                 description: id of a thing
+ *               type:
+ *                 type: string
+ *                 description: one of (Post/Comment)
  *      responses:
  *          200:
  *              description: Post unlocked successfully
+ *          400:
+ *              description: Bad Request
  *          401:
  *              description: User unauthorized to unlock this thing
  *          404:
@@ -309,7 +334,7 @@ router.post("/api/unlock", (req, res, next) => {});
  * @swagger
  * /api/unsave:
  *  post:
- *      summary: Unsave a link or comment (This removes the thing from the user's saved listings)
+ *      summary: Unsave a Post or comment (This removes the thing from the user's saved listings)
  *      tags: [Post and comment actions]
  *      requestBody:
  *       required: true
@@ -320,16 +345,21 @@ router.post("/api/unlock", (req, res, next) => {});
  *             properties:
  *               id:
  *                 type: string
- *                 description: fullname of a thing
+ *                 description: id of a thing
+ *               type:
+ *                 type: string
+ *                 description: one of (Post/Comment)
  *      responses:
  *          200:
  *              description: Post unsaved successfully
+ *          400:
+ *              description: Bad Request
  *          404:
  *              description: Post/Comment not found
  *          401:
- *              description: User unauthorized to unsave this link/comment
+ *              description: User unauthorized to unsave this Post/comment
  *          409:
- *              description: Link/Comment already unsaved
+ *              description: Post/Comment already unsaved
  *          500:
  *              description: Server Error
  *      security:
@@ -352,16 +382,21 @@ router.post("/api/unsave", (req, res, next) => {});
  *             properties:
  *               id:
  *                 type: string
- *                 description: fullname of a thing
+ *                 description: id of a thing
+ *               type:
+ *                 type: string
+ *                 description: one of (Post/Comment)
  *               dir:
  *                 type: number
- *                 description: vote direction. one of (1, 0, -1)
+ *                 description: Vote direction.. one of (1, 0, -1)
  *               rank:
  *                 type: integer
  *                 description: an integer greater than 1
  *      responses:
  *          200:
  *              description: Vote registered successfully
+ *          400:
+ *              description: Bad Request
  *          404:
  *              description: Thing not found
  *          401:
