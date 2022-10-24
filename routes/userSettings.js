@@ -141,6 +141,54 @@ router.patch("/account_settings", (req, res) => {});
 
 /**
  * @swagger
+ * /connect/{type}:
+ *   post:
+ *     summary: Connect the account with google or facebook for fast login
+ *     tags: [User settings]
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         description: Type of connect
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - google
+ *             - facebook
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - accessToken
+ *             properties:
+ *               accessToken:
+ *                 type: string
+ *                 description: Access token from the response of google or facebook
+ *     responses:
+ *       200:
+ *         description: Connected successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post("/connect/:type", (req, res) => {});
+
+/**
+ * @swagger
  * /change_email:
  *   put:
  *     summary: Change the email of the logged in user
@@ -233,6 +281,21 @@ router.put("/change_password", (req, res) => {});
  *   delete:
  *     summary: Delete the account
  *     tags: [User settings]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Username for that user
+ *               password:
+ *                 type: string
+ *                 description: The password
  *     responses:
  *       204:
  *         description: Account deleted successfully
@@ -271,7 +334,7 @@ router.delete("/delete_account", (req, res) => {});
  *                 type: string
  *                 description: The link
  *     responses:
- *       200:
+ *       201:
  *         description: Link has been added successfully
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
