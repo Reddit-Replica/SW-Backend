@@ -14,9 +14,12 @@ const router = express.Router();
  *     ListedPost:
  *       type: object
  *       properties:
- *         after / before:
+ *         after:
  *           type: string
- *           description: The id of last item in the listing to use as the anchor point of the slice.
+ *           description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         before:
+ *           type: string
+ *           description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         children:
  *           type: array
  *           description: List of [Things] to return
@@ -24,7 +27,7 @@ const router = express.Router();
  *             properties:
  *               id:
  *                 type: string
- *                 description: Id of the [Thing]
+ *                 description: Id of the post
  *               data:
  *                 type: object
  *                 properties:
@@ -53,6 +56,16 @@ const router = express.Router();
  *                     type: string
  *                     format: date-time
  *                     description: Publish time of the post
+ *                   saved:
+ *                         type: boolean
+ *                         description: If true, then this post was saved before by the logged-in user
+ *                   vote:
+ *                     type: integer
+ *                     enum:
+ *                       - 1
+ *                       - 0
+ *                       - -1
+ *                     description: Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post
  */
 
 /**
@@ -63,8 +76,13 @@ const router = express.Router();
  *     tags: [Listing]
  *     parameters:
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -92,8 +110,13 @@ router.get("/best", (req, res) => {});
  *     tags: [Listing]
  *     parameters:
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -127,8 +150,13 @@ router.get("/hot", (req, res) => {});
  *         schema:
  *           type: string
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -158,8 +186,13 @@ router.get("/r/:subreddit/hot", (req, res) => {});
  *     tags: [Listing]
  *     parameters:
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -193,9 +226,13 @@ router.get("/new", (req, res) => {});
  *         schema:
  *           type: string
  *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -221,26 +258,17 @@ router.get("/r/:subreddit/new", (req, res) => {});
  * @swagger
  * /random:
  *   get:
- *     summary: Return a random post
+ *     summary: Return the id of a random post. [can be used to get the post and the comment tree later]
  *     tags: [Listing]
- *     parameters:
- *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
- *         schema:
- *           type: string
- *       - in: query
- *         name: limit
- *         description: Maximum number of items desired [Maximum = 100]
- *         schema:
- *           type: integer
- *           default: 25
  *     responses:
  *       200:
  *         content:
  *           application/json:
  *             schema:
- *                $ref: "#/components/schemas/ListedPost"
+ *                properties:
+ *                  postId:
+ *                    type: string
+ *                    description: Post id that can be used to request for the post and its comments
  *       500:
  *         description: Internal server error
  */
@@ -250,7 +278,7 @@ router.get("/random", (req, res) => {});
  * @swagger
  * /r/{subreddit}/random:
  *   get:
- *     summary: Return a random post from a specific subreddit
+ *     summary: Return the id of a random post from a specific subreddit. [can be used to get the post and the comment tree later]
  *     tags: [Listing]
  *     parameters:
  *       - in: path
@@ -259,23 +287,15 @@ router.get("/random", (req, res) => {});
  *         required: true
  *         schema:
  *           type: string
- *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
- *         schema:
- *           type: string
- *       - in: query
- *         name: limit
- *         description: Maximum number of items desired [Maximum = 100]
- *         schema:
- *           type: integer
- *           default: 25
  *     responses:
  *       200:
  *         content:
  *           application/json:
  *             schema:
- *                $ref: "#/components/schemas/ListedPost"
+ *                properties:
+ *                  postId:
+ *                    type: string
+ *                    description: Post id that can be used to request for the post and its comments
  *       404:
  *         description: Didn't find a subreddit with that name
  *       500:
@@ -304,8 +324,13 @@ router.get("/r/:subreddit/random", (req, res) => {});
  *             - year
  *             - all
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -352,8 +377,13 @@ router.get("/top", (req, res) => {});
  *             - year
  *             - all
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -379,7 +409,7 @@ router.get("/r/:subreddit/hot", (req, res) => {});
  * @swagger
  * /r/{subreddit}/comments/{article}:
  *   get:
- *     summary: Return the top posts in a specific subreddit based on [votes]
+ *     summary: Get the comment tree for a given post
  *     tags: [Listing]
  *     parameters:
  *       - in: path
@@ -482,7 +512,7 @@ router.get("/r/:subreddit/hot", (req, res) => {});
  *                         description: The level of the comment [level of nesting]
  *                       children:
  *                         type: array
- *                         description: The replys to that comment
+ *                         description: The replies to that comment
  *                         items:
  *                           properties:
  *       400:
