@@ -52,6 +52,13 @@ const router = express.Router();
  *                   numOfComments:
  *                         type: integer
  *                         description: Total number of comments
+ *                   edited:
+ *                     type: boolean
+ *                     description: If true, then this post was edited
+ *                   editTime:
+ *                     type: string
+ *                     format: date-time
+ *                     description: Edit time of the post
  *                   publishTime:
  *                     type: string
  *                     format: date-time
@@ -66,6 +73,51 @@ const router = express.Router();
  *                       - 0
  *                       - -1
  *                     description: Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post
+ *     CommentTree:
+ *       type: object
+ *       properties:
+ *         commentTree:
+ *           type: array
+ *           description: The comment tree for the post
+ *           items:
+ *             properties:
+ *               commentId:
+ *                 type: string
+ *                 description: The id of the comment
+ *               commentBy:
+ *                 type: string
+ *                 description: The author of the comment
+ *               edited:
+ *                 type: boolean
+ *                 description: If true, then this comment was edited
+ *               editTime:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Edit time of the comment
+ *               publishTime:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Publish time of the comment
+ *               commentBody:
+ *                 type: string
+ *                 description: The comment itself
+ *               upVotes:
+ *                 type: integer
+ *                 description: Number of Up votes to that post
+ *               downVotes:
+ *                 type: integer
+ *                 description: Number of Down votes to that post
+ *               parent:
+ *                 type: string
+ *                 description: The id of the parent comment in the tree
+ *               level:
+ *                 type: integer
+ *                 description: The level of the comment [level of nesting]
+ *               children:
+ *                  type: array
+ *                  description: The replies to that comment
+ *                  items:
+ *                    properties:
  */
 
 /**
@@ -407,7 +459,7 @@ router.get("/r/:subreddit/hot", (req, res) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/comments/{article}:
+ * /r/{subreddit}/comments/{post}:
  *   get:
  *     summary: Get the comment tree for a given post
  *     tags: [Listing]
@@ -419,7 +471,7 @@ router.get("/r/:subreddit/hot", (req, res) => {});
  *         schema:
  *           type: string
  *       - in: path
- *         name: article
+ *         name: post
  *         description: The post id
  *         required: true
  *         schema:
@@ -456,65 +508,7 @@ router.get("/r/:subreddit/hot", (req, res) => {});
  *         content:
  *           application/json:
  *             schema:
- *               properties:
- *                 post:
- *                   type: object
- *                   description: The post with id = article
- *                   properties:
- *                     postBy:
- *                       type: string
- *                       description: The username for the publisher of the post
- *                     title:
- *                       type: string
- *                       description: Title of the post
- *                     content:
- *                       type: string
- *                       description: Content of the post [text, video, image, link]
- *                     upVotes:
- *                       type: integer
- *                       description: Number of Up votes to that post
- *                     downVotes:
- *                       type: integer
- *                       description: Number of Down votes to that post
- *                     numOfComments:
- *                       type: integer
- *                       description: Total number of comments
- *                     publishTime:
- *                       type: string
- *                       format: date-time
- *                       description: Publish time of the post
- *                 commentTree:
- *                   type: array
- *                   description: The comment tree for the post
- *                   items:
- *                     properties:
- *                       commentBy:
- *                         type: string
- *                         description: The author of the comment
- *                       publishTime:
- *                         type: string
- *                         format: date-time
- *                         description: Publish time of the post
- *                       commentBody:
- *                         type: string
- *                         description: The comment itself
- *                       upVotes:
- *                         type: integer
- *                         description: Number of Up votes to that post
- *                       downVotes:
- *                         type: integer
- *                         description: Number of Down votes to that post
- *                       parent:
- *                         type: string
- *                         description: The id of the parent comment in the tree
- *                       level:
- *                         type: integer
- *                         description: The level of the comment [level of nesting]
- *                       children:
- *                         type: array
- *                         description: The replies to that comment
- *                         items:
- *                           properties:
+ *               $ref: "#/components/schemas/CommentTree"
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -527,6 +521,72 @@ router.get("/r/:subreddit/hot", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/r/:subreddit/comments/:article", (req, res) => {});
+router.get("/r/:subreddit/comments/:post", (req, res) => {});
+
+/**
+ * @swagger
+ * /r/{subreddit}/comments/{post}/{comment_id}:
+ *   get:
+ *     summary: Return comment tree of a specific comment
+ *     tags: [Listing]
+ *     parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: The name of the subreddit
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: post
+ *         description: The post id
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: comment_id
+ *         description: The comment id to show its tree
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: sort
+ *         description: Comments sorting algorithm
+ *         schema:
+ *           type: string
+ *           default: best
+ *           enum:
+ *             - best
+ *             - top
+ *             - new
+ *             - old
+ *       - in: query
+ *         name: depth
+ *         description: Maximum depth of subtrees of comments (optional)
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: comment
+ *         description: Id of a comment in the comment tree to be the highlighted (optional)
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/CommentTree"
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/r/:subreddit/comments/:post/:comment_id", (req, res) => {});
 
 export default router;
