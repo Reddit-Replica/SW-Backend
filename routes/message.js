@@ -9,6 +9,22 @@ const router=express.Router();
  *     Message:
  *       type: object
  *       properties:
+ *         id:
+ *           type: string
+ *           description: The special full name for each message
+ *         type:
+ *           type: string
+ *           description: describes the type of message,we have three types
+ *           enum:
+ *             -Messages
+ *             -Post Replies
+ *             -Username Mentions
+ *         subreddit_name:
+ *           type: string
+ *           description: the name of subreddit that the mention or the reply happened in, it will be needed in the case of post replies and mentions
+ *         post_title:
+ *           type: string
+ *           description: the title of the post that the mention or reply happened in, it will be needed in the case of post replies and mentions
  *         text:
  *           type: string
  *           description: Message Content as text
@@ -18,7 +34,7 @@ const router=express.Router();
  *         receiverUsername:
  *           type: string
  *           description: Username of the receiver
- *         time:
+ *         sendingTime:
  *           type: string
  *           description: Time of sending the message
  *         subject:
@@ -60,7 +76,29 @@ const router=express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Message'
+ *             ReCAPTCHAs:
+ *               type: string
+ *               description: ReCAPTCHAs response
+ *               required: true
+ *             text:
+ *               type: string
+ *               description: Message Content as text
+ *               required: true
+ *             senderUsername:
+ *               type: string
+ *               description: Username of the sender
+ *               required: true
+ *             receiverUsername:
+ *               type: string
+ *               description: Username of the receiver
+ *               required: true
+ *             sendingTime:
+ *               type: string
+ *               description: Time of sending the message
+ *             subject:
+ *               type: string
+ *               description: Subject of the message
+ *               required: true
  *      responses:
  *          200:
  *              description: Your message is delivered successfully
@@ -72,99 +110,60 @@ const router=express.Router();
  *       - bearerAuth: []
  */
 router.post("/message/compose",(req,res)=>{});
-
-/**
- * @swagger
- * api/del_msg:
- *  post:
- *      summary: Delete a Message
- *      tags: [Messages]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              id:
- *                type: string
- *                description: Full name of the deleted message
- *      responses:
- *          200:
- *              description: Message is successfully deleted
- *          401:
- *              description: Unauthorized to delete this message
- *          404:
- *              description: Message is already deleted
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-router.post("/del_msg",(req,res)=>{});
-
-/**
- * @swagger
- * api/spam_msg:
- *  post:
- *      summary: spam a Message
- *      tags: [Messages]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              id:
- *                type: string
- *                description: Full name of the spammed message
- *      responses:
- *          200:
- *              description: Message has just been spammed
- *          401:
- *              description: Unauthorized to spam this message
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-router.post("/spam_msg",(req,res)=>{});
-
 /**
  * @swagger
  * api/message/sent:
  *  get:
  *      summary: Return a listing of messages that you sent sorted by time of sending the msg  
  *      tags: [Messages]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              limit:
- *                type: number
- *                description: the maximum number of items desired (default-> 25, maximum-> 100)
- *                default: 25
- *              after:
- *                type: string
- *                description: the starting index to get the messages
- *                required: true
- *              count: 
- *                type: number
- *                description: the number of items desired
- *                default: 0
+ *      parameters:
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
  *      responses:
  *          200:
  *              description: Returned successfully
  *              content:
  *                  application/json:
  *                      schema:
- *                        type: array
- *                        items: 
- *                              $ref: '#/components/schemas/Message'
+ *                        type: object
+ *                        properties:
+ *                          statusCode:
+ *                            type: string
+ *                            description: the status code of the response
+ *                          after / before:
+ *                            type: string
+ *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          children:
+ *                            type: array
+ *                            description: List of [Things] to return
+ *                            items:
+ *                              properties: 
+ *                               text:
+ *                                 type: string   
+ *                                 description: Message Content as text
+ *                               receiverUsername:
+ *                                 type: string
+ *                                 description: Username of the receiver
+ *                               sendingTime:
+ *                                type: string
+ *                                description: Time of sending the message
+ *                               subject:
+ *                                 type: string
+ *                                 description: Subject of the message
  *          404:
  *              description: Page not found
  *          401:
@@ -179,36 +178,75 @@ router.get("/message/sent",(req,res)=>{});
  * @swagger
  * api/message/inbox:
  *  get:
- *      summary: Return a listing of all the messages that you sent or received sorted by time of sending the msg  
+ *      summary: Return a listing of all the messages,selfreplies and mentions that you received sorted by time of sending them  
  *      tags: [Messages]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              limit:
- *                type: number
- *                description: the maximum number of items desired (default-> 25, maximum-> 100)
- *                default: 25
- *              after:
- *                type: string
- *                description: the starting index to get the messages
- *                required: true
- *              count: 
- *                type: number
- *                description: the number of items desired
- *                default: 0
+ *      parameters:
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
  *      responses:
  *          200:
  *              description: Returned successfully
  *              content:
  *                  application/json:
  *                      schema:
- *                        type: array
- *                        items: 
- *                              $ref: '#/components/schemas/Message'
+ *                        type: object
+ *                        properties:
+ *                          statusCode:
+ *                            type: string
+ *                            description: the status code of the response
+ *                          after / before:
+ *                            type: string
+ *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          children:
+ *                            type: array
+ *                            description: List of [Things] to return
+ *                            items:
+ *                              properties: 
+ *                               text:
+ *                                 type: string   
+ *                                 description: Message Content as text
+ *                               type:
+ *                                 type: string
+ *                                 description: describes the type of message
+ *                               subreddit_name:
+ *                                 type: string
+ *                                 description: subreddit name that the reply or the mention was in
+ *                               post_title:
+ *                                 type: string
+ *                                 description: the title of the post that the reply or the mention happened in
+ *                               senderUsername:
+ *                                 type: string
+ *                                 description: Username of the sender
+ *                               receiverUsername:
+ *                                 type: string
+ *                                 description: Username of the receiver
+ *                               sendingTime:
+ *                                type: string
+ *                                description: Time of sending the message
+ *                               subject:
+ *                                 type: string
+ *                                 description: Subject of the message
+ *                               isReply:
+ *                                 type: boolean
+ *                                 description: True if the msg is a reply to another , False if the msg isn't a reply to another
+ *                               isRead:
+ *                                 type: boolean
+ *                                 description: True if the msg was read before , False if the msg wasn't read before
+ *                                 default: false
  *          404:
  *              description: Page not found
  *          401:
@@ -225,34 +263,57 @@ router.get("/message/inbox",(req,res)=>{});
  *  get:
  *      summary: Return a listing of unread messages that you received sorted by time of sending the msg  
  *      tags: [Messages]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              limit:
- *                type: number
- *                description: the maximum number of items desired (default-> 25, maximum-> 100)
- *                default: 25
- *              after:
- *                type: string
- *                description: the starting index to get the messages
- *                required: true
- *              count: 
- *                type: number
- *                description: the number of items desired
- *                default: 0
+ *      parameters:
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
  *      responses:
  *          200:
  *              description: Returned successfully
  *              content:
  *                  application/json:
  *                      schema:
- *                        type: array
- *                        items: 
- *                              $ref: '#/components/schemas/Message'
+ *                        type: object
+ *                        properties:
+ *                          statusCode:
+ *                            type: string
+ *                            description: the status code of the response
+ *                          after / before:
+ *                            type: string
+ *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          children:
+ *                            type: array
+ *                            description: List of [Things] to return
+ *                            items:
+ *                              properties: 
+ *                               text:
+ *                                 type: string   
+ *                                 description: Message Content as text
+ *                               senderUsername:
+ *                                 type: string
+ *                                 description: Username of the sender
+ *                               sendingTime:
+ *                                type: string
+ *                                description: Time of sending the message
+ *                               subject:
+ *                                 type: string
+ *                                 description: Subject of the message
+ *                               isReply:
+ *                                 type: boolean
+ *                                 description: True if the msg is a reply to another , False if the msg isn't a reply to another
  *          404:
  *              description: Page not found
  *          401:
@@ -269,34 +330,69 @@ router.get("/message/unread",(req,res)=>{});
  *  get:
  *      summary: Return a listing of post replies that you made sorted by time of adding the reply  
  *      tags: [Messages]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              limit:
- *                type: number
- *                description: the maximum number of items desired (default-> 25, maximum-> 100)
- *                default: 25
- *              after:
- *                type: string
- *                description: the starting index to get the messages
- *                required: true
- *              count: 
- *                type: number
- *                description: the number of items desired
- *                default: 0
- *      responses:
+ *      parameters:
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+*      responses:
  *          200:
  *              description: Returned successfully
  *              content:
  *                  application/json:
  *                      schema:
- *                        type: array
- *                        items: 
- *                              $ref: '#/components/schemas/Message'
+ *                        type: object
+ *                        properties:
+ *                          statusCode:
+ *                            type: string
+ *                            description: the status code of the response
+ *                          after / before:
+ *                            type: string
+ *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          children:
+ *                            type: array
+ *                            description: List of [Things] to return
+ *                            items:
+ *                              properties: 
+ *                               text:
+ *                                 type: string   
+ *                                 description: Message Content as text
+ *                               type:
+ *                                 type: string
+ *                                 description: describes the type of message
+ *                               subreddit_name:
+ *                                 type: string
+ *                                 description: subreddit name that the reply was in
+ *                               post_title:
+ *                                 type: string
+ *                                 description: the title of the post that the reply happened in
+ *                               senderUsername:
+ *                                 type: string
+ *                                 description: Username of the sender
+ *                               receiverUsername:
+ *                                 type: string
+ *                                 description: Username of the receiver
+ *                               sendingTime:
+ *                                type: string
+ *                                description: Time of sending the message
+ *                               subject:
+ *                                 type: string
+ *                                 description: Subject of the message
+ *                               isReply:
+ *                                 type: boolean
+ *                                 description: True if the msg is a reply to another , False if the msg isn't a reply to another
  *          404:
  *              description: Page not found
  *          401:
@@ -313,34 +409,69 @@ router.get("/message/selfreply",(req,res)=>{});
  *  get:
  *      summary: Return a listing of mentions that you made sorted by time of adding the mention  
  *      tags: [Messages]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              limit:
- *                type: number
- *                description: the maximum number of items desired (default-> 25, maximum-> 100)
- *                default: 25
- *              after:
- *                type: string
- *                description: the starting index to get the messages
- *                required: true
- *              count: 
- *                type: number
- *                description: the number of items desired
- *                default: 0
+ *      parameters:
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
  *      responses:
  *          200:
  *              description: Returned successfully
  *              content:
  *                  application/json:
  *                      schema:
- *                        type: array
- *                        items: 
- *                              $ref: '#/components/schemas/Message'
+ *                        type: object
+ *                        properties:
+ *                          statusCode:
+ *                            type: string
+ *                            description: the status code of the response
+ *                          after / before:
+ *                            type: string
+ *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          children:
+ *                            type: array
+ *                            description: List of [Things] to return
+ *                            items:
+ *                             properties: 
+ *                               text:
+ *                                 type: string   
+ *                                 description: Message Content as text
+ *                               type:
+ *                                 type: string
+ *                                 description: describes the type of message
+ *                               subreddit_name:
+ *                                 type: string
+ *                                 description: subreddit name that the mention was in
+ *                               post_title:
+ *                                 type: string
+ *                                 description: the title of the post that the reply happened in
+ *                               senderUsername:
+ *                                 type: string
+ *                                 description: Username of the sender
+ *                               receiverUsername:
+ *                                 type: string
+ *                                 description: Username of the receiver
+ *                               sendingTime:
+ *                                type: string
+ *                                description: Time of sending the message
+ *                               subject:
+ *                                 type: string
+ *                                 description: Subject of the message
+ *                               isReply:
+ *                                 type: boolean
+ *                                 description: True if the msg is a reply to another , False if the msg isn't a reply to another
  *          404:
  *              description: Page not found
  *          401:
@@ -353,8 +484,82 @@ router.get("/message/selfreply",(req,res)=>{});
 router.get("/message/mentions",(req,res)=>{});
 /**
  * @swagger
- * api/unread_message:
- *  post:
+ * api/message/messages:
+ *  get:
+ *      summary: Return a listing of all messages that was sent or received sorted by the time  
+ *      tags: [Messages]
+ *      parameters:
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *      responses:
+ *          200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: object
+ *                        properties:
+ *                          statusCode:
+ *                            type: string
+ *                            description: the status code of the response
+ *                          after / before:
+ *                            type: string
+ *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          children:
+ *                            type: array
+ *                            description: List of [Things] to return
+ *                            items:
+ *                              properties: 
+ *                               text:
+ *                                 type: string   
+ *                                 description: Message Content as text
+ *                               senderUsername:
+ *                                 type: string
+ *                                 description: Username of the sender
+ *                               receiverUsername:
+ *                                 type: string
+ *                                 description: Username of the receiver
+ *                               sendingTime:
+ *                                type: string
+ *                                description: Time of sending the message
+ *                               subject:
+ *                                 type: string
+ *                                 description: Subject of the message
+ *                               isReply:
+ *                                 type: boolean
+ *                                 description: True if the msg is a reply to another , False if the msg isn't a reply to another
+ *                               isRead:
+ *                                 type: boolean
+ *                                 description: True if the msg was read before , False if the msg wasn't read before
+ *                                 default: false
+ *          404:
+ *              description: Page not found
+ *          401:
+ *              description: User unauthorized to view this info
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+ router.get("/message/messages",(req,res)=>{});
+/**
+ * @swagger
+ * api/unread_a_message:
+ *  put:
  *      summary: Unread a Message
  *      tags: [Messages]
  *      requestBody:
@@ -366,7 +571,8 @@ router.get("/message/mentions",(req,res)=>{});
  *             properties:
  *              id:
  *                type: string
- *                description: Full name of the unread message
+ *                description: Full name of the message you want to unread it
+ *                required: true   
  *      responses:
  *          200:
  *              description: Message has been unread successfully
@@ -377,7 +583,29 @@ router.get("/message/mentions",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unread_message",(req,res)=>{});
+router.put("/unread_a_message",(req,res)=>{});
+/**
+ * @swagger
+ * api/read_all_msgs:
+ *  post:
+ *      summary: mark all messages as read
+ *      tags: [Messages]
+ *      responses:
+ *          200:
+ *              description: All Message has been read successfully
+ *          401:
+ *              description: Unauthorized to read all the messages
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.post("/read_all_msgs",(req,res)=>{});
 
 
 export default router;
+
+/*edits
+add re-captcha-response attribute
+*/

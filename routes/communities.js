@@ -59,13 +59,9 @@ const router=express.Router();
  *                description: the maximum number of items desired (default-> 25, maximum-> 100)
  *                default: 25
  *              after:
- *                type: string
- *                description: the starting index to get the communities
+ *                type: boolean
+ *                description: true if you want if after , false if you want if before
  *                required: true
- *              count: 
- *                type: number
- *                description: the number of items desired
- *                default: 0
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -110,13 +106,9 @@ router.get("/subreddits/leaderboard",(req,res)=>{});
  *                description: the maximum number of items desired (default-> 25, maximum-> 100)
  *                default: 25
  *              after:
- *                type: string
- *                description: the starting index to get the communities
+ *                type: boolean
+ *                description: true if you want if after , false if you want if before
  *                required: true
- *              count: 
- *                type: number
- *                description: the number of items desired
- *                default: 0
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -154,13 +146,9 @@ router.get("/subreddits/leaderboard/:categoryName",(req,res)=>{});
  *                description: the maximum number of items desired (default-> 25, maximum-> 100)
  *                default: 25
  *              after:
- *                type: string
- *                description: the starting index to get the communities
+ *                type: boolean
+ *                description: true if you want if after , false if you want if before
  *                required: true
- *              count: 
- *                type: number
- *                description: the number of items desired
- *                default: 0
  *              random_Category:
  *                type: string
  *                description: the name of the random category
@@ -188,3 +176,8 @@ router.get("/api/random_category",(req,res)=>{})
 
  export default router;
 
+
+ /*edits
+
+
+*/

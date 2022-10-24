@@ -25,7 +25,7 @@ const router=express.Router();
  *         Isread:
  *           type: boolean
  *           description: True if the notification is read , False if the message is not read
- *         time:
+ *         Sendingtime:
  *           type: string
  *           description: The time of sending the notification
  *         nsfw:
@@ -72,14 +72,9 @@ const router=express.Router();
  *                description: the maximum number of items desired (default-> 25, maximum-> 100)
  *                default: 25
  *              after:
- *                type: string
- *                description: the starting index to get the updates
+ *                type: boolean
+ *                description: true if you want if after , false if you want if before
  *                required: true
- *              count: 
- *                type: number
- *                description: the number of items desired
- *                default: 0
- *      
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -101,30 +96,10 @@ const router=express.Router();
 router.get("/live/thread",(req, res)=>{});
 /**
  * @swagger
- * api/live/thread:
+ * api/live/by_id/names:
  *  get:
  *      summary: Get a list all the live events
  *      tags: [Threads]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              limit:
- *                type: number
- *                description: the maximum number of items desired (default-> 25, maximum-> 100)
- *                default: 25
- *              after:
- *                type: string
- *                description: the starting index to get the updates
- *                required: true
- *              count: 
- *                type: number
- *                description: the number of items desired
- *                default: 0
- *      
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -344,3 +319,8 @@ router.post("markAsRead",(req, res)=>{})
 
 
 export default router;
+
+/*edits
+
+
+*/
