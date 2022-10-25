@@ -601,7 +601,7 @@ router.put("/unread_a_message",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.post("/read_all_msgs",(req,res)=>{});
+router.put("/read_all_msgs",(req,res)=>{});
 
 
 export default router;

@@ -60,21 +60,23 @@ const router=express.Router();
  *  get:
  *      summary: Get a list of updates posted in this thread.
  *      tags: [Threads]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              limit:
- *                type: number
- *                description: the maximum number of items desired (default-> 25, maximum-> 100)
- *                default: 25
- *              after:
- *                type: boolean
- *                description: true if you want if after , false if you want if before
- *                required: true
+ *      parameters:
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -259,16 +261,23 @@ router.post("/live/thread/close_thread",(req,res)=>{});
  *  get:
  *      summary: get all the notifications sent to the user
  *      tags: [Notifications]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              id:
- *                type: string
- *                description: the id that specifies which user do you want to get his notifications
+ *      parameters:
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -292,18 +301,8 @@ router.get("/notifications")
  * @swagger
  * api/markAsRead:
  *  post:
- *      summary: closes a thread
+ *      summary: mark all the notifications as read
  *      tags: [Notifications]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              id:
- *                type: string
- *                description: Full name of the user
  *      responses:
  *          200:
  *              description: Notifications are set to read successfully
