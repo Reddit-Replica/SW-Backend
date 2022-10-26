@@ -9,6 +9,119 @@ const router = express.Router();
 
 /**
  * @swagger
+ *  components:
+ *    schemas:
+ *      UserOverview:
+ *        type: object
+ *        properties:
+ *          before:
+ *            type: string
+ *            description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *          after:
+ *            type: string
+ *            description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *          children:
+ *            type: array
+ *            description: List of [Things] to return
+ *            items:
+ *              properties:
+ *                id:
+ *                  type: string
+ *                  description: Id of the post or the post containing the comments
+ *                type:
+ *                  type: string
+ *                  enum:
+ *                    - fullPost
+ *                    - summaryPost
+ *                  description: The type of the show [full post with its comments (your post), summary of the post with its comments]
+ *                data:
+ *                  properties:
+ *                    subreddit:
+ *                      type: string
+ *                      description: Name of subreddit which contain the post or the comment
+ *                    postedBy:
+ *                      type: string
+ *                      description: The username for the publisher of the post
+ *                    title:
+ *                      type: string
+ *                      description: Title of the post
+ *                    type:
+ *                      type: string
+ *                      description: Type of content of the post
+ *                      enum:
+ *                        - text
+ *                        - video
+ *                        - image
+ *                        - link
+ *                    content:
+ *                      type: string
+ *                      description: Content of the post [text, path of the video, path of the image, link]
+ *                    post:
+ *                      type: object
+ *                      description: Post data
+ *                      properties:
+ *                        votes:
+ *                          type: integer
+ *                          description: Total number of votes to that post
+ *                        publishTime:
+ *                          type: string
+ *                          format: date-time
+ *                          description: Publish time of the post
+ *                        editTime:
+ *                          type: string
+ *                          format: date-time
+ *                          description: Edit time of the post
+ *                        nsfw:
+ *                          type: boolean
+ *                          description: If true, then this post is NSFW
+ *                        spoiler:
+ *                          type: boolean
+ *                          description: If true, then this post was marked as spoiler
+ *                        saved:
+ *                          type: boolean
+ *                          description: If true, then this post was saved before by the logged-in user
+ *                        vote:
+ *                          type: integer
+ *                          enum:
+ *                            - 1
+ *                            - 0
+ *                            - -1
+ *                          description: Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post
+ *                    comments:
+ *                      type: array
+ *                      description: The comments writen by this user
+ *                      items:
+ *                        properties:
+ *                          commentId:
+ *                            type: string
+ *                            description: The id of the comment
+ *                          commentBy:
+ *                            type: string
+ *                            description: The username of the comment owner
+ *                          commentBody:
+ *                            type: string
+ *                            description: The comment itself
+ *                          points:
+ *                            type: integer
+ *                            description: The points to that comment [up votes - down votes]
+ *                          publishTime:
+ *                            type: string
+ *                            format: date-time
+ *                            description: Publish time for the comment
+ *                          editTime:
+ *                            type: string
+ *                            format: date-time
+ *                            description: Edit time for the comment
+ *                          parent:
+ *                            type: string
+ *                            description: The id of the parent comment in the tree
+ *                          level:
+ *                            type: integer
+ *                            description: The level of the comment [level of nesting]
+ */
+
+/**
+ * @swagger
  * /block_user:
  *   post:
  *     summary: Block a user
@@ -113,6 +226,9 @@ router.post("/follow_user", (req, res) => {});
  *                 displayName:
  *                   type: string
  *                   description: The display name of the user
+ *                 about:
+ *                   type: string
+ *                   description: The brief description of the user
  *                 banner:
  *                   type: string
  *                   description: Path of the banner of the user
@@ -227,97 +343,7 @@ router.get("/user/:username/about", (req, res) => {});
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 before:
- *                   type: string
- *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
- *                 after:
- *                   type: string
- *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
- *                 children:
- *                   type: array
- *                   description: List of [Things] to return
- *                   items:
- *                     properties:
- *                       id:
- *                         type: string
- *                         description: Id of the post or the post containing the comments
- *                       type:
- *                         type: string
- *                         enum:
- *                           - fullPost
- *                           - summaryPost
- *                         description: The type of the show [full post with its comments, summary of the post with its comments]
- *                       data:
- *                         properties:
- *                           subreddit:
- *                             type: string
- *                             description: Name of subreddit which contain the post or the comment
- *                           postedBy:
- *                             type: string
- *                             description: The username for the publisher of the post
- *                           title:
- *                             type: string
- *                             description: Title of the post
- *                           content:
- *                             type: string
- *                             description: Content of the post [text, video, image, link]
- *                           post:
- *                             type: object
- *                             description: Post data
- *                             properties:
- *                               upVotes:
- *                                 type: integer
- *                                 description: Up votes to that post
- *                               downVotes:
- *                                 type: integer
- *                                 description: Down votes to that post
- *                               publishTime:
- *                                 type: string
- *                                 format: date-time
- *                                 description: Publish time of the post
- *                               edited:
- *                                 type: boolean
- *                                 description: If true, then this post was edited
- *                               editTime:
- *                                 type: string
- *                                 format: date-time
- *                                 description: Edit time of the post
- *                           comments:
- *                             type: array
- *                             description: The comments and the reply of the user to it
- *                             items:
- *                               properties:
- *                                 commentId:
- *                                   type: string
- *                                   description: The id of the comment
- *                                 commentBy:
- *                                   type: string
- *                                   description: The username of the comment owner
- *                                 commentBody:
- *                                   type: string
- *                                   description: The comment itself
- *                                 points:
- *                                   type: integer
- *                                   description: The points to that comment [up votes - down votes]
- *                                 publishTime:
- *                                   type: string
- *                                   format: date-time
- *                                   description: Publish time for the comment
- *                                 edited:
- *                                   type: boolean
- *                                   description: If true, then this post was edited
- *                                 editTime:
- *                                   type: string
- *                                   format: date-time
- *                                   description: Edit time for the comment
- *                                 parent:
- *                                   type: string
- *                                   description: The id of the parent comment in the tree
- *                                 level:
- *                                   type: integer
- *                                   description: The level of the comment [level of nesting]
+ *               $ref: "#/components/schemas/UserOverview"
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -449,37 +475,57 @@ router.get("/user/:username/posts", (req, res) => {});
  *             schema:
  *               type: object
  *               properties:
- *                 after / before:
+ *                 before:
  *                   type: string
- *                   description: The id of last item in the listing to use as the anchor point of the slice.
+ *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                 after:
+ *                   type: string
+ *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                 children:
  *                   type: array
- *                   description: List of [Things] to return
+ *                   description: List of comments to return
  *                   items:
  *                     properties:
  *                       id:
  *                         type: string
- *                         description: Id of the [Thing]
+ *                         description: Id of the post containing the comment
  *                       data:
  *                         type: object
  *                         properties:
  *                           subreddit:
  *                             type: string
- *                             description: Name of subreddit which contain the post or the comment
+ *                             description: Name of subreddit which contain the comment
  *                           postedBy:
  *                             type: string
  *                             description: The username for the publisher of the post
  *                           title:
  *                             type: string
  *                             description: Title of the post
+ *                           type:
+ *                             type: string
+ *                             description: Type of content of the post
+ *                             enum:
+ *                               - text
+ *                               - video
+ *                               - image
+ *                               - link
  *                           content:
  *                               type: string
- *                               description: Content of the post [text, video, image, link]
+ *                               description: Content of the post [text, path of the video, path of the image, link]
+ *                           nsfw:
+ *                             type: boolean
+ *                             description: If true, then this post is NSFW
+ *                           spoiler:
+ *                             type: boolean
+ *                             description: If true, then this post is marked as spoiler
  *                           comment:
  *                             type: array
  *                             description: The comments and the reply of the user to it
  *                             items:
  *                               properties:
+ *                                 commentId:
+ *                                   type: string
+ *                                   description: The id of the comment
  *                                 commentBy:
  *                                   type: string
  *                                   description: The username of the comment owner
@@ -489,6 +535,10 @@ router.get("/user/:username/posts", (req, res) => {});
  *                                 points:
  *                                   type: integer
  *                                   description: The points to that comment [up votes - down votes]
+ *                                 editTime:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   description: Edit time for the comment (if exists)
  *                                 publishTime:
  *                                   type: string
  *                                   format: date-time
@@ -671,97 +721,7 @@ router.get("/user/:username/downvoted", (req, res) => {});
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 before:
- *                   type: string
- *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
- *                 after:
- *                   type: string
- *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
- *                 children:
- *                   type: array
- *                   description: List of [Things] to return
- *                   items:
- *                     properties:
- *                       id:
- *                         type: string
- *                         description: Id of the post or the post containing the comments
- *                       type:
- *                         type: string
- *                         enum:
- *                           - fullPost
- *                           - summaryPost
- *                         description: The type of the show [full post only, summary of the post with its comments]
- *                       data:
- *                         properties:
- *                           subreddit:
- *                             type: string
- *                             description: Name of subreddit which contain the post or the comment
- *                           postedBy:
- *                             type: string
- *                             description: The username for the publisher of the post
- *                           title:
- *                             type: string
- *                             description: Title of the post
- *                           content:
- *                             type: string
- *                             description: Content of the post [text, video, image, link]
- *                           post:
- *                             type: object
- *                             description: Post data
- *                             properties:
- *                               upVotes:
- *                                 type: integer
- *                                 description: Up votes to that post
- *                               downVotes:
- *                                 type: integer
- *                                 description: Down votes to that post
- *                               publishTime:
- *                                 type: string
- *                                 format: date-time
- *                                 description: Publish time of the post
- *                               edited:
- *                                 type: boolean
- *                                 description: If true, then this post was edited
- *                               editTime:
- *                                 type: string
- *                                 format: date-time
- *                                 description: Edit time of the post
- *                           comments:
- *                             type: array
- *                             description: The comments and the reply of the user to it
- *                             items:
- *                               properties:
- *                                 commentId:
- *                                   type: string
- *                                   description: The id of the comment
- *                                 commentBy:
- *                                   type: string
- *                                   description: The username of the comment owner
- *                                 commentBody:
- *                                   type: string
- *                                   description: The comment itself
- *                                 points:
- *                                   type: integer
- *                                   description: The points to that comment [up votes - down votes]
- *                                 publishTime:
- *                                   type: string
- *                                   format: date-time
- *                                   description: Publish time for the comment
- *                                 edited:
- *                                   type: boolean
- *                                   description: If true, then this post was edited
- *                                 editTime:
- *                                   type: string
- *                                   format: date-time
- *                                   description: Edit time for the comment
- *                                 parent:
- *                                   type: string
- *                                   description: The id of the parent comment in the tree
- *                                 level:
- *                                   type: integer
- *                                   description: The level of the comment [level of nesting]
+ *               $ref: "#/components/schemas/UserOverview"
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -775,7 +735,7 @@ router.get("/user/:username/saved", (req, res) => {});
  * @swagger
  * /user/{username}/hidden:
  *   get:
- *     summary: Return a list of user's hidden [posts, comments]
+ *     summary: Return a list of user's hidden posts
  *     tags: [User]
  *     parameters:
  *       - in: path
@@ -805,97 +765,7 @@ router.get("/user/:username/saved", (req, res) => {});
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 before:
- *                   type: string
- *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
- *                 after:
- *                   type: string
- *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
- *                 children:
- *                   type: array
- *                   description: List of [Things] to return
- *                   items:
- *                     properties:
- *                       id:
- *                         type: string
- *                         description: Id of the post or the post containing the comments
- *                       type:
- *                         type: string
- *                         enum:
- *                           - fullPost
- *                           - summaryPost
- *                         description: The type of the show [full post only, summary of the post with its comments]
- *                       data:
- *                         properties:
- *                           subreddit:
- *                             type: string
- *                             description: Name of subreddit which contain the post or the comment
- *                           postedBy:
- *                             type: string
- *                             description: The username for the publisher of the post
- *                           title:
- *                             type: string
- *                             description: Title of the post
- *                           content:
- *                             type: string
- *                             description: Content of the post [text, video, image, link]
- *                           post:
- *                             type: object
- *                             description: Post data
- *                             properties:
- *                               upVotes:
- *                                 type: integer
- *                                 description: Up votes to that post
- *                               downVotes:
- *                                 type: integer
- *                                 description: Down votes to that post
- *                               publishTime:
- *                                 type: string
- *                                 format: date-time
- *                                 description: Publish time of the post
- *                               edited:
- *                                 type: boolean
- *                                 description: If true, then this post was edited
- *                               editTime:
- *                                 type: string
- *                                 format: date-time
- *                                 description: Edit time of the post
- *                           comments:
- *                             type: array
- *                             description: The comments and the reply of the user to it
- *                             items:
- *                               properties:
- *                                 commentId:
- *                                   type: string
- *                                   description: The id of the comment
- *                                 commentBy:
- *                                   type: string
- *                                   description: The username of the comment owner
- *                                 commentBody:
- *                                   type: string
- *                                   description: The comment itself
- *                                 points:
- *                                   type: integer
- *                                   description: The points to that comment [up votes - down votes]
- *                                 publishTime:
- *                                   type: string
- *                                   format: date-time
- *                                   description: Publish time for the comment
- *                                 edited:
- *                                   type: boolean
- *                                   description: If true, then this post was edited
- *                                 editTime:
- *                                   type: string
- *                                   format: date-time
- *                                   description: Edit time for the comment
- *                                 parent:
- *                                   type: string
- *                                   description: The id of the parent comment in the tree
- *                                 level:
- *                                   type: integer
- *                                   description: The level of the comment [level of nesting]
+ *               $ref: "#/components/schemas/ListedPost"
  *       404:
  *         description: Didn't find a user with that username
  *       500:
