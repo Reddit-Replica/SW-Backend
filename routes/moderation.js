@@ -553,6 +553,7 @@ moderationRouter.post("/api/unlock", (req, res, next) => {});
  *       required:
  *        - userId
  *        - subreddit
+ *        - reasonForBan
  *       properties:
  *        userId:
  *         type: string
@@ -560,6 +561,18 @@ moderationRouter.post("/api/unlock", (req, res, next) => {});
  *        subreddit:
  *         type: string
  *         description: The name of the subreddit.
+ *        banPeriod:
+ *         type: string
+ *         description: The period that user will be banned. (default Permanent)
+ *        reasonForBan:
+ *         type: string
+ *         description: The reason for banning that user.
+ *        modNote:
+ *         type: string
+ *         description: Note on that ban
+ *        noteInclude:
+ *         type: string
+ *         description: Note to include in ban message
  *   responses:
  *    200:
  *     description: Accepted
