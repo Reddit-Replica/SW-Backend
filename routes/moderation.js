@@ -83,15 +83,28 @@ const moderationRouter = express.Router();
  *      required: false
  *    - in: query
  *      name: only
- *      description: one of (posts, comments)
+ *      description: type of things to be returned
  *      schema:
- *       type: enum
+ *       type: string
+ *       enum: 
+ *        - posts
+ *        - comments
  *      required: true
+ *    - in: query
+ *      name: sort
+ *      description: method of sorting the returned things
+ *      schema:
+ *       type: string
+ *       enum: 
+ *        - newestfirst
+ *        - oldestfirst
+ *       default: newestfirst
+ *      required: false
  *    - in: query
  *      name: show
  *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
  *      schema:
- *       type: enum
+ *       type: string
  *      required: false
  *   responses:
  *    200:
@@ -150,15 +163,28 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *      required: false
  *    - in: query
  *      name: only
- *      description: one of (posts, comments)
+ *      description: type of things to be returned
  *      schema:
- *       type: enum
+ *       type: string
+ *       enum: 
+ *        - posts
+ *        - comments
  *      required: true
+ *    - in: query
+ *      name: sort
+ *      description: method of sorting the returned things
+ *      schema:
+ *       type: string
+ *       enum: 
+ *        - newestfirst
+ *        - oldestfirst
+ *       default: newestfirst
+ *      required: false
  *    - in: query
  *      name: show
  *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
  *      schema:
- *       type: enum
+ *       type: string
  *      required: false
  *   responses:
  *    200:
@@ -217,15 +243,28 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *      required: false
  *    - in: query
  *      name: only
- *      description: one of (posts, comments)
+ *      description: type of things to be returned
  *      schema:
- *       type: enum
+ *       type: string
+ *       enum: 
+ *        - posts
+ *        - comments
  *      required: true
+ *    - in: query
+ *      name: sort
+ *      description: method of sorting the returned things
+ *      schema:
+ *       type: string
+ *       enum: 
+ *        - newestfirst
+ *        - oldestfirst
+ *       default: newestfirst
+ *      required: false
  *    - in: query
  *      name: show
  *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
  *      schema:
- *       type: enum
+ *       type: string
  *      required: false
  *   responses:
  *    200:
@@ -550,7 +589,7 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  *      name: show
  *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
  *      schema:
- *       type: enum
+ *       type: string
  *      required: false
  *   responses:
  *    200:
