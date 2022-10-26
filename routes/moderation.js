@@ -6,7 +6,7 @@ const moderationRouter = express.Router();
  * @swagger
  *  components:
  *   schemas:
- *    ListItem:
+ *    ListPost:
  *     type: object
  *     properties:
  *      id:
@@ -15,7 +15,51 @@ const moderationRouter = express.Router();
  *      data:
  *       type: object
  *       description: A custom data structure used to hold valuable information.
- *    Listing:
+ *       properties:
+ *         subreddit:
+ *           type: string
+ *           description: Name of subreddit which contain the post
+ *         postBy:
+ *           type: string
+ *           description: The username for the publisher of the post
+ *         title:
+ *           type: string
+ *           description: Title of the post
+ *         content:
+ *           type: string
+ *           description: Content of the post [text, video, image, link]
+ *         upVotes:
+ *           type: integer
+ *           description: Number of Up votes to that post
+ *         downVotes:
+ *               type: integer
+ *               description: Number of Down votes to that post
+ *         numOfComments:
+ *               type: integer
+ *               description: Total number of comments
+ *         edited:
+ *           type: boolean
+ *           description: If true, then this post was edited
+ *         editTime:
+ *           type: string
+ *           format: date-time
+ *           description: Edit time of the post
+ *         publishTime:
+ *           type: string
+ *           format: date-time
+ *           description: Publish time of the post
+ *         saved:
+ *               type: boolean
+ *               description: If true, then this post was saved before by that moderator.
+ *         vote:
+ *           type: integer
+ *           enum:
+ *             - 1
+ *             - 0
+ *             - -1
+ *           description: Used to know if that moderator voted up [1] or down [-1] or didn't vote [0] to that post
+
+ *    ListingPost:
  *     type: object
  *     properties:
  *      before:
@@ -27,7 +71,7 @@ const moderationRouter = express.Router();
  *      children:
  *       type: array
  *       items:
- *         $ref: '#/components/schemas/ListItem'
+ *         $ref: '#/components/schemas/ListPost'
  */
 
 /**
@@ -112,7 +156,7 @@ const moderationRouter = express.Router();
  *     content:
  *      application/json:
  *       schema:
- *        $ref: '#/components/schemas/Listing'
+ *        $ref: '#/components/schemas/ListingPost'
  *    400:
  *     description: Bad request
  *    401:
@@ -192,7 +236,7 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *     content:
  *      application/json:
  *       schema:
- *        $ref: '#/components/schemas/Listing'
+ *        $ref: '#/components/schemas/ListingPost'
  *    400:
  *     description: Bad request
  *    401:
@@ -242,15 +286,6 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *       default: 25
  *      required: false
  *    - in: query
- *      name: only
- *      description: type of things to be returned
- *      schema:
- *       type: string
- *       enum: 
- *        - posts
- *        - comments
- *      required: true
- *    - in: query
  *      name: sort
  *      description: method of sorting the returned things
  *      schema:
@@ -272,7 +307,7 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *     content:
  *      application/json:
  *       schema:
- *        $ref: '#/components/schemas/Listing'
+ *        $ref: '#/components/schemas/ListingPost'
  *    400:
  *     description: Bad request
  *    401:
@@ -597,7 +632,7 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  *     content:
  *      application/json:
  *       schema:
- *        $ref: '#/components/schemas/Listing'
+ *        $ref: '#/components/schemas/ListingPost'
  *    400:
  *     description: Bad request
  *    401:
