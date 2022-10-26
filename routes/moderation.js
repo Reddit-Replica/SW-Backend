@@ -49,67 +49,6 @@ const moderationRouter = express.Router();
 
 /**
  * @swagger
- * /about/spam:
- *  get:
- *   summary:
- *    Return a listing of required items relevant to moderators with things that have been marked as spam. (This endpoint is a listing)
- *   tags: [Moderation]
- *   parameters:
- *    - in: query
- *      name: after
- *      description: fullname of a thing.
- *      schema:
- *       type: fullname
- *      required: false
- *    - in: query
- *      name: before
- *      description: fullname of a thing. one of after/before should be specified
- *      schema:
- *       type: fullname
- *      required: false
- *    - in: query
- *      name: limit
- *      description: the maximum number of items desired (default 25, maximum 100)
- *      schema:
- *       type: integer
- *       maximum: 100
- *       default: 25
- *      required: false
- *    - in: query
- *      name: only
- *      description: one of (posts, comments)
- *      schema:
- *       type: enum
- *      required: true
- *    - in: query
- *      name: show
- *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
- *      schema:
- *       type: enum
- *      required: false
- *   responses:
- *    200:
- *     description: Listing of required items relevant to moderators.
- *     content:
- *      application/json:
- *       schema:
- *        $ref: '#/components/schemas/Listing'
- *    400:
- *     description: Bad request
- *    401:
- *     description: Unauthorized access
- *    404:
- *     description: Not Found
- *    500:
- *     description: Internal Server Error
- *   security:
- *    - bearerAuth: []
- */
-
-moderationRouter.get("/about/spam", (req, res, next) => {});
-
-/**
- * @swagger
  * /r/{subreddit}/about/spam:
  *  get:
  *   summary:
@@ -177,67 +116,6 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
 
 /**
  * @swagger
- * /about/edited:
- *  get:
- *   summary:
- *    Return a listing of required items relevant to moderators with things that have been edited recently. (This endpoint is a listing)
- *   tags: [Moderation]
- *   parameters:
- *    - in: query
- *      name: after
- *      description: fullname of a thing.
- *      schema:
- *       type: fullname
- *      required: false
- *    - in: query
- *      name: before
- *      description: fullname of a thing. one of after/before should be specified
- *      schema:
- *       type: fullname
- *      required: false
- *    - in: query
- *      name: limit
- *      description: the maximum number of items desired (default 25, maximum 100)
- *      schema:
- *       type: integer
- *       maximum: 100
- *       default: 25
- *      required: false
- *    - in: query
- *      name: only
- *      description: one of (posts, comments)
- *      schema:
- *       type: enum
- *      required: true
- *    - in: query
- *      name: show
- *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
- *      schema:
- *       type: enum
- *      required: false
- *   responses:
- *    200:
- *     description: Listing of required items relevant to moderators.
- *     content:
- *      application/json:
- *       schema:
- *        $ref: '#/components/schemas/Listing'
- *    400:
- *     description: Bad request
- *    401:
- *     description: Unauthorized access
- *    404:
- *     description: Not Found
- *    500:
- *     description: Internal Server Error
- *   security:
- *    - bearerAuth: []
- */
-
-moderationRouter.get("/about/edited", (req, res, next) => {});
-
-/**
- * @swagger
  * /r/{subreddit}/about/edited:
  *  get:
  *   summary:
@@ -302,67 +180,6 @@ moderationRouter.get("/about/edited", (req, res, next) => {});
  */
 
 moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
-
-/**
- * @swagger
- * /about/unmoderated:
- *  get:
- *   summary:
- *    Return a listing of required items relevant to moderators with things that have yet to be approved/removed by a mod. (This endpoint is a listing)
- *   tags: [Moderation]
- *   parameters:
- *    - in: query
- *      name: after
- *      description: fullname of a thing.
- *      schema:
- *       type: fullname
- *      required: false
- *    - in: query
- *      name: before
- *      description: fullname of a thing. one of after/before should be specified
- *      schema:
- *       type: fullname
- *      required: false
- *    - in: query
- *      name: limit
- *      description: the maximum number of items desired (default 25, maximum 100)
- *      schema:
- *       type: integer
- *       maximum: 100
- *       default: 25
- *      required: false
- *    - in: query
- *      name: only
- *      description: one of (posts, comments)
- *      schema:
- *       type: enum
- *      required: true
- *    - in: query
- *      name: show
- *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
- *      schema:
- *       type: enum
- *      required: false
- *   responses:
- *    200:
- *     description: Listing of required items relevant to moderators.
- *     content:
- *      application/json:
- *       schema:
- *        $ref: '#/components/schemas/Listing'
- *    400:
- *     description: Bad request
- *    401:
- *     description: Unauthorized access
- *    404:
- *     description: Not Found
- *    500:
- *     description: Internal Server Error
- *   security:
- *    - bearerAuth: []
- */
-
-moderationRouter.get("/about/unmoderated", (req, res, next) => {});
 
 /**
  * @swagger
