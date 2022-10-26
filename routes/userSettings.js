@@ -31,7 +31,7 @@ const router = express.Router();
  *                   description: Gender of the user
  *                 displayName:
  *                   type: string
- *                   description: The new display name
+ *                   description: The display name
  *                 about:
  *                   type: string
  *                   description: The brief description of the user
@@ -51,7 +51,7 @@ const router = express.Router();
  *                         description: The link
  *                 havePassword:
  *                   type: boolean
- *                   description: Used to know if the user logged in with [google, facebook] or not
+ *                   description: User to know if the user have a password or not
  *                 hasVerifiedEmail:
  *                   type: boolean
  *                   description: Used to know if the user logged in verified his email or not
@@ -108,7 +108,7 @@ router.get("/account_settings", (req, res) => {});
  *                 description: The brief description of the user
  *               havePassword:
  *                 type: boolean
- *                 description: Used to know if the user logged in with [google, facebook] or not
+ *                 description: User to know if the user have a password or not
  *               nsfw:
  *                 type: boolean
  *                 description: This content is NSFW or not
@@ -513,8 +513,13 @@ router.delete("/banner_image", (req, res) => {});
  *     tags: [User settings]
  *     parameters:
  *       - in: query
- *         name: after / before
- *         description: Only one should be specified. these indicate the id of an item in the listing to use as the anchor point of the slice.
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *         schema:
  *           type: string
  *       - in: query
@@ -530,17 +535,20 @@ router.delete("/banner_image", (req, res) => {});
  *             schema:
  *               type: object
  *               properties:
- *                 after / before:
+ *                 before:
  *                   type: string
- *                   description: The id of last item in the listing to use as the anchor point of the slice.
+ *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                 after:
+ *                   type: string
+ *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                 children:
  *                   type: array
- *                   description: List of [Things] to return
+ *                   description: List of users to return
  *                   items:
  *                     properties:
  *                       id:
  *                         type: string
- *                         description: Id of the [Thing]
+ *                         description: Id of the users
  *                       data:
  *                         type: object
  *                         properties:
