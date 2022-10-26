@@ -4,28 +4,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * components:
- *   schemas:
- *     Category:
- *       type: string
- *       description: A category name
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-/**
- * @swagger
- * tags:
- *  - name: Categories
- *    description: All Categories
- */
-
-/**
- * @swagger
- * /api/saved_categories:
+ * /saved_categories:
  *  get:
  *      summary: Get a list of categories in which things are currently saved
  *      tags: [Categories]
@@ -35,13 +14,23 @@ const router = express.Router();
  *              content:
  *                  application/json:
  *                      schema:
- *                        type: array
- *                        items:
- *                           $ref: '#/components/schemas/Category'
+ *                        type: object
+ *                        properties:
+ *                          categories:
+ *                              type: array
+ *                              items:
+ *                                  $ref: '#/components/schemas/Category'
  *          404:
  *              description: Page not found
  *          400:
- *              description: Bad Request
+ *              description: The request was invalid. You may refer to response for details around why this happened.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: Type of error
  *          401:
  *              description: Unauthorized to view saved categories
  *          500:
@@ -49,6 +38,6 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.get("/api/saved_categories", (req, res, next) => {});
+router.get("/saved_categories", (req, res, next) => {});
 
 export default router;
