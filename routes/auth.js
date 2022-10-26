@@ -72,7 +72,7 @@ router.post("/signup", (req, res) => {});
  * @swagger
  * /signup/{type}:
  *   post:
- *     summary: Create a new account to the user
+ *     summary: Sign up with google or facebook
  *     tags: [Sign Up]
  *     parameters:
  *       - in: path
@@ -366,7 +366,7 @@ router.post("/login/:type", (req, res) => {});
  *                   - password
  *               username:
  *                 type: string
- *                 description: Username
+ *                 description: Username (only when type = password)
  *               email:
  *                 type: string
  *                 description: Email
