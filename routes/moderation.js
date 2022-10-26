@@ -94,6 +94,58 @@ const moderationRouter = express.Router();
  *       type: array
  *       items:
  *         $ref: '#/components/schemas/ListItem'
+ * 
+ *    ListingUserItem:
+ *     type: object
+ *     properties:
+ *      id:
+ *       type: string
+ *       description: this item's identifier.
+ *      data:
+ *       type: object
+ *       description: A custom data structure used to hold valuable information.
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: Username of the banned user
+ *         userPhoto:
+ *           type: string
+ *           description: The link of the user profile picture
+ *         bannedAt:
+ *           type: string
+ *           format: date-time
+ *           description: The time at which the user is banned
+ *         banPeriod:
+ *           type: integer
+ *           description: The period that user will be banned in days if not permanent.
+ *         modNote:
+ *          type: string
+ *          description: Note on that ban
+ *         noteInclude:
+ *          type: string
+ *          description: Note to include in ban message
+ *         reasonForBan:
+ *          type: string
+ *          description: The reason for banning that user.
+ *          enum:
+ *           - Spam
+ *           - Personal and confidential information
+ *           - Threatening, harassing, or inciting violence
+ *           - Other
+ * 
+ *    ListingUser:
+ *     type: object
+ *     properties:
+ *      before:
+ *       type: string
+ *       description: The fullname of the listing that follows before this page. null if there is no previous page.
+ *      after:
+ *       type: string
+ *       description: The fullname of the listing that follows after this page. null if there is no next page.
+ *      children:
+ *       type: array
+ *       items:
+ *         $ref: '#/components/schemas/ListingUserItem'
  */
 
 /**
@@ -583,10 +635,15 @@ moderationRouter.post("/api/unlock", (req, res, next) => {});
  *         type: string
  *         description: The name of the subreddit.
  *        banPeriod:
- *         type: string
- *         description: The period that user will be banned. (default Permanent)
+ *         type: integer
+ *         description: The period that user will be banned in days if not permanent. (default Permanent)
  *        reasonForBan:
  *         type: string
+ *         enum:
+ *          - Spam
+ *          - Personal and confidential information
+ *          - Threatening, harassing, or inciting violence
+ *          - Other
  *         description: The reason for banning that user.
  *        modNote:
  *         type: string
@@ -688,7 +745,7 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  *     content:
  *      application/json:
  *       schema:
- *        $ref: '#/components/schemas/ListingPost'
+ *        $ref: '#/components/schemas/ListingUser'
  *    400:
  *     description: Bad Request
  *     content:
