@@ -60,6 +60,11 @@ const router = express.Router();
  *            schema:
  *                  type: string
  *          - in: query
+ *            name: restrict_sr
+ *            description: Search in restricted subreddits only
+ *            schema:
+ *                  type: boolean
+ *          - in: query
  *            name: time
  *            description: Search within a time frame
  *            schema:
@@ -169,6 +174,11 @@ router.get("/search", (req, res, next) => {});
  *            description: Search in a specific category
  *            schema:
  *                  type: string
+ *          - in: query
+ *            name: restrict_sr
+ *            description: Search in restricted subreddits only
+ *            schema:
+ *                  type: boolean
  *          - in: query
  *            name: time
  *            description: Search within a time frame
