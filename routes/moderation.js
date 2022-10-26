@@ -180,7 +180,14 @@ const moderationRouter = express.Router();
  *       schema:
  *        $ref: '#/components/schemas/ListingPost'
  *    400:
- *     description: Bad request
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
  *    401:
  *     description: Unauthorized access
  *    404:
@@ -260,7 +267,14 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *       schema:
  *        $ref: '#/components/schemas/ListingPost'
  *    400:
- *     description: Bad request
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
  *    401:
  *     description: Unauthorized access
  *    404:
@@ -331,7 +345,14 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *       schema:
  *        $ref: '#/components/schemas/ListingPost'
  *    400:
- *     description: Bad request
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
  *    401:
  *     description: Unauthorized access
  *    404:
@@ -669,7 +690,14 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  *       schema:
  *        $ref: '#/components/schemas/ListingPost'
  *    400:
- *     description: Bad request
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
  *    401:
  *     description: Unauthorized access
  *    404:
