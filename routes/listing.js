@@ -65,9 +65,15 @@ const router = express.Router();
  *                     type: string
  *                     format: date-time
  *                     description: Publish time of the post
+ *                   nsfw:
+ *                     type: boolean
+ *                     description: If true, then this post is NSFW
+ *                   spoiler:
+ *                     type: boolean
+ *                     description: If true, then this post is marked as spoiler
  *                   saved:
- *                         type: boolean
- *                         description: If true, then this post was saved before by the logged-in user
+ *                     type: boolean
+ *                     description: If true, then this post was saved before by the logged-in user
  *                   vote:
  *                     type: integer
  *                     enum:
