@@ -427,6 +427,15 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
  *   responses:
  *    200:
  *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
  *    401:
  *     description: Unauthorized access
  *    500:
@@ -461,8 +470,19 @@ moderationRouter.post(
  *   responses:
  *    200:
  *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
  *    401:
  *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
@@ -496,8 +516,19 @@ moderationRouter.post("/api/leavemoderator", (req, res, next) => {});
  *   responses:
  *    200:
  *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
  *    401:
  *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
@@ -531,8 +562,19 @@ moderationRouter.post("/api/approve", (req, res, next) => {});
  *   responses:
  *    200:
  *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
  *    401:
  *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
@@ -566,8 +608,19 @@ moderationRouter.post("/api/remove", (req, res, next) => {});
  *   responses:
  *    200:
  *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
  *    401:
  *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
@@ -601,8 +654,19 @@ moderationRouter.post("/api/lock", (req, res, next) => {});
  *   responses:
  *    200:
  *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
  *    401:
  *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
@@ -654,8 +718,19 @@ moderationRouter.post("/api/unlock", (req, res, next) => {});
  *   responses:
  *    200:
  *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
  *    401:
  *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
@@ -689,8 +764,19 @@ moderationRouter.post("/api/ban", (req, res, next) => {});
  *   responses:
  *    200:
  *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
  *    401:
  *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
