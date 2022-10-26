@@ -4,74 +4,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * components:
- *   schemas:
- *     Post:
- *       type: object
- *       required:
- *         - kind
- *         - sr
- *         - title
- *       properties:
- *         kind:
- *           type: string
- *           description: one of (post, self, image, video, videogif)
- *         sr:
- *           type: string
- *           description: Subreddit name
- *         text:
- *           type: string
- *           description: Post content as text
- *         sendreplies:
- *           type: boolean
- *           description: Allow replies on post
- *         nsfw:
- *           type: boolean
- *           description: Not Safe for Work
- *         ad:
- *           type: boolean
- *           description: Ad or not
- *         spoiler:
- *           type: boolean
- *           description: Blur the content of the post
- *         title:
- *           type: string
- *           description: title of the submission. up to 300 characters long
- *         url:
- *           type: string
- *           description: Post url (should be valid)
- *         flair_id:
- *           type: string
- *           maxLength: 36
- *           description: Flair ID
- *         flair_text:
- *           type: string
- *           maxLength: 64
- *           description: Flair text
- *         comments:
- *           type: number
- *           description: Total number of comments on a post
- *         upvotes:
- *           type: number
- *           description: Total number of upvotes on a post
- *         days:
- *           type: number
- *           description: How many days past since the post was published
- *         username:
- *           type: string
- *           description: Name of the user associated with the post
- */
-
-/**
- * @swagger
- * tags:
- *  - name: Search
- *    description: Search for anything in any place
- */
-
-/**
- * @swagger
- * /api/search:
+ * /search:
  *  get:
  *      summary: Search posts page
  *      tags: [Search]
@@ -84,56 +17,61 @@ const router = express.Router();
  *                  type: string
  *          - in: query
  *            name: after
- *            description: id of the last post in a collection
+ *            description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *            schema:
  *                  type: string
  *          - in: query
  *            name: before
- *            description: id of a thing
- *            schema:
- *                  type: string
- *          - in: query
- *            name: type
- *            description: one of (sr, user, comment, post)
- *            schema:
- *                  type: string
- *          - in: query
- *            name: sort
- *            description: one of (hot, top, new, relevance, most comments)
- *            schema:
- *                  type: string
- *          - in: query
- *            name: category
- *            description: a string no longer than 5 characters
- *            schema:
- *                  type: string
- *          - in: query
- *            name: t
- *            description: one of (hour, day, week, month, year, all)
+ *            description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
  *            schema:
  *                  type: string
  *          - in: query
  *            name: limit
- *            default: 25
- *            max: 100
- *            description: the maximum number of items desired (default 25, maximum 100)
+ *            description: The maximum number of items desired (Maximum 100)
  *            schema:
  *                  type: number
+ *                  default: 25
  *          - in: query
- *            name: include_facets
- *            description: A boolean value
+ *            name: type
+ *            description: Thing being searched for
+ *            schema:
+ *                  type: string
+ *                  default: post
+ *                  enum:
+ *                      - subreddit
+ *                      - user
+ *                      - comment
+ *                      - post
+ *          - in: query
+ *            name: sort
+ *            description: Type of sort applied on the results
+ *            schema:
+ *                  type: string
+ *                  default: new
+ *                  enum:
+ *                   - hot
+ *                   - top
+ *                   - new
+ *                   - best
+ *                   - most comments
+ *          - in: query
+ *            name: category
+ *            description: Search in a specific category
  *            schema:
  *                  type: string
  *          - in: query
- *            name: show
- *            description: Get all posts (no exceptions)
+ *            name: time
+ *            description: Search within a time frame
  *            schema:
  *                  type: string
- *          - in: query
- *            name: restrict_sr
- *            description: Boolean value
- *            schema:
- *                  type: string
+ *                  default: all
+ *                  enum:
+ *                   - hour
+ *                   - day
+ *                   - week
+ *                   - month
+ *                   - year
+ *                   - all
  *      responses:
  *          200:
  *              description: Search results returned successfully
@@ -148,34 +86,36 @@ const router = express.Router();
  *                           after:
  *                              type: string
  *                              description: The id of the listing that follows after this page. Null if there is no next page.
- *                           limit:
- *                              type: number
- *                              default: 25
- *                              max: 100
- *                              description: the maximum number of items desired (default 25, maximum 100)
  *                           children:
  *                              type: array
  *                              items:
- *                                  $ref: '#/components/schemas/Post'
+ *                                  $ref: '#/components/schemas/SearchResults'
  *          400:
- *              description: Bad Request
+ *              description: The request was invalid. You may refer to response for details around why this happened.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: Type of error
  *          404:
  *              description: No Results found
  *          500:
  *              description: Server Error
  */
-router.get("/api/search", (req, res, next) => {});
+router.get("/search", (req, res, next) => {});
 
 /**
  * @swagger
- * /api/r/{sr}/search:
+ * /r/{subreddit}/search:
  *  get:
  *      summary: Search posts page
  *      tags: [Search]
  *      parameters:
  *          - in: path
  *            required: true
- *            name: sr
+ *            name: subreddit
  *            description: Subreddit name
  *            schema:
  *                  type: string
@@ -187,56 +127,61 @@ router.get("/api/search", (req, res, next) => {});
  *                  type: string
  *          - in: query
  *            name: after
- *            description: id of the last post in a collection
+ *            description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *            schema:
  *                  type: string
  *          - in: query
  *            name: before
- *            description: id of a thing
- *            schema:
- *                  type: string
- *          - in: query
- *            name: type
- *            description: one of (sr, user, comment, post)
- *            schema:
- *                  type: string
- *          - in: query
- *            name: sort
- *            description: one of (hot, top, new, relevance, most comments)
- *            schema:
- *                  type: string
- *          - in: query
- *            name: category
- *            description: a string no longer than 5 characters
- *            schema:
- *                  type: string
- *          - in: query
- *            name: t
- *            description: one of (hour, day, week, month, year, all)
+ *            description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
  *            schema:
  *                  type: string
  *          - in: query
  *            name: limit
- *            default: 25
- *            max: 100
- *            description: the maximum number of items desired (default 25, maximum 100)
+ *            description: The maximum number of items desired (Maximum 100)
  *            schema:
  *                  type: number
+ *                  default: 25
  *          - in: query
- *            name: include_facets
- *            description: A boolean value
+ *            name: type
+ *            description: Thing being searched for
+ *            schema:
+ *                  type: string
+ *                  default: post
+ *                  enum:
+ *                      - subreddit
+ *                      - user
+ *                      - comment
+ *                      - post
+ *          - in: query
+ *            name: sort
+ *            description: Type of sort applied on the results
+ *            schema:
+ *                  type: string
+ *                  default: new
+ *                  enum:
+ *                   - hot
+ *                   - top
+ *                   - new
+ *                   - best
+ *                   - most comments
+ *          - in: query
+ *            name: category
+ *            description: Search in a specific category
  *            schema:
  *                  type: string
  *          - in: query
- *            name: show
- *            description: Get all posts (no exceptions)
+ *            name: time
+ *            description: Search within a time frame
  *            schema:
  *                  type: string
- *          - in: query
- *            name: restrict_sr
- *            description: Boolean value
- *            schema:
- *                  type: string
+ *                  default: all
+ *                  enum:
+ *                   - hour
+ *                   - day
+ *                   - week
+ *                   - month
+ *                   - year
+ *                   - all
  *      responses:
  *          200:
  *              description: Search results returned successfully
@@ -251,22 +196,24 @@ router.get("/api/search", (req, res, next) => {});
  *                           after:
  *                              type: string
  *                              description: The id of the listing that follows after this page. Null if there is no next page.
- *                           limit:
- *                              type: number
- *                              default: 25
- *                              max: 100
- *                              description: the maximum number of items desired (default 25, maximum 100)
  *                           children:
  *                              type: array
  *                              items:
- *                                  $ref: '#/components/schemas/Post'
+ *                                  $ref: '#/components/schemas/SearchResults'
  *          400:
- *              description: Bad Request
+ *              description: The request was invalid. You may refer to response for details around why this happened.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: Type of error
  *          404:
  *              description: No Results found
  *          500:
  *              description: Server Error
  */
-router.get("/api/r/:sr/search", (req, res, next) => {});
+router.get("/r/:subreddit/search", (req, res, next) => {});
 
 export default router;
