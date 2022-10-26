@@ -6,12 +6,18 @@ const moderationRouter = express.Router();
  * @swagger
  *  components:
  *   schemas:
- *    ListPost:
+ *    ListItem:
  *     type: object
  *     properties:
  *      id:
  *       type: string
  *       description: this item's identifier.
+ *      type:
+ *       type: string
+ *       enum:
+ *        - Post
+ *        - Comment
+ *       description: the type of this item whether it is a comment or a post.
  *      data:
  *       type: object
  *       description: A custom data structure used to hold valuable information.
@@ -22,42 +28,58 @@ const moderationRouter = express.Router();
  *         postBy:
  *           type: string
  *           description: The username for the publisher of the post
+ *         commentBy:
+ *           type: string
+ *           description: The username for the user made the comment (in case that item has a type comment).
  *         title:
  *           type: string
  *           description: Title of the post
  *         content:
  *           type: string
- *           description: Content of the post [text, video, image, link]
+ *           description: Content of the post [text, video, image, link] (in case that item has a type post).
+ *         commentContent:
+ *           type: string
+ *           description: Content of the comment (in case that item has a type comment).
  *         upVotes:
  *           type: integer
- *           description: Number of Up votes to that post
+ *           description: Number of Up votes to that post (in case that item has a type post).
  *         downVotes:
  *               type: integer
- *               description: Number of Down votes to that post
+ *               description: Number of Down votes to that post (in case that item has a type post).
+ *         commentuUpVotes:
+ *           type: integer
+ *           description: Number of Up votes to that comment (in case that item has a type comment).
+ *         commentDownVotes:
+ *               type: integer
+ *               description: Number of Down votes to that comment (in case that item has a type comment).
  *         numOfComments:
  *               type: integer
- *               description: Total number of comments
+ *               description: Total number of comments (in case that item has a type post).
  *         edited:
  *           type: boolean
- *           description: If true, then this post was edited
+ *           description: If true, then this post or comment is edited 
  *         editTime:
  *           type: string
  *           format: date-time
- *           description: Edit time of the post
+ *           description: Edit time of the post or comment
  *         publishTime:
  *           type: string
  *           format: date-time
  *           description: Publish time of the post
+ *         commentPublishTime:
+ *           type: string
+ *           format: date-time
+ *           description: Publish time of the Comment (in case that item has a type comment).
  *         saved:
  *               type: boolean
- *               description: If true, then this post was saved before by that moderator.
+ *               description: If true, then this post or comment is saved before by that moderator.
  *         vote:
  *           type: integer
  *           enum:
  *             - 1
  *             - 0
  *             - -1
- *           description: Used to know if that moderator voted up [1] or down [-1] or didn't vote [0] to that post
+ *           description: Used to know if that moderator voted up [1] or down [-1] or didn't vote [0] to that post or comment
 
  *    ListingPost:
  *     type: object
@@ -71,7 +93,7 @@ const moderationRouter = express.Router();
  *      children:
  *       type: array
  *       items:
- *         $ref: '#/components/schemas/ListPost'
+ *         $ref: '#/components/schemas/ListItem'
  */
 
 /**
