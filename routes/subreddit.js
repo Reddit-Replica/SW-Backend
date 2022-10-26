@@ -52,8 +52,12 @@ const router = express.Router();
  *                 error:
  *                   type: string
  *                   description: Type of error
+ *       401:
+ *         description: Access Denied
  *       500:
  *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
  */
 router.post("/create_subreddit", (req, res) => {});
 
