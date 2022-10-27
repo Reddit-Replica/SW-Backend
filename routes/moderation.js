@@ -1258,4 +1258,55 @@ moderationRouter.put(
   (req, res, next) => {}
 );
 
+/**
+ * @swagger
+ * /r/{subreddit}/about/rulesOrder:
+ *  post:
+ *   summary:
+ *    Edit rules order of the subreddit.
+ *   tags: [Subreddit moderation]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - rulesOrder
+ *       properties:
+ *         rulesOrder:
+ *          type: array
+ *          description: The order of the rules.
+ *          items:
+ *           type: object
+ *           properties:
+ *            ruleId:
+ *             type: string
+ *             description: id of the rule
+ *            ruleOrder:
+ *             type: string
+ *             description: The new order of the rule
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post("/r/:subreddit/about/rulesOrder", (req, res, next) => {});
+
 export default moderationRouter;
