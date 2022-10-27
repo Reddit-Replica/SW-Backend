@@ -69,6 +69,9 @@ router.delete("/del", (req, res, next) => {});
  *                  - post
  *                  - comment
  *                  - message
+ *              reason:
+ *                type: string
+ *                description: Reason for why the user marked this thing as spam
  *      responses:
  *          200:
  *              description: Marked as spam successfully
