@@ -1136,4 +1136,63 @@ moderationRouter.get("/r/:subreddit/suggestedTopics", (req, res, next) => {});
 
 moderationRouter.post("/r/:subreddit/about/addRule", (req, res, next) => {});
 
+/**
+ * @swagger
+ * /r/{subreddit}/about/rules:
+ *  get:
+ *   summary:
+ *    Get the rules for a subreddit.
+ *   tags: [Subreddit moderation]
+ *   responses:
+ *    200:
+ *     description: The rules for the subreddit.
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         rules:
+ *          type: array
+ *          description: The rules of the subreddit. (maximum 15 rule)
+ *          items:
+ *           type: object
+ *           properties:
+ *            ruleID:
+ *             type: string
+ *             description: ID of the rule
+ *            ruleName:
+ *             type: string
+ *             description: Name of the rule
+ *            ruleOrder:
+ *             type: integer
+ *             description: Order of the rule
+ *            createdAt:
+ *             type: string
+ *             format: date-time
+ *             description: Creation date of the rule
+ *            appliesTo:
+ *             type: string
+ *             description: Where to apply the rule
+ *             enum:
+ *              - posts and comments
+ *              - posts only
+ *              - comments only
+ *            Report reason:
+ *             type: string
+ *             description: The reason of the report. (maximum 100 charachter)
+ *            Description:
+ *             type: string
+ *             description: The full description of the report. (maximum 500 charachter)
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.get("/r/:subreddit/about/rules", (req, res, next) => {});
+
 export default moderationRouter;
