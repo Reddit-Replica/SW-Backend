@@ -1082,10 +1082,10 @@ moderationRouter.get("/r/:subreddit/suggestedTopics", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/about/addRule:
- *  put:
+ * /r/{subreddit}/about/rules:
+ *  post:
  *   summary:
- *    ٍSet the settings of a subreddit.
+ *    Add a rule to subreddit.
  *   tags: [Subreddit moderation]
  *   requestBody:
  *    required: true
@@ -1106,10 +1106,10 @@ moderationRouter.get("/r/:subreddit/suggestedTopics", (req, res, next) => {});
  *           - posts and comments
  *           - posts only
  *           - comments only
- *         Report reason:
+ *         reportReason:
  *          type: string
  *          description: The reason of the report. (maximum 100 charachter)
- *         Description:
+ *         description:
  *          type: string
  *          description: The full description of the report. (maximum 500 charachter)
  *   responses:
@@ -1134,7 +1134,7 @@ moderationRouter.get("/r/:subreddit/suggestedTopics", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/r/:subreddit/about/addRule", (req, res, next) => {});
+moderationRouter.post("/r/:subreddit/about/rules", (req, res, next) => {});
 
 /**
  * @swagger
@@ -1180,7 +1180,7 @@ moderationRouter.post("/r/:subreddit/about/addRule", (req, res, next) => {});
  *            Report reason:
  *             type: string
  *             description: The reason of the report. (maximum 100 charachter)
- *            Description:
+ *            description:
  *             type: string
  *             description: The full description of the report. (maximum 500 charachter)
  *    401:
@@ -1194,5 +1194,68 @@ moderationRouter.post("/r/:subreddit/about/addRule", (req, res, next) => {});
  */
 
 moderationRouter.get("/r/:subreddit/about/rules", (req, res, next) => {});
+
+/**
+ * @swagger
+ * /r/{subreddit}/about/rules/{ruleId}:
+ *  put:
+ *   summary:
+ *    Edit a rule at subreddit.
+ *   tags: [Subreddit moderation]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - ruleName
+ *        - appliesTo
+ *        - ruleOrder
+ *       properties:
+ *         ruleName:
+ *          type: string
+ *          description: The name of the rule.
+ *         ruleOrder:
+ *          type: integer
+ *          description: Order of the rule
+ *         appliesTo:
+ *          type: string
+ *          description: Where to apply the rule
+ *          enum:
+ *           - posts and comments
+ *           - posts only
+ *           - comments only
+ *         reportReason:
+ *          type: string
+ *          description: The reason of the report. (maximum 100 charachter)
+ *         description:
+ *          type: string
+ *          description: The full description of the report. (maximum 500 charachter)
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.put(
+  "/r/:subreddit/about/rules/:ruleId",
+  (req, res, next) => {}
+);
 
 export default moderationRouter;
