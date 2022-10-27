@@ -4,6 +4,37 @@ const moderationRouter = express.Router();
 
 /**
  * @swagger
+ * tags:
+ *  name: Posts and comments moderation
+ *  description: Posts and comments moderation endpoints
+ */
+
+/**
+ * @swagger
+ * tags:
+ *  name: General moderation
+ *  description: General moderation endpoints
+ */
+
+/**
+ * @swagger
+ * tags:
+ *  name: Subreddit moderation
+ *  description: Subreddit Moderation endpoints
+ */
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+/**
+ * @swagger
  *  components:
  *   schemas:
  *    ListItem:
@@ -150,28 +181,11 @@ const moderationRouter = express.Router();
 
 /**
  * @swagger
- * tags:
- *  name: Moderation
- *  description: The Moderation endpoints API
- */
-
-/**
- * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-/**
- * @swagger
  * /r/{subreddit}/about/spam:
  *  get:
  *   summary:
  *    Return a listing of required items relevant to moderators with things that have been marked as spam in that subreddit. (This endpoint is a listing)
- *   tags: [Moderation]
+ *   tags: [Subreddit moderation]
  *   parameters:
  *    - in: path
  *      name: subreddit
@@ -204,7 +218,7 @@ const moderationRouter = express.Router();
  *      description: type of things to be returned
  *      schema:
  *       type: string
- *       enum: 
+ *       enum:
  *        - posts
  *        - comments
  *      required: true
@@ -213,7 +227,7 @@ const moderationRouter = express.Router();
  *      description: method of sorting the returned things
  *      schema:
  *       type: string
- *       enum: 
+ *       enum:
  *        - newestfirst
  *        - oldestfirst
  *       default: newestfirst
@@ -258,7 +272,7 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *  get:
  *   summary:
  *    Return a listing of required items relevant to moderators with things that have been edited recently in that subreddit. (This endpoint is a listing)
- *   tags: [Moderation]
+ *   tags: [Subreddit moderation]
  *   parameters:
  *    - in: path
  *      name: subreddit
@@ -291,7 +305,7 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *      description: type of things to be returned
  *      schema:
  *       type: string
- *       enum: 
+ *       enum:
  *        - posts
  *        - comments
  *      required: true
@@ -300,7 +314,7 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *      description: method of sorting the returned things
  *      schema:
  *       type: string
- *       enum: 
+ *       enum:
  *        - newestfirst
  *        - oldestfirst
  *       default: newestfirst
@@ -345,7 +359,7 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *  get:
  *   summary:
  *    Return a listing of required items relevant to moderators with things that have yet to be approved/removed by a mod in that subreddit. (This endpoint is a listing)
- *   tags: [Moderation]
+ *   tags: [Subreddit moderation]
  *   parameters:
  *    - in: path
  *      name: subreddit
@@ -378,7 +392,7 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *      description: method of sorting the returned things
  *      schema:
  *       type: string
- *       enum: 
+ *       enum:
  *        - newestfirst
  *        - oldestfirst
  *       default: newestfirst
@@ -423,7 +437,7 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
  *  post:
  *   summary:
  *    Accept an invite to moderate the specified subreddit. The authenticated user must have been invited to moderate the subreddit by one of its current moderators or the admin.
- *   tags: [Moderation]
+ *   tags: [General moderation]
  *   responses:
  *    200:
  *     description: Accepted
@@ -455,7 +469,7 @@ moderationRouter.post(
  *  post:
  *   summary:
  *    Abdicate moderator status in a subreddit.
- *   tags: [Moderation]
+ *   tags: [General moderation]
  *   requestBody:
  *    required: true
  *    content:
@@ -497,7 +511,7 @@ moderationRouter.post("/api/leavemoderator", (req, res, next) => {});
  *  post:
  *   summary:
  *    Approve a post or comment. for spam reports, approving means that this post / comment is not a spam.
- *   tags: [Moderation]
+ *   tags: [Posts and comments moderation]
  *   requestBody:
  *    required: true
  *    content:
@@ -543,7 +557,7 @@ moderationRouter.post("/api/approve", (req, res, next) => {});
  *  post:
  *   summary:
  *    Remove  a post or comment. for spam reports, removing means that this post / comment is a spam so it is removed.
- *   tags: [Moderation]
+ *   tags: [Posts and comments moderation]
  *   requestBody:
  *    required: true
  *    content:
@@ -589,7 +603,7 @@ moderationRouter.post("/api/remove", (req, res, next) => {});
  *  post:
  *   summary:
  *    Lock a post or comment. Prevents a post or new child comments from receiving new comments.
- *   tags: [Moderation]
+ *   tags: [Posts and comments moderation]
  *   requestBody:
  *    required: true
  *    content:
@@ -635,7 +649,7 @@ moderationRouter.post("/api/lock", (req, res, next) => {});
  *  post:
  *   summary:
  *    Unlock a post or comment. Allow a post or comment to receive new comments.
- *   tags: [Moderation]
+ *   tags: [Posts and comments moderation]
  *   requestBody:
  *    required: true
  *    content:
@@ -681,7 +695,7 @@ moderationRouter.post("/api/unlock", (req, res, next) => {});
  *  post:
  *   summary:
  *    Ban a user from a subreddit. Banned users can't post or comment on that subreddit.
- *   tags: [Moderation]
+ *   tags: [Subreddit moderation]
  *   requestBody:
  *    required: true
  *    content:
@@ -745,7 +759,7 @@ moderationRouter.post("/api/ban", (req, res, next) => {});
  *  post:
  *   summary:
  *    Remove a ban from a user.
- *   tags: [Moderation]
+ *   tags: [Subreddit moderation]
  *   requestBody:
  *    required: true
  *    content:
@@ -791,7 +805,7 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  *  get:
  *   summary:
  *    Return a listing relevant to moderators in that subreddit with banned users. (This endpoint is a listing)
- *   tags: [Moderation]
+ *   tags: [Subreddit moderation]
  *   parameters:
  *    - in: path
  *      name: subreddit
@@ -859,7 +873,7 @@ moderationRouter.get("/r/:subreddit/about/banned", (req, res, next) => {});
  *  get:
  *   summary:
  *    Get the current settings of a subreddit.
- *   tags: [Moderation]
+ *   tags: [Subreddit moderation]
  *   responses:
  *    200:
  *     description: The current settings of the subreddit.
@@ -874,9 +888,9 @@ moderationRouter.get("/r/:subreddit/about/banned", (req, res, next) => {});
  *         communityTopics:
  *          type: array
  *          description: The topics of the community.
- *          items: 
+ *          items:
  *           type: object
- *           properties: 
+ *           properties:
  *            topicName:
  *             type: string
  *             description: Name of the topic
@@ -930,14 +944,13 @@ moderationRouter.get("/r/:subreddit/about/banned", (req, res, next) => {});
 
 moderationRouter.get("/r/:subreddit/about/edit", (req, res, next) => {});
 
-
 /**
  * @swagger
  * /r/{subreddit}/about/edit:
  *  put:
  *   summary:
  *    ٍSet the settings of a subreddit.
- *   tags: [Moderation]
+ *   tags: [Subreddit moderation]
  *   requestBody:
  *    required: true
  *    content:
@@ -963,9 +976,9 @@ moderationRouter.get("/r/:subreddit/about/edit", (req, res, next) => {});
  *         communityTopics:
  *          type: array
  *          description: The topics of the community.
- *          items: 
+ *          items:
  *           type: object
- *           properties: 
+ *           properties:
  *            topicName:
  *             type: string
  *             description: Name of the topic
