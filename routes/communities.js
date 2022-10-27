@@ -106,6 +106,12 @@ const router=express.Router();
  *         isMember:
  *           type: boolean
  *           description: True if you are a member of the community , False if you are not a member of the community
+ *         banner:
+ *           type: string
+ *           description: Path of the banner of the community
+ *         picture:
+ *           type: string
+ *           description: Path of the picture of the community
  *         communityTheme:
  *           type: boolean
  *           description: True if community theme is on , False if community theme is off  
