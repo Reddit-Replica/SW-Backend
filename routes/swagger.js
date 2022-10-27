@@ -122,7 +122,7 @@
  *           description: Blur the content of the post
  *         title:
  *           type: string
- *           description: title of the submission. up to 300 characters long
+ *           description: Title of the submission
  *         flair_name:
  *           type: string
  *           description: Name of the flair attached to a post
