@@ -83,7 +83,15 @@
  *         share_post_id:
  *           type: string
  *           description: id of a post (given in case of sharing a post)
- *         recaptcha_response	:
+ *         schedule_date:
+ *           type: string
+ *           format: date
+ *           description: Date required for the post to be submitted in case of scheduling it
+ *         schedule_time:
+ *           type: string
+ *           format: time
+ *           description: Time required for the post to be submitted in case of scheduling it
+ *         recaptcha_response:
  *           type: string
  *           description: reCAPTCHA response
  *     SearchResults:
