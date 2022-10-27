@@ -975,7 +975,7 @@ moderationRouter.get("/r/:subreddit/about/edit", (req, res, next) => {});
  *          description: The name of the community.
  *         communityTopics:
  *          type: array
- *          description: The topics of the community.
+ *          description: The topics of the community. (maximum 25 topic)
  *          items:
  *           type: object
  *           properties:
@@ -984,13 +984,13 @@ moderationRouter.get("/r/:subreddit/about/edit", (req, res, next) => {});
  *             description: Name of the topic
  *         communityDescription:
  *          type: string
- *          description: The description of the community.
+ *          description: The description of the community. (maximum 500 Characters)
  *         sendWelcomeMessage:
  *          type: boolean
  *          description: If that community send a welcome message to the new members or not.
  *         welcomeMessage:
  *          type: string
- *          description: The welcome message of the community. (if sendWelcomeMessage is true)
+ *          description: The welcome message of the community. (if sendWelcomeMessage is true) (maximum 5000 Characters)
  *         language:
  *          type: string
  *          description: The janguage of the community.
