@@ -95,7 +95,9 @@ const router=express.Router();
  *      security:
  *       - bearerAuth: []
  */
+
 router.get("/live/thread",(req, res)=>{});
+
 /**
  * @swagger
  * api/live/by_id/names:
@@ -121,7 +123,8 @@ router.get("/live/thread",(req, res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("live/by_id/names",(req,res)=>{})
+router.get("live/by_id/names",(req,res)=>{});
+
 /**
  * @swagger
  * api/live/create:
@@ -147,7 +150,9 @@ router.get("live/by_id/names",(req,res)=>{})
  *      security:
  *       - bearerAuth: []
  */
+
 router.post("/live/create",(req,res)=>{});
+
 /**
  * @swagger
  * api/live/thread/about:
@@ -172,11 +177,13 @@ router.post("/live/create",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
+
 router.get("/live/thread/about",(req,res)=>{});
+
 /**
  * @swagger
- * api/live/thread/edit:
- *  post:
+ * api/live/thread:
+ *  patch:
  *      summary: editing a thread
  *      tags: [Threads]
  *      requestBody:
@@ -199,11 +206,13 @@ router.get("/live/thread/about",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/live/thread/edit",(req,res)=>{});
+
+router.patch("/live/thread",(req,res)=>{});
+
 /**
  * @swagger
- * api/live/thread/update:
- *  post:
+ * api/live/thread:
+ *  put:
  *      summary: updating a thread
  *      tags: [Threads]
  *      requestBody:
@@ -226,11 +235,13 @@ router.post("/live/thread/edit",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/live/thread/update",(req,res)=>{});
+
+router.put("/live/thread",(req,res)=>{});
+
 /**
  * @swagger
- * api/live/thread/close_thread:
- *  post:
+ * api/live/thread:
+ *  delete:
  *      summary: closes a thread
  *      tags: [Threads]
  *      requestBody:
@@ -253,7 +264,8 @@ router.post("/live/thread/update",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/live/thread/close_thread",(req,res)=>{});
+
+router.delete("/live/thread",(req,res)=>{});
 
 /**
  * @swagger
@@ -296,7 +308,9 @@ router.post("/live/thread/close_thread",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
-router.get("/notifications")
+
+router.get("/notifications");
+
 /**
  * @swagger
  * api/markAsRead:
@@ -313,13 +327,7 @@ router.get("/notifications")
  *      security:
  *       - bearerAuth: []
  */
-router.post("markAsRead",(req, res)=>{})
 
-
+router.post("markAsRead",(req, res)=>{});
 
 export default router;
-
-/*edits
-
-
-*/

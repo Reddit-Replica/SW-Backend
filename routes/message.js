@@ -109,7 +109,9 @@ const router=express.Router();
  *      security:
  *       - bearerAuth: []
  */
+
 router.post("/message/compose",(req,res)=>{});
+
 /**
  * @swagger
  * api/message/sent:
@@ -173,7 +175,9 @@ router.post("/message/compose",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
+
 router.get("/message/sent",(req,res)=>{});
+
 /**
  * @swagger
  * api/message/inbox:
@@ -256,7 +260,9 @@ router.get("/message/sent",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
+
 router.get("/message/inbox",(req,res)=>{});
+
 /**
  * @swagger
  * api/message/unread:
@@ -323,7 +329,9 @@ router.get("/message/inbox",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
+
 router.get("/message/unread",(req,res)=>{});
+
 /**
  * @swagger
  * api/message/selfreply:
@@ -402,7 +410,9 @@ router.get("/message/unread",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
+
 router.get("/message/selfreply",(req,res)=>{});
+
 /**
  * @swagger
  * api/message/mentions:
@@ -481,7 +491,9 @@ router.get("/message/selfreply",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
+
 router.get("/message/mentions",(req,res)=>{});
+
 /**
  * @swagger
  * api/message/messages:
@@ -555,11 +567,13 @@ router.get("/message/mentions",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
+
  router.get("/message/messages",(req,res)=>{});
+
 /**
  * @swagger
  * api/unread_a_message:
- *  put:
+ *  patch:
  *      summary: Unread a Message
  *      tags: [Messages]
  *      requestBody:
@@ -583,11 +597,13 @@ router.get("/message/mentions",(req,res)=>{});
  *      security:
  *       - bearerAuth: []
  */
-router.put("/unread_a_message",(req,res)=>{});
+
+router.patch("/unread_a_message",(req,res)=>{});
+
 /**
  * @swagger
  * api/read_all_msgs:
- *  post:
+ *  patch:
  *      summary: mark all messages as read
  *      tags: [Messages]
  *      responses:
@@ -601,11 +617,6 @@ router.put("/unread_a_message",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.put("/read_all_msgs",(req,res)=>{});
-
+router.patch("/read_all_msgs",(req,res)=>{});
 
 export default router;
-
-/*edits
-add re-captcha-response attribute
-*/
