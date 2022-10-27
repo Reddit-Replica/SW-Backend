@@ -1044,4 +1044,40 @@ moderationRouter.get("/r/:subreddit/about/edit", (req, res, next) => {});
 
 moderationRouter.put("/r/:subreddit/about/edit", (req, res, next) => {});
 
+/**
+ * @swagger
+ * /r/{subreddit}/suggestedTopics:
+ *  get:
+ *   summary:
+ *    Get the suggested topics for a subreddit.
+ *   tags: [Subreddit moderation]
+ *   responses:
+ *    200:
+ *     description: The suggested topics for the subreddit.
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         communityTopics:
+ *          type: array
+ *          description: The topics of the community. (maximum 25 topic)
+ *          items:
+ *           type: object
+ *           properties:
+ *            topicName:
+ *             type: string
+ *             description: Name of the topic
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.get("/r/:subreddit/suggestedTopics", (req, res, next) => {});
+
 export default moderationRouter;
