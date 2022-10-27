@@ -86,11 +86,15 @@
  *         schedule_date:
  *           type: string
  *           format: date
- *           description: Date required for the post to be submitted in case of scheduling it
+ *           description: Date for the post submitted at in case of scheduling it
  *         schedule_time:
  *           type: string
  *           format: time
- *           description: Time required for the post to be submitted in case of scheduling it
+ *           description: Time required for the post to be submitted at in case of scheduling it
+ *         schedule_time_zone:
+ *           type: string
+ *           format: time_zone
+ *           description: Time zone chosen when scheduling a post
  *         recaptcha_response:
  *           type: string
  *           description: reCAPTCHA response
