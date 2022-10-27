@@ -408,7 +408,7 @@ router.post("/unspoiler", (req, res, next) => {});
 
 /**
  * @swagger
- * /insights_counts:
+ * /insights_count:
  *  get:
  *      summary: Get the number of views on a post
  *      tags: [Posts]
@@ -446,7 +446,7 @@ router.post("/unspoiler", (req, res, next) => {});
  *          500:
  *              description: Server Error
  */
-router.get("/insights_counts", (req, res, next) => {});
+router.get("/insights_count", (req, res, next) => {});
 
 /**
  * @swagger
