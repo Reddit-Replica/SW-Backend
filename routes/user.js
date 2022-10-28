@@ -418,6 +418,48 @@ router.get("/user/:username/posts", (req, res) => {});
 
 /**
  * @swagger
+ * /user/{username}/history:
+ *   get:
+ *     summary: Return a list of user's history (recent clicked posts)
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         description: The username of the user to get
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ListedPost"
+ *       404:
+ *         description: Didn't find a user with that username
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/user/:username/history", (req, res) => {});
+
+/**
+ * @swagger
  * /user/{username}/comments:
  *   get:
  *     summary: Return a list of user's comments
