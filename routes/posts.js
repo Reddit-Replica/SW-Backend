@@ -408,7 +408,7 @@ router.post("/unspoiler", (req, res, next) => {});
 
 /**
  * @swagger
- * /insights_count:
+ * /post_insights:
  *  get:
  *      summary: Get the number of views on a post
  *      tags: [Posts]
@@ -421,15 +421,24 @@ router.post("/unspoiler", (req, res, next) => {});
  *            description: id of the post
  *      responses:
  *          200:
- *              description: Number of insights returned successfully
+ *              description: Post insights returned successfully
  *              content:
  *                  application/json:
  *                      schema:
  *                        type: object
  *                        properties:
- *                          number_of_insights:
+ *                          total_views:
  *                              type: number
- *                              description: Number of insights on a post
+ *                              description: The number of people who viewed this post
+ *                          upvote_rate:
+ *                              type: number
+ *                              description: Ratio between the number of upvotes and downvotes
+ *                          community_karma:
+ *                              type: number
+ *                              description: Total amount of karma earned in this community
+ *                          total_shares:
+ *                              type: number
+ *                              description: How many times the post was shared
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -442,11 +451,11 @@ router.post("/unspoiler", (req, res, next) => {});
  *          404:
  *              description: Post not found
  *          401:
- *              description: Unauthorized to view the number of insights on this post
+ *              description: Unauthorized to view this post's insights
  *          500:
  *              description: Server Error
  */
-router.get("/insights_count", (req, res, next) => {});
+router.get("/post_insights", (req, res, next) => {});
 
 /**
  * @swagger
@@ -483,6 +492,8 @@ router.get("/insights_count", (req, res, next) => {});
  *              description: Unauthorized to view info of this post
  *          500:
  *              description: Server Error
+ *      security:
+ *         - bearerAuth: []
  */
 router.get("/get_post", (req, res, next) => {});
 
