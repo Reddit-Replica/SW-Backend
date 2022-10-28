@@ -454,6 +454,8 @@ router.post("/unspoiler", (req, res, next) => {});
  *              description: Unauthorized to view this post's insights
  *          500:
  *              description: Server Error
+ *      security:
+ *         - bearerAuth: []
  */
 router.get("/post_insights", (req, res, next) => {});
 
@@ -492,8 +494,6 @@ router.get("/post_insights", (req, res, next) => {});
  *              description: Unauthorized to view info of this post
  *          500:
  *              description: Server Error
- *      security:
- *         - bearerAuth: []
  */
 router.get("/get_post", (req, res, next) => {});
 
