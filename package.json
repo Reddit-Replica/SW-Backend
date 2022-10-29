@@ -8,6 +8,8 @@
     "dev": "nodemon app.js",
     "start": "node app.js",
     "test": "jasmine",
+    "doc": "swagger-jsdoc-generator config.json > documentation.json",
+    "doc2": "redoc-cli bundle -o apidoc/index.html documentation.json",
     "lint": "eslint ./**/*.js",
     "prettier": "prettier ./**/*.js --write"
   },
@@ -34,6 +36,8 @@
     "jasmine": "^4.4.0",
     "jasmine-spec-reporter": "^7.0.0",
     "nodemon": "^2.0.20",
+    "redoc-cli": "^0.13.20",
+    "swagger-jsdoc-generator": "^1.0.3",
     "prettier": "2.7.1"
   }
 }
