@@ -54,6 +54,7 @@ const router = express.Router();
  *                   - new
  *                   - best
  *                   - most comments
+ *                   - trending
  *          - in: query
  *            name: category
  *            description: Search in a specific category
@@ -169,6 +170,7 @@ router.get("/search", (req, res, next) => {});
  *                   - new
  *                   - best
  *                   - most comments
+ *                   - trending
  *          - in: query
  *            name: category
  *            description: Search in a specific category
