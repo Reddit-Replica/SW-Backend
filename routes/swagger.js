@@ -735,6 +735,9 @@
  *               level:
  *                 type: integer
  *                 description: The level of the comment [level of nesting]
+ *               numChildren:
+ *                 type: integer
+ *                 description: Number of replies to that comment
  *               children:
  *                  type: array
  *                  description: The replies to that comment (Will be same structure as the current comment)

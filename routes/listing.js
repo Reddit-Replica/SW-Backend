@@ -543,6 +543,22 @@ router.get("/r/:subreddit/comments/:post", (req, res) => {});
  *         schema:
  *           type: string
  *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of comments to return (optional)
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *       - in: query
  *         name: sort
  *         description: Comments sorting algorithm
  *         schema:
@@ -568,51 +584,7 @@ router.get("/r/:subreddit/comments/:post", (req, res) => {});
  *         content:
  *           application/json:
  *             schema:
- *               properties:
- *                 commentId:
- *                   type: string
- *                   description: The id of the comment
- *                 commentBy:
- *                   type: string
- *                   description: The author of the comment
- *                 editTime:
- *                   type: string
- *                   format: date-time
- *                   description: Edit time of the comment (if exists)
- *                 publishTime:
- *                   type: string
- *                   format: date-time
- *                   description: Publish time of the comment
- *                 commentBody:
- *                   type: string
- *                   description: The comment itself
- *                 votes:
- *                   type: integer
- *                   description: Total number of votes to that post
- *                 saved:
- *                   type: boolean
- *                   description: If true, then this comment was saved before by the logged-in user
- *                 followed:
- *                   type: boolean
- *                   description: If true, then this comment was followed before by the logged-in user
- *                 vote:
- *                   type: integer
- *                   enum:
- *                     - 1
- *                     - 0
- *                     - -1
- *                   description: Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post
- *                 parent:
- *                   type: string
- *                   description: The id of the parent comment in the tree
- *                 level:
- *                   type: integer
- *                   description: The level of the comment [level of nesting]
- *                 children:
- *                    type: array
- *                    description: The replies to that comment
- *                    items:
- *                      type: object
+ *               $ref: "#/components/schemas/CommentTree"
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
