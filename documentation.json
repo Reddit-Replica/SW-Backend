@@ -407,6 +407,65 @@
                             }
                           }
                         },
+                        "inYourSubreddit": {
+                          "type": "boolean",
+                          "description": "If true, then you can approve, remove, or spam that post"
+                        },
+                        "moderation": {
+                          "type": "object",
+                          "description": "Moderate the post if you are a moderator in that subreddit",
+                          "properties": {
+                            "approve": {
+                              "type": "object",
+                              "description": "Approve the post",
+                              "properties": {
+                                "approvedBy": {
+                                  "type": "string",
+                                  "description": "Username for the moderator who approved that post"
+                                },
+                                "approvedDate": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "description": "Date when that post approved"
+                                }
+                              }
+                            },
+                            "remove": {
+                              "type": "object",
+                              "description": "Remove the post",
+                              "properties": {
+                                "removedBy": {
+                                  "type": "string",
+                                  "description": "Username for the moderator who removed that post"
+                                },
+                                "removedDate": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "description": "Date when that post removed"
+                                }
+                              }
+                            },
+                            "spam": {
+                              "type": "object",
+                              "description": "Spam the post",
+                              "properties": {
+                                "spamedBy": {
+                                  "type": "string",
+                                  "description": "Username for the moderator who spamed that post"
+                                },
+                                "spamedDate": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "description": "Date when that post spamed"
+                                }
+                              }
+                            },
+                            "lock": {
+                              "type": "boolean",
+                              "description": "If true, then comments are locked in this post"
+                            }
+                          }
+                        },
                         "editTime": {
                           "type": "string",
                           "format": "date-time",
@@ -740,6 +799,65 @@
                       "format": "date-time",
                       "description": "Publish time of the post"
                     },
+                    "inYourSubreddit": {
+                      "type": "boolean",
+                      "description": "If true, then you can approve, remove, or spam that post"
+                    },
+                    "moderation": {
+                      "type": "object",
+                      "description": "Moderate the post if you are a moderator in that subreddit",
+                      "properties": {
+                        "approve": {
+                          "type": "object",
+                          "description": "Approve the post",
+                          "properties": {
+                            "approvedBy": {
+                              "type": "string",
+                              "description": "Username for the moderator who approved that post"
+                            },
+                            "approvedDate": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "Date when that post approved"
+                            }
+                          }
+                        },
+                        "remove": {
+                          "type": "object",
+                          "description": "Remove the post",
+                          "properties": {
+                            "removedBy": {
+                              "type": "string",
+                              "description": "Username for the moderator who removed that post"
+                            },
+                            "removedDate": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "Date when that post removed"
+                            }
+                          }
+                        },
+                        "spam": {
+                          "type": "object",
+                          "description": "Spam the post",
+                          "properties": {
+                            "spamedBy": {
+                              "type": "string",
+                              "description": "Username for the moderator who spamed that post"
+                            },
+                            "spamedDate": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "Date when that post spamed"
+                            }
+                          }
+                        },
+                        "lock": {
+                          "type": "boolean",
+                          "description": "If true, then comments are locked in this post"
+                        }
+                      }
+                    },
                     "nsfw": {
                       "type": "boolean",
                       "description": "If true, then this post is NSFW"
@@ -826,6 +944,10 @@
                 "level": {
                   "type": "integer",
                   "description": "The level of the comment [level of nesting]"
+                },
+                "numChildren": {
+                  "type": "integer",
+                  "description": "Number of replies to that comment"
                 },
                 "children": {
                   "type": "array",
@@ -1643,13 +1765,13 @@
         }
       }
     },
-    "/saved_categories": {
+    "/categories": {
       "get": {
-        "summary": "Get a list of categories in which things are currently saved",
+        "summary": "Get a list of all categories",
         "tags": ["Categories"],
         "responses": {
           "200": {
-            "description": "Saved categories returned successfully",
+            "description": "Categories returned successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -1748,7 +1870,7 @@
     "/api/subreddits/leaderboard": {
       "get": {
         "summary": "Return a listing of all the Communities",
-        "tags": ["Communities"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "query",
@@ -1845,7 +1967,7 @@
     "/api/subreddits/leaderboard/{categoryName}": {
       "get": {
         "summary": "Return a listing of communities of a specific category",
-        "tags": ["Communities"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -1957,7 +2079,7 @@
     "/api/custom_random_category": {
       "get": {
         "summary": "Return a listing of random communities with random category",
-        "tags": ["Communities"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "query",
@@ -2054,7 +2176,7 @@
     "/api/trending_communities": {
       "get": {
         "summary": "Return a listing of the mostly viewed communities",
-        "tags": ["Communities"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "query",
@@ -2155,7 +2277,7 @@
     "/api/random_category": {
       "get": {
         "summary": "Return two random categories to display",
-        "tags": ["Communities"],
+        "tags": ["Subreddit"],
         "responses": {
           "200": {
             "description": "Returned successfully",
@@ -2261,7 +2383,7 @@
     "/api/r/{subredditName}": {
       "get": {
         "summary": "Return all the details of the subreddit",
-        "tags": ["Communities"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -2311,8 +2433,8 @@
     },
     "/api/r/{subredditName}/about/moderators": {
       "get": {
-        "summary": "Return a listing of moderators in hat specified subreddit",
-        "tags": ["Communities"],
+        "summary": "Return a listing of moderators in that specified subreddit",
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -2395,8 +2517,8 @@
     },
     "/api/r/{subredditName}/wiki/rules": {
       "get": {
-        "summary": "Return all the rules of the subbreddit in details",
-        "tags": ["Communities"],
+        "summary": "Return all the rules of the subbreddit in details (canceled feature)",
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -2450,8 +2572,8 @@
     },
     "/api/r/{subredditName}/wiki/bans": {
       "get": {
-        "summary": "Return all the ban questions of the subbreddit in details",
-        "tags": ["Communities"],
+        "summary": "Return all the ban questions of the subbreddit in details (canceled feature)",
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -2503,65 +2625,10 @@
         ]
       }
     },
-    "/api/r/{subredditName}/suggested_topics": {
-      "get": {
-        "summary": "Return all the suggested topics",
-        "tags": ["Communities"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subredditName",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "string",
-                      "description": "the status code of the response"
-                    },
-                    "children": {
-                      "type": "array",
-                      "description": "List of [Things] to return",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to view this info"
-          },
-          "404": {
-            "description": "Page not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/api/r/{subredditName}/add_main_topic": {
       "post": {
         "summary": "add the main topic to the community",
-        "tags": ["Communities"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -2609,7 +2676,7 @@
     "/api/r/{subredditName}/add_subtopic": {
       "post": {
         "summary": "add subtopics of the community",
-        "tags": ["Communities"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -2660,7 +2727,7 @@
     "/api/r/{subredditName}/add_description": {
       "post": {
         "summary": "add description of the community",
-        "tags": ["Communities"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -2708,7 +2775,7 @@
     "/api/r/{subredditName}/toggle_favorite": {
       "patch": {
         "summary": "toggle favorite property of the community",
-        "tags": ["Communities"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -2739,8 +2806,8 @@
     },
     "/api/r/{subredditName}/toggle_community_theme": {
       "patch": {
-        "summary": "toggle community theme option of the community",
-        "tags": ["Communities"],
+        "summary": "toggle community theme option of the community (canceled feature)",
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -3359,7 +3426,7 @@
     "/r/{subreddit}/comments/{post}": {
       "get": {
         "summary": "Get the comment tree for a given post",
-        "tags": ["Listing"],
+        "tags": ["Comments"],
         "parameters": [
           {
             "in": "path",
@@ -3465,7 +3532,7 @@
     "/r/{subreddit}/comments/{post}/{comment_id}": {
       "get": {
         "summary": "Return comment tree of a specific comment",
-        "tags": ["Listing"],
+        "tags": ["Comments"],
         "parameters": [
           {
             "in": "path",
@@ -3492,6 +3559,31 @@
             "required": true,
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of comments to return (optional)",
+            "schema": {
+              "type": "integer",
+              "default": 25
             }
           },
           {
@@ -3526,62 +3618,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "commentId": {
-                      "type": "string",
-                      "description": "The id of the comment"
-                    },
-                    "commentBy": {
-                      "type": "string",
-                      "description": "The author of the comment"
-                    },
-                    "editTime": {
-                      "type": "string",
-                      "format": "date-time",
-                      "description": "Edit time of the comment (if exists)"
-                    },
-                    "publishTime": {
-                      "type": "string",
-                      "format": "date-time",
-                      "description": "Publish time of the comment"
-                    },
-                    "commentBody": {
-                      "type": "string",
-                      "description": "The comment itself"
-                    },
-                    "votes": {
-                      "type": "integer",
-                      "description": "Total number of votes to that post"
-                    },
-                    "saved": {
-                      "type": "boolean",
-                      "description": "If true, then this comment was saved before by the logged-in user"
-                    },
-                    "followed": {
-                      "type": "boolean",
-                      "description": "If true, then this comment was followed before by the logged-in user"
-                    },
-                    "vote": {
-                      "type": "integer",
-                      "enum": [1, 0, -1],
-                      "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
-                    },
-                    "parent": {
-                      "type": "string",
-                      "description": "The id of the parent comment in the tree"
-                    },
-                    "level": {
-                      "type": "integer",
-                      "description": "The level of the comment [level of nesting]"
-                    },
-                    "children": {
-                      "type": "array",
-                      "description": "The replies to that comment",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/CommentTree"
                 }
               }
             }
@@ -3610,7 +3647,7 @@
     "/r/{subreddit}/comments/{post}/{comment_id}/parent_comments": {
       "get": {
         "summary": "Return the parents of a specific comment",
-        "tags": ["Listing"],
+        "tags": ["Comments"],
         "parameters": [
           {
             "in": "path",
@@ -3912,7 +3949,7 @@
     },
     "/api/message/inbox": {
       "get": {
-        "summary": "Return a listing of all the messages,selfreplies and mentions that you received sorted by time of sending them",
+        "summary": "Return a listing of all the messages,postreplies and mentions that you received sorted by time of sending them",
         "tags": ["Messages"],
         "parameters": [
           {
@@ -4125,7 +4162,7 @@
         ]
       }
     },
-    "/api/message/selfreply": {
+    "/api/message/postreply": {
       "get": {
         "summary": "Return a listing of post replies that you made sorted by time of adding the reply",
         "tags": ["Messages"],
@@ -6171,7 +6208,32 @@
                     "Post_Flairs": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/Flair"
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "id of the flair"
+                          },
+                          "flair_name": {
+                            "type": "string",
+                            "description": "Name of the flair"
+                          },
+                          "order": {
+                            "type": "number",
+                            "description": "Order of the flair among the rest"
+                          },
+                          "background_color": {
+                            "type": "string",
+                            "description": "Background color of the flair"
+                          },
+                          "text_color": {
+                            "type": "string",
+                            "description": "Color of the flair name"
+                          },
+                          "settings": {
+                            "$ref": "#/components/schemas/FlairSettings"
+                          }
+                        }
                       }
                     }
                   }
@@ -6839,129 +6901,6 @@
         ]
       }
     },
-    "/api/send_notifications": {
-      "get": {
-        "summary": "send notification to all the users",
-        "tags": ["Notifications"],
-        "responses": {
-          "200": {
-            "description": "Returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "string",
-                      "description": "the status code of the response"
-                    },
-                    "children": {
-                      "type": "object",
-                      "description": "List of [Things] to return",
-                      "properties": {
-                        "id": {
-                          "type": "string",
-                          "description": "id of the request"
-                        },
-                        "recipients": {
-                          "type": "number",
-                          "description": "number of ids that receives that notification"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to view this info"
-          },
-          "404": {
-            "description": "notifications not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/send_notifications_to_device": {
-      "post": {
-        "summary": "send notification to specific user",
-        "tags": ["Notifications"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "devices": {
-                    "type": "array",
-                    "description": "array of devices that you want to send notifications to",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "string",
-                      "description": "the status code of the response"
-                    },
-                    "children": {
-                      "type": "object",
-                      "description": "List of [Things] to return",
-                      "properties": {
-                        "id": {
-                          "type": "string",
-                          "description": "id of the request"
-                        },
-                        "recipients": {
-                          "type": "number",
-                          "description": "number of ids that receives that notification"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to view this info"
-          },
-          "404": {
-            "description": "notifications not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/api/mark_as_read": {
       "patch": {
         "summary": "mark all the notifications as read",
@@ -7024,7 +6963,7 @@
     },
     "/api/live/thread": {
       "get": {
-        "summary": "Get a list of updates posted in this thread.",
+        "summary": "Get a list of updates posted in this thread. (canceled feature)",
         "tags": ["Threads"],
         "parameters": [
           {
@@ -7084,7 +7023,7 @@
         ]
       },
       "patch": {
-        "summary": "editing a thread",
+        "summary": "editing a thread (canceled feature)",
         "tags": ["Threads"],
         "requestBody": {
           "required": true,
@@ -7120,7 +7059,7 @@
         ]
       },
       "put": {
-        "summary": "updating a thread",
+        "summary": "updating a thread (canceled feature)",
         "tags": ["Threads"],
         "requestBody": {
           "required": true,
@@ -7156,7 +7095,7 @@
         ]
       },
       "delete": {
-        "summary": "closes a thread",
+        "summary": "closes a thread (canceled feature)",
         "tags": ["Threads"],
         "requestBody": {
           "required": true,
@@ -7194,7 +7133,7 @@
     },
     "/api/live/by_id/names": {
       "get": {
-        "summary": "Get a list all the live events",
+        "summary": "Get a list all the live events (canceled feature)",
         "tags": ["Threads"],
         "responses": {
           "200": {
@@ -7229,7 +7168,7 @@
     },
     "/api/live/create": {
       "post": {
-        "summary": "Create a new live thread. Once created, the initial settings can be modified with /api/live/thread/edit and new updates can be posted with /api/live/thread/update.",
+        "summary": "Create a new live thread. Once created, the initial settings can be modified with /api/live/thread/edit and new updates can be posted with /api/live/thread/update. (canceled feature)",
         "tags": ["Threads"],
         "responses": {
           "200": {
@@ -7264,7 +7203,7 @@
     },
     "/api/live/thread/about": {
       "get": {
-        "summary": "get a some basic info about the live thread",
+        "summary": "get a some basic info about the live thread (canceled feature)",
         "tags": ["Threads"],
         "responses": {
           "200": {
@@ -7297,7 +7236,7 @@
         ]
       }
     },
-    "/del": {
+    "/delete": {
       "delete": {
         "summary": "Delete a Post, Comment or Message",
         "tags": ["Post-comment-message actions"],
@@ -7989,7 +7928,7 @@
     },
     "/set_suggested_sort": {
       "post": {
-        "summary": "Set suggested sort for a post",
+        "summary": "Set suggested sort for a post comments",
         "tags": ["Posts"],
         "requestBody": {
           "required": true,
@@ -8632,6 +8571,66 @@
         ]
       }
     },
+    "/edit_post_flair": {
+      "put": {
+        "summary": "Change the flair on a post",
+        "tags": ["Posts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "id of the post being edited"
+                  },
+                  "flairId": {
+                    "type": "string",
+                    "description": "id of the new flair selected"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post flair edited successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized to edit this post"
+          },
+          "404": {
+            "description": "Post not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/search": {
       "get": {
         "summary": "Search posts page",
@@ -9027,7 +9026,7 @@
 
     "/block_user": {
       "post": {
-        "summary": "Block a user",
+        "summary": "Block or unblock a user",
         "tags": ["User"],
         "requestBody": {
           "required": true,
@@ -9084,7 +9083,7 @@
     },
     "/follow_user": {
       "post": {
-        "summary": "Follow a user",
+        "summary": "Follow or unfollow a user",
         "tags": ["User"],
         "requestBody": {
           "required": true,
@@ -9607,7 +9606,7 @@
                               },
                               "comment": {
                                 "type": "array",
-                                "description": "The comments and the reply of the user to it",
+                                "description": "Comments writen by the current user",
                                 "items": {
                                   "properties": {
                                     "commentId": {
@@ -9639,6 +9638,65 @@
                                     "level": {
                                       "type": "integer",
                                       "description": "The level of the comment [level of nesting]"
+                                    },
+                                    "inYourSubreddit": {
+                                      "type": "boolean",
+                                      "description": "If true, then you can approve, remove, or spam that comment"
+                                    },
+                                    "moderation": {
+                                      "type": "object",
+                                      "description": "Moderate the comment if you are a moderator in that subreddit",
+                                      "properties": {
+                                        "approve": {
+                                          "type": "object",
+                                          "description": "Approve the comment",
+                                          "properties": {
+                                            "approvedBy": {
+                                              "type": "string",
+                                              "description": "Username for the moderator who approved that comment"
+                                            },
+                                            "approvedDate": {
+                                              "type": "string",
+                                              "format": "date-time",
+                                              "description": "Date when that comment approved"
+                                            }
+                                          }
+                                        },
+                                        "remove": {
+                                          "type": "object",
+                                          "description": "Remove the comment",
+                                          "properties": {
+                                            "removedBy": {
+                                              "type": "string",
+                                              "description": "Username for the moderator who removed that comment"
+                                            },
+                                            "removedDate": {
+                                              "type": "string",
+                                              "format": "date-time",
+                                              "description": "Date when that comment removed"
+                                            }
+                                          }
+                                        },
+                                        "spam": {
+                                          "type": "object",
+                                          "description": "Spam the comment",
+                                          "properties": {
+                                            "spamedBy": {
+                                              "type": "string",
+                                              "description": "Username for the moderator who spamed that comment"
+                                            },
+                                            "spamedDate": {
+                                              "type": "string",
+                                              "format": "date-time",
+                                              "description": "Date when that comment spamed"
+                                            }
+                                          }
+                                        },
+                                        "lock": {
+                                          "type": "boolean",
+                                          "description": "If true, then comments are locked in this post"
+                                        }
+                                      }
                                     }
                                   }
                                 }
@@ -10726,10 +10784,6 @@
       "description": "Login and forget password endpoints used"
     },
     {
-      "name": "Communities",
-      "description": "group of people share the same interest, they also called \"subreddits\""
-    },
-    {
       "name": "Listing",
       "description": "Listing endpoints"
     },
@@ -10759,7 +10813,7 @@
     },
     {
       "name": "Subreddit",
-      "description": "Create a subreddit endpoints"
+      "description": "Subreddit endpoints"
     },
     {
       "name": "Posts",
