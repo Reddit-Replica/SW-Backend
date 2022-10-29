@@ -2,61 +2,6 @@ import express from "express";
 
 const router = express.Router();
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     Message:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *           description: The special full name for each message
- *         type:
- *           type: string
- *           description: describes the type of message,we have three types
- *           enum:
- *             -Messages
- *             -Post Replies
- *             -Username Mentions
- *         subreddit_name:
- *           type: string
- *           description: the name of subreddit that the mention or the reply happened in, it will be needed in the case of post replies and mentions
- *         post_title:
- *           type: string
- *           description: the title of the post that the mention or reply happened in, it will be needed in the case of post replies and mentions
- *         text:
- *           type: string
- *           description: Message Content as text
- *         senderUsername:
- *           type: string
- *           description: Username of the sender
- *         receiverUsername:
- *           type: string
- *           description: Username of the receiver
- *         sendingTime:
- *           type: string
- *           description: Time of sending the message
- *         subject:
- *           type: string
- *           description: Subject of the message
- *         isReply:
- *           type: boolean
- *           description: True if the msg is a reply to another , False if the msg isn't a reply to another
- *         isRead:
- *           type: boolean
- *           description: True if the msg was read before , False if the msg wasn't read before
- *           default: false
- *         spamsCount:
- *           type: number
- *           description: Number of the spams this comment took
- *           default: 0
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
 
 /**
  * @swagger

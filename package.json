@@ -9,7 +9,7 @@
     "start": "node app.js",
     "test": "jasmine",
     "doc": "swagger-jsdoc-generator config.json > documentation.json",
-    "doc2": "redoc-cli bundle -o index.html openapi.json"
+    "doc2": "redoc-cli bundle -o index.html documentation.json"
   },
   "repository": {
     "type": "git",

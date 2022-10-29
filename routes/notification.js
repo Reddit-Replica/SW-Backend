@@ -2,64 +2,6 @@ import express from "express";
 
 const router = express.Router();
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     Notifications:
- *       type: object
- *       properties:
- *         title:
- *           type: string
- *           description: Title of the notification (maximum:120)
- *           max: 120
- *         content:
- *           type: object
- *           description: An object that has every detail that we want to send
- *         included_segments:
- *           type: array
- *           description: An array hat describes which devices we will send notification to
- *         content_available:
- *           type: bool
- *           description: true if this notification will be send if the device is off ,false if it won't
- *         smallIcon:
- *           type: string
- *           description: the path of the icon of the notification
- *         data:
- *           type: object
- *           description: the external data that you want to send with the notification
- *         SenderID:
- *           type: string
- *           description: Name of the sender of the notification
- *         ReceiverID:
- *           type: number
- *           description: Name of the sender of the notification
- *         Isread:
- *           type: boolean
- *           description: True if the notification is read , False if the message is not read
- *         sending_time:
- *           type: string
- *           description: The time of sending the notification
- *         nsfw:
- *           type: boolean
- *           description: not safe for work
- *         ishidden:
- *           type: boolean
- *           description: true if the notification is hidden , false if notification is not hidden
- *
- *     Threads:
- *       type: object
- *       properties:
- *         Id:
- *           type: string
- *           description: full name of the thread
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- *
- */
 
 /**
  * @swagger
