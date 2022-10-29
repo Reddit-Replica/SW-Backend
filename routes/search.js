@@ -94,7 +94,7 @@ const router = express.Router();
  *                           children:
  *                              type: array
  *                              items:
- *                                  $ref: '#/components/schemas/SearchResults'
+ *                                  $ref: '#/components/schemas/Post'
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -209,7 +209,7 @@ router.get("/search", (req, res, next) => {});
  *                           children:
  *                              type: array
  *                              items:
- *                                  $ref: '#/components/schemas/SearchResults'
+ *                                  $ref: '#/components/schemas/Post'
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
