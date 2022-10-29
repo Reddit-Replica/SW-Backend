@@ -5,6 +5,7 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Sign Up
+ *   description: Sign Up and email verfication endpoints
  */
 
 
@@ -241,6 +242,7 @@ router.get("/random_username", (req, res) => {});
  * @swagger
  * tags:
  *   name: Login
+ *   description: Login and forget password endpoints used
  */
 
 /**
