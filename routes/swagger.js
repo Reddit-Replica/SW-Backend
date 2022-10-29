@@ -35,9 +35,6 @@
  *          background_color:
  *              type: string
  *              description: Background color of the flair
- *          css_class:
- *              type: string
- *              description: (Optional) CSS Class chosen for this flair
  *          text_color:
  *              type: string
  *              description: Color of the flair name
