@@ -5,6 +5,7 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: User
+ *   description: User's profile endpoints (overview, history, ...etc)
  */
 
 /**

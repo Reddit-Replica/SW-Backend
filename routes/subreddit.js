@@ -5,6 +5,7 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Subreddit
+ *   description: Create a subreddit endpoints
  */
 
 /**

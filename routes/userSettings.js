@@ -5,6 +5,7 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: User settings
+ *   description: User settings endpoints
  */
 
 /**
