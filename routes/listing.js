@@ -8,7 +8,6 @@ const router = express.Router();
  *   description: Listing endpoints
  */
 
-
 /**
  * @swagger
  * /best:
@@ -106,6 +105,11 @@ router.get("/hot", (req, res) => {});
  *         schema:
  *           type: integer
  *           default: 25
+ *       - in: query
+ *         name: flairId
+ *         description: Flair id to get all posts with that flair (optional)
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         content:
@@ -118,6 +122,87 @@ router.get("/hot", (req, res) => {});
  *         description: Internal server error
  */
 router.get("/r/:subreddit/hot", (req, res) => {});
+
+/**
+ * @swagger
+ * /trending:
+ *   get:
+ *     summary: Return the trending posts based on [views]
+ *     tags: [Listing]
+ *     parameters:
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: "#/components/schemas/ListedPost"
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/trending", (req, res) => {});
+
+/**
+ * @swagger
+ * /r/{subreddit}/trending:
+ *   get:
+ *     summary: Return the trending posts in a specific subreddit based on [views]
+ *     tags: [Listing]
+ *     parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: The name of the subreddit
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *       - in: query
+ *         name: flairId
+ *         description: Flair id to get all posts with that flair (optional)
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: "#/components/schemas/ListedPost"
+ *       404:
+ *         description: Didn't find a subreddit with that name
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/r/:subreddit/trending", (req, res) => {});
 
 /**
  * @swagger
@@ -182,6 +267,11 @@ router.get("/new", (req, res) => {});
  *         schema:
  *           type: integer
  *           default: 25
+ *       - in: query
+ *         name: flairId
+ *         description: Flair id to get all posts with that flair (optional)
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         content:
@@ -333,6 +423,11 @@ router.get("/top", (req, res) => {});
  *         schema:
  *           type: integer
  *           default: 25
+ *       - in: query
+ *         name: flairId
+ *         description: Flair id to get all posts with that flair (optional)
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         content:
