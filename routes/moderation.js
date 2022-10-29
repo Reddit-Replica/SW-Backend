@@ -319,6 +319,62 @@ moderationRouter.post(
 
 /**
  * @swagger
+ * /r/{subreddit}/api/moderator_invite:
+ *  post:
+ *   summary:
+ *    Send a moderation invite to a user.
+ *   tags: [General moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - accessTo
+ *       properties:
+ *        accessTo:
+ *         type: string
+ *         description: Give the moderator access to do what.
+ *         enum:
+ *          - Every thing
+ *          - Manage users
+ *          - Manage settings
+ *          - Manage flair
+ *          - Manage posts and comments
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post(
+  "/r/:subreddit/api/moderator_invite",
+  (req, res, next) => {}
+);
+
+/**
+ * @swagger
  * /api/leavemoderator:
  *  post:
  *   summary:
