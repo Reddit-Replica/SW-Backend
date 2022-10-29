@@ -1,0 +1,11 @@
+{
+  "swaggerDefinition": {
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Read-it",
+      "version": "1.0.0",
+      "description": "API-Documentation"
+    }
+  },
+  "apis": ["./routes/*.js"]
+}

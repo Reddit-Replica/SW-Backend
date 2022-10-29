@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "test": "jasmine"
+    "test": "jasmine",
+    "doc": "swagger-jsdoc-generator config.json > documentation.json"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "jasmine": "^4.4.0",
     "jasmine-spec-reporter": "^7.0.0",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "swagger-jsdoc-generator": "^1.0.3"
   }
 }
