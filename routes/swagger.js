@@ -328,6 +328,49 @@
  *                            textColor:
  *                              type: string
  *                              description: Color of the flair text
+ *                        inYourSubreddit:
+ *                          type: boolean
+ *                          description: If true, then you can approve, remove, or spam that post
+ *                        moderation:
+ *                          type: object
+ *                          description: Moderate the post if you are a moderator in that subreddit
+ *                          properties:
+ *                            approve:
+ *                              type: object
+ *                              description: Approve the post
+ *                              properties:
+ *                                approvedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who approved that post
+ *                                approvedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post approved
+ *                            remove:
+ *                              type: object
+ *                              description: Remove the post
+ *                              properties:
+ *                                removedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who removed that post
+ *                                removedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post removed
+ *                            spam:
+ *                              type: object
+ *                              description: Spam the post
+ *                              properties:
+ *                                spamedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who spamed that post
+ *                                spamedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post spamed
+ *                            lock:
+ *                              type: boolean
+ *                              description: If true, then comments are locked in this post
  *                        editTime:
  *                          type: string
  *                          format: date-time
@@ -580,6 +623,49 @@
  *                     type: string
  *                     format: date-time
  *                     description: Publish time of the post
+ *                   inYourSubreddit:
+ *                     type: boolean
+ *                     description: If true, then you can approve, remove, or spam that post
+ *                   moderation:
+ *                     type: object
+ *                     description: Moderate the post if you are a moderator in that subreddit
+ *                     properties:
+ *                       approve:
+ *                         type: object
+ *                         description: Approve the post
+ *                         properties:
+ *                           approvedBy:
+ *                             type: string
+ *                             description: Username for the moderator who approved that post
+ *                           approvedDate:
+ *                             type: string
+ *                             format: date-time
+ *                             description: Date when that post approved
+ *                       remove:
+ *                         type: object
+ *                         description: Remove the post
+ *                         properties:
+ *                           removedBy:
+ *                             type: string
+ *                             description: Username for the moderator who removed that post
+ *                           removedDate:
+ *                             type: string
+ *                             format: date-time
+ *                             description: Date when that post removed
+ *                       spam:
+ *                         type: object
+ *                         description: Spam the post
+ *                         properties:
+ *                            spamedBy:
+ *                              type: string
+ *                              description: Username for the moderator who spamed that post
+ *                            spamedDate:
+ *                              type: string
+ *                              format: date-time
+ *                              description: Date when that post spamed
+ *                       lock:
+ *                         type: boolean
+ *                         description: If true, then comments are locked in this post
  *                   nsfw:
  *                     type: boolean
  *                     description: If true, then this post is NSFW

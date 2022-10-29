@@ -465,7 +465,7 @@ router.get("/user/:username/history", (req, res) => {});
  *                             description: If true, then this post is marked as spoiler
  *                           comment:
  *                             type: array
- *                             description: The comments and the reply of the user to it
+ *                             description: Comments writen by the current user
  *                             items:
  *                               properties:
  *                                 commentId:
@@ -491,6 +491,49 @@ router.get("/user/:username/history", (req, res) => {});
  *                                 level:
  *                                   type: integer
  *                                   description: The level of the comment [level of nesting]
+ *                                 inYourSubreddit:
+ *                                   type: boolean
+ *                                   description: If true, then you can approve, remove, or spam that comment
+ *                                 moderation:
+ *                                   type: object
+ *                                   description: Moderate the comment if you are a moderator in that subreddit
+ *                                   properties:
+ *                                     approve:
+ *                                       type: object
+ *                                       description: Approve the comment
+ *                                       properties:
+ *                                         approvedBy:
+ *                                           type: string
+ *                                           description: Username for the moderator who approved that comment
+ *                                         approvedDate:
+ *                                           type: string
+ *                                           format: date-time
+ *                                           description: Date when that comment approved
+ *                                     remove:
+ *                                       type: object
+ *                                       description: Remove the comment
+ *                                       properties:
+ *                                         removedBy:
+ *                                           type: string
+ *                                           description: Username for the moderator who removed that comment
+ *                                         removedDate:
+ *                                           type: string
+ *                                           format: date-time
+ *                                           description: Date when that comment removed
+ *                                     spam:
+ *                                       type: object
+ *                                       description: Spam the comment
+ *                                       properties:
+ *                                          spamedBy:
+ *                                            type: string
+ *                                            description: Username for the moderator who spamed that comment
+ *                                          spamedDate:
+ *                                            type: string
+ *                                            format: date-time
+ *                                            description: Date when that comment spamed
+ *                                     lock:
+ *                                       type: boolean
+ *                                       description: If true, then comments are locked in this post
  *       404:
  *         description: Didn't find a user with that username
  *       500:
