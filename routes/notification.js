@@ -43,6 +43,9 @@ const router=express.Router();
  *         nsfw:
  *           type: boolean
  *           description: not safe for work
+ *         ishidden:
+ *           type: boolean
+ *           description: true if the notification is hidden , false if notification is not hidden
  *         
  *     Threads:
  *       type: object
@@ -236,10 +239,39 @@ router.post("/send_notifications_to_device");
 
 /**
  * @swagger
- * api/markAsRead:
+ * api/mark_as_read:
  *  patch:
  *      summary: mark all the notifications as read
  *      tags: [Notifications]
+ *      responses:
+ *          200:
+ *              description: Notification is hidden successfully
+ *          401:
+ *              description: Unauthorized to hide the notifications
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.patch("/mark_as_read",(req, res)=>{});
+
+/**
+ * @swagger
+ * api/hide_noification:
+ *  patch:
+ *      summary: mark a specific notification as hidden
+ *      tags: [Notifications]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              id:
+ *                type: string
+ *                description: id of the notification you want to make hidden
  *      responses:
  *          200:
  *              description: Notifications are set to read successfully
@@ -251,7 +283,7 @@ router.post("/send_notifications_to_device");
  *       - bearerAuth: []
  */
 
-router.patch("markAsRead",(req, res)=>{});
+ router.patch("hide_noification",(req, res)=>{});
 
 /**
  * @swagger
