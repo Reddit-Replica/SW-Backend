@@ -21,29 +21,31 @@ const router = express.Router();
  *       content:
  *         application/json:
  *           schema:
+ *            required:
+ *             - ReCAPTCHAs
+ *             - text
+ *             - subject
+ *             - senderUsername
+ *             - receiverUsername
+ *            properties:
  *             ReCAPTCHAs:
  *               type: string
  *               description: ReCAPTCHAs response
- *               required: true
  *             text:
  *               type: string
  *               description: Message Content as text
- *               required: true
  *             senderUsername:
  *               type: string
  *               description: Username of the sender
- *               required: true
  *             receiverUsername:
  *               type: string
  *               description: Username of the receiver
- *               required: true
  *             sendingTime:
  *               type: string
  *               description: Time of sending the message
  *             subject:
  *               type: string
  *               description: Subject of the message
- *               required: true
  *      responses:
  *          200:
  *              description: Your message is delivered successfully
@@ -527,11 +529,12 @@ router.get("/message/messages", (req, res) => {});
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *              - id
  *             properties:
  *              id:
  *                type: string
  *                description: Full name of the message you want to unread it
- *                required: true
  *      responses:
  *          200:
  *              description: Message has been unread successfully

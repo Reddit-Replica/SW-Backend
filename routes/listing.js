@@ -517,7 +517,7 @@ router.get("/r/:subreddit/comments/:post", (req, res) => {});
  *                    type: array
  *                    description: The replies to that comment
  *                    items:
- *                      properties:
+ *                      type: object
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:

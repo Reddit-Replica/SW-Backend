@@ -93,7 +93,6 @@ router.get("/notifications");
  *  get:
  *      summary: send notification to all the users
  *      tags: [Notifications]
- *      parameters:
  *      responses:
  *          200:
  *              description: Returned successfully

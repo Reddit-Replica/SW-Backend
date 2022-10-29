@@ -44,13 +44,13 @@ const moderationRouter = express.Router();
  *      name: after
  *      description: fullname of a thing.
  *      schema:
- *       type: fullname
+ *       type: string
  *      required: false
  *    - in: query
  *      name: before
  *      description: fullname of a thing. one of after/before should be specified
  *      schema:
- *       type: fullname
+ *       type: string
  *      required: false
  *    - in: query
  *      name: limit
@@ -131,13 +131,13 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *      name: after
  *      description: fullname of a thing.
  *      schema:
- *       type: fullname
+ *       type: string
  *      required: false
  *    - in: query
  *      name: before
  *      description: fullname of a thing. one of after/before should be specified
  *      schema:
- *       type: fullname
+ *       type: string
  *      required: false
  *    - in: query
  *      name: limit
@@ -218,13 +218,13 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *      name: after
  *      description: fullname of a thing.
  *      schema:
- *       type: fullname
+ *       type: string
  *      required: false
  *    - in: query
  *      name: before
  *      description: fullname of a thing. one of after/before should be specified
  *      schema:
- *       type: fullname
+ *       type: string
  *      required: false
  *    - in: query
  *      name: limit
@@ -671,13 +671,13 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  *      name: after
  *      description: fullname of a thing.
  *      schema:
- *       type: fullname
+ *       type: string
  *      required: false
  *    - in: query
  *      name: before
  *      description: fullname of a thing. one of after/before should be specified
  *      schema:
- *       type: fullname
+ *       type: string
  *      required: false
  *    - in: query
  *      name: limit

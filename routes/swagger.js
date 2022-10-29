@@ -222,15 +222,16 @@
  *         title:
  *           type: string
  *           description: Title of the notification (maximum:120)
- *           max: 120
  *         content:
  *           type: object
  *           description: An object that has every detail that we want to send
  *         included_segments:
  *           type: array
  *           description: An array hat describes which devices we will send notification to
+ *           items:
+ *            type: object
  *         content_available:
- *           type: bool
+ *           type: boolean
  *           description: true if this notification will be send if the device is off ,false if it won't
  *         smallIcon:
  *           type: string
@@ -509,7 +510,7 @@
  *               type: array
  *               description: the array of subtopics of the community
  *               items:
- *                 type:array
+ *                 type: object
  *   ListedPost:
  *       type: object
  *       properties:
@@ -652,7 +653,7 @@
  *                  type: array
  *                  description: The replies to that comment (Will be same structure as the current comment)
  *                  items:
- *                    properties:
+ *                    type: object
  * 
  * 
  *   Message:
@@ -665,9 +666,9 @@
  *           type: string
  *           description: describes the type of message,we have three types
  *           enum:
- *             -Messages
- *             -Post Replies
- *             -Username Mentions
+ *             - Messages
+ *             - Post Replies
+ *             - Username Mentions
  *         subreddit_name:
  *           type: string
  *           description: the name of subreddit that the mention or the reply happened in, it will be needed in the case of post replies and mentions

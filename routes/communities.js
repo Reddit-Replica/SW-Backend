@@ -580,7 +580,7 @@ router.get("/r/:subredditName/wiki/bans", (req, res) => {});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              type:string
+ *                              type: object
  *          404:
  *              description: Page not found
  *          401:
@@ -610,10 +610,12 @@ router.get("/r/:subredditName/suggested_topics", (req, res) => {});
  *       content:
  *         application/json:
  *           schema:
+ *            required:
+ *             - title
+ *            properties:
  *             title:
  *               type: string
  *               description: title of the main topic in the community
- *               required: true
  *      responses:
  *          200:
  *              description: main topic is submitted successfully
@@ -644,12 +646,14 @@ router.post("/r/:subredditName/add_main_topic", (req, res) => {});
  *       content:
  *         application/json:
  *           schema:
- *             titles:
+ *            required:
+ *             - title
+ *            properties:
+ *             title:
  *               type: array
  *               description: title of the main topic in the community
- *               required: true
  *               items:
- *                 type:string
+ *                 type: object
  *      responses:
  *          200:
  *              description: subtopics is submitted successfully
@@ -680,11 +684,12 @@ router.post("/r/:subredditName/add_subtopics", (req, res) => {});
  *       content:
  *         application/json:
  *           schema:
- *             titles:
+ *            required:
+ *             - title
+ *            properties:
+ *             title:
  *               type: string
- *               description: description of the community
- *               required: true
- *               max: 500
+ *               description: description of the community (maximum 500)
  *      responses:
  *          200:
  *              description: description is submitted successfully
