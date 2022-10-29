@@ -38,8 +38,6 @@
  *          text_color:
  *              type: string
  *              description: Color of the flair name
- *          settings:
- *              $ref: '#/components/schemas/FlairSettings'
  *     Thing:
  *       type: object
  *       properties:
@@ -116,9 +114,6 @@
  *         flair_id:
  *           type: string
  *           description: Flair ID
- *         flair_name:
- *           type: string
- *           description: Name of the flair attached with a post
  *         send_replies:
  *           type: boolean
  *           description: Allow post reply notifications
@@ -165,9 +160,8 @@
  *         title:
  *           type: string
  *           description: Title of the submission
- *         flair_name:
- *           type: string
- *           description: Name of the flair attached to a post
+ *         flair:
+ *           $ref: '#/components/schemas/Flair'
  *         comments:
  *           type: number
  *           description: Total number of comments on a post
@@ -208,9 +202,8 @@
  *         title:
  *           type: string
  *           description: Title of the submission
- *         flair_name:
- *           type: string
- *           description: Name of the flair attached to a post
+ *         flair:
+ *           $ref: '#/components/schemas/Flair'
  *         comments:
  *           type: number
  *           description: Total number of comments on a post
