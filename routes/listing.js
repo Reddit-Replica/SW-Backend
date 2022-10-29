@@ -151,7 +151,7 @@ const router = express.Router();
  *                 description: The level of the comment [level of nesting]
  *               children:
  *                  type: array
- *                  description: The replies to that comment
+ *                  description: The replies to that comment (Will be same structure as the current comment)
  *                  items:
  *                    properties:
  */
