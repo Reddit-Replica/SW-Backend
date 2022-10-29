@@ -67,6 +67,21 @@ const router = express.Router();
  *                          type: string
  *                          format: date-time
  *                          description: Publish time of the post
+ *                        flair:
+ *                          type: object
+ *                          properties:
+ *                            flairId:
+ *                              type: string
+ *                              description: The id of the flair
+ *                            flairText:
+ *                              type: string
+ *                              description: Flair text
+ *                            backgroundColor:
+ *                              type: string
+ *                              description: Background color of the flair
+ *                            textColor:
+ *                              type: string
+ *                              description: Color of the flair text
  *                        editTime:
  *                          type: string
  *                          format: date-time
@@ -554,6 +569,21 @@ router.get("/user/:username/history", (req, res) => {});
  *                           content:
  *                               type: string
  *                               description: Content of the post [text, path of the video, path of the image, link]
+ *                           flair:
+ *                             type: object
+ *                             properties:
+ *                               flairId:
+ *                                 type: string
+ *                                 description: The id of the flair
+ *                               flairText:
+ *                                 type: string
+ *                                 description: Flair text
+ *                               backgroundColor:
+ *                                 type: string
+ *                                 description: Background color of the flair
+ *                               textColor:
+ *                                 type: string
+ *                                 description: Color of the flair text
  *                           nsfw:
  *                             type: boolean
  *                             description: If true, then this post is NSFW
