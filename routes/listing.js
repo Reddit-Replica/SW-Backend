@@ -105,6 +105,11 @@ router.get("/hot", (req, res) => {});
  *         schema:
  *           type: integer
  *           default: 25
+ *       - in: query
+ *         name: flairId
+ *         description: Flair id to get all posts with that flair (optional)
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         content:
@@ -181,6 +186,11 @@ router.get("/trending", (req, res) => {});
  *         schema:
  *           type: integer
  *           default: 25
+ *       - in: query
+ *         name: flairId
+ *         description: Flair id to get all posts with that flair (optional)
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         content:
@@ -257,6 +267,11 @@ router.get("/new", (req, res) => {});
  *         schema:
  *           type: integer
  *           default: 25
+ *       - in: query
+ *         name: flairId
+ *         description: Flair id to get all posts with that flair (optional)
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         content:
@@ -408,6 +423,11 @@ router.get("/top", (req, res) => {});
  *         schema:
  *           type: integer
  *           default: 25
+ *       - in: query
+ *         name: flairId
+ *         description: Flair id to get all posts with that flair (optional)
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         content:
