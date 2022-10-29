@@ -576,4 +576,46 @@ router.post("/pin_post", (req, res, next) => {});
  */
 router.get("/pinned_posts", (req, res, next) => {});
 
+/**
+ * @swagger
+ * /edit_post_flair:
+ *  put:
+ *      summary: Change the flair on a post
+ *      tags: [Posts]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *              type: object
+ *              properties:
+ *                  id:
+ *                      type: string
+ *                      description: id of the post being edited
+ *                  flairId:
+ *                      type: string
+ *                      description: id of the new flair selected
+ *      responses:
+ *          200:
+ *              description: Post flair edited successfully
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why this happened.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: Type of error
+ *          401:
+ *              description: Unauthorized to edit this post
+ *          404:
+ *              description: Post not found
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+router.put("/edit_post_flair", (req, res, next) => {});
+
 export default router;

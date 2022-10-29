@@ -1236,7 +1236,25 @@ moderationRouter.post("/r/:subreddit/about/rulesOrder", (req, res, next) => {});
  *                              Post_Flairs:
  *                                type: array
  *                                items:
- *                                    $ref: '#/components/schemas/Flair'
+ *                                    type: object
+ *                                    properties:
+ *                                       id:
+ *                                           type: string
+ *                                           description: id of the flair
+ *                                       flair_name:
+ *                                           type: string
+ *                                           description: Name of the flair
+ *                                       order:
+ *                                           type: number
+ *                                           description: Order of the flair among the rest
+ *                                       background_color:
+ *                                           type: string
+ *                                           description: Background color of the flair
+ *                                       text_color:
+ *                                           type: string
+ *                                           description: Color of the flair name
+ *                                       settings:
+ *                                           $ref: '#/components/schemas/FlairSettings'
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
