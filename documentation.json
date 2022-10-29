@@ -38,7 +38,10 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": ["fullPost", "summaryPost"],
+                    "enum": [
+                      "fullPost",
+                      "summaryPost"
+                    ],
                     "description": "The type of the show [full post with its comments (your post), summary of the post with its comments]"
                   },
                   "data": {
@@ -58,7 +61,12 @@
                       "type": {
                         "type": "string",
                         "description": "Type of content of the post",
-                        "enum": ["text", "video", "image", "link"]
+                        "enum": [
+                          "text",
+                          "video",
+                          "image",
+                          "link"
+                        ]
                       },
                       "content": {
                         "type": "string",
@@ -117,7 +125,11 @@
                           },
                           "vote": {
                             "type": "integer",
-                            "enum": [1, 0, -1],
+                            "enum": [
+                              1,
+                              0,
+                              -1
+                            ],
                             "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
                           }
                         }
@@ -176,13 +188,20 @@
     "/signup": {
       "post": {
         "summary": "Create a new account to the user",
-        "tags": ["Sign Up"],
+        "tags": [
+          "Sign Up"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["username", "email", "password", "ReCAPTCHAs"],
+                "required": [
+                  "username",
+                  "email",
+                  "password",
+                  "ReCAPTCHAs"
+                ],
                 "properties": {
                   "email": {
                     "type": "string",
@@ -241,7 +260,9 @@
     "/signup/{type}": {
       "post": {
         "summary": "Sign up with google or facebook",
-        "tags": ["Sign Up"],
+        "tags": [
+          "Sign Up"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -250,7 +271,10 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["google", "facebook"]
+              "enum": [
+                "google",
+                "facebook"
+              ]
             }
           }
         ],
@@ -259,7 +283,9 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["accessToken"],
+                "required": [
+                  "accessToken"
+                ],
                 "properties": {
                   "accessToken": {
                     "type": "string",
@@ -306,7 +332,9 @@
     "/username_available": {
       "get": {
         "summary": "Check if the username is used before",
-        "tags": ["Sign Up"],
+        "tags": [
+          "Sign Up"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -349,7 +377,9 @@
     "/email_available": {
       "get": {
         "summary": "Check if the email is used before",
-        "tags": ["Sign Up"],
+        "tags": [
+          "Sign Up"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -392,7 +422,9 @@
     "/verify_email/{id}/{token}": {
       "post": {
         "summary": "Verify the email",
-        "tags": ["Sign Up"],
+        "tags": [
+          "Sign Up"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -452,7 +484,9 @@
     "/random_username": {
       "get": {
         "summary": "Get an available random username used to create a new account",
-        "tags": ["Sign Up"],
+        "tags": [
+          "Sign Up"
+        ],
         "responses": {
           "200": {
             "description": "The email is available",
@@ -478,13 +512,18 @@
     "/login": {
       "post": {
         "summary": "Log in to the website",
-        "tags": ["Login"],
+        "tags": [
+          "Login"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["username", "password"],
+                "required": [
+                  "username",
+                  "password"
+                ],
                 "properties": {
                   "username": {
                     "type": "string",
@@ -535,7 +574,9 @@
     "/login/{type}": {
       "post": {
         "summary": "Login with google or facebook",
-        "tags": ["Login"],
+        "tags": [
+          "Login"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -544,7 +585,10 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["google", "facebook"]
+              "enum": [
+                "google",
+                "facebook"
+              ]
             }
           }
         ],
@@ -553,7 +597,9 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["accessToken"],
+                "required": [
+                  "accessToken"
+                ],
                 "properties": {
                   "accessToken": {
                     "type": "string",
@@ -600,18 +646,26 @@
     "/login/forget": {
       "post": {
         "summary": "Forget username or password",
-        "tags": ["Login"],
+        "tags": [
+          "Login"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["type", "email"],
+                "required": [
+                  "type",
+                  "email"
+                ],
                 "properties": {
                   "type": {
                     "type": "string",
                     "description": "Forget username or password",
-                    "enum": ["username", "password"]
+                    "enum": [
+                      "username",
+                      "password"
+                    ]
                   },
                   "username": {
                     "type": "string",
@@ -654,7 +708,9 @@
     "/reset_password/{id}/{token}": {
       "post": {
         "summary": "Reset the password",
-        "tags": ["Login"],
+        "tags": [
+          "Login"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -680,7 +736,10 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["newPassword", "verifyPassword"],
+                "required": [
+                  "newPassword",
+                  "verifyPassword"
+                ],
                 "properties": {
                   "newPassword": {
                     "type": "string",
@@ -734,7 +793,9 @@
     "/saved_categories": {
       "get": {
         "summary": "Get a list of categories in which things are currently saved",
-        "tags": ["Categories"],
+        "tags": [
+          "Categories"
+        ],
         "responses": {
           "200": {
             "description": "Saved categories returned successfully",
@@ -789,7 +850,9 @@
     "/comment": {
       "post": {
         "summary": "Submit a new comment or reply to a message",
-        "tags": ["Comments"],
+        "tags": [
+          "Comments"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -833,10 +896,12 @@
         ]
       }
     },
-    "api/subreddits/leaderboard": {
+    "/api/subreddits/leaderboard": {
       "get": {
         "summary": "Return a listing of all the Communities",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -930,10 +995,12 @@
         ]
       }
     },
-    "api/subreddits/leaderboard/{categoryName}": {
+    "/api/subreddits/leaderboard/{categoryName}": {
       "get": {
         "summary": "Return a listing of communities of a specific category",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1042,10 +1109,12 @@
         ]
       }
     },
-    "api/custom_random_category": {
+    "/api/custom_random_category": {
       "get": {
         "summary": "Return a listing of random communities with random category",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -1139,10 +1208,12 @@
         ]
       }
     },
-    "api/trending_communities": {
+    "/api/trending_communities": {
       "get": {
         "summary": "Return a listing of the mostly viewed communities",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -1240,10 +1311,12 @@
         ]
       }
     },
-    "api/random_category": {
+    "/api/random_category": {
       "get": {
         "summary": "Return two random categories to display",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "responses": {
           "200": {
             "description": "Returned successfully",
@@ -1346,10 +1419,12 @@
         ]
       }
     },
-    "api/r/{subredditName}": {
+    "/api/r/{subredditName}": {
       "get": {
         "summary": "Return all the details of the subreddit",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1397,10 +1472,12 @@
         ]
       }
     },
-    "api/r/{subredditName}/about/moderators": {
+    "/api/r/{subredditName}/about/moderators": {
       "get": {
         "summary": "Return a listing of moderators in hat specified subreddit",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1481,10 +1558,12 @@
         ]
       }
     },
-    "api/r/{subredditName}/wiki/rules": {
+    "/api/r/{subredditName}/wiki/rules": {
       "get": {
         "summary": "Return all the rules of the subbreddit in details",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1536,10 +1615,12 @@
         ]
       }
     },
-    "api/r/{subredditName}/wiki/bans": {
+    "/api/r/{subredditName}/wiki/bans": {
       "get": {
         "summary": "Return all the ban questions of the subbreddit in details",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1591,10 +1672,12 @@
         ]
       }
     },
-    "api/r/{subredditName}/suggested_topics": {
+    "/api/r/{subredditName}/suggested_topics": {
       "get": {
         "summary": "Return all the suggested topics",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1644,10 +1727,12 @@
         ]
       }
     },
-    "api/r/{subredditName}/add_main_topic": {
+    "/api/r/{subredditName}/add_main_topic": {
       "post": {
         "summary": "add the main topic to the community",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1690,10 +1775,12 @@
         ]
       }
     },
-    "api/r/{subredditName}/add_subtopic": {
+    "/api/r/{subredditName}/add_subtopic": {
       "post": {
         "summary": "add subtopics of the community",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1737,10 +1824,12 @@
         ]
       }
     },
-    "api/r/{subredditName}/add_description": {
+    "/api/r/{subredditName}/add_description": {
       "post": {
         "summary": "add description of the community",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1784,10 +1873,12 @@
         ]
       }
     },
-    "api/r/{subredditName}/toggle_favorite": {
+    "/api/r/{subredditName}/toggle_favorite": {
       "patch": {
         "summary": "toggle favorite property of the community",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1816,10 +1907,12 @@
         ]
       }
     },
-    "api/r/{subredditName}/toggle_community_theme": {
+    "/api/r/{subredditName}/toggle_community_theme": {
       "patch": {
         "summary": "toggle community theme option of the community",
-        "tags": ["Communities"],
+        "tags": [
+          "Communities"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1851,7 +1944,9 @@
     "/best": {
       "get": {
         "summary": "Return the best posts based on [time, votes, comments, number of shares]",
-        "tags": ["Listing"],
+        "tags": [
+          "Listing"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -1898,7 +1993,9 @@
     "/hot": {
       "get": {
         "summary": "Return the hot posts based on [time, votes, comments]",
-        "tags": ["Listing"],
+        "tags": [
+          "Listing"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -1945,7 +2042,9 @@
     "/r/{subreddit}/hot": {
       "get": {
         "summary": "Return the hot posts in a specific subreddit based on [time, votes, comments]",
-        "tags": ["Listing"],
+        "tags": [
+          "Listing"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -2004,7 +2103,9 @@
     "/new": {
       "get": {
         "summary": "Return the new posts",
-        "tags": ["Listing"],
+        "tags": [
+          "Listing"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -2051,7 +2152,9 @@
     "/r/{subreddit}/new": {
       "get": {
         "summary": "Return the new posts in a specific subreddit",
-        "tags": ["Listing"],
+        "tags": [
+          "Listing"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -2110,7 +2213,9 @@
     "/random": {
       "get": {
         "summary": "Return the id of a random post. [can be used to get the post and the comment tree later]",
-        "tags": ["Listing"],
+        "tags": [
+          "Listing"
+        ],
         "responses": {
           "200": {
             "content": {
@@ -2135,7 +2240,9 @@
     "/r/{subreddit}/random": {
       "get": {
         "summary": "Return the id of a random post from a specific subreddit. [can be used to get the post and the comment tree later]",
-        "tags": ["Listing"],
+        "tags": [
+          "Listing"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -2174,7 +2281,9 @@
     "/top": {
       "get": {
         "summary": "Return the top posts based on [votes]",
-        "tags": ["Listing"],
+        "tags": [
+          "Listing"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -2183,7 +2292,14 @@
             "schema": {
               "type": "string",
               "default": "all",
-              "enum": ["hour", "day", "week", "month", "year", "all"]
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ]
             }
           },
           {
@@ -2231,7 +2347,9 @@
     "/r/{subreddit}/top": {
       "get": {
         "summary": "Return the top posts in a specific subreddit based on [votes]",
-        "tags": ["Listing"],
+        "tags": [
+          "Listing"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -2249,7 +2367,14 @@
             "schema": {
               "type": "string",
               "default": "all",
-              "enum": ["hour", "day", "week", "month", "year", "all"]
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ]
             }
           },
           {
@@ -2300,7 +2425,9 @@
     "/r/{subreddit}/comments/{post}": {
       "get": {
         "summary": "Get the comment tree for a given post",
-        "tags": ["Listing"],
+        "tags": [
+          "Listing"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -2352,7 +2479,12 @@
             "schema": {
               "type": "string",
               "default": "best",
-              "enum": ["best", "top", "new", "old"]
+              "enum": [
+                "best",
+                "top",
+                "new",
+                "old"
+              ]
             }
           },
           {
@@ -2406,7 +2538,9 @@
     "/r/{subreddit}/comments/{post}/{comment_id}": {
       "get": {
         "summary": "Return comment tree of a specific comment",
-        "tags": ["Listing"],
+        "tags": [
+          "Listing"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -2442,7 +2576,12 @@
             "schema": {
               "type": "string",
               "default": "best",
-              "enum": ["best", "top", "new", "old"]
+              "enum": [
+                "best",
+                "top",
+                "new",
+                "old"
+              ]
             }
           },
           {
@@ -2504,7 +2643,11 @@
                     },
                     "vote": {
                       "type": "integer",
-                      "enum": [1, 0, -1],
+                      "enum": [
+                        1,
+                        0,
+                        -1
+                      ],
                       "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
                     },
                     "parent": {
@@ -2551,7 +2694,9 @@
     "/r/{subreddit}/comments/{post}/{comment_id}/parent_comments": {
       "get": {
         "summary": "Return the parents of a specific comment",
-        "tags": ["Listing"],
+        "tags": [
+          "Listing"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -2587,7 +2732,12 @@
             "schema": {
               "type": "string",
               "default": "best",
-              "enum": ["best", "top", "new", "old"]
+              "enum": [
+                "best",
+                "top",
+                "new",
+                "old"
+              ]
             }
           },
           {
@@ -2654,7 +2804,11 @@
                           },
                           "vote": {
                             "type": "integer",
-                            "enum": [1, 0, -1],
+                            "enum": [
+                              1,
+                              0,
+                              -1
+                            ],
                             "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
                           },
                           "parent": {
@@ -2694,10 +2848,12 @@
         }
       }
     },
-    "api/message/compose": {
+    "/api/message/compose": {
       "post": {
         "summary": "Send a message to a specific user with its subject",
-        "tags": ["Messages"],
+        "tags": [
+          "Messages"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -2754,10 +2910,12 @@
         ]
       }
     },
-    "api/message/sent": {
+    "/api/message/sent": {
       "get": {
         "summary": "Return a listing of messages that you sent sorted by time of sending the msg",
-        "tags": ["Messages"],
+        "tags": [
+          "Messages"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -2847,10 +3005,12 @@
         ]
       }
     },
-    "api/message/inbox": {
+    "/api/message/inbox": {
       "get": {
         "summary": "Return a listing of all the messages,selfreplies and mentions that you received sorted by time of sending them",
-        "tags": ["Messages"],
+        "tags": [
+          "Messages"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -2965,10 +3125,12 @@
         ]
       }
     },
-    "api/message/unread": {
+    "/api/message/unread": {
       "get": {
         "summary": "Return a listing of unread messages that you received sorted by time of sending the msg",
-        "tags": ["Messages"],
+        "tags": [
+          "Messages"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -3062,10 +3224,12 @@
         ]
       }
     },
-    "api/message/selfreply": {
+    "/api/message/selfreply": {
       "get": {
         "summary": "Return a listing of post replies that you made sorted by time of adding the reply",
-        "tags": ["Messages"],
+        "tags": [
+          "Messages"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -3175,10 +3339,12 @@
         ]
       }
     },
-    "api/message/mentions": {
+    "/api/message/mentions": {
       "get": {
         "summary": "Return a listing of mentions that you made sorted by time of adding the mention",
-        "tags": ["Messages"],
+        "tags": [
+          "Messages"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -3288,10 +3454,12 @@
         ]
       }
     },
-    "api/message/messages": {
+    "/api/message/messages": {
       "get": {
         "summary": "Return a listing of all messages that was sent or received sorted by the time",
-        "tags": ["Messages"],
+        "tags": [
+          "Messages"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -3394,10 +3562,12 @@
         ]
       }
     },
-    "api/unread_a_message": {
+    "/api/unread_a_message": {
       "patch": {
         "summary": "Unread a Message",
-        "tags": ["Messages"],
+        "tags": [
+          "Messages"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -3433,10 +3603,12 @@
         ]
       }
     },
-    "api/read_all_msgs": {
+    "/api/read_all_msgs": {
       "patch": {
         "summary": "mark all messages as read",
-        "tags": ["Messages"],
+        "tags": [
+          "Messages"
+        ],
         "responses": {
           "200": {
             "description": "All Message has been read successfully"
@@ -3458,7 +3630,9 @@
     "/r/{subreddit}/about/spam": {
       "get": {
         "summary": "Return a listing of required items relevant to moderators with things that have been marked as spam in that subreddit. (This endpoint is a listing)",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -3504,7 +3678,10 @@
             "description": "type of things to be returned",
             "schema": {
               "type": "string",
-              "enum": ["posts", "comments"]
+              "enum": [
+                "posts",
+                "comments"
+              ]
             },
             "required": true
           },
@@ -3514,7 +3691,10 @@
             "description": "method of sorting the returned things",
             "schema": {
               "type": "string",
-              "enum": ["newestfirst", "oldestfirst"],
+              "enum": [
+                "newestfirst",
+                "oldestfirst"
+              ],
               "default": "newestfirst"
             },
             "required": false
@@ -3575,7 +3755,9 @@
     "/r/{subreddit}/about/edited": {
       "get": {
         "summary": "Return a listing of required items relevant to moderators with things that have been edited recently in that subreddit. (This endpoint is a listing)",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -3621,7 +3803,10 @@
             "description": "type of things to be returned",
             "schema": {
               "type": "string",
-              "enum": ["posts", "comments"]
+              "enum": [
+                "posts",
+                "comments"
+              ]
             },
             "required": true
           },
@@ -3631,7 +3816,10 @@
             "description": "method of sorting the returned things",
             "schema": {
               "type": "string",
-              "enum": ["newestfirst", "oldestfirst"],
+              "enum": [
+                "newestfirst",
+                "oldestfirst"
+              ],
               "default": "newestfirst"
             },
             "required": false
@@ -3692,7 +3880,9 @@
     "/r/{subreddit}/about/unmoderated": {
       "get": {
         "summary": "Return a listing of required items relevant to moderators with things that have yet to be approved/removed by a mod in that subreddit. (This endpoint is a listing)",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -3738,7 +3928,10 @@
             "description": "method of sorting the returned things",
             "schema": {
               "type": "string",
-              "enum": ["newestfirst", "oldestfirst"],
+              "enum": [
+                "newestfirst",
+                "oldestfirst"
+              ],
               "default": "newestfirst"
             },
             "required": false
@@ -3799,7 +3992,20 @@
     "/r/{subreddit}/api/accept_moderator_invite": {
       "post": {
         "summary": "Accept an invite to moderate the specified subreddit. The authenticated user must have been invited to moderate the subreddit by one of its current moderators or the admin.",
-        "tags": ["General moderation"],
+        "tags": [
+          "General moderation"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "Accepted"
@@ -3836,13 +4042,17 @@
     "/api/leavemoderator": {
       "post": {
         "summary": "Abdicate moderator status in a subreddit.",
-        "tags": ["General moderation"],
+        "tags": [
+          "General moderation"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["subreddit"],
+                "required": [
+                  "subreddit"
+                ],
                 "properties": {
                   "subreddit": {
                     "type": "string",
@@ -3892,13 +4102,18 @@
     "/api/approve": {
       "post": {
         "summary": "Approve a post or comment. for spam reports, approving means that this post / comment is not a spam.",
-        "tags": ["Posts and comments moderation"],
+        "tags": [
+          "Posts and comments moderation"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["id", "type"],
+                "required": [
+                  "id",
+                  "type"
+                ],
                 "properties": {
                   "id": {
                     "type": "string",
@@ -3952,13 +4167,18 @@
     "/api/remove": {
       "post": {
         "summary": "Remove  a post or comment. for spam reports, removing means that this post / comment is a spam so it is removed.",
-        "tags": ["Posts and comments moderation"],
+        "tags": [
+          "Posts and comments moderation"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["id", "type"],
+                "required": [
+                  "id",
+                  "type"
+                ],
                 "properties": {
                   "id": {
                     "type": "string",
@@ -4012,13 +4232,18 @@
     "/api/lock": {
       "post": {
         "summary": "Lock a post or comment. Prevents a post or new child comments from receiving new comments.",
-        "tags": ["Posts and comments moderation"],
+        "tags": [
+          "Posts and comments moderation"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["id", "type"],
+                "required": [
+                  "id",
+                  "type"
+                ],
                 "properties": {
                   "id": {
                     "type": "string",
@@ -4072,13 +4297,18 @@
     "/api/unlock": {
       "post": {
         "summary": "Unlock a post or comment. Allow a post or comment to receive new comments.",
-        "tags": ["Posts and comments moderation"],
+        "tags": [
+          "Posts and comments moderation"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["id", "type"],
+                "required": [
+                  "id",
+                  "type"
+                ],
                 "properties": {
                   "id": {
                     "type": "string",
@@ -4132,13 +4362,19 @@
     "/api/ban": {
       "post": {
         "summary": "Ban a user from a subreddit. Banned users can't post or comment on that subreddit.",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["userId", "subreddit", "reasonForBan"],
+                "required": [
+                  "userId",
+                  "subreddit",
+                  "reasonForBan"
+                ],
                 "properties": {
                   "userId": {
                     "type": "string",
@@ -4214,13 +4450,18 @@
     "/api/unban": {
       "post": {
         "summary": "Remove a ban from a user.",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["userId", "subreddit"],
+                "required": [
+                  "userId",
+                  "subreddit"
+                ],
                 "properties": {
                   "userId": {
                     "type": "string",
@@ -4274,7 +4515,9 @@
     "/r/{subreddit}/about/banned": {
       "get": {
         "summary": "Return a listing relevant to moderators in that subreddit with banned users. (This endpoint is a listing)",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -4370,7 +4613,20 @@
     "/r/{subreddit}/about/edit": {
       "get": {
         "summary": "Get the current settings of a subreddit.",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "The current settings of the subreddit.",
@@ -4419,7 +4675,11 @@
                     "Type": {
                       "type": "string",
                       "description": "The type of the community.",
-                      "enum": ["Public", "Restricted", "Private"]
+                      "enum": [
+                        "Public",
+                        "Restricted",
+                        "Private"
+                      ]
                     },
                     "NSFW": {
                       "type": "boolean",
@@ -4436,7 +4696,11 @@
                     "approvedUsersHaveTheAbilityTo": {
                       "type": "string",
                       "description": "Approved users have the ability to (if the type is restricted only)",
-                      "enum": ["Post only", "Comment only", "Post & Comment"]
+                      "enum": [
+                        "Post only",
+                        "Comment only",
+                        "Post & Comment"
+                      ]
                     }
                   }
                 }
@@ -4461,7 +4725,20 @@
       },
       "put": {
         "summary": "ٍSet the settings of a subreddit.",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -4522,7 +4799,11 @@
                   "Type": {
                     "type": "string",
                     "description": "The type of the community.",
-                    "enum": ["Public", "Restricted", "Private"]
+                    "enum": [
+                      "Public",
+                      "Restricted",
+                      "Private"
+                    ]
                   },
                   "NSFW": {
                     "type": "boolean",
@@ -4539,7 +4820,11 @@
                   "approvedUsersHaveTheAbilityTo": {
                     "type": "string",
                     "description": "Approved users have the ability to (if the type is restricted only)",
-                    "enum": ["Post only", "Comment only", "Post & Comment"]
+                    "enum": [
+                      "Post only",
+                      "Comment only",
+                      "Post & Comment"
+                    ]
                   }
                 }
               }
@@ -4585,7 +4870,20 @@
     "/r/{subreddit}/suggestedTopics": {
       "get": {
         "summary": "Get the suggested topics for a subreddit.",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "The suggested topics for the subreddit.",
@@ -4632,13 +4930,29 @@
     "/r/{subreddit}/about/rules": {
       "post": {
         "summary": "Add a rule to subreddit.",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["ruleName", "appliesTo"],
+                "required": [
+                  "ruleName",
+                  "appliesTo"
+                ],
                 "properties": {
                   "ruleName": {
                     "type": "string",
@@ -4703,7 +5017,20 @@
       },
       "get": {
         "summary": "Get the rules for a subreddit.",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "The rules for the subreddit.",
@@ -4780,13 +5107,30 @@
     "/r/{subreddit}/about/rules/{ruleId}": {
       "put": {
         "summary": "Edit a rule at subreddit.",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["ruleName", "appliesTo", "ruleOrder"],
+                "required": [
+                  "ruleName",
+                  "appliesTo",
+                  "ruleOrder"
+                ],
                 "properties": {
                   "ruleName": {
                     "type": "string",
@@ -4857,13 +5201,28 @@
     "/r/{subreddit}/about/rulesOrder": {
       "post": {
         "summary": "Edit rules order of the subreddit.",
-        "tags": ["Subreddit moderation"],
+        "tags": [
+          "Subreddit moderation"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["rulesOrder"],
+                "required": [
+                  "rulesOrder"
+                ],
                 "properties": {
                   "rulesOrder": {
                     "type": "array",
@@ -4926,7 +5285,9 @@
     "/r/{subreddit}/about/post_flairs": {
       "get": {
         "summary": "Returns all post flairs of a subreddit",
-        "tags": ["Posts and comments moderation"],
+        "tags": [
+          "Posts and comments moderation"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -4990,7 +5351,9 @@
       },
       "post": {
         "summary": "Add a new post flair to a given subreddit",
-        "tags": ["Posts and comments moderation"],
+        "tags": [
+          "Posts and comments moderation"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -5068,7 +5431,9 @@
     "/r/{subreddit}/about/post_flairs/{flairId}": {
       "get": {
         "summary": "Returns details of a specific post flair",
-        "tags": ["Posts and comments moderation"],
+        "tags": [
+          "Posts and comments moderation"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -5154,7 +5519,9 @@
       },
       "put": {
         "summary": "Edit an existing post flair in a given subreddit",
-        "tags": ["Posts and comments moderation"],
+        "tags": [
+          "Posts and comments moderation"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -5239,7 +5606,9 @@
       },
       "delete": {
         "summary": "Delete an existing post flair in a given subreddit",
-        "tags": ["Posts and comments moderation"],
+        "tags": [
+          "Posts and comments moderation"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -5299,7 +5668,9 @@
     "/r/{subreddit}/about/postFlairsOrder": {
       "post": {
         "summary": "Edit the order of all post flairs in a given subreddit",
-        "tags": ["Posts and comments moderation"],
+        "tags": [
+          "Posts and comments moderation"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -5378,7 +5749,9 @@
     "/r/{subreddit}/about/post_flairs_settings": {
       "get": {
         "summary": "Get settings for post flairs in a given subreddit",
-        "tags": ["Posts and comments moderation"],
+        "tags": [
+          "Posts and comments moderation"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -5444,7 +5817,9 @@
       },
       "post": {
         "summary": "Change the settings for post flairs in a community",
-        "tags": ["Posts and comments moderation"],
+        "tags": [
+          "Posts and comments moderation"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -5512,10 +5887,12 @@
         ]
       }
     },
-    "api/notifications": {
+    "/api/notifications": {
       "get": {
         "summary": "get all the notifications sent to the user",
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -5617,10 +5994,12 @@
         ]
       }
     },
-    "api/send_notifications": {
+    "/api/send_notifications": {
       "get": {
         "summary": "send notification to all the users",
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "parameters": null,
         "responses": {
           "200": {
@@ -5670,10 +6049,12 @@
         ]
       }
     },
-    "api/send_notifications_to_device": {
+    "/api/send_notifications_to_device": {
       "post": {
         "summary": "send notification to specific user",
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -5741,10 +6122,12 @@
         ]
       }
     },
-    "api/mark_as_read": {
+    "/api/mark_as_read": {
       "patch": {
         "summary": "mark all the notifications as read",
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "responses": {
           "200": {
             "description": "Notification is hidden successfully"
@@ -5763,10 +6146,12 @@
         ]
       }
     },
-    "api/hide_noification": {
+    "/api/hide_noification": {
       "patch": {
         "summary": "mark a specific notification as hidden",
-        "tags": ["Notifications"],
+        "tags": [
+          "Notifications"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -5801,10 +6186,12 @@
         ]
       }
     },
-    "api/live/thread": {
+    "/api/live/thread": {
       "get": {
         "summary": "Get a list of updates posted in this thread.",
-        "tags": ["Threads"],
+        "tags": [
+          "Threads"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -5864,7 +6251,9 @@
       },
       "patch": {
         "summary": "editing a thread",
-        "tags": ["Threads"],
+        "tags": [
+          "Threads"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -5900,7 +6289,9 @@
       },
       "put": {
         "summary": "updating a thread",
-        "tags": ["Threads"],
+        "tags": [
+          "Threads"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -5936,7 +6327,9 @@
       },
       "delete": {
         "summary": "closes a thread",
-        "tags": ["Threads"],
+        "tags": [
+          "Threads"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -5971,10 +6364,12 @@
         ]
       }
     },
-    "api/live/by_id/names": {
+    "/api/live/by_id/names": {
       "get": {
         "summary": "Get a list all the live events",
-        "tags": ["Threads"],
+        "tags": [
+          "Threads"
+        ],
         "responses": {
           "200": {
             "description": "Returned successfully",
@@ -6006,10 +6401,12 @@
         ]
       }
     },
-    "api/live/create": {
+    "/api/live/create": {
       "post": {
         "summary": "Create a new live thread. Once created, the initial settings can be modified with /api/live/thread/edit and new updates can be posted with /api/live/thread/update.",
-        "tags": ["Threads"],
+        "tags": [
+          "Threads"
+        ],
         "responses": {
           "200": {
             "description": "Returned successfully",
@@ -6041,10 +6438,12 @@
         ]
       }
     },
-    "api/live/thread/about": {
+    "/api/live/thread/about": {
       "get": {
         "summary": "get a some basic info about the live thread",
-        "tags": ["Threads"],
+        "tags": [
+          "Threads"
+        ],
         "responses": {
           "200": {
             "description": "Returned successfully",
@@ -6079,7 +6478,9 @@
     "/del": {
       "delete": {
         "summary": "Delete a Post, Comment or Message",
-        "tags": ["Post-comment-message actions"],
+        "tags": [
+          "Post-comment-message actions"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6093,7 +6494,11 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": ["post", "comment", "message"]
+                    "enum": [
+                      "post",
+                      "comment",
+                      "message"
+                    ]
                   }
                 }
               }
@@ -6139,7 +6544,9 @@
     "/spam": {
       "post": {
         "summary": "Mark a post, comment or message as spam",
-        "tags": ["Post-comment-message actions"],
+        "tags": [
+          "Post-comment-message actions"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6153,7 +6560,11 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": ["post", "comment", "message"]
+                    "enum": [
+                      "post",
+                      "comment",
+                      "message"
+                    ]
                   },
                   "reason": {
                     "type": "string",
@@ -6206,7 +6617,9 @@
     "/unmarkspam": {
       "post": {
         "summary": "Unmark a post as spam",
-        "tags": ["Post-comment-message actions"],
+        "tags": [
+          "Post-comment-message actions"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6220,7 +6633,11 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": ["post", "comment", "message"]
+                    "enum": [
+                      "post",
+                      "comment",
+                      "message"
+                    ]
                   }
                 }
               }
@@ -6269,7 +6686,9 @@
     "/editusertext": {
       "put": {
         "summary": "Edit the body text of a comment or post",
-        "tags": ["Post-comment actions"],
+        "tags": [
+          "Post-comment actions"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6287,7 +6706,10 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": ["post", "comment"]
+                    "enum": [
+                      "post",
+                      "comment"
+                    ]
                   }
                 }
               }
@@ -6333,7 +6755,9 @@
     "/save": {
       "post": {
         "summary": "Save a post or comment",
-        "tags": ["Post-comment actions"],
+        "tags": [
+          "Post-comment actions"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6347,7 +6771,10 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": ["post", "comment"]
+                    "enum": [
+                      "post",
+                      "comment"
+                    ]
                   },
                   "category": {
                     "type": "string",
@@ -6400,7 +6827,9 @@
     "/sendreplies": {
       "post": {
         "summary": "Enable or disable inbox replies for a Post or comment",
-        "tags": ["Post-comment actions"],
+        "tags": [
+          "Post-comment actions"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6414,7 +6843,10 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": ["post", "comment"]
+                    "enum": [
+                      "post",
+                      "comment"
+                    ]
                   },
                   "state": {
                     "type": "boolean",
@@ -6464,7 +6896,9 @@
     "/unsave": {
       "post": {
         "summary": "Unsave a Post or comment (This removes the thing from the user's saved listings)",
-        "tags": ["Post-comment actions"],
+        "tags": [
+          "Post-comment actions"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6478,7 +6912,10 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": ["post", "comment"]
+                    "enum": [
+                      "post",
+                      "comment"
+                    ]
                   }
                 }
               }
@@ -6527,7 +6964,9 @@
     "/vote": {
       "post": {
         "summary": "Cast a vote on a thing",
-        "tags": ["Post-comment actions"],
+        "tags": [
+          "Post-comment actions"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6541,7 +6980,10 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": ["post", "comment"]
+                    "enum": [
+                      "post",
+                      "comment"
+                    ]
                   },
                   "dir": {
                     "type": "number",
@@ -6591,7 +7033,9 @@
     "/follow_post": {
       "post": {
         "summary": "Follow or unfollow a post.",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6651,7 +7095,9 @@
     "/hide": {
       "post": {
         "summary": "Hide a post (This removes it from the user's default view of subreddit listings)",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6710,7 +7156,9 @@
     "/marknsfw": {
       "post": {
         "summary": "Mark a post NSFW (Not Safe For Work)",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6769,7 +7217,9 @@
     "/set_suggested_sort": {
       "post": {
         "summary": "Set suggested sort for a post",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6829,7 +7279,9 @@
     "/clear_suggested_sort": {
       "post": {
         "summary": "Reset the suggested sort for a post back to default",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6885,7 +7337,9 @@
     "/spoiler": {
       "post": {
         "summary": "Blur the content of the post and unblur when opening it",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6944,7 +7398,9 @@
     "/submit": {
       "post": {
         "summary": "Submit or share a post to a subreddit",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -6994,7 +7450,9 @@
     "/unhide": {
       "post": {
         "summary": "Unhide a post",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -7053,7 +7511,9 @@
     "/unmarknsfw": {
       "post": {
         "summary": "Remove the NSFW marking from a post",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -7112,7 +7572,9 @@
     "/unspoiler": {
       "post": {
         "summary": "Remove ability to blur the content of the post",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -7171,7 +7633,9 @@
     "/post_insights": {
       "get": {
         "summary": "Get the number of views on a post",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -7247,7 +7711,9 @@
     "/post_details": {
       "get": {
         "summary": "Get details about a specific post",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -7300,7 +7766,9 @@
     "/pin_post": {
       "post": {
         "summary": "Add a post to the user's collection of pinned posts",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -7359,7 +7827,9 @@
     "/pinned_posts": {
       "get": {
         "summary": "Returns all posts pinned by the user",
-        "tags": ["Posts"],
+        "tags": [
+          "Posts"
+        ],
         "responses": {
           "200": {
             "description": "Pinned posts returned successfully",
@@ -7414,7 +7884,9 @@
     "/search": {
       "get": {
         "summary": "Search posts page",
-        "tags": ["Search"],
+        "tags": [
+          "Search"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -7457,7 +7929,12 @@
             "schema": {
               "type": "string",
               "default": "post",
-              "enum": ["subreddit", "user", "comment", "post"]
+              "enum": [
+                "subreddit",
+                "user",
+                "comment",
+                "post"
+              ]
             }
           },
           {
@@ -7467,7 +7944,13 @@
             "schema": {
               "type": "string",
               "default": "new",
-              "enum": ["hot", "top", "new", "best", "most comments"]
+              "enum": [
+                "hot",
+                "top",
+                "new",
+                "best",
+                "most comments"
+              ]
             }
           },
           {
@@ -7493,7 +7976,14 @@
             "schema": {
               "type": "string",
               "default": "all",
-              "enum": ["hour", "day", "week", "month", "year", "all"]
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ]
             }
           }
         ],
@@ -7551,7 +8041,9 @@
     "/r/{subreddit}/search": {
       "get": {
         "summary": "Search posts page",
-        "tags": ["Search"],
+        "tags": [
+          "Search"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -7603,7 +8095,12 @@
             "schema": {
               "type": "string",
               "default": "post",
-              "enum": ["subreddit", "user", "comment", "post"]
+              "enum": [
+                "subreddit",
+                "user",
+                "comment",
+                "post"
+              ]
             }
           },
           {
@@ -7613,7 +8110,13 @@
             "schema": {
               "type": "string",
               "default": "new",
-              "enum": ["hot", "top", "new", "best", "most comments"]
+              "enum": [
+                "hot",
+                "top",
+                "new",
+                "best",
+                "most comments"
+              ]
             }
           },
           {
@@ -7639,7 +8142,14 @@
             "schema": {
               "type": "string",
               "default": "all",
-              "enum": ["hour", "day", "week", "month", "year", "all"]
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ]
             }
           }
         ],
@@ -7697,13 +8207,20 @@
     "/create_subreddit": {
       "post": {
         "summary": "Create a new subreddit",
-        "tags": ["Subreddit"],
+        "tags": [
+          "Subreddit"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["subredditName", "type", "nsfw", "category"],
+                "required": [
+                  "subredditName",
+                  "type",
+                  "nsfw",
+                  "category"
+                ],
                 "properties": {
                   "subredditName": {
                     "type": "string",
@@ -7712,7 +8229,11 @@
                   "type": {
                     "type": "string",
                     "description": "Subreddit type",
-                    "enum": ["Public", "Restricted", "Private"]
+                    "enum": [
+                      "Public",
+                      "Restricted",
+                      "Private"
+                    ]
                   },
                   "nsfw": {
                     "type": "boolean",
@@ -7763,7 +8284,9 @@
     "/subreddit_name_available": {
       "get": {
         "summary": "Check if the username is used before",
-        "tags": ["Subreddit"],
+        "tags": [
+          "Subreddit"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -7806,13 +8329,18 @@
     "/block_user": {
       "post": {
         "summary": "Block a user",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["block", "username"],
+                "required": [
+                  "block",
+                  "username"
+                ],
                 "properties": {
                   "block": {
                     "type": "boolean",
@@ -7863,13 +8391,18 @@
     "/follow_user": {
       "post": {
         "summary": "Follow a user",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["follow", "username"],
+                "required": [
+                  "follow",
+                  "username"
+                ],
                 "properties": {
                   "follow": {
                     "type": "boolean",
@@ -7920,7 +8453,9 @@
     "/user/{username}/about": {
       "get": {
         "summary": "Return information about the user",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -8032,7 +8567,9 @@
     "/user/{username}/overview": {
       "get": {
         "summary": "Return a list of user's activity [posts, comments]",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -8050,7 +8587,11 @@
             "schema": {
               "type": "string",
               "default": "new",
-              "enum": ["new", "hot", "top"]
+              "enum": [
+                "new",
+                "hot",
+                "top"
+              ]
             }
           },
           {
@@ -8060,7 +8601,14 @@
             "schema": {
               "type": "string",
               "default": "all",
-              "enum": ["hour", "day", "week", "month", "year", "all"]
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ]
             }
           },
           {
@@ -8111,7 +8659,9 @@
     "/user/{username}/posts": {
       "get": {
         "summary": "Return a list of user's posts",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -8129,7 +8679,11 @@
             "schema": {
               "type": "string",
               "default": "new",
-              "enum": ["new", "hot", "top"]
+              "enum": [
+                "new",
+                "hot",
+                "top"
+              ]
             }
           },
           {
@@ -8139,7 +8693,14 @@
             "schema": {
               "type": "string",
               "default": "all",
-              "enum": ["hour", "day", "week", "month", "year", "all"]
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ]
             }
           },
           {
@@ -8190,7 +8751,9 @@
     "/user/{username}/history": {
       "get": {
         "summary": "Return a list of user's history (recent clicked posts)",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -8249,7 +8812,9 @@
     "/user/{username}/comments": {
       "get": {
         "summary": "Return a list of user's comments",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -8267,7 +8832,11 @@
             "schema": {
               "type": "string",
               "default": "new",
-              "enum": ["new", "hot", "top"]
+              "enum": [
+                "new",
+                "hot",
+                "top"
+              ]
             }
           },
           {
@@ -8277,7 +8846,14 @@
             "schema": {
               "type": "string",
               "default": "all",
-              "enum": ["hour", "day", "week", "month", "year", "all"]
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ]
             }
           },
           {
@@ -8348,7 +8924,12 @@
                               "type": {
                                 "type": "string",
                                 "description": "Type of content of the post",
-                                "enum": ["text", "video", "image", "link"]
+                                "enum": [
+                                  "text",
+                                  "video",
+                                  "image",
+                                  "link"
+                                ]
                               },
                               "content": {
                                 "type": "string",
@@ -8443,7 +9024,9 @@
     "/user/{username}/upvoted": {
       "get": {
         "summary": "Return a list of user's upvoted posts",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -8461,7 +9044,11 @@
             "schema": {
               "type": "string",
               "default": "new",
-              "enum": ["new", "hot", "top"]
+              "enum": [
+                "new",
+                "hot",
+                "top"
+              ]
             }
           },
           {
@@ -8471,7 +9058,14 @@
             "schema": {
               "type": "string",
               "default": "all",
-              "enum": ["hour", "day", "week", "month", "year", "all"]
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ]
             }
           },
           {
@@ -8527,7 +9121,9 @@
     "/user/{username}/downvoted": {
       "get": {
         "summary": "Return a list of user's downvoted posts",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -8545,7 +9141,11 @@
             "schema": {
               "type": "string",
               "default": "new",
-              "enum": ["new", "hot", "top"]
+              "enum": [
+                "new",
+                "hot",
+                "top"
+              ]
             }
           },
           {
@@ -8555,7 +9155,14 @@
             "schema": {
               "type": "string",
               "default": "all",
-              "enum": ["hour", "day", "week", "month", "year", "all"]
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ]
             }
           },
           {
@@ -8611,7 +9218,9 @@
     "/user/{username}/saved": {
       "get": {
         "summary": "Return a list of user's saved [posts, comments]",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -8675,7 +9284,9 @@
     "/user/{username}/hidden": {
       "get": {
         "summary": "Return a list of user's hidden posts",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -8739,7 +9350,9 @@
     "/account_settings": {
       "get": {
         "summary": "Return the preference settings of the logged in user",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "responses": {
           "200": {
             "content": {
@@ -8838,7 +9451,9 @@
       },
       "patch": {
         "summary": "Change the settings of the logged in user [can send any of the properties]",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -8915,7 +9530,9 @@
     "/connect/{type}": {
       "post": {
         "summary": "Connect the account with google or facebook for fast login",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -8924,7 +9541,10 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["google", "facebook"]
+              "enum": [
+                "google",
+                "facebook"
+              ]
             }
           }
         ],
@@ -8933,7 +9553,9 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["accessToken"],
+                "required": [
+                  "accessToken"
+                ],
                 "properties": {
                   "accessToken": {
                     "type": "string",
@@ -8980,13 +9602,18 @@
     "/change_email": {
       "put": {
         "summary": "Change the email of the logged in user",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["currentPassword", "newEmail"],
+                "required": [
+                  "currentPassword",
+                  "newEmail"
+                ],
                 "properties": {
                   "currentPassword": {
                     "type": "string",
@@ -9037,7 +9664,9 @@
     "/change_password": {
       "put": {
         "summary": "Change the password of the logged in user",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -9102,13 +9731,18 @@
     "/delete_account": {
       "delete": {
         "summary": "Delete the account",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["username", "password"],
+                "required": [
+                  "username",
+                  "password"
+                ],
                 "properties": {
                   "username": {
                     "type": "string",
@@ -9144,13 +9778,19 @@
     "/social_link": {
       "post": {
         "summary": "Add a social link to the logged in user",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["type", "displayText", "link"],
+                "required": [
+                  "type",
+                  "displayText",
+                  "link"
+                ],
                 "properties": {
                   "type": {
                     "type": "string",
@@ -9203,13 +9843,19 @@
       },
       "delete": {
         "summary": "Delete the social link",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["type", "displayText", "link"],
+                "required": [
+                  "type",
+                  "displayText",
+                  "link"
+                ],
                 "properties": {
                   "type": {
                     "type": "string",
@@ -9252,13 +9898,17 @@
     "/profile_picture": {
       "post": {
         "summary": "Add a profile picture to the logged in user",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["picture"],
+                "required": [
+                  "picture"
+                ],
                 "properties": {
                   "picture": {
                     "type": "string",
@@ -9303,7 +9953,9 @@
       },
       "delete": {
         "summary": "Delete the profile picture",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "responses": {
           "204": {
             "description": "Profile picture deleted successfully"
@@ -9325,13 +9977,17 @@
     "/banner_image": {
       "post": {
         "summary": "Add a banner to the logged in user",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["banner"],
+                "required": [
+                  "banner"
+                ],
                 "properties": {
                   "banner": {
                     "type": "string",
@@ -9376,7 +10032,9 @@
       },
       "delete": {
         "summary": "Delete the banner image",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "responses": {
           "204": {
             "description": "Banner image deleted successfully"
@@ -9398,7 +10056,9 @@
     "/blocked_users": {
       "get": {
         "summary": "Get a list of blocked users by the logged in user",
-        "tags": ["User settings"],
+        "tags": [
+          "User settings"
+        ],
         "parameters": [
           {
             "in": "query",

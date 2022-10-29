@@ -1,6 +1,6 @@
 import express from "express";
 
-const router=express.Router();
+const router = express.Router();
 
 /**
  * @swagger
@@ -67,7 +67,7 @@ const router=express.Router();
 
 /**
  * @swagger
- * api/message/compose:
+ * /api/message/compose:
  *  post:
  *      summary: Send a message to a specific user with its subject
  *      tags: [Messages]
@@ -110,13 +110,13 @@ const router=express.Router();
  *       - bearerAuth: []
  */
 
-router.post("/message/compose",(req,res)=>{});
+router.post("/message/compose", (req, res) => {});
 
 /**
  * @swagger
- * api/message/sent:
+ * /api/message/sent:
  *  get:
- *      summary: Return a listing of messages that you sent sorted by time of sending the msg  
+ *      summary: Return a listing of messages that you sent sorted by time of sending the msg
  *      tags: [Messages]
  *      parameters:
  *       - in: query
@@ -153,9 +153,9 @@ router.post("/message/compose",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              properties: 
+ *                              properties:
  *                               text:
- *                                 type: string   
+ *                                 type: string
  *                                 description: Message Content as text
  *                               receiverUsername:
  *                                 type: string
@@ -176,13 +176,13 @@ router.post("/message/compose",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/message/sent",(req,res)=>{});
+router.get("/message/sent", (req, res) => {});
 
 /**
  * @swagger
- * api/message/inbox:
+ * /api/message/inbox:
  *  get:
- *      summary: Return a listing of all the messages,selfreplies and mentions that you received sorted by time of sending them  
+ *      summary: Return a listing of all the messages,selfreplies and mentions that you received sorted by time of sending them
  *      tags: [Messages]
  *      parameters:
  *       - in: query
@@ -219,9 +219,9 @@ router.get("/message/sent",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              properties: 
+ *                              properties:
  *                               text:
- *                                 type: string   
+ *                                 type: string
  *                                 description: Message Content as text
  *                               type:
  *                                 type: string
@@ -261,13 +261,13 @@ router.get("/message/sent",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/message/inbox",(req,res)=>{});
+router.get("/message/inbox", (req, res) => {});
 
 /**
  * @swagger
- * api/message/unread:
+ * /api/message/unread:
  *  get:
- *      summary: Return a listing of unread messages that you received sorted by time of sending the msg  
+ *      summary: Return a listing of unread messages that you received sorted by time of sending the msg
  *      tags: [Messages]
  *      parameters:
  *       - in: query
@@ -304,9 +304,9 @@ router.get("/message/inbox",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              properties: 
+ *                              properties:
  *                               text:
- *                                 type: string   
+ *                                 type: string
  *                                 description: Message Content as text
  *                               senderUsername:
  *                                 type: string
@@ -330,13 +330,13 @@ router.get("/message/inbox",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/message/unread",(req,res)=>{});
+router.get("/message/unread", (req, res) => {});
 
 /**
  * @swagger
- * api/message/selfreply:
+ * /api/message/selfreply:
  *  get:
- *      summary: Return a listing of post replies that you made sorted by time of adding the reply  
+ *      summary: Return a listing of post replies that you made sorted by time of adding the reply
  *      tags: [Messages]
  *      parameters:
  *       - in: query
@@ -355,7 +355,7 @@ router.get("/message/unread",(req,res)=>{});
  *         schema:
  *           type: integer
  *           default: 25
-*      responses:
+ *      responses:
  *          200:
  *              description: Returned successfully
  *              content:
@@ -373,9 +373,9 @@ router.get("/message/unread",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              properties: 
+ *                              properties:
  *                               text:
- *                                 type: string   
+ *                                 type: string
  *                                 description: Message Content as text
  *                               type:
  *                                 type: string
@@ -411,13 +411,13 @@ router.get("/message/unread",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/message/selfreply",(req,res)=>{});
+router.get("/message/selfreply", (req, res) => {});
 
 /**
  * @swagger
- * api/message/mentions:
+ * /api/message/mentions:
  *  get:
- *      summary: Return a listing of mentions that you made sorted by time of adding the mention  
+ *      summary: Return a listing of mentions that you made sorted by time of adding the mention
  *      tags: [Messages]
  *      parameters:
  *       - in: query
@@ -454,9 +454,9 @@ router.get("/message/selfreply",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                             properties: 
+ *                             properties:
  *                               text:
- *                                 type: string   
+ *                                 type: string
  *                                 description: Message Content as text
  *                               type:
  *                                 type: string
@@ -492,13 +492,13 @@ router.get("/message/selfreply",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/message/mentions",(req,res)=>{});
+router.get("/message/mentions", (req, res) => {});
 
 /**
  * @swagger
- * api/message/messages:
+ * /api/message/messages:
  *  get:
- *      summary: Return a listing of all messages that was sent or received sorted by the time  
+ *      summary: Return a listing of all messages that was sent or received sorted by the time
  *      tags: [Messages]
  *      parameters:
  *       - in: query
@@ -535,9 +535,9 @@ router.get("/message/mentions",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              properties: 
+ *                              properties:
  *                               text:
- *                                 type: string   
+ *                                 type: string
  *                                 description: Message Content as text
  *                               senderUsername:
  *                                 type: string
@@ -568,11 +568,11 @@ router.get("/message/mentions",(req,res)=>{});
  *       - bearerAuth: []
  */
 
- router.get("/message/messages",(req,res)=>{});
+router.get("/message/messages", (req, res) => {});
 
 /**
  * @swagger
- * api/unread_a_message:
+ * /api/unread_a_message:
  *  patch:
  *      summary: Unread a Message
  *      tags: [Messages]
@@ -586,7 +586,7 @@ router.get("/message/mentions",(req,res)=>{});
  *              id:
  *                type: string
  *                description: Full name of the message you want to unread it
- *                required: true   
+ *                required: true
  *      responses:
  *          200:
  *              description: Message has been unread successfully
@@ -598,11 +598,11 @@ router.get("/message/mentions",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.patch("/unread_a_message",(req,res)=>{});
+router.patch("/unread_a_message", (req, res) => {});
 
 /**
  * @swagger
- * api/read_all_msgs:
+ * /api/read_all_msgs:
  *  patch:
  *      summary: mark all messages as read
  *      tags: [Messages]
@@ -617,6 +617,6 @@ router.patch("/unread_a_message",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.patch("/read_all_msgs",(req,res)=>{});
+router.patch("/read_all_msgs", (req, res) => {});
 
 export default router;

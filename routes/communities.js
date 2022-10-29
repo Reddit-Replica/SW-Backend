@@ -1,6 +1,6 @@
 import express from "express";
 
-const router=express.Router();
+const router = express.Router();
 
 /**
  * @swagger
@@ -58,7 +58,7 @@ const router=express.Router();
  *         type:
  *           type: string
  *           description: type of the community
- *           enum: 
+ *           enum:
  *             - private
  *             - public
  *             - restricted
@@ -97,7 +97,7 @@ const router=express.Router();
  *           type: array
  *           description: list of the ban questions of the subreddit
  *           items:
- *             $ref: '#/components/schemas/bans' 
+ *             $ref: '#/components/schemas/bans'
  *         moderators:
  *           type: array
  *           description: list of the moderators of the subreddit
@@ -114,7 +114,7 @@ const router=express.Router();
  *           description: Path of the picture of the community
  *         communityTheme:
  *           type: boolean
- *           description: True if community theme is on , False if community theme is off  
+ *           description: True if community theme is on , False if community theme is off
  *         views:
  *           type: number
  *           description: number of views of he community to get the trending search
@@ -130,7 +130,7 @@ const router=express.Router();
  *               description: the array of subtopics of the community
  *               items:
  *                 type:array
- *     
+ *
  *   securitySchemes:
  *     bearerAuth:
  *       type: http
@@ -141,13 +141,13 @@ const router=express.Router();
 /**
  * @swagger
  * tags:
- *  - name: Communities 
+ *  - name: Communities
  *    description: group of people share the same interest, they also called "subreddits"
  */
 
 /**
  * @swagger
- * api/subreddits/leaderboard:
+ * /api/subreddits/leaderboard:
  *  get:
  *      summary: Return a listing of all the Communities
  *      tags: [Communities]
@@ -186,9 +186,9 @@ const router=express.Router();
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              properties: 
+ *                              properties:
  *                               title:
- *                                 type: string   
+ *                                 type: string
  *                                 description: Name of the community
  *                               Members:
  *                                 type: number
@@ -201,7 +201,7 @@ const router=express.Router();
  *                                description: A brief description of the community
  *                               isMember:
  *                                 type: boolean
- *                                 description: True if you are a member of the community , False if you are not a member of the community 
+ *                                 description: True if you are a member of the community , False if you are not a member of the community
  *          404:
  *              description: Page not found
  *          401:
@@ -212,11 +212,11 @@ const router=express.Router();
  *       - bearerAuth: []
  */
 
-router.get("/subreddits/leaderboard",(req,res)=>{});
+router.get("/subreddits/leaderboard", (req, res) => {});
 
 /**
  * @swagger
- * api/subreddits/leaderboard/{categoryName}:
+ * /api/subreddits/leaderboard/{categoryName}:
  *  get:
  *      summary: Return a listing of communities of a specific category
  *      tags: [Communities]
@@ -260,9 +260,9 @@ router.get("/subreddits/leaderboard",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              properties: 
+ *                              properties:
  *                               title:
- *                                 type: string   
+ *                                 type: string
  *                                 description: Name of the community
  *                               Members:
  *                                 type: number
@@ -280,7 +280,7 @@ router.get("/subreddits/leaderboard",(req,res)=>{});
  *                                   type: string
  *                               isMember:
  *                                 type: boolean
- *                                 description: True if you are a member of the community , False if you are not a member of the community 
+ *                                 description: True if you are a member of the community , False if you are not a member of the community
  *          404:
  *              description: Page not found
  *          401:
@@ -291,11 +291,11 @@ router.get("/subreddits/leaderboard",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/subreddits/leaderboard/:categoryName",(req,res)=>{});
+router.get("/subreddits/leaderboard/:categoryName", (req, res) => {});
 
 /**
  * @swagger
- * api/custom_random_category:
+ * /api/custom_random_category:
  *  get:
  *      summary: Return a listing of random communities with random category
  *      tags: [Communities]
@@ -334,9 +334,9 @@ router.get("/subreddits/leaderboard/:categoryName",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              properties: 
+ *                              properties:
  *                               title:
- *                                 type: string   
+ *                                 type: string
  *                                 description: Name of the community
  *                               Members:
  *                                 type: number
@@ -349,7 +349,7 @@ router.get("/subreddits/leaderboard/:categoryName",(req,res)=>{});
  *                                description: A brief description of the community
  *                               isMember:
  *                                 type: boolean
- *                                 description: True if you are a member of the community , False if you are not a member of the community 
+ *                                 description: True if you are a member of the community , False if you are not a member of the community
  *          404:
  *              description: Page not found
  *          401:
@@ -360,11 +360,11 @@ router.get("/subreddits/leaderboard/:categoryName",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/custom_random_category",(req,res)=>{});
+router.get("/custom_random_category", (req, res) => {});
 
 /**
  * @swagger
- * api/trending_communities:
+ * /api/trending_communities:
  *  get:
  *      summary: Return a listing of the mostly viewed communities
  *      tags: [Communities]
@@ -403,9 +403,9 @@ router.get("/custom_random_category",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              properties: 
+ *                              properties:
  *                               title:
- *                                 type: string   
+ *                                 type: string
  *                                 description: Name of the community
  *                               Members:
  *                                 type: number
@@ -421,7 +421,7 @@ router.get("/custom_random_category",(req,res)=>{});
  *                                 description: Number of views of the community
  *                               isMember:
  *                                 type: boolean
- *                                 description: True if you are a member of the community , False if you are not a member of the community 
+ *                                 description: True if you are a member of the community , False if you are not a member of the community
  *          404:
  *              description: Page not found
  *          401:
@@ -432,11 +432,11 @@ router.get("/custom_random_category",(req,res)=>{});
  *       - bearerAuth: []
  */
 
- router.get("/trending_communities",(req,res)=>{});
+router.get("/trending_communities", (req, res) => {});
 
 /**
  * @swagger
- * api/random_category:
+ * /api/random_category:
  *  get:
  *      summary: Return two random categories to display
  *      tags: [Communities]
@@ -464,9 +464,9 @@ router.get("/custom_random_category",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              properties: 
+ *                              properties:
  *                               title:
- *                                 type: string   
+ *                                 type: string
  *                                 description: Name of the community
  *                               Members:
  *                                 type: number
@@ -479,14 +479,14 @@ router.get("/custom_random_category",(req,res)=>{});
  *                                description: A brief description of the community
  *                               isMember:
  *                                 type: boolean
- *                                 description: True if you are a member of the community , False if you are not a member of the community 
+ *                                 description: True if you are a member of the community , False if you are not a member of the community
  *                          second_category_children:
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              properties: 
+ *                              properties:
  *                               title:
- *                                 type: string   
+ *                                 type: string
  *                                 description: Name of the community
  *                               Members:
  *                                 type: number
@@ -510,11 +510,11 @@ router.get("/custom_random_category",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/random_category",(req,res)=>{});
+router.get("/random_category", (req, res) => {});
 
 /**
  * @swagger
- * api/r/{subredditName}:
+ * /api/r/{subredditName}:
  *  get:
  *      summary: Return all the details of the subreddit
  *      tags: [Communities]
@@ -536,7 +536,7 @@ router.get("/random_category",(req,res)=>{});
  *                            type: string
  *                            description: the status code of the response
  *                          children:
- *                            $ref: '#/components/schemas/moderator'   
+ *                            $ref: '#/components/schemas/moderator'
  *          404:
  *              description: Page not found
  *          401:
@@ -547,11 +547,11 @@ router.get("/random_category",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subredditName",(req,res)=>{});
+router.get("/r/:subredditName", (req, res) => {});
 
 /**
  * @swagger
- * api/r/{subredditName}/about/moderators:
+ * /api/r/{subredditName}/about/moderators:
  *  get:
  *      summary: Return a listing of moderators in hat specified subreddit
  *      tags: [Communities]
@@ -595,7 +595,7 @@ router.get("/r/:subredditName",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              $ref: '#/components/schemas/communities'   
+ *                              $ref: '#/components/schemas/communities'
  *          404:
  *              description: Page not found
  *          401:
@@ -606,11 +606,11 @@ router.get("/r/:subredditName",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subredditName/about/moderators",(req,res)=>{});
+router.get("/r/:subredditName/about/moderators", (req, res) => {});
 
 /**
  * @swagger
- * api/r/{subredditName}/wiki/rules:
+ * /api/r/{subredditName}/wiki/rules:
  *  get:
  *      summary: Return all the rules of the subbreddit in details
  *      tags: [Communities]
@@ -635,7 +635,7 @@ router.get("/r/:subredditName/about/moderators",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              $ref: '#/components/schemas/rules'   
+ *                              $ref: '#/components/schemas/rules'
  *          404:
  *              description: Page not found
  *          401:
@@ -646,11 +646,11 @@ router.get("/r/:subredditName/about/moderators",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subredditName/wiki/rules",(req,res)=>{});
+router.get("/r/:subredditName/wiki/rules", (req, res) => {});
 
 /**
  * @swagger
- * api/r/{subredditName}/wiki/bans:
+ * /api/r/{subredditName}/wiki/bans:
  *  get:
  *      summary: Return all the ban questions of the subbreddit in details
  *      tags: [Communities]
@@ -675,7 +675,7 @@ router.get("/r/:subredditName/wiki/rules",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              $ref: '#/components/schemas/bans'   
+ *                              $ref: '#/components/schemas/bans'
  *          404:
  *              description: Page not found
  *          401:
@@ -686,11 +686,11 @@ router.get("/r/:subredditName/wiki/rules",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subredditName/wiki/bans",(req,res)=>{});
+router.get("/r/:subredditName/wiki/bans", (req, res) => {});
 
 /**
  * @swagger
- * api/r/{subredditName}/suggested_topics:
+ * /api/r/{subredditName}/suggested_topics:
  *  get:
  *      summary: Return all the suggested topics
  *      tags: [Communities]
@@ -715,7 +715,7 @@ router.get("/r/:subredditName/wiki/bans",(req,res)=>{});
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              type:string  
+ *                              type:string
  *          404:
  *              description: Page not found
  *          401:
@@ -726,11 +726,11 @@ router.get("/r/:subredditName/wiki/bans",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subredditName/suggested_topics",(req,res)=>{});
+router.get("/r/:subredditName/suggested_topics", (req, res) => {});
 
 /**
  * @swagger
- * api/r/{subredditName}/add_main_topic:
+ * /api/r/{subredditName}/add_main_topic:
  *  post:
  *      summary: add the main topic to the community
  *      tags: [Communities]
@@ -760,11 +760,11 @@ router.get("/r/:subredditName/suggested_topics",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.post("/r/:subredditName/add_main_topic",(req,res)=>{});
+router.post("/r/:subredditName/add_main_topic", (req, res) => {});
 
 /**
  * @swagger
- * api/r/{subredditName}/add_subtopic:
+ * /api/r/{subredditName}/add_subtopic:
  *  post:
  *      summary: add subtopics of the community
  *      tags: [Communities]
@@ -796,11 +796,11 @@ router.post("/r/:subredditName/add_main_topic",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.post("/r/:subredditName/add_subtopics",(req,res)=>{});
+router.post("/r/:subredditName/add_subtopics", (req, res) => {});
 
 /**
  * @swagger
- * api/r/{subredditName}/add_description:
+ * /api/r/{subredditName}/add_description:
  *  post:
  *      summary: add description of the community
  *      tags: [Communities]
@@ -831,11 +831,11 @@ router.post("/r/:subredditName/add_subtopics",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.post("/r/:subredditName/add_description",(req,res)=>{});
+router.post("/r/:subredditName/add_description", (req, res) => {});
 
 /**
  * @swagger
- * api/r/{subredditName}/toggle_favorite:
+ * /api/r/{subredditName}/toggle_favorite:
  *  patch:
  *      summary: toggle favorite property of the community
  *      tags: [Communities]
@@ -856,11 +856,11 @@ router.post("/r/:subredditName/add_description",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.patch("/r/:subredditName/toggle_favorite",(req,res)=>{});
+router.patch("/r/:subredditName/toggle_favorite", (req, res) => {});
 
 /**
  * @swagger
- * api/r/{subredditName}/toggle_community_theme:
+ * /api/r/{subredditName}/toggle_community_theme:
  *  patch:
  *      summary: toggle community theme option of the community
  *      tags: [Communities]
@@ -881,10 +881,10 @@ router.patch("/r/:subredditName/toggle_favorite",(req,res)=>{});
  *       - bearerAuth: []
  */
 
-router.patch("/r/:subredditName/toggle_community_theme",(req,res)=>{});
+router.patch("/r/:subredditName/toggle_community_theme", (req, res) => {});
 
 export default router;
- /*edits
+/*edits
 
  we need to add posts from posts file
 */

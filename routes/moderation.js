@@ -53,7 +53,6 @@ const moderationRouter = express.Router();
  *              $ref: '#/components/schemas/FlairSettings'
  */
 
-
 /**
  * @swagger
  * tags:
@@ -483,6 +482,13 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
  *   summary:
  *    Accept an invite to moderate the specified subreddit. The authenticated user must have been invited to moderate the subreddit by one of its current moderators or the admin.
  *   tags: [General moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
  *   responses:
  *    200:
  *     description: Accepted
@@ -919,6 +925,13 @@ moderationRouter.get("/r/:subreddit/about/banned", (req, res, next) => {});
  *   summary:
  *    Get the current settings of a subreddit.
  *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
  *   responses:
  *    200:
  *     description: The current settings of the subreddit.
@@ -996,6 +1009,13 @@ moderationRouter.get("/r/:subreddit/about/edit", (req, res, next) => {});
  *   summary:
  *    ٍSet the settings of a subreddit.
  *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
  *   requestBody:
  *    required: true
  *    content:
@@ -1096,6 +1116,13 @@ moderationRouter.put("/r/:subreddit/about/edit", (req, res, next) => {});
  *   summary:
  *    Get the suggested topics for a subreddit.
  *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
  *   responses:
  *    200:
  *     description: The suggested topics for the subreddit.
@@ -1132,6 +1159,13 @@ moderationRouter.get("/r/:subreddit/suggestedTopics", (req, res, next) => {});
  *   summary:
  *    Add a rule to subreddit.
  *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
  *   requestBody:
  *    required: true
  *    content:
@@ -1188,6 +1222,13 @@ moderationRouter.post("/r/:subreddit/about/rules", (req, res, next) => {});
  *   summary:
  *    Get the rules for a subreddit.
  *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
  *   responses:
  *    200:
  *     description: The rules for the subreddit.
@@ -1247,6 +1288,13 @@ moderationRouter.get("/r/:subreddit/about/rules", (req, res, next) => {});
  *   summary:
  *    Edit a rule at subreddit.
  *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
  *   requestBody:
  *    required: true
  *    content:
@@ -1310,6 +1358,13 @@ moderationRouter.put(
  *   summary:
  *    Edit rules order of the subreddit.
  *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
  *   requestBody:
  *    required: true
  *    content:

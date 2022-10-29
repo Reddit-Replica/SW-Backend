@@ -1,6 +1,6 @@
 import express from "express";
 
-const router=express.Router();
+const router = express.Router();
 
 /**
  * @swagger
@@ -25,7 +25,7 @@ const router=express.Router();
  *         smallIcon:
  *           type: string
  *           description: the path of the icon of the notification
- *         data: 
+ *         data:
  *           type: object
  *           description: the external data that you want to send with the notification
  *         SenderID:
@@ -46,7 +46,7 @@ const router=express.Router();
  *         ishidden:
  *           type: boolean
  *           description: true if the notification is hidden , false if notification is not hidden
- *         
+ *
  *     Threads:
  *       type: object
  *       properties:
@@ -58,13 +58,13 @@ const router=express.Router();
  *       type: http
  *       scheme: bearer
  *       bearerFormat: JWT
- *         
+ *
  */
 
 /**
  * @swagger
  * tags:
- *  - name: Notifications 
+ *  - name: Notifications
  *    description: Notifications that sent to each user about an occurred event
  *  - name : Threads
  *    description: Containers that help us to send notifications
@@ -72,7 +72,7 @@ const router=express.Router();
 
 /**
  * @swagger
- * api/notifications:
+ * /api/notifications:
  *  get:
  *      summary: get all the notifications sent to the user
  *      tags: [Notifications]
@@ -111,9 +111,9 @@ const router=express.Router();
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              properties: 
+ *                              properties:
  *                               title:
- *                                 type: string   
+ *                                 type: string
  *                                 description: title of the notification
  *                               sending_time:
  *                                 type: string
@@ -130,7 +130,7 @@ const router=express.Router();
  *                               SenderID:
  *                                 type: string
  *                                 description: Name of the sender of the notification
- *                               data: 
+ *                               data:
  *                                 type: object
  *                                 description: the external data that you want to send with the notification
  *          404:
@@ -147,7 +147,7 @@ router.get("/notifications");
 
 /**
  * @swagger
- * api/send_notifications:
+ * /api/send_notifications:
  *  get:
  *      summary: send notification to all the users
  *      tags: [Notifications]
@@ -166,14 +166,14 @@ router.get("/notifications");
  *                          children:
  *                            type: object
  *                            description: List of [Things] to return
- *                            properties: 
+ *                            properties:
  *                             id:
- *                               type: string   
+ *                               type: string
  *                               description: id of the request
  *                             recipients:
  *                               type: number
  *                               description: number of ids that receives that notification
- * 
+ *
  *          404:
  *              description: notifications not found
  *          401:
@@ -184,11 +184,11 @@ router.get("/notifications");
  *       - bearerAuth: []
  */
 
- router.get("/send_notifications");
+router.get("/send_notifications");
 
- /**
+/**
  * @swagger
- * api/send_notifications_to_device:
+ * /api/send_notifications_to_device:
  *  post:
  *      summary: send notification to specific user
  *      tags: [Notifications]
@@ -218,9 +218,9 @@ router.get("/notifications");
  *                          children:
  *                            type: object
  *                            description: List of [Things] to return
- *                            properties: 
+ *                            properties:
  *                             id:
- *                               type: string   
+ *                               type: string
  *                               description: id of the request
  *                             recipients:
  *                               type: number
@@ -239,7 +239,7 @@ router.post("/send_notifications_to_device");
 
 /**
  * @swagger
- * api/mark_as_read:
+ * /api/mark_as_read:
  *  patch:
  *      summary: mark all the notifications as read
  *      tags: [Notifications]
@@ -254,11 +254,11 @@ router.post("/send_notifications_to_device");
  *       - bearerAuth: []
  */
 
-router.patch("/mark_as_read",(req, res)=>{});
+router.patch("/mark_as_read", (req, res) => {});
 
 /**
  * @swagger
- * api/hide_noification:
+ * /api/hide_noification:
  *  patch:
  *      summary: mark a specific notification as hidden
  *      tags: [Notifications]
@@ -283,11 +283,11 @@ router.patch("/mark_as_read",(req, res)=>{});
  *       - bearerAuth: []
  */
 
- router.patch("hide_noification",(req, res)=>{});
+router.patch("hide_noification", (req, res) => {});
 
 /**
  * @swagger
- * api/live/thread:
+ * /api/live/thread:
  *  get:
  *      summary: Get a list of updates posted in this thread.
  *      tags: [Threads]
@@ -315,7 +315,7 @@ router.patch("/mark_as_read",(req, res)=>{});
  *                  application/json:
  *                      schema:
  *                        type: array
- *                        items: 
+ *                        items:
  *                              $ref: '#/components/schemas/Threads'
  *          404:
  *              description: thread not found
@@ -327,176 +327,175 @@ router.patch("/mark_as_read",(req, res)=>{});
  *       - bearerAuth: []
  */
 
- router.get("/live/thread",(req, res)=>{});
+router.get("/live/thread", (req, res) => {});
 
- /**
-  * @swagger
-  * api/live/by_id/names:
-  *  get:
-  *      summary: Get a list all the live events
-  *      tags: [Threads]
-  *      responses:
-  *          200:
-  *              description: Returned successfully
-  *              content:
-  *                  application/json:
-  *                      schema:
-  *                        type: array
-  *                        items: 
-  *                              $ref: '#/components/schemas/Threads'
-  *          404:
-  *              description: thread not found
-  *          401:
-  *              description: User unauthorized to get this thread
-  *          500:
-  *              description: Server Error
-  *      security:
-  *       - bearerAuth: []
-  */
- 
- router.get("live/by_id/names",(req,res)=>{});
- 
- /**
-  * @swagger
-  * api/live/create:
-  *  post:
-  *      summary: Create a new live thread.
+/**
+ * @swagger
+ * /api/live/by_id/names:
+ *  get:
+ *      summary: Get a list all the live events
+ *      tags: [Threads]
+ *      responses:
+ *          200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: array
+ *                        items:
+ *                              $ref: '#/components/schemas/Threads'
+ *          404:
+ *              description: thread not found
+ *          401:
+ *              description: User unauthorized to get this thread
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.get("live/by_id/names", (req, res) => {});
+
+/**
+ * @swagger
+ * /api/live/create:
+ *  post:
+ *      summary: Create a new live thread.
  *       Once created, the initial settings can be modified with /api/live/thread/edit and new updates can be posted with /api/live/thread/update.
-  *      tags: [Threads]
-  *      responses:
-  *          200:
-  *              description: Returned successfully
-  *              content:
-  *                  application/json:
-  *                      schema:
-  *                        type: array
-  *                        items: 
-  *                              $ref: '#/components/schemas/Threads'
-  *          201:
-  *              description: Created successfully
-  *          401:
-  *              description: Unauthorized to create this thread
-  *          500:
-  *              description: Server Error
-  *      security:
-  *       - bearerAuth: []
-  */
- 
- router.post("/live/create",(req,res)=>{});
- 
- /**
-  * @swagger
-  * api/live/thread/about:
-  *  get:
-  *      summary: get a some basic info about the live thread
-  *      tags: [Threads]
-  *      responses:
-  *          200:
-  *              description: Returned successfully
-  *              content:
-  *                  application/json:
-  *                      schema:
-  *                        type: array
-  *                        items: 
-  *                              $ref: '#/components/schemas/Threads'
-  *          404:
-  *              description: threads not found
-  *          401:
-  *              description: User unauthorized to get the threads
-  *          500:
-  *              description: Server Error
-  *      security:
-  *       - bearerAuth: []
-  */
- 
- router.get("/live/thread/about",(req,res)=>{});
- 
- /**
-  * @swagger
-  * api/live/thread:
-  *  patch:
-  *      summary: editing a thread
-  *      tags: [Threads]
-  *      requestBody:
-  *       required: true
-  *       content:
-  *         application/json:
-  *           schema:
-  *             type: object
-  *             properties:
-  *              id:
-  *                type: string
-  *                description: Full name of the thread that you want to edit
-  *      responses:
-  *          200:
-  *              description: thread has just been edited
-  *          401:
-  *              description: Unauthorized to spam this thread
-  *          500:
-  *              description: Server Error
-  *      security:
-  *       - bearerAuth: []
-  */
- 
- router.patch("/live/thread",(req,res)=>{});
- 
- /**
-  * @swagger
-  * api/live/thread:
-  *  put:
-  *      summary: updating a thread
-  *      tags: [Threads]
-  *      requestBody:
-  *       required: true
-  *       content:
-  *         application/json:
-  *           schema:
-  *             type: object
-  *             properties:
-  *              id:
-  *                type: string
-  *                description: Full name of the thread
-  *      responses:
-  *          200:
-  *              description: Thread has ben updated successfully
-  *          401:
-  *              description: Unauthorized to update this thread
-  *          500:
-  *              description: Server Error
-  *      security:
-  *       - bearerAuth: []
-  */
- 
- router.put("/live/thread",(req,res)=>{});
- 
- /**
-  * @swagger
-  * api/live/thread:
-  *  delete:
-  *      summary: closes a thread
-  *      tags: [Threads]
-  *      requestBody:
-  *       required: true
-  *       content:
-  *         application/json:
-  *           schema:
-  *             type: object
-  *             properties:
-  *              id:
-  *                type: string
-  *                description: Full name of the thread that you want to close
-  *      responses:
-  *          200:
-  *              description: thread has just been closed successfully
-  *          401:
-  *              description: Unauthorized to close this thread
-  *          500:
-  *              description: Server Error
-  *      security:
-  *       - bearerAuth: []
-  */
- 
- router.delete("/live/thread",(req,res)=>{});
- 
+ *      tags: [Threads]
+ *      responses:
+ *          200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: array
+ *                        items:
+ *                              $ref: '#/components/schemas/Threads'
+ *          201:
+ *              description: Created successfully
+ *          401:
+ *              description: Unauthorized to create this thread
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.post("/live/create", (req, res) => {});
+
+/**
+ * @swagger
+ * /api/live/thread/about:
+ *  get:
+ *      summary: get a some basic info about the live thread
+ *      tags: [Threads]
+ *      responses:
+ *          200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: array
+ *                        items:
+ *                              $ref: '#/components/schemas/Threads'
+ *          404:
+ *              description: threads not found
+ *          401:
+ *              description: User unauthorized to get the threads
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.get("/live/thread/about", (req, res) => {});
+
+/**
+ * @swagger
+ * /api/live/thread:
+ *  patch:
+ *      summary: editing a thread
+ *      tags: [Threads]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              id:
+ *                type: string
+ *                description: Full name of the thread that you want to edit
+ *      responses:
+ *          200:
+ *              description: thread has just been edited
+ *          401:
+ *              description: Unauthorized to spam this thread
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.patch("/live/thread", (req, res) => {});
+
+/**
+ * @swagger
+ * /api/live/thread:
+ *  put:
+ *      summary: updating a thread
+ *      tags: [Threads]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              id:
+ *                type: string
+ *                description: Full name of the thread
+ *      responses:
+ *          200:
+ *              description: Thread has ben updated successfully
+ *          401:
+ *              description: Unauthorized to update this thread
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.put("/live/thread", (req, res) => {});
+
+/**
+ * @swagger
+ * /api/live/thread:
+ *  delete:
+ *      summary: closes a thread
+ *      tags: [Threads]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              id:
+ *                type: string
+ *                description: Full name of the thread that you want to close
+ *      responses:
+ *          200:
+ *              description: thread has just been closed successfully
+ *          401:
+ *              description: Unauthorized to close this thread
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.delete("/live/thread", (req, res) => {});
 
 export default router;
