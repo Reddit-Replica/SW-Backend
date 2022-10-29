@@ -2,6 +2,47 @@
  * @swagger
  * components:
  *   schemas:
+ *     FlairSettings:
+ *       type: object
+ *       properties:
+ *          mod_only:
+ *              type: boolean
+ *              description: Flair is only available for mods to select
+ *          allow_user_edits:
+ *              type: boolean
+ *              description: User will be able to edit flair text
+ *          flair_type:
+ *              type: string
+ *              enum:
+ *                  - Text and emojis
+ *                  - Text only
+ *                  - Emojis only
+ *          emojis_limit:
+ *              type: number
+ *              description: Limit to the number of emojis in the flair (1 - 10)
+ *     Flair:
+ *       type: object
+ *       properties:
+ *          id:
+ *              type: string
+ *              description: id of the flair
+ *          flair_name:
+ *              type: string
+ *              description: Name of the flair
+ *          order:
+ *              type: number
+ *              description: Order of the flair among the rest
+ *          background_color:
+ *              type: string
+ *              description: Background color of the flair
+ *          css_class:
+ *              type: string
+ *              description: (Optional) CSS Class chosen for this flair
+ *          text_color:
+ *              type: string
+ *              description: Color of the flair name
+ *          settings:
+ *              $ref: '#/components/schemas/FlairSettings'
  *     Thing:
  *       type: object
  *       properties:
@@ -36,10 +77,13 @@
  *     Category:
  *       type: object
  *       properties:
+ *          id:
+ *              type: string
+ *              description: Category id
  *          name:
  *              type: string
  *              description: A category name
- *     Post:
+ *     PostSubmission:
  *       type: object
  *       required:
  *         - kind
@@ -53,6 +97,7 @@
  *              - text
  *              - image
  *              - video
+ *              - post
  *         subreddit:
  *           type: string
  *           description: Subreddit name
@@ -77,9 +122,9 @@
  *         flair_name:
  *           type: string
  *           description: Name of the flair attached with a post
- *         resubmit:
+ *         send_replies:
  *           type: boolean
- *           description: Share a post
+ *           description: Allow post reply notifications
  *         share_post_id:
  *           type: string
  *           description: id of a post (given in case of sharing a post)
@@ -98,7 +143,7 @@
  *         recaptcha_response:
  *           type: string
  *           description: reCAPTCHA response
- *     SearchResults:
+ *     PostDetails:
  *       type: object
  *       properties:
  *         kind:
@@ -108,6 +153,49 @@
  *              - text
  *              - image
  *              - video
+ *         subreddit:
+ *           type: string
+ *           description: Subreddit name
+ *         content:
+ *           type: string
+ *           description: Post content (text/url/image/video)
+ *         nsfw:
+ *           type: boolean
+ *           description: Not Safe for Work
+ *         spoiler:
+ *           type: boolean
+ *           description: Blur the content of the post
+ *         title:
+ *           type: string
+ *           description: Title of the submission
+ *         flair_name:
+ *           type: string
+ *           description: Name of the flair attached to a post
+ *         comments:
+ *           type: number
+ *           description: Total number of comments on a post
+ *         votes:
+ *           type: number
+ *           description: Total number of votes on a post
+ *         posted_at:
+ *           type: string
+ *           description: The time in which this post was published
+ *         posted_by:
+ *           type: string
+ *           description: Name of the user associated with the post
+ *     Post:
+ *       type: object
+ *       properties:
+ *         kind:
+ *           type: string
+ *           enum:
+ *              - link
+ *              - text
+ *              - image
+ *              - video
+ *         id:
+ *           type: string
+ *           description: id of a post
  *         subreddit:
  *           type: string
  *           description: Subreddit name
