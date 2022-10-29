@@ -15,7 +15,6 @@ const router = express.Router();
  *     tags: [User settings]
  *     responses:
  *       200:
- *         description: ''
  *         content:
  *           application/json:
  *             schema:

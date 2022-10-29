@@ -55,8 +55,23 @@ const router = express.Router();
  *                     type: integer
  *                     description: Total number of votes to that post
  *                   numOfComments:
- *                         type: integer
- *                         description: Total number of comments
+ *                     type: integer
+ *                     description: Total number of comments
+ *                   flair:
+ *                     type: object
+ *                     properties:
+ *                       flairId:
+ *                         type: string
+ *                         description: The id of the flair
+ *                       flairText:
+ *                         type: string
+ *                         description: Flair text
+ *                       backgroundColor:
+ *                         type: string
+ *                         description: Background color of the flair
+ *                       textColor:
+ *                         type: string
+ *                         description: Color of the flair text
  *                   editTime:
  *                     type: string
  *                     format: date-time
@@ -136,7 +151,7 @@ const router = express.Router();
  *                 description: The level of the comment [level of nesting]
  *               children:
  *                  type: array
- *                  description: The replies to that comment
+ *                  description: The replies to that comment (Will be same structure as the current comment)
  *                  items:
  *                    properties:
  */
