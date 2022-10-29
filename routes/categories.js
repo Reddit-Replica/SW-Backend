@@ -4,13 +4,13 @@ const router = express.Router();
 
 /**
  * @swagger
- * /saved_categories:
+ * /categories:
  *  get:
- *      summary: Get a list of categories in which things are currently saved
+ *      summary: Get a list of all categories
  *      tags: [Categories]
  *      responses:
  *          200:
- *              description: Saved categories returned successfully
+ *              description: Categories returned successfully
  *              content:
  *                  application/json:
  *                      schema:

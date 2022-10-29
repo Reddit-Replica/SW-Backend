@@ -12,7 +12,7 @@ const router = express.Router();
  * @swagger
  * /block_user:
  *   post:
- *     summary: Block a user
+ *     summary: Block or unblock a user
  *     tags: [User]
  *     requestBody:
  *       required: true
@@ -54,7 +54,7 @@ router.post("/block_user", (req, res) => {});
  * @swagger
  * /follow_user:
  *   post:
- *     summary: Follow a user
+ *     summary: Follow or unfollow a user
  *     tags: [User]
  *     requestBody:
  *       required: true

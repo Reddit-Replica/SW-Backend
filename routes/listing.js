@@ -446,7 +446,7 @@ router.get("/r/:subreddit/top", (req, res) => {});
  * /r/{subreddit}/comments/{post}:
  *   get:
  *     summary: Get the comment tree for a given post
- *     tags: [Listing]
+ *     tags: [Comments]
  *     parameters:
  *       - in: path
  *         name: subreddit
@@ -522,7 +522,7 @@ router.get("/r/:subreddit/comments/:post", (req, res) => {});
  * /r/{subreddit}/comments/{post}/{comment_id}:
  *   get:
  *     summary: Return comment tree of a specific comment
- *     tags: [Listing]
+ *     tags: [Comments]
  *     parameters:
  *       - in: path
  *         name: subreddit
@@ -604,7 +604,7 @@ router.get("/r/:subreddit/comments/:post/:comment_id", (req, res) => {});
  * /r/{subreddit}/comments/{post}/{comment_id}/parent_comments:
  *   get:
  *     summary: Return the parents of a specific comment
- *     tags: [Listing]
+ *     tags: [Comments]
  *     parameters:
  *       - in: path
  *         name: subreddit

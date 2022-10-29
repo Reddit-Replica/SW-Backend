@@ -2,7 +2,6 @@ import express from "express";
 
 const router = express.Router();
 
-
 /**
  * @swagger
  * tags:
@@ -89,97 +88,6 @@ router.get("/notifications");
 
 /**
  * @swagger
- * /api/send_notifications:
- *  get:
- *      summary: send notification to all the users
- *      tags: [Notifications]
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: object
- *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
- *                          children:
- *                            type: object
- *                            description: List of [Things] to return
- *                            properties:
- *                             id:
- *                               type: string
- *                               description: id of the request
- *                             recipients:
- *                               type: number
- *                               description: number of ids that receives that notification
- *
- *          404:
- *              description: notifications not found
- *          401:
- *              description: User unauthorized to view this info
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-router.get("/send_notifications");
-
-/**
- * @swagger
- * /api/send_notifications_to_device:
- *  post:
- *      summary: send notification to specific user
- *      tags: [Notifications]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              devices:
- *                type: array
- *                description: array of devices that you want to send notifications to
- *                items:
- *                  type: string
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: object
- *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
- *                          children:
- *                            type: object
- *                            description: List of [Things] to return
- *                            properties:
- *                             id:
- *                               type: string
- *                               description: id of the request
- *                             recipients:
- *                               type: number
- *                               description: number of ids that receives that notification
- *          404:
- *              description: notifications not found
- *          401:
- *              description: User unauthorized to view this info
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-router.post("/send_notifications_to_device");
-
-/**
- * @swagger
  * /api/mark_as_read:
  *  patch:
  *      summary: mark all the notifications as read
@@ -230,7 +138,7 @@ router.patch("hide_noification", (req, res) => {});
  * @swagger
  * /api/live/thread:
  *  get:
- *      summary: Get a list of updates posted in this thread.
+ *      summary: Get a list of updates posted in this thread. (canceled feature)
  *      tags: [Threads]
  *      parameters:
  *       - in: query
@@ -274,7 +182,7 @@ router.get("/live/thread", (req, res) => {});
  * @swagger
  * /api/live/by_id/names:
  *  get:
- *      summary: Get a list all the live events
+ *      summary: Get a list all the live events (canceled feature)
  *      tags: [Threads]
  *      responses:
  *          200:
@@ -302,7 +210,7 @@ router.get("live/by_id/names", (req, res) => {});
  * /api/live/create:
  *  post:
  *      summary: Create a new live thread.
- *       Once created, the initial settings can be modified with /api/live/thread/edit and new updates can be posted with /api/live/thread/update.
+ *       Once created, the initial settings can be modified with /api/live/thread/edit and new updates can be posted with /api/live/thread/update. (canceled feature)
  *      tags: [Threads]
  *      responses:
  *          200:
@@ -329,7 +237,7 @@ router.post("/live/create", (req, res) => {});
  * @swagger
  * /api/live/thread/about:
  *  get:
- *      summary: get a some basic info about the live thread
+ *      summary: get a some basic info about the live thread (canceled feature)
  *      tags: [Threads]
  *      responses:
  *          200:
@@ -356,7 +264,7 @@ router.get("/live/thread/about", (req, res) => {});
  * @swagger
  * /api/live/thread:
  *  patch:
- *      summary: editing a thread
+ *      summary: editing a thread (canceled feature)
  *      tags: [Threads]
  *      requestBody:
  *       required: true
@@ -385,7 +293,7 @@ router.patch("/live/thread", (req, res) => {});
  * @swagger
  * /api/live/thread:
  *  put:
- *      summary: updating a thread
+ *      summary: updating a thread (canceled feature)
  *      tags: [Threads]
  *      requestBody:
  *       required: true
@@ -414,7 +322,7 @@ router.put("/live/thread", (req, res) => {});
  * @swagger
  * /api/live/thread:
  *  delete:
- *      summary: closes a thread
+ *      summary: closes a thread (canceled feature)
  *      tags: [Threads]
  *      requestBody:
  *       required: true

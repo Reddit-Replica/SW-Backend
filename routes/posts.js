@@ -130,7 +130,7 @@ router.post("/marknsfw", (req, res, next) => {});
  * @swagger
  * /set_suggested_sort:
  *  post:
- *      summary: Set suggested sort for a post
+ *      summary: Set suggested sort for a post comments
  *      tags: [Posts]
  *      requestBody:
  *        required: true

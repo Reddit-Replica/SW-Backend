@@ -5,17 +5,10 @@ const router = express.Router();
 
 /**
  * @swagger
- * tags:
- *  - name: Communities
- *    description: group of people share the same interest, they also called "subreddits"
- */
-
-/**
- * @swagger
  * /api/subreddits/leaderboard:
  *  get:
  *      summary: Return a listing of all the Communities
- *      tags: [Communities]
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: query
  *         name: before
@@ -84,7 +77,7 @@ router.get("/subreddits/leaderboard", (req, res) => {});
  * /api/subreddits/leaderboard/{categoryName}:
  *  get:
  *      summary: Return a listing of communities of a specific category
- *      tags: [Communities]
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: path
  *         name: categoryName
@@ -163,7 +156,7 @@ router.get("/subreddits/leaderboard/:categoryName", (req, res) => {});
  * /api/custom_random_category:
  *  get:
  *      summary: Return a listing of random communities with random category
- *      tags: [Communities]
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: query
  *         name: before
@@ -232,7 +225,7 @@ router.get("/custom_random_category", (req, res) => {});
  * /api/trending_communities:
  *  get:
  *      summary: Return a listing of the mostly viewed communities
- *      tags: [Communities]
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: query
  *         name: before
@@ -304,7 +297,7 @@ router.get("/trending_communities", (req, res) => {});
  * /api/random_category:
  *  get:
  *      summary: Return two random categories to display
- *      tags: [Communities]
+ *      tags: [Subreddit]
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -382,7 +375,7 @@ router.get("/random_category", (req, res) => {});
  * /api/r/{subredditName}:
  *  get:
  *      summary: Return all the details of the subreddit
- *      tags: [Communities]
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: path
  *         name: subredditName
@@ -418,8 +411,8 @@ router.get("/r/:subredditName", (req, res) => {});
  * @swagger
  * /api/r/{subredditName}/about/moderators:
  *  get:
- *      summary: Return a listing of moderators in hat specified subreddit
- *      tags: [Communities]
+ *      summary: Return a listing of moderators in that specified subreddit
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: path
  *         name: subredditName
@@ -477,8 +470,8 @@ router.get("/r/:subredditName/about/moderators", (req, res) => {});
  * @swagger
  * /api/r/{subredditName}/wiki/rules:
  *  get:
- *      summary: Return all the rules of the subbreddit in details
- *      tags: [Communities]
+ *      summary: Return all the rules of the subbreddit in details (canceled feature)
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: path
  *         name: subredditName
@@ -517,8 +510,8 @@ router.get("/r/:subredditName/wiki/rules", (req, res) => {});
  * @swagger
  * /api/r/{subredditName}/wiki/bans:
  *  get:
- *      summary: Return all the ban questions of the subbreddit in details
- *      tags: [Communities]
+ *      summary: Return all the ban questions of the subbreddit in details (canceled feature)
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: path
  *         name: subredditName
@@ -555,50 +548,10 @@ router.get("/r/:subredditName/wiki/bans", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subredditName}/suggested_topics:
- *  get:
- *      summary: Return all the suggested topics
- *      tags: [Communities]
- *      parameters:
- *       - in: path
- *         name: subredditName
- *         description: the name of the subreddit
- *         schema:
- *           type: string
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: object
- *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
- *                          children:
- *                            type: array
- *                            description: List of [Things] to return
- *                            items:
- *                              type: object
- *          404:
- *              description: Page not found
- *          401:
- *              description: User unauthorized to view this info
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-router.get("/r/:subredditName/suggested_topics", (req, res) => {});
-
-/**
- * @swagger
  * /api/r/{subredditName}/add_main_topic:
  *  post:
  *      summary: add the main topic to the community
- *      tags: [Communities]
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: path
  *         name: subredditName
@@ -634,7 +587,7 @@ router.post("/r/:subredditName/add_main_topic", (req, res) => {});
  * /api/r/{subredditName}/add_subtopic:
  *  post:
  *      summary: add subtopics of the community
- *      tags: [Communities]
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: path
  *         name: subredditName
@@ -672,7 +625,7 @@ router.post("/r/:subredditName/add_subtopics", (req, res) => {});
  * /api/r/{subredditName}/add_description:
  *  post:
  *      summary: add description of the community
- *      tags: [Communities]
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: path
  *         name: subredditName
@@ -708,7 +661,7 @@ router.post("/r/:subredditName/add_description", (req, res) => {});
  * /api/r/{subredditName}/toggle_favorite:
  *  patch:
  *      summary: toggle favorite property of the community
- *      tags: [Communities]
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: path
  *         name: subredditName
@@ -732,8 +685,8 @@ router.patch("/r/:subredditName/toggle_favorite", (req, res) => {});
  * @swagger
  * /api/r/{subredditName}/toggle_community_theme:
  *  patch:
- *      summary: toggle community theme option of the community
- *      tags: [Communities]
+ *      summary: toggle community theme option of the community (canceled feature)
+ *      tags: [Subreddit]
  *      parameters:
  *       - in: path
  *         name: subredditName

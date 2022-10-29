@@ -129,7 +129,7 @@ router.get("/message/sent", (req, res) => {});
  * @swagger
  * /api/message/inbox:
  *  get:
- *      summary: Return a listing of all the messages,selfreplies and mentions that you received sorted by time of sending them
+ *      summary: Return a listing of all the messages,postreplies and mentions that you received sorted by time of sending them
  *      tags: [Messages]
  *      parameters:
  *       - in: query
@@ -281,7 +281,7 @@ router.get("/message/unread", (req, res) => {});
 
 /**
  * @swagger
- * /api/message/selfreply:
+ * /api/message/postreply:
  *  get:
  *      summary: Return a listing of post replies that you made sorted by time of adding the reply
  *      tags: [Messages]
@@ -358,7 +358,7 @@ router.get("/message/unread", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/selfreply", (req, res) => {});
+router.get("/message/postreply", (req, res) => {});
 
 /**
  * @swagger

@@ -4,7 +4,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /del:
+ * /delete:
  *  delete:
  *      summary: Delete a Post, Comment or Message
  *      tags: [Post-comment-message actions]
@@ -45,7 +45,7 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.delete("/del", (req, res, next) => {});
+router.delete("/delete", (req, res, next) => {});
 
 /**
  * @swagger
