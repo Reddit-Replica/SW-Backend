@@ -274,8 +274,7 @@
         "properties": {
           "title": {
             "type": "string",
-            "description": "Title of the notification (maximum:120)",
-            "max": 120
+            "description": "Title of the notification (maximum:120)"
           },
           "content": {
             "type": "object",
@@ -283,10 +282,13 @@
           },
           "included_segments": {
             "type": "array",
-            "description": "An array hat describes which devices we will send notification to"
+            "description": "An array hat describes which devices we will send notification to",
+            "items": {
+              "type": "object"
+            }
           },
           "content_available": {
-            "type": "bool",
+            "type": "boolean",
             "description": "true if this notification will be send if the device is off ,false if it won't"
           },
           "smallIcon": {
@@ -647,7 +649,9 @@
               "subtopics": {
                 "type": "array",
                 "description": "the array of subtopics of the community",
-                "items": "type:array"
+                "items": {
+                  "type": "object"
+                }
               }
             }
           }
@@ -827,7 +831,7 @@
                   "type": "array",
                   "description": "The replies to that comment (Will be same structure as the current comment)",
                   "items": {
-                    "properties": null
+                    "type": "object"
                   }
                 }
               }
@@ -845,7 +849,7 @@
           "type": {
             "type": "string",
             "description": "describes the type of message,we have three types",
-            "enum": "-Messages -Post Replies -Username Mentions"
+            "enum": ["Messages", "Post Replies", "Username Mentions"]
           },
           "subreddit_name": {
             "type": "string",
@@ -2528,7 +2532,9 @@
                     "children": {
                       "type": "array",
                       "description": "List of [Things] to return",
-                      "items": "type:string"
+                      "items": {
+                        "type": "object"
+                      }
                     }
                   }
                 }
@@ -2571,10 +2577,12 @@
           "content": {
             "application/json": {
               "schema": {
-                "title": {
-                  "type": "string",
-                  "description": "title of the main topic in the community",
-                  "required": true
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "title of the main topic in the community"
+                  }
                 }
               }
             }
@@ -2617,11 +2625,15 @@
           "content": {
             "application/json": {
               "schema": {
-                "titles": {
-                  "type": "array",
-                  "description": "title of the main topic in the community",
-                  "required": true,
-                  "items": "type:string"
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "array",
+                    "description": "title of the main topic in the community",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
                 }
               }
             }
@@ -2664,11 +2676,12 @@
           "content": {
             "application/json": {
               "schema": {
-                "titles": {
-                  "type": "string",
-                  "description": "description of the community",
-                  "required": true,
-                  "max": 500
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "description of the community (maximum 500)"
+                  }
                 }
               }
             }
@@ -3427,7 +3440,7 @@
                       "type": "array",
                       "description": "The replies to that comment",
                       "items": {
-                        "properties": null
+                        "type": "object"
                       }
                     }
                   }
@@ -3611,34 +3624,38 @@
           "content": {
             "application/json": {
               "schema": {
-                "ReCAPTCHAs": {
-                  "type": "string",
-                  "description": "ReCAPTCHAs response",
-                  "required": true
-                },
-                "text": {
-                  "type": "string",
-                  "description": "Message Content as text",
-                  "required": true
-                },
-                "senderUsername": {
-                  "type": "string",
-                  "description": "Username of the sender",
-                  "required": true
-                },
-                "receiverUsername": {
-                  "type": "string",
-                  "description": "Username of the receiver",
-                  "required": true
-                },
-                "sendingTime": {
-                  "type": "string",
-                  "description": "Time of sending the message"
-                },
-                "subject": {
-                  "type": "string",
-                  "description": "Subject of the message",
-                  "required": true
+                "required": [
+                  "ReCAPTCHAs",
+                  "text",
+                  "subject",
+                  "senderUsername",
+                  "receiverUsername"
+                ],
+                "properties": {
+                  "ReCAPTCHAs": {
+                    "type": "string",
+                    "description": "ReCAPTCHAs response"
+                  },
+                  "text": {
+                    "type": "string",
+                    "description": "Message Content as text"
+                  },
+                  "senderUsername": {
+                    "type": "string",
+                    "description": "Username of the sender"
+                  },
+                  "receiverUsername": {
+                    "type": "string",
+                    "description": "Username of the receiver"
+                  },
+                  "sendingTime": {
+                    "type": "string",
+                    "description": "Time of sending the message"
+                  },
+                  "subject": {
+                    "type": "string",
+                    "description": "Subject of the message"
+                  }
                 }
               }
             }
@@ -4312,11 +4329,11 @@
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["id"],
                 "properties": {
                   "id": {
                     "type": "string",
-                    "description": "Full name of the message you want to unread it",
-                    "required": true
+                    "description": "Full name of the message you want to unread it"
                   }
                 }
               }
@@ -4382,7 +4399,7 @@
             "name": "after",
             "description": "fullname of a thing.",
             "schema": {
-              "type": "fullname"
+              "type": "string"
             },
             "required": false
           },
@@ -4391,7 +4408,7 @@
             "name": "before",
             "description": "fullname of a thing. one of after/before should be specified",
             "schema": {
-              "type": "fullname"
+              "type": "string"
             },
             "required": false
           },
@@ -4499,7 +4516,7 @@
             "name": "after",
             "description": "fullname of a thing.",
             "schema": {
-              "type": "fullname"
+              "type": "string"
             },
             "required": false
           },
@@ -4508,7 +4525,7 @@
             "name": "before",
             "description": "fullname of a thing. one of after/before should be specified",
             "schema": {
-              "type": "fullname"
+              "type": "string"
             },
             "required": false
           },
@@ -4616,7 +4633,7 @@
             "name": "after",
             "description": "fullname of a thing.",
             "schema": {
-              "type": "fullname"
+              "type": "string"
             },
             "required": false
           },
@@ -4625,7 +4642,7 @@
             "name": "before",
             "description": "fullname of a thing. one of after/before should be specified",
             "schema": {
-              "type": "fullname"
+              "type": "string"
             },
             "required": false
           },
@@ -5209,7 +5226,7 @@
             "name": "after",
             "description": "fullname of a thing.",
             "schema": {
-              "type": "fullname"
+              "type": "string"
             },
             "required": false
           },
@@ -5218,7 +5235,7 @@
             "name": "before",
             "description": "fullname of a thing. one of after/before should be specified",
             "schema": {
-              "type": "fullname"
+              "type": "string"
             },
             "required": false
           },
@@ -6617,7 +6634,6 @@
       "get": {
         "summary": "send notification to all the users",
         "tags": ["Notifications"],
-        "parameters": null,
         "responses": {
           "200": {
             "description": "Returned successfully",
@@ -8799,6 +8815,7 @@
         }
       }
     },
+
     "/block_user": {
       "post": {
         "summary": "Block a user",
@@ -10492,17 +10509,20 @@
   "securityDefinitions": {},
   "tags": [
     {
-      "name": "Sign Up"
+      "name": "Sign Up",
+      "description": "Sign Up and email verfication endpoints"
     },
     {
-      "name": "Login"
+      "name": "Login",
+      "description": "Login and forget password endpoints used"
     },
     {
       "name": "Communities",
       "description": "group of people share the same interest, they also called \"subreddits\""
     },
     {
-      "name": "Listing"
+      "name": "Listing",
+      "description": "Listing endpoints"
     },
     {
       "name": "Messages",
@@ -10529,7 +10549,8 @@
       "description": "Containers that help us to send notifications"
     },
     {
-      "name": "Subreddit"
+      "name": "Subreddit",
+      "description": "Create a subreddit endpoints"
     },
     {
       "name": "Posts",
@@ -10556,10 +10577,12 @@
       "description": "Search for anything in any place"
     },
     {
-      "name": "User"
+      "name": "User",
+      "description": "User's profile endpoints (overview, history, ...etc)"
     },
     {
-      "name": "User settings"
+      "name": "User settings",
+      "description": "User settings endpoints"
     }
   ]
 }
