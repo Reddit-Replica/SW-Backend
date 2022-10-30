@@ -2,7 +2,6 @@ import express from "express";
 
 const router = express.Router();
 
-
 /**
  * @swagger
  * tags:
@@ -40,7 +39,7 @@ const router = express.Router();
  *             receiverUsername:
  *               type: string
  *               description: Username of the receiver
- *             sendingTime:
+ *             sendAt:
  *               type: string
  *               description: Time of sending the message
  *             subject:
@@ -93,9 +92,12 @@ router.post("/message/compose", (req, res) => {});
  *                          statusCode:
  *                            type: string
  *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -107,7 +109,7 @@ router.post("/message/compose", (req, res) => {});
  *                               receiverUsername:
  *                                 type: string
  *                                 description: Username of the receiver
- *                               sendingTime:
+ *                               sendAt:
  *                                type: string
  *                                description: Time of sending the message
  *                               subject:
@@ -134,12 +136,12 @@ router.get("/message/sent", (req, res) => {});
  *      parameters:
  *       - in: query
  *         name: before
- *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         description:  The id of last item in the listing that follows before this page. null if there is no previous page Only one of after/before will be specified.
  *         schema:
  *           type: string
  *       - in: query
  *         name: after
- *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         description:  The id of last item in the listing that follows after this page. null if there is no next page Only one of after/before will be specified.
  *         schema:
  *           type: string
  *       - in: query
@@ -159,9 +161,12 @@ router.get("/message/sent", (req, res) => {});
  *                          statusCode:
  *                            type: string
  *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -173,10 +178,10 @@ router.get("/message/sent", (req, res) => {});
  *                               type:
  *                                 type: string
  *                                 description: describes the type of message
- *                               subreddit_name:
+ *                               subredditName:
  *                                 type: string
  *                                 description: subreddit name that the reply or the mention was in
- *                               post_title:
+ *                               postTitle:
  *                                 type: string
  *                                 description: the title of the post that the reply or the mention happened in
  *                               senderUsername:
@@ -185,7 +190,7 @@ router.get("/message/sent", (req, res) => {});
  *                               receiverUsername:
  *                                 type: string
  *                                 description: Username of the receiver
- *                               sendingTime:
+ *                               sendAt:
  *                                type: string
  *                                description: Time of sending the message
  *                               subject:
@@ -244,9 +249,12 @@ router.get("/message/inbox", (req, res) => {});
  *                          statusCode:
  *                            type: string
  *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -258,7 +266,7 @@ router.get("/message/inbox", (req, res) => {});
  *                               senderUsername:
  *                                 type: string
  *                                 description: Username of the sender
- *                               sendingTime:
+ *                               sendAt:
  *                                type: string
  *                                description: Time of sending the message
  *                               subject:
@@ -281,7 +289,7 @@ router.get("/message/unread", (req, res) => {});
 
 /**
  * @swagger
- * /api/message/postreply:
+ * /api/message/post-reply:
  *  get:
  *      summary: Return a listing of post replies that you made sorted by time of adding the reply
  *      tags: [Messages]
@@ -313,9 +321,12 @@ router.get("/message/unread", (req, res) => {});
  *                          statusCode:
  *                            type: string
  *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -327,10 +338,10 @@ router.get("/message/unread", (req, res) => {});
  *                               type:
  *                                 type: string
  *                                 description: describes the type of message
- *                               subreddit_name:
+ *                               subredditName:
  *                                 type: string
  *                                 description: subreddit name that the reply was in
- *                               post_title:
+ *                               postTitle:
  *                                 type: string
  *                                 description: the title of the post that the reply happened in
  *                               senderUsername:
@@ -339,7 +350,7 @@ router.get("/message/unread", (req, res) => {});
  *                               receiverUsername:
  *                                 type: string
  *                                 description: Username of the receiver
- *                               sendingTime:
+ *                               sendAt:
  *                                type: string
  *                                description: Time of sending the message
  *                               subject:
@@ -358,7 +369,7 @@ router.get("/message/unread", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/postreply", (req, res) => {});
+router.get("/message/post-reply", (req, res) => {});
 
 /**
  * @swagger
@@ -394,9 +405,12 @@ router.get("/message/postreply", (req, res) => {});
  *                          statusCode:
  *                            type: string
  *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -408,10 +422,10 @@ router.get("/message/postreply", (req, res) => {});
  *                               type:
  *                                 type: string
  *                                 description: describes the type of message
- *                               subreddit_name:
+ *                               subredditName:
  *                                 type: string
  *                                 description: subreddit name that the mention was in
- *                               post_title:
+ *                               postTitle:
  *                                 type: string
  *                                 description: the title of the post that the reply happened in
  *                               senderUsername:
@@ -420,7 +434,7 @@ router.get("/message/postreply", (req, res) => {});
  *                               receiverUsername:
  *                                 type: string
  *                                 description: Username of the receiver
- *                               sendingTime:
+ *                               sendAt:
  *                                type: string
  *                                description: Time of sending the message
  *                               subject:
@@ -475,9 +489,12 @@ router.get("/message/mentions", (req, res) => {});
  *                          statusCode:
  *                            type: string
  *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -492,7 +509,7 @@ router.get("/message/mentions", (req, res) => {});
  *                               receiverUsername:
  *                                 type: string
  *                                 description: Username of the receiver
- *                               sendingTime:
+ *                               sendAt:
  *                                type: string
  *                                description: Time of sending the message
  *                               subject:
@@ -519,7 +536,7 @@ router.get("/message/messages", (req, res) => {});
 
 /**
  * @swagger
- * /api/unread_a_message:
+ * /api/unread-message:
  *  patch:
  *      summary: Unread a Message
  *      tags: [Messages]
@@ -546,11 +563,11 @@ router.get("/message/messages", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/unread_a_message", (req, res) => {});
+router.patch("/unread-message", (req, res) => {});
 
 /**
  * @swagger
- * /api/read_all_msgs:
+ * /api/read-all-msgs:
  *  patch:
  *      summary: mark all messages as read
  *      tags: [Messages]
@@ -565,6 +582,6 @@ router.patch("/unread_a_message", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/read_all_msgs", (req, res) => {});
+router.patch("/read-all-msgs", (req, res) => {});
 
 export default router;
