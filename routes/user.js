@@ -10,7 +10,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /block_user:
+ * /block-user:
  *   post:
  *     summary: Block or unblock a user
  *     tags: [User]
@@ -48,11 +48,11 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.post("/block_user", (req, res) => {});
+router.post("/block-user", (req, res) => {});
 
 /**
  * @swagger
- * /follow_user:
+ * /follow-user:
  *   post:
  *     summary: Follow or unfollow a user
  *     tags: [User]
@@ -90,7 +90,7 @@ router.post("/block_user", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.post("/follow_user", (req, res) => {});
+router.post("/follow-user", (req, res) => {});
 
 /**
  * @swagger
