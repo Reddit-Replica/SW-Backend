@@ -42,9 +42,6 @@ const router = express.Router();
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
  *                          before:
  *                           type: string
  *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
