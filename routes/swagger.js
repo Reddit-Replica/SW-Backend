@@ -5,19 +5,19 @@
  *   FlairSettings:
  *       type: object
  *       properties:
- *          mod_only:
+ *          modOnly:
  *              type: boolean
  *              description: Flair is only available for mods to select
- *          allow_user_edits:
+ *          allowUserEdits:
  *              type: boolean
  *              description: User will be able to edit flair text
- *          flair_type:
+ *          flairType:
  *              type: string
  *              enum:
  *                  - Text and emojis
  *                  - Text only
  *                  - Emojis only
- *          emojis_limit:
+ *          emojisLimit:
  *              type: number
  *              description: Limit to the number of emojis in the flair (1 - 10)
  *   Flair:
@@ -26,16 +26,16 @@
  *          id:
  *              type: string
  *              description: id of the flair
- *          flair_name:
+ *          flairName:
  *              type: string
  *              description: Name of the flair
  *          order:
  *              type: number
  *              description: Order of the flair among the rest
- *          background_color:
+ *          backgroundColor:
  *              type: string
  *              description: Background color of the flair
- *          text_color:
+ *          textColor:
  *              type: string
  *              description: Color of the flair name
  *   Thing:
@@ -58,10 +58,10 @@
  *         text:
  *           type: string
  *           description: Comment content (raw markdown text)
- *         parent_id:
+ *         parentId:
  *           type: string
  *           description: id of the thing being replied to (parent)
- *         parent_type:
+ *         parentType:
  *           type: string
  *           enum:
  *              - post
@@ -102,37 +102,34 @@
  *         content:
  *           type: string
  *           description: Post content (text/url/image/video)
- *         sendreplies:
- *           type: boolean
- *           description: Allow replies on post
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
  *         spoiler:
  *           type: boolean
  *           description: Blur the content of the post
- *         flair_id:
+ *         flairId:
  *           type: string
  *           description: Flair ID
- *         send_replies:
+ *         sendReplies:
  *           type: boolean
  *           description: Allow post reply notifications
- *         share_post_id:
+ *         sharePostId:
  *           type: string
  *           description: id of a post (given in case of sharing a post)
- *         schedule_date:
+ *         scheduleDate:
  *           type: string
  *           format: date
  *           description: Date for the post submitted at in case of scheduling it
- *         schedule_time:
+ *         scheduleTime:
  *           type: string
  *           format: time
  *           description: Time required for the post to be submitted at in case of scheduling it
- *         schedule_time_zone:
+ *         scheduleTimeZone:
  *           type: string
  *           format: time_zone
  *           description: Time zone chosen when scheduling a post
- *         recaptcha_response:
+ *         recaptchaResponse:
  *           type: string
  *           description: reCAPTCHA response
  *   PostDetails:
@@ -168,10 +165,10 @@
  *         votes:
  *           type: number
  *           description: Total number of votes on a post
- *         posted_at:
+ *         postedAt:
  *           type: string
  *           description: The time in which this post was published
- *         posted_by:
+ *         postedBy:
  *           type: string
  *           description: Name of the user associated with the post
  *   Post:
@@ -210,10 +207,10 @@
  *         votes:
  *           type: number
  *           description: Total number of votes on a post
- *         posted_at:
+ *         postedAt:
  *           type: string
  *           description: The time in which this post was published
- *         posted_by:
+ *         postedBy:
  *           type: string
  *           description: Name of the user associated with the post
  *   Notifications:
@@ -225,12 +222,12 @@
  *         content:
  *           type: object
  *           description: An object that has every detail that we want to send
- *         included_segments:
+ *         includedSegments:
  *           type: array
  *           description: An array hat describes which devices we will send notification to
  *           items:
  *            type: object
- *         content_available:
+ *         contentAvailable:
  *           type: boolean
  *           description: true if this notification will be send if the device is off ,false if it won't
  *         smallIcon:
@@ -239,22 +236,22 @@
  *         data:
  *           type: object
  *           description: the external data that you want to send with the notification
- *         SenderID:
+ *         senderId:
  *           type: string
  *           description: Name of the sender of the notification
- *         ReceiverID:
+ *         receiverId:
  *           type: number
  *           description: Name of the sender of the notification
- *         Isread:
+ *         isRead:
  *           type: boolean
  *           description: True if the notification is read , False if the message is not read
- *         sending_time:
+ *         sentAt:
  *           type: string
  *           description: The time of sending the notification
  *         nsfw:
  *           type: boolean
  *           description: not safe for work
- *         ishidden:
+ *         isHidden:
  *           type: boolean
  *           description: true if the notification is hidden , false if notification is not hidden
  *   UserOverview:
@@ -361,10 +358,10 @@
  *                              type: object
  *                              description: Spam the post
  *                              properties:
- *                                spamedBy:
+ *                                spammedBy:
  *                                  type: string
  *                                  description: Username for the moderator who spamed that post
- *                                spamedDate:
+ *                                spammedDate:
  *                                  type: string
  *                                  format: date-time
  *                                  description: Date when that post spamed
@@ -399,7 +396,7 @@
  *                          commentId:
  *                            type: string
  *                            description: The id of the comment
- *                          commentBy:
+ *                          commentedBy:
  *                            type: string
  *                            description: The username of the comment owner
  *                          commentBody:
@@ -425,7 +422,7 @@
  *   Threads:
  *       type: object
  *       properties:
- *         Id:
+ *         id:
  *           type: string
  *           description: full name of the thread
  * 
@@ -468,7 +465,7 @@
  *         dateOfModeration:
  *           type: string
  *           description: he date of being a moderator
- *         Permissions:
+ *         permissions:
  *           type: array
  *           description: array of permissions the moderator has
  *           items:
@@ -492,13 +489,13 @@
  *         title:
  *           type: string
  *           description: Name of the community
- *         Category:
+ *         category:
  *           type: string
  *           description: Category of the community
- *         Members:
+ *         members:
  *           type: number
  *           description: Number of members of the community
- *         Online:
+ *         online:
  *           type: number
  *           description: Number of online members of the community
  *         description:
@@ -577,7 +574,7 @@
  *                   subreddit:
  *                     type: string
  *                     description: Name of subreddit which contain the post
- *                   postBy:
+ *                   postedBy:
  *                     type: string
  *                     description: The username for the publisher of the post
  *                   title:
@@ -597,7 +594,7 @@
  *                   votes:
  *                     type: integer
  *                     description: Total number of votes to that post
- *                   numOfComments:
+ *                   numberOfComments:
  *                     type: integer
  *                     description: Total number of comments
  *                   flair:
@@ -656,10 +653,10 @@
  *                         type: object
  *                         description: Spam the post
  *                         properties:
- *                            spamedBy:
+ *                            spammedBy:
  *                              type: string
  *                              description: Username for the moderator who spamed that post
- *                            spamedDate:
+ *                            spammedDate:
  *                              type: string
  *                              format: date-time
  *                              description: Date when that post spamed
@@ -699,7 +696,7 @@
  *               commentId:
  *                 type: string
  *                 description: The id of the comment
- *               commentBy:
+ *               commentedBy:
  *                 type: string
  *                 description: The author of the comment
  *               editTime:
@@ -735,7 +732,7 @@
  *               level:
  *                 type: integer
  *                 description: The level of the comment [level of nesting]
- *               numChildren:
+ *               numberofChildren:
  *                 type: integer
  *                 description: Number of replies to that comment
  *               children:
@@ -758,10 +755,10 @@
  *             - Messages
  *             - Post Replies
  *             - Username Mentions
- *         subreddit_name:
+ *         subredditName:
  *           type: string
  *           description: the name of subreddit that the mention or the reply happened in, it will be needed in the case of post replies and mentions
- *         post_title:
+ *         postTitle:
  *           type: string
  *           description: the title of the post that the mention or reply happened in, it will be needed in the case of post replies and mentions
  *         text:
@@ -773,7 +770,7 @@
  *         receiverUsername:
  *           type: string
  *           description: Username of the receiver
- *         sendingTime:
+ *         sentAt:
  *           type: string
  *           description: Time of sending the message
  *         subject:
@@ -812,10 +809,10 @@
  *         subreddit:
  *           type: string
  *           description: Name of subreddit which contain the post
- *         postBy:
+ *         postedBy:
  *           type: string
  *           description: The username for the publisher of the post
- *         commentBy:
+ *         commentedBy:
  *           type: string
  *           description: The username for the user made the comment (in case that item has a type comment).
  *         title:
@@ -827,19 +824,19 @@
  *         commentContent:
  *           type: string
  *           description: Content of the comment (in case that item has a type comment).
- *         upVotes:
+ *         postUpVotes:
  *           type: integer
  *           description: Number of Up votes to that post (in case that item has a type post).
- *         downVotes:
+ *         postDownVotes:
  *               type: integer
  *               description: Number of Down votes to that post (in case that item has a type post).
- *         commentuUpVotes:
+ *         commentUpVotes:
  *           type: integer
  *           description: Number of Up votes to that comment (in case that item has a type comment).
  *         commentDownVotes:
  *               type: integer
  *               description: Number of Down votes to that comment (in case that item has a type comment).
- *         numOfComments:
+ *         numberOfComments:
  *               type: integer
  *               description: Total number of comments (in case that item has a type post).
  *         edited:

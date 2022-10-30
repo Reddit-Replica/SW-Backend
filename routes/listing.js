@@ -443,7 +443,7 @@ router.get("/r/:subreddit/top", (req, res) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/comments/{post}:
+ * /r/{subreddit}/comments/{postId}:
  *   get:
  *     summary: Get the comment tree for a given post
  *     tags: [Comments]
@@ -455,7 +455,7 @@ router.get("/r/:subreddit/top", (req, res) => {});
  *         schema:
  *           type: string
  *       - in: path
- *         name: post
+ *         name: postId
  *         description: The post id
  *         required: true
  *         schema:
@@ -515,11 +515,11 @@ router.get("/r/:subreddit/top", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/r/:subreddit/comments/:post", (req, res) => {});
+router.get("/r/:subreddit/comments/:postId", (req, res) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/comments/{post}/{comment_id}:
+ * /r/{subreddit}/comments/{postId}/{commentId}:
  *   get:
  *     summary: Return comment tree of a specific comment
  *     tags: [Comments]
@@ -531,13 +531,13 @@ router.get("/r/:subreddit/comments/:post", (req, res) => {});
  *         schema:
  *           type: string
  *       - in: path
- *         name: post
+ *         name: postId
  *         description: The post id
  *         required: true
  *         schema:
  *           type: string
  *       - in: path
- *         name: comment_id
+ *         name: commentId
  *         description: The comment id to show its tree
  *         required: true
  *         schema:
@@ -575,8 +575,8 @@ router.get("/r/:subreddit/comments/:post", (req, res) => {});
  *         schema:
  *           type: integer
  *       - in: query
- *         name: comment
- *         description: Id of a comment in the comment tree to be the highlighted (optional)
+ *         name: highlightedCommentId
+ *         description: Id of a comment in the comment tree to be highlighted (optional)
  *         schema:
  *           type: integer
  *     responses:
@@ -597,11 +597,11 @@ router.get("/r/:subreddit/comments/:post", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/r/:subreddit/comments/:post/:comment_id", (req, res) => {});
+router.get("/r/:subreddit/comments/:postId/:commentId", (req, res) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/comments/{post}/{comment_id}/parent_comments:
+ * /r/{subreddit}/comments/{postId}/{commentId}/parent_comments:
  *   get:
  *     summary: Return the parents of a specific comment
  *     tags: [Comments]
@@ -613,13 +613,13 @@ router.get("/r/:subreddit/comments/:post/:comment_id", (req, res) => {});
  *         schema:
  *           type: string
  *       - in: path
- *         name: post
+ *         name: postId
  *         description: The post id
  *         required: true
  *         schema:
  *           type: string
  *       - in: path
- *         name: comment_id
+ *         name: commentId
  *         description: The comment id to show its tree
  *         required: true
  *         schema:
@@ -641,7 +641,7 @@ router.get("/r/:subreddit/comments/:post/:comment_id", (req, res) => {});
  *         schema:
  *           type: integer
  *       - in: query
- *         name: comment
+ *         name: highlightedCommentId
  *         description: Id of a comment in the comment tree to be the highlighted (optional)
  *         schema:
  *           type: integer
@@ -659,7 +659,7 @@ router.get("/r/:subreddit/comments/:post/:comment_id", (req, res) => {});
  *                       commentId:
  *                         type: string
  *                         description: The id of the comment
- *                       commentBy:
+ *                       commentedBy:
  *                         type: string
  *                         description: The author of the comment
  *                       editTime:
@@ -708,7 +708,7 @@ router.get("/r/:subreddit/comments/:post/:comment_id", (req, res) => {});
  *         description: Internal server error
  */
 router.get(
-  "/r/:subreddit/comments/:post/:comment_id/parent_comments",
+  "/r/:subreddit/comments/:postId/:commentId/parent_comments",
   (req, res) => {}
 );
 
