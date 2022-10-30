@@ -39,13 +39,13 @@ const moderationRouter = express.Router();
  *      required: true
  *    - in: query
  *      name: after
- *      description: fullname of a thing.
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *      schema:
  *       type: string
  *      required: false
  *    - in: query
  *      name: before
- *      description: fullname of a thing. one of after/before should be specified
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
  *      schema:
  *       type: string
  *      required: false
@@ -126,13 +126,13 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *      required: true
  *    - in: query
  *      name: after
- *      description: fullname of a thing.
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *      schema:
  *       type: string
  *      required: false
  *    - in: query
  *      name: before
- *      description: fullname of a thing. one of after/before should be specified
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
  *      schema:
  *       type: string
  *      required: false
@@ -213,13 +213,13 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *      required: true
  *    - in: query
  *      name: after
- *      description: fullname of a thing.
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *      schema:
  *       type: string
  *      required: false
  *    - in: query
  *      name: before
- *      description: fullname of a thing. one of after/before should be specified
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
  *      schema:
  *       type: string
  *      required: false
@@ -722,13 +722,13 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  *      required: true
  *    - in: query
  *      name: after
- *      description: fullname of a thing.
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *      schema:
  *       type: string
  *      required: false
  *    - in: query
  *      name: before
- *      description: fullname of a thing. one of after/before should be specified
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
  *      schema:
  *       type: string
  *      required: false
