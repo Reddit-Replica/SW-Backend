@@ -4,7 +4,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /categories:
+ * /saved-categories:
  *  get:
  *      summary: Get a list of all categories
  *      tags: [Categories]
@@ -38,6 +38,6 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.get("/saved_categories", (req, res, next) => {});
+router.get("/saved-categories", (req, res, next) => {});
 
 export default router;

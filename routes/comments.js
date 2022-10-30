@@ -33,7 +33,6 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-
 router.post("/comment", (req, res, next) => {});
 
 export default router;
