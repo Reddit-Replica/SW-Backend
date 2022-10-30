@@ -277,7 +277,7 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/api/accept_moderator_invite:
+ * /r/{subreddit}/api/accept-moderator-invite:
  *  post:
  *   summary:
  *    Accept an invite to moderate the specified subreddit. The authenticated user must have been invited to moderate the subreddit by one of its current moderators or the admin.
@@ -310,13 +310,13 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
  */
 
 moderationRouter.post(
-  "/r/:subreddit/api/accept_moderator_invite",
+  "/r/:subreddit/api/accept-moderator-invite",
   (req, res, next) => {}
 );
 
 /**
  * @swagger
- * /r/{subreddit}/api/moderator_invite:
+ * /r/{subreddit}/api/moderator-invite:
  *  post:
  *   summary:
  *    Send a moderation invite to a user.
@@ -366,13 +366,13 @@ moderationRouter.post(
  */
 
 moderationRouter.post(
-  "/r/:subreddit/api/moderator_invite",
+  "/r/:subreddit/api/moderator-invite",
   (req, res, next) => {}
 );
 
 /**
  * @swagger
- * /api/leavemoderator:
+ * /api/leave-moderator:
  *  post:
  *   summary:
  *    Abdicate moderator status in a subreddit.
@@ -410,7 +410,7 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/leavemoderator", (req, res, next) => {});
+moderationRouter.post("/api/leave-moderator", (req, res, next) => {});
 
 /**
  * @swagger
@@ -820,10 +820,10 @@ moderationRouter.get("/r/:subreddit/about/banned", (req, res, next) => {});
  *         language:
  *          type: string
  *          description: The janguage of the community.
- *         Region:
+ *         region:
  *          type: string
  *          description: The region of the community.
- *         Type:
+ *         type:
  *          type: string
  *          description: The type of the community.
  *          enum:
@@ -887,8 +887,8 @@ moderationRouter.get("/r/:subreddit/about/edit", (req, res, next) => {});
  *        - acceptingRequestsToPost
  *        - acceptingRequestsToJoin
  *        - NSFW
- *        - Type
- *        - Region
+ *        - type
+ *        - region
  *        - language
  *       properties:
  *         communityName:
@@ -967,7 +967,7 @@ moderationRouter.put("/r/:subreddit/about/edit", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/suggestedTopics:
+ * /r/{subreddit}/suggested-topics:
  *  get:
  *   summary:
  *    Get the suggested topics for a subreddit.
@@ -1006,7 +1006,7 @@ moderationRouter.put("/r/:subreddit/about/edit", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/suggestedTopics", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/suggested-topics", (req, res, next) => {});
 
 /**
  * @swagger
@@ -1119,7 +1119,7 @@ moderationRouter.post("/r/:subreddit/about/rules", (req, res, next) => {});
  *              - posts and comments
  *              - posts only
  *              - comments only
- *            Report reason:
+ *            reportReason:
  *             type: string
  *             description: The reason of the report. (maximum 100 charachter)
  *            description:
@@ -1209,7 +1209,7 @@ moderationRouter.put(
 
 /**
  * @swagger
- * /r/{subreddit}/about/rulesOrder:
+ * /r/{subreddit}/about/rules-order:
  *  post:
  *   summary:
  *    Edit rules order of the subreddit.
@@ -1263,7 +1263,10 @@ moderationRouter.put(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/r/:subreddit/about/rulesOrder", (req, res, next) => {});
+moderationRouter.post(
+  "/r/:subreddit/about/rules-order",
+  (req, res, next) => {}
+);
 
 /**
  * @swagger
@@ -1300,7 +1303,7 @@ moderationRouter.post("/r/:subreddit/about/rulesOrder", (req, res, next) => {});
  *                                       order:
  *                                           type: number
  *                                           description: Order of the flair among the rest
- *                                       backgroundcolor:
+ *                                       backgroundColor:
  *                                           type: string
  *                                           description: Background color of the flair
  *                                       textColor:
