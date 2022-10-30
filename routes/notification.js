@@ -45,9 +45,12 @@ const router = express.Router();
  *                          statusCode:
  *                            type: string
  *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
