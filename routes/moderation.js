@@ -9,7 +9,6 @@ const moderationRouter = express.Router();
  *  description: Posts and comments moderation endpoints
  */
 
-
 /**
  * @swagger
  * tags:
@@ -23,8 +22,6 @@ const moderationRouter = express.Router();
  *  name: Subreddit moderation
  *  description: Subreddit Moderation endpoints
  */
-
-
 
 /**
  * @swagger
@@ -42,13 +39,13 @@ const moderationRouter = express.Router();
  *      required: true
  *    - in: query
  *      name: after
- *      description: fullname of a thing.
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *      schema:
  *       type: string
  *      required: false
  *    - in: query
  *      name: before
- *      description: fullname of a thing. one of after/before should be specified
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
  *      schema:
  *       type: string
  *      required: false
@@ -129,13 +126,13 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *      required: true
  *    - in: query
  *      name: after
- *      description: fullname of a thing.
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *      schema:
  *       type: string
  *      required: false
  *    - in: query
  *      name: before
- *      description: fullname of a thing. one of after/before should be specified
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
  *      schema:
  *       type: string
  *      required: false
@@ -216,13 +213,13 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *      required: true
  *    - in: query
  *      name: after
- *      description: fullname of a thing.
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *      schema:
  *       type: string
  *      required: false
  *    - in: query
  *      name: before
- *      description: fullname of a thing. one of after/before should be specified
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
  *      schema:
  *       type: string
  *      required: false
@@ -280,7 +277,7 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/api/accept_moderator_invite:
+ * /r/{subreddit}/api/accept-moderator-invite:
  *  post:
  *   summary:
  *    Accept an invite to moderate the specified subreddit. The authenticated user must have been invited to moderate the subreddit by one of its current moderators or the admin.
@@ -313,13 +310,13 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
  */
 
 moderationRouter.post(
-  "/r/:subreddit/api/accept_moderator_invite",
+  "/r/:subreddit/api/accept-moderator-invite",
   (req, res, next) => {}
 );
 
 /**
  * @swagger
- * /r/{subreddit}/api/moderator_invite:
+ * /r/{subreddit}/api/moderator-invite:
  *  post:
  *   summary:
  *    Send a moderation invite to a user.
@@ -369,13 +366,13 @@ moderationRouter.post(
  */
 
 moderationRouter.post(
-  "/r/:subreddit/api/moderator_invite",
+  "/r/:subreddit/api/moderator-invite",
   (req, res, next) => {}
 );
 
 /**
  * @swagger
- * /api/leavemoderator:
+ * /api/leave-moderator:
  *  post:
  *   summary:
  *    Abdicate moderator status in a subreddit.
@@ -413,7 +410,7 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/leavemoderator", (req, res, next) => {});
+moderationRouter.post("/api/leave-moderator", (req, res, next) => {});
 
 /**
  * @swagger
@@ -725,13 +722,13 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  *      required: true
  *    - in: query
  *      name: after
- *      description: fullname of a thing.
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *      schema:
  *       type: string
  *      required: false
  *    - in: query
  *      name: before
- *      description: fullname of a thing. one of after/before should be specified
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
  *      schema:
  *       type: string
  *      required: false
@@ -823,10 +820,10 @@ moderationRouter.get("/r/:subreddit/about/banned", (req, res, next) => {});
  *         language:
  *          type: string
  *          description: The janguage of the community.
- *         Region:
+ *         region:
  *          type: string
  *          description: The region of the community.
- *         Type:
+ *         type:
  *          type: string
  *          description: The type of the community.
  *          enum:
@@ -890,8 +887,8 @@ moderationRouter.get("/r/:subreddit/about/edit", (req, res, next) => {});
  *        - acceptingRequestsToPost
  *        - acceptingRequestsToJoin
  *        - NSFW
- *        - Type
- *        - Region
+ *        - type
+ *        - region
  *        - language
  *       properties:
  *         communityName:
@@ -970,7 +967,7 @@ moderationRouter.put("/r/:subreddit/about/edit", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/suggestedTopics:
+ * /r/{subreddit}/suggested-topics:
  *  get:
  *   summary:
  *    Get the suggested topics for a subreddit.
@@ -1009,7 +1006,7 @@ moderationRouter.put("/r/:subreddit/about/edit", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/suggestedTopics", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/suggested-topics", (req, res, next) => {});
 
 /**
  * @swagger
@@ -1122,7 +1119,7 @@ moderationRouter.post("/r/:subreddit/about/rules", (req, res, next) => {});
  *              - posts and comments
  *              - posts only
  *              - comments only
- *            Report reason:
+ *            reportReason:
  *             type: string
  *             description: The reason of the report. (maximum 100 charachter)
  *            description:
@@ -1212,7 +1209,7 @@ moderationRouter.put(
 
 /**
  * @swagger
- * /r/{subreddit}/about/rulesOrder:
+ * /r/{subreddit}/about/rules-order:
  *  post:
  *   summary:
  *    Edit rules order of the subreddit.
@@ -1266,11 +1263,14 @@ moderationRouter.put(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/r/:subreddit/about/rulesOrder", (req, res, next) => {});
+moderationRouter.post(
+  "/r/:subreddit/about/rules-order",
+  (req, res, next) => {}
+);
 
 /**
  * @swagger
- * /r/{subreddit}/about/post_flairs:
+ * /r/{subreddit}/about/post-flairs:
  *  get:
  *      summary: Returns all post flairs of a subreddit
  *      tags: [Posts and comments moderation]
@@ -1289,7 +1289,7 @@ moderationRouter.post("/r/:subreddit/about/rulesOrder", (req, res, next) => {});
  *                      schema:
  *                          type: object
  *                          properties:
- *                              Post_Flairs:
+ *                              postFlairs:
  *                                type: array
  *                                items:
  *                                    type: object
@@ -1297,16 +1297,16 @@ moderationRouter.post("/r/:subreddit/about/rulesOrder", (req, res, next) => {});
  *                                       id:
  *                                           type: string
  *                                           description: id of the flair
- *                                       flair_name:
+ *                                       flairName:
  *                                           type: string
  *                                           description: Name of the flair
  *                                       order:
  *                                           type: number
  *                                           description: Order of the flair among the rest
- *                                       background_color:
+ *                                       backgroundColor:
  *                                           type: string
  *                                           description: Background color of the flair
- *                                       text_color:
+ *                                       textColor:
  *                                           type: string
  *                                           description: Color of the flair name
  *                                       settings:
@@ -1329,11 +1329,11 @@ moderationRouter.post("/r/:subreddit/about/rulesOrder", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.get("/r/:subreddit/about/post_flairs", (req, res, next) => {});
+router.get("/r/:subreddit/about/post-flairs", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/about/post_flairs/{flairId}:
+ * /r/{subreddit}/about/post-flairs/{flairId}:
  *  get:
  *      summary: Returns details of a specific post flair
  *      tags: [Posts and comments moderation]
@@ -1358,16 +1358,16 @@ router.get("/r/:subreddit/about/post_flairs", (req, res, next) => {});
  *                      schema:
  *                         type: object
  *                         properties:
- *                           flair_name:
+ *                           flairName:
  *                              type: string
  *                              description: Name of the flair
- *                           background_color:
+ *                           backgroundColor:
  *                              type: string
  *                              description: Background color of the flair
  *                           order:
  *                              type: number
  *                              description: Order of the flair among the rest
- *                           text_color:
+ *                           textColor:
  *                              type: string
  *                              description: Color of the flair name
  *                           settings:
@@ -1390,11 +1390,11 @@ router.get("/r/:subreddit/about/post_flairs", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.get("/r/:subreddit/about/post_flairs/:flairId", (req, res, next) => {});
+router.get("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/about/post_flairs:
+ * /r/{subreddit}/about/post-flairs:
  *  post:
  *      summary: Add a new post flair to a given subreddit
  *      tags: [Posts and comments moderation]
@@ -1412,13 +1412,13 @@ router.get("/r/:subreddit/about/post_flairs/:flairId", (req, res, next) => {});
  *                 schema:
  *                    type: object
  *                    properties:
- *                       flair_name:
+ *                       flairName:
  *                          type: string
  *                          description: Name of the flair
- *                       background_color:
+ *                       backgroundColor:
  *                          type: string
  *                          description: Background color of the flair
- *                       text_color:
+ *                       textColor:
  *                          type: string
  *                          description: Color of the flair name
  *                       settings:
@@ -1444,11 +1444,11 @@ router.get("/r/:subreddit/about/post_flairs/:flairId", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.post("/r/:subreddit/about/post_flairs", (req, res, next) => {});
+router.post("/r/:subreddit/about/post-flairs", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/about/post_flairs/{flairId}:
+ * /r/{subreddit}/about/post-flairs/{flairId}:
  *  put:
  *      summary: Edit an existing post flair in a given subreddit
  *      tags: [Posts and comments moderation]
@@ -1472,13 +1472,13 @@ router.post("/r/:subreddit/about/post_flairs", (req, res, next) => {});
  *                 schema:
  *                    type: object
  *                    properties:
- *                       flair_name:
+ *                       flairName:
  *                          type: string
  *                          description: Name of the flair
- *                       background_color:
+ *                       backgroundColor:
  *                          type: string
  *                          description: Background color of the flair
- *                       text_color:
+ *                       textColor:
  *                          type: string
  *                          description: Color of the flair name
  *                       settings:
@@ -1504,11 +1504,11 @@ router.post("/r/:subreddit/about/post_flairs", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.put("/r/:subreddit/about/post_flairs/:flairId", (req, res, next) => {});
+router.put("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/about/post_flairs/{flairId}:
+ * /r/{subreddit}/about/post-flairs/{flairId}:
  *  delete:
  *      summary: Delete an existing post flair in a given subreddit
  *      tags: [Posts and comments moderation]
@@ -1547,13 +1547,13 @@ router.put("/r/:subreddit/about/post_flairs/:flairId", (req, res, next) => {});
  *          - bearerAuth: []
  */
 router.delete(
-  "/r/:subreddit/about/post_flairs/:flairId",
+  "/r/:subreddit/about/post-flairs/:flairId",
   (req, res, next) => {}
 );
 
 /**
  * @swagger
- * /r/{subreddit}/about/postFlairsOrder:
+ * /r/{subreddit}/about/post-flairs-order:
  *  post:
  *      summary: Edit the order of all post flairs in a given subreddit
  *      tags: [Posts and comments moderation]
@@ -1571,7 +1571,7 @@ router.delete(
  *              schema:
  *                  type: object
  *                  properties:
- *                    rulesOrder:
+ *                    flairsOrder:
  *                      type: array
  *                      items:
  *                          type: object
@@ -1603,11 +1603,11 @@ router.delete(
  *      security:
  *          - bearerAuth: []
  */
-router.post("/r/:subreddit/about/postFlairsOrder", (req, res, next) => {});
+router.post("/r/:subreddit/about/post-flairs-order", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/about/post_flairs_settings:
+ * /r/{subreddit}/about/post-flairs-settings:
  *  get:
  *      summary: Get settings for post flairs in a given subreddit
  *      tags: [Posts and comments moderation]
@@ -1626,10 +1626,10 @@ router.post("/r/:subreddit/about/postFlairsOrder", (req, res, next) => {});
  *                      schema:
  *                         type: object
  *                         properties:
- *                           enable_post_flairs:
+ *                           enablePostFlairs:
  *                              type: boolean
  *                              description: Indicates whether this community enabled flairs on posts or not
- *                           allow_users:
+ *                           allowUsers:
  *                              type: boolean
  *                              description: This will let users select, edit, and clear post flair for their posts in this community.
  *          400:
@@ -1650,11 +1650,11 @@ router.post("/r/:subreddit/about/postFlairsOrder", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.get("/r/:subreddit/about/post_flairs_settings", (req, res, next) => {});
+router.get("/r/:subreddit/about/post-flairs-settings", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/about/post_flairs_settings:
+ * /r/{subreddit}/about/post-flairs-settings:
  *  post:
  *      summary: Change the settings for post flairs in a community
  *      tags: [Posts and comments moderation]
@@ -1672,10 +1672,10 @@ router.get("/r/:subreddit/about/post_flairs_settings", (req, res, next) => {});
  *              schema:
  *                  type: object
  *                  properties:
- *                     enable_post_flairs:
+ *                     enablePostFlairs:
  *                        type: boolean
  *                        description: Indicates whether this community enabled flairs on posts or not
- *                     allow_users:
+ *                     allowUsers:
  *                        type: boolean
  *                        description: This will let users select, edit, and clear post flair for their posts in this community.
  *      responses:
@@ -1699,6 +1699,6 @@ router.get("/r/:subreddit/about/post_flairs_settings", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.post("/r/:subreddit/about/post_flairs_settings", (req, res, next) => {});
+router.post("/r/:subreddit/about/post-flairs-settings", (req, res, next) => {});
 
 export default moderationRouter;

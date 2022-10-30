@@ -10,7 +10,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /create_subreddit:
+ * /create-subreddit:
  *   post:
  *     summary: Create a new subreddit
  *     tags: [Subreddit]
@@ -60,11 +60,11 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.post("/create_subreddit", (req, res) => {});
+router.post("/create-subreddit", (req, res) => {});
 
 /**
  * @swagger
- * /subreddit_name_available:
+ * /subreddit-name-available:
  *   get:
  *     summary: Check if the username is used before
  *     tags: [Subreddit]
@@ -92,6 +92,6 @@ router.post("/create_subreddit", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/subreddit_name_available", (req, res) => {});
+router.get("/subreddit-name-available", (req, res) => {});
 
 export default router;
