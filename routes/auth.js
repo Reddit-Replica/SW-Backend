@@ -112,7 +112,7 @@ router.post("/signup/:type", (req, res) => {});
 
 /**
  * @swagger
- * /username_available:
+ * /username-available:
  *   get:
  *     summary: Check if the username is used before
  *     tags: [Sign Up]
@@ -140,11 +140,11 @@ router.post("/signup/:type", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/username_available", (req, res) => {});
+router.get("/username-available", (req, res) => {});
 
 /**
  * @swagger
- * /email_available:
+ * /email-available:
  *   get:
  *     summary: Check if the email is used before
  *     tags: [Sign Up]
@@ -172,11 +172,11 @@ router.get("/username_available", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/email_available", (req, res) => {});
+router.get("/email-available", (req, res) => {});
 
 /**
  * @swagger
- * /verify_email/{id}/{token}:
+ * /verify-email/{id}/{token}:
  *   post:
  *     summary: Verify the email
  *     tags: [Sign Up]
@@ -215,11 +215,11 @@ router.get("/email_available", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/verify_email/:id/:token", (req, res) => {});
+router.post("/verify-email/:id/:token", (req, res) => {});
 
 /**
  * @swagger
- * /random_username:
+ * /random-username:
  *   get:
  *     summary: Get an available random username used to create a new account
  *     tags: [Sign Up]
@@ -236,7 +236,7 @@ router.post("/verify_email/:id/:token", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/random_username", (req, res) => {});
+router.get("/random-username", (req, res) => {});
 
 /**
  * @swagger
@@ -383,7 +383,7 @@ router.post("/login/forget", (req, res) => {});
 
 /**
  * @swagger
- * /reset_password/{id}/{token}:
+ * /reset-password/{id}/{token}:
  *   post:
  *     summary: Reset the password
  *     tags: [Login]
@@ -437,6 +437,6 @@ router.post("/login/forget", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/reset_password/:id/:token", (req, res) => {});
+router.post("/reset-password/:id/:token", (req, res) => {});
 
 export default router;

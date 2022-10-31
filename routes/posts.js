@@ -4,7 +4,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /follow_post:
+ * /follow-post:
  *  post:
  *      summary: Follow or unfollow a post.
  *      tags: [Posts]
@@ -42,7 +42,7 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.post("/follow_post", (req, res, next) => {});
+router.post("/follow-post", (req, res, next) => {});
 
 /**
  * @swagger
@@ -87,7 +87,7 @@ router.post("/hide", (req, res, next) => {});
 
 /**
  * @swagger
- * /marknsfw:
+ * /mark-nsfw:
  *  post:
  *      summary: Mark a post NSFW (Not Safe For Work)
  *      tags: [Posts]
@@ -124,11 +124,11 @@ router.post("/hide", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/marknsfw", (req, res, next) => {});
+router.post("/mark-nsfw", (req, res, next) => {});
 
 /**
  * @swagger
- * /set_suggested_sort:
+ * /set-suggested-sort:
  *  post:
  *      summary: Set suggested sort for a post comments
  *      tags: [Posts]
@@ -166,11 +166,11 @@ router.post("/marknsfw", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/set_suggested_sort", (req, res, next) => {});
+router.post("/set-suggested-sort", (req, res, next) => {});
 
 /**
  * @swagger
- * /clear_suggested_sort:
+ * /clear-suggested-sort:
  *  post:
  *      summary: Reset the suggested sort for a post back to default
  *      tags: [Posts]
@@ -205,11 +205,11 @@ router.post("/set_suggested_sort", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/clear_suggested_sort", (req, res, next) => {});
+router.post("/clear-suggested-sort", (req, res, next) => {});
 
 /**
  * @swagger
- * /spoiler:
+ * /mark-spoiler:
  *  post:
  *      summary: Blur the content of the post and unblur when opening it
  *      tags: [Posts]
@@ -246,7 +246,7 @@ router.post("/clear_suggested_sort", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/spoiler", (req, res, next) => {});
+router.post("/mark-spoiler", (req, res, next) => {});
 
 /**
  * @swagger
@@ -326,7 +326,7 @@ router.post("/unhide", (req, res, next) => {});
 
 /**
  * @swagger
- * /unmarknsfw:
+ * /unmark-nsfw:
  *  post:
  *      summary: Remove the NSFW marking from a post
  *      tags: [Posts]
@@ -363,11 +363,11 @@ router.post("/unhide", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unmarknsfw", (req, res, next) => {});
+router.post("/unmark-nsfw", (req, res, next) => {});
 
 /**
  * @swagger
- * /unspoiler:
+ * /unmark-spoiler:
  *  post:
  *      summary: Remove ability to blur the content of the post
  *      tags: [Posts]
@@ -404,11 +404,11 @@ router.post("/unmarknsfw", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unspoiler", (req, res, next) => {});
+router.post("/unmark-spoiler", (req, res, next) => {});
 
 /**
  * @swagger
- * /post_insights:
+ * /post-insights:
  *  get:
  *      summary: Get the number of views on a post
  *      tags: [Posts]
@@ -427,16 +427,16 @@ router.post("/unspoiler", (req, res, next) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          total_views:
+ *                          totalViews:
  *                              type: number
  *                              description: The number of people who viewed this post
- *                          upvote_rate:
+ *                          upvoteRate:
  *                              type: number
  *                              description: Ratio between the number of upvotes and downvotes
- *                          community_karma:
+ *                          communityKarma:
  *                              type: number
  *                              description: Total amount of karma earned in this community
- *                          total_shares:
+ *                          totalShares:
  *                              type: number
  *                              description: How many times the post was shared
  *          400:
@@ -457,11 +457,11 @@ router.post("/unspoiler", (req, res, next) => {});
  *      security:
  *         - bearerAuth: []
  */
-router.get("/post_insights", (req, res, next) => {});
+router.get("/post-insights", (req, res, next) => {});
 
 /**
  * @swagger
- * /post_details:
+ * /post-details:
  *  get:
  *      summary: Get details about a specific post
  *      tags: [Posts]
@@ -495,11 +495,11 @@ router.get("/post_insights", (req, res, next) => {});
  *          500:
  *              description: Server Error
  */
-router.get("/post_details", (req, res, next) => {});
+router.get("/post-details", (req, res, next) => {});
 
 /**
  * @swagger
- * /pin_post:
+ * /pin-post:
  *  post:
  *      summary: Add a post to the user's collection of pinned posts
  *      tags: [Posts]
@@ -536,11 +536,11 @@ router.get("/post_details", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/pin_post", (req, res, next) => {});
+router.post("/pin-post", (req, res, next) => {});
 
 /**
  * @swagger
- * /pinned_posts:
+ * /pinned-posts:
  *  get:
  *      summary: Returns all posts pinned by the user
  *      tags: [Posts]
@@ -574,11 +574,11 @@ router.post("/pin_post", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.get("/pinned_posts", (req, res, next) => {});
+router.get("/pinned-posts", (req, res, next) => {});
 
 /**
  * @swagger
- * /edit_post_flair:
+ * /edit-post-flair:
  *  put:
  *      summary: Change the flair on a post
  *      tags: [Posts]
@@ -616,6 +616,6 @@ router.get("/pinned_posts", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.put("/edit_post_flair", (req, res, next) => {});
+router.put("/edit-post-flair", (req, res, next) => {});
 
 export default router;

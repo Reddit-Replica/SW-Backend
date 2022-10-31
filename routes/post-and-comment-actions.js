@@ -49,7 +49,7 @@ router.delete("/delete", (req, res, next) => {});
 
 /**
  * @swagger
- * /spam:
+ * /mark-spam:
  *  post:
  *      summary: Mark a post, comment or message as spam
  *      tags: [Post-comment-message actions]
@@ -95,11 +95,11 @@ router.delete("/delete", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/spam", (req, res, next) => {});
+router.post("/mark-spam", (req, res, next) => {});
 
 /**
  * @swagger
- * /unmarkspam:
+ * /unmark-spam:
  *  post:
  *      summary: Unmark a post as spam
  *      tags: [Post-comment-message actions]
@@ -142,11 +142,11 @@ router.post("/spam", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unmarkspam", (req, res, next) => {});
+router.post("/unmark-spam", (req, res, next) => {});
 
 /**
  * @swagger
- * /editusertext:
+ * /edit-user-text:
  *  put:
  *      summary: Edit the body text of a comment or post
  *      tags: [Post-comment actions]
@@ -189,7 +189,7 @@ router.post("/unmarkspam", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.put("/editusertext", (req, res, next) => {});
+router.put("/edit-user-text", (req, res, next) => {});
 
 /**
  * @swagger
@@ -212,9 +212,6 @@ router.put("/editusertext", (req, res, next) => {});
  *                    enum:
  *                       - post
  *                       - comment
- *                  category:
- *                    type: string
- *                    description: A category name
  *      responses:
  *          200:
  *              description: Post/Comment Saved successfully
@@ -242,7 +239,7 @@ router.post("/save", (req, res, next) => {});
 
 /**
  * @swagger
- * /sendreplies:
+ * /send-replies:
  *  post:
  *      summary: Enable or disable inbox replies for a Post or comment
  *      tags: [Post-comment actions]
@@ -285,7 +282,7 @@ router.post("/save", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/sendreplies", (req, res, next) => {});
+router.post("/send-replies", (req, res, next) => {});
 
 /**
  * @swagger
@@ -337,7 +334,7 @@ router.post("/unsave", (req, res, next) => {});
  * @swagger
  * /vote:
  *  post:
- *      summary: Cast a vote on a thing
+ *      summary: Vote on a post or comment
  *      tags: [Post-comment actions]
  *      requestBody:
  *       required: true
@@ -354,9 +351,9 @@ router.post("/unsave", (req, res, next) => {});
  *                 enum:
  *                     - post
  *                     - comment
- *               dir:
+ *               direction:
  *                 type: number
- *                 description: Vote direction.. one of (1, -1)
+ *                 description: Vote direction.. 1 for upvote and -1 for downvote
  *      responses:
  *          200:
  *              description: Vote registered successfully
