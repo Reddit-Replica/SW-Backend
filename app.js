@@ -3,14 +3,14 @@ import express from "express";
 import mongoose from "mongoose";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
-import messageRouter from "./routes/message.js";
-import categoriesRouter from "./routes/communities.js";
-import notificationsRouter from "./routes/notification.js";
+import mainRouter from "./routes/routes";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 const app = express();
 
-dotenv.config();
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 
 app.use(bodyParser.json());
 app.use(morgan("dev"));
@@ -24,23 +24,16 @@ app.use((req, res, next) => {
   next();
 });
 
-var monngoURL = "mongodb://mongo-service/database";
+const DB_URL = `mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=admin`;
 
 // mongoose
-//   .connect(monngoURL, { useNewUrlParser: true })
+//   .connect(DB_URL, { useNewUrlParser: true })
 //   .then(() => {
 //     console.log("connected to mongo");
 //   })
 //   .catch((error) => {
 //     console.log("unable to connect to mongoDB : ", error);
 //   });
-
-app.get("/api", (req, res, next) => {
-  const data = process.env.DATA_TO_SEND || "Data Added Automatically";
-  res.json({
-    text: data,
-  });
-});
 
 // swagger options
 const options = {
@@ -57,9 +50,7 @@ const options = {
 const specs = swaggerJsDoc(options);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
-app.use("/api", messageRouter);
-app.use("/api", categoriesRouter);
-app.use("/api", notificationsRouter);
+app.use(mainRouter);
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
 });
