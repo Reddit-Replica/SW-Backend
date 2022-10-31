@@ -89,9 +89,6 @@ router.post("/message/compose", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
  *                          before:
  *                           type: string
  *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
@@ -158,9 +155,6 @@ router.get("/message/sent", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
  *                          before:
  *                           type: string
  *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
@@ -246,9 +240,6 @@ router.get("/message/inbox", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
  *                          before:
  *                           type: string
  *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
@@ -318,9 +309,6 @@ router.get("/message/unread", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
  *                          before:
  *                           type: string
  *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
@@ -402,9 +390,6 @@ router.get("/message/post-reply", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
  *                          before:
  *                           type: string
  *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
@@ -486,9 +471,6 @@ router.get("/message/mentions", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
  *                          before:
  *                           type: string
  *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.

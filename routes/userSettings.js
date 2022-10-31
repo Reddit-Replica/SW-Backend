@@ -10,7 +10,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /account_settings:
+ * /account-settings:
  *   get:
  *     summary: Return the preference settings of the logged in user
  *     tags: [User settings]
@@ -80,11 +80,11 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.get("/account_settings", (req, res) => {});
+router.get("/account-settings", (req, res) => {});
 
 /**
  * @swagger
- * /account_settings:
+ * /account-settings:
  *   patch:
  *     summary: Change the settings of the logged in user [can send any of the properties]
  *     tags: [User settings]
@@ -137,7 +137,7 @@ router.get("/account_settings", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.patch("/account_settings", (req, res) => {});
+router.patch("/account-settings", (req, res) => {});
 
 /**
  * @swagger
@@ -189,7 +189,7 @@ router.post("/connect/:type", (req, res) => {});
 
 /**
  * @swagger
- * /change_email:
+ * /change-email:
  *   put:
  *     summary: Change the email of the logged in user
  *     tags: [User settings]
@@ -227,11 +227,11 @@ router.post("/connect/:type", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.put("/change_email", (req, res) => {});
+router.put("/change-email", (req, res) => {});
 
 /**
  * @swagger
- * /change_password:
+ * /change-password:
  *   put:
  *     summary: Change the password of the logged in user
  *     tags: [User settings]
@@ -273,11 +273,11 @@ router.put("/change_email", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.put("/change_password", (req, res) => {});
+router.put("/change-password", (req, res) => {});
 
 /**
  * @swagger
- * /delete_account:
+ * /delete-account:
  *   delete:
  *     summary: Delete the account
  *     tags: [User settings]
@@ -306,11 +306,11 @@ router.put("/change_password", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/delete_account", (req, res) => {});
+router.delete("/delete-account", (req, res) => {});
 
 /**
  * @swagger
- * /social_link:
+ * /social-link:
  *   post:
  *     summary: Add a social link to the logged in user
  *     tags: [User settings]
@@ -352,11 +352,11 @@ router.delete("/delete_account", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.post("/social_link", (req, res) => {});
+router.post("/social-link", (req, res) => {});
 
 /**
  * @swagger
- * /social_link:
+ * /social-link:
  *   delete:
  *     summary: Delete the social link
  *     tags: [User settings]
@@ -391,11 +391,11 @@ router.post("/social_link", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/social_link", (req, res) => {});
+router.delete("/social-link", (req, res) => {});
 
 /**
  * @swagger
- * /profile_picture:
+ * /profile-picture:
  *   post:
  *     summary: Add a profile picture to the logged in user
  *     tags: [User settings]
@@ -429,11 +429,11 @@ router.delete("/social_link", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.post("/profile_picture", (req, res) => {});
+router.post("/profile-picture", (req, res) => {});
 
 /**
  * @swagger
- * /profile_picture:
+ * /profile-picture:
  *   delete:
  *     summary: Delete the profile picture
  *     tags: [User settings]
@@ -447,11 +447,11 @@ router.post("/profile_picture", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/profile_picture", (req, res) => {});
+router.delete("/profile-picture", (req, res) => {});
 
 /**
  * @swagger
- * /banner_image:
+ * /banner-image:
  *   post:
  *     summary: Add a banner to the logged in user
  *     tags: [User settings]
@@ -485,11 +485,11 @@ router.delete("/profile_picture", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.post("/banner_image", (req, res) => {});
+router.post("/banner-image", (req, res) => {});
 
 /**
  * @swagger
- * /banner_image:
+ * /banner-image:
  *   delete:
  *     summary: Delete the banner image
  *     tags: [User settings]
@@ -503,11 +503,11 @@ router.post("/banner_image", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/banner_image", (req, res) => {});
+router.delete("/banner-image", (req, res) => {});
 
 /**
  * @swagger
- * /blocked_users:
+ * /blocked-users:
  *   get:
  *     summary: Get a list of blocked users by the logged in user
  *     tags: [User settings]
@@ -568,6 +568,6 @@ router.delete("/banner_image", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.get("/blocked_users", (req, res) => {});
+router.get("/blocked-users", (req, res) => {});
 
 export default router;

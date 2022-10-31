@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Read-it API",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "API Documentation for all endpoints"
   },
   "components": {
@@ -10,19 +10,19 @@
       "FlairSettings": {
         "type": "object",
         "properties": {
-          "mod_only": {
+          "modOnly": {
             "type": "boolean",
             "description": "Flair is only available for mods to select"
           },
-          "allow_user_edits": {
+          "allowUserEdits": {
             "type": "boolean",
             "description": "User will be able to edit flair text"
           },
-          "flair_type": {
+          "flairType": {
             "type": "string",
             "enum": ["Text and emojis", "Text only", "Emojis only"]
           },
-          "emojis_limit": {
+          "emojisLimit": {
             "type": "number",
             "description": "Limit to the number of emojis in the flair (1 - 10)"
           }
@@ -35,7 +35,7 @@
             "type": "string",
             "description": "id of the flair"
           },
-          "flair_name": {
+          "flairName": {
             "type": "string",
             "description": "Name of the flair"
           },
@@ -43,11 +43,11 @@
             "type": "number",
             "description": "Order of the flair among the rest"
           },
-          "background_color": {
+          "backgroundColor": {
             "type": "string",
             "description": "Background color of the flair"
           },
-          "text_color": {
+          "textColor": {
             "type": "string",
             "description": "Color of the flair name"
           }
@@ -77,11 +77,11 @@
             "type": "string",
             "description": "Comment content (raw markdown text)"
           },
-          "parent_id": {
+          "parentId": {
             "type": "string",
             "description": "id of the thing being replied to (parent)"
           },
-          "parent_type": {
+          "parentType": {
             "type": "string",
             "enum": ["post", "comment"]
           },
@@ -124,10 +124,6 @@
             "type": "string",
             "description": "Post content (text/url/image/video)"
           },
-          "sendreplies": {
-            "type": "boolean",
-            "description": "Allow replies on post"
-          },
           "nsfw": {
             "type": "boolean",
             "description": "Not Safe for Work"
@@ -136,34 +132,34 @@
             "type": "boolean",
             "description": "Blur the content of the post"
           },
-          "flair_id": {
+          "flairId": {
             "type": "string",
             "description": "Flair ID"
           },
-          "send_replies": {
+          "sendReplies": {
             "type": "boolean",
             "description": "Allow post reply notifications"
           },
-          "share_post_id": {
+          "sharePostId": {
             "type": "string",
             "description": "id of a post (given in case of sharing a post)"
           },
-          "schedule_date": {
+          "scheduleDate": {
             "type": "string",
             "format": "date",
             "description": "Date for the post submitted at in case of scheduling it"
           },
-          "schedule_time": {
+          "scheduleTime": {
             "type": "string",
             "format": "time",
             "description": "Time required for the post to be submitted at in case of scheduling it"
           },
-          "schedule_time_zone": {
+          "scheduleTimeZone": {
             "type": "string",
             "format": "time_zone",
             "description": "Time zone chosen when scheduling a post"
           },
-          "recaptcha_response": {
+          "recaptchaResponse": {
             "type": "string",
             "description": "reCAPTCHA response"
           }
@@ -207,11 +203,11 @@
             "type": "number",
             "description": "Total number of votes on a post"
           },
-          "posted_at": {
+          "postedAt": {
             "type": "string",
             "description": "The time in which this post was published"
           },
-          "posted_by": {
+          "postedBy": {
             "type": "string",
             "description": "Name of the user associated with the post"
           }
@@ -259,11 +255,11 @@
             "type": "number",
             "description": "Total number of votes on a post"
           },
-          "posted_at": {
+          "postedAt": {
             "type": "string",
             "description": "The time in which this post was published"
           },
-          "posted_by": {
+          "postedBy": {
             "type": "string",
             "description": "Name of the user associated with the post"
           }
@@ -280,14 +276,14 @@
             "type": "object",
             "description": "An object that has every detail that we want to send"
           },
-          "included_segments": {
+          "includedSegments": {
             "type": "array",
             "description": "An array hat describes which devices we will send notification to",
             "items": {
               "type": "object"
             }
           },
-          "content_available": {
+          "contentAvailable": {
             "type": "boolean",
             "description": "true if this notification will be send if the device is off ,false if it won't"
           },
@@ -299,19 +295,19 @@
             "type": "object",
             "description": "the external data that you want to send with the notification"
           },
-          "SenderID": {
+          "senderId": {
             "type": "string",
             "description": "Name of the sender of the notification"
           },
-          "ReceiverID": {
+          "receiverId": {
             "type": "number",
             "description": "Name of the sender of the notification"
           },
-          "Isread": {
+          "isRead": {
             "type": "boolean",
             "description": "True if the notification is read , False if the message is not read"
           },
-          "sending_time": {
+          "sentAt": {
             "type": "string",
             "description": "The time of sending the notification"
           },
@@ -319,7 +315,7 @@
             "type": "boolean",
             "description": "not safe for work"
           },
-          "ishidden": {
+          "isHidden": {
             "type": "boolean",
             "description": "true if the notification is hidden , false if notification is not hidden"
           }
@@ -449,11 +445,11 @@
                               "type": "object",
                               "description": "Spam the post",
                               "properties": {
-                                "spamedBy": {
+                                "spammedBy": {
                                   "type": "string",
                                   "description": "Username for the moderator who spamed that post"
                                 },
-                                "spamedDate": {
+                                "spammedDate": {
                                   "type": "string",
                                   "format": "date-time",
                                   "description": "Date when that post spamed"
@@ -499,7 +495,7 @@
                             "type": "string",
                             "description": "The id of the comment"
                           },
-                          "commentBy": {
+                          "commentedBy": {
                             "type": "string",
                             "description": "The username of the comment owner"
                           },
@@ -542,7 +538,7 @@
       "Threads": {
         "type": "object",
         "properties": {
-          "Id": {
+          "id": {
             "type": "string",
             "description": "full name of the thread"
           }
@@ -600,7 +596,7 @@
             "type": "string",
             "description": "he date of being a moderator"
           },
-          "Permissions": {
+          "permissions": {
             "type": "array",
             "description": "array of permissions the moderator has",
             "items": {
@@ -629,15 +625,15 @@
             "type": "string",
             "description": "Name of the community"
           },
-          "Category": {
+          "category": {
             "type": "string",
             "description": "Category of the community"
           },
-          "Members": {
+          "members": {
             "type": "number",
             "description": "Number of members of the community"
           },
-          "Online": {
+          "online": {
             "type": "number",
             "description": "Number of online members of the community"
           },
@@ -743,7 +739,7 @@
                       "type": "string",
                       "description": "Name of subreddit which contain the post"
                     },
-                    "postBy": {
+                    "postedBy": {
                       "type": "string",
                       "description": "The username for the publisher of the post"
                     },
@@ -764,7 +760,7 @@
                       "type": "integer",
                       "description": "Total number of votes to that post"
                     },
-                    "numOfComments": {
+                    "numberOfComments": {
                       "type": "integer",
                       "description": "Total number of comments"
                     },
@@ -841,11 +837,11 @@
                           "type": "object",
                           "description": "Spam the post",
                           "properties": {
-                            "spamedBy": {
+                            "spammedBy": {
                               "type": "string",
                               "description": "Username for the moderator who spamed that post"
                             },
-                            "spamedDate": {
+                            "spammedDate": {
                               "type": "string",
                               "format": "date-time",
                               "description": "Date when that post spamed"
@@ -902,7 +898,7 @@
                   "type": "string",
                   "description": "The id of the comment"
                 },
-                "commentBy": {
+                "commentedBy": {
                   "type": "string",
                   "description": "The author of the comment"
                 },
@@ -945,7 +941,7 @@
                   "type": "integer",
                   "description": "The level of the comment [level of nesting]"
                 },
-                "numChildren": {
+                "numberofChildren": {
                   "type": "integer",
                   "description": "Number of replies to that comment"
                 },
@@ -973,11 +969,11 @@
             "description": "describes the type of message,we have three types",
             "enum": ["Messages", "Post Replies", "Username Mentions"]
           },
-          "subreddit_name": {
+          "subredditName": {
             "type": "string",
             "description": "the name of subreddit that the mention or the reply happened in, it will be needed in the case of post replies and mentions"
           },
-          "post_title": {
+          "postTitle": {
             "type": "string",
             "description": "the title of the post that the mention or reply happened in, it will be needed in the case of post replies and mentions"
           },
@@ -993,7 +989,7 @@
             "type": "string",
             "description": "Username of the receiver"
           },
-          "sendingTime": {
+          "sentAt": {
             "type": "string",
             "description": "Time of sending the message"
           },
@@ -1037,11 +1033,11 @@
                 "type": "string",
                 "description": "Name of subreddit which contain the post"
               },
-              "postBy": {
+              "postedBy": {
                 "type": "string",
                 "description": "The username for the publisher of the post"
               },
-              "commentBy": {
+              "commentedBy": {
                 "type": "string",
                 "description": "The username for the user made the comment (in case that item has a type comment)."
               },
@@ -1057,15 +1053,15 @@
                 "type": "string",
                 "description": "Content of the comment (in case that item has a type comment)."
               },
-              "upVotes": {
+              "postUpVotes": {
                 "type": "integer",
                 "description": "Number of Up votes to that post (in case that item has a type post)."
               },
-              "downVotes": {
+              "postDownVotes": {
                 "type": "integer",
                 "description": "Number of Down votes to that post (in case that item has a type post)."
               },
-              "commentuUpVotes": {
+              "commentUpVotes": {
                 "type": "integer",
                 "description": "Number of Up votes to that comment (in case that item has a type comment)."
               },
@@ -1073,7 +1069,7 @@
                 "type": "integer",
                 "description": "Number of Down votes to that comment (in case that item has a type comment)."
               },
-              "numOfComments": {
+              "numberOfComments": {
                 "type": "integer",
                 "description": "Total number of comments (in case that item has a type post)."
               },
@@ -1337,7 +1333,7 @@
         }
       }
     },
-    "/username_available": {
+    "/username-available": {
       "get": {
         "summary": "Check if the username is used before",
         "tags": ["Sign Up"],
@@ -1380,7 +1376,7 @@
         }
       }
     },
-    "/email_available": {
+    "/email-available": {
       "get": {
         "summary": "Check if the email is used before",
         "tags": ["Sign Up"],
@@ -1423,7 +1419,7 @@
         }
       }
     },
-    "/verify_email/{id}/{token}": {
+    "/verify-email/{id}/{token}": {
       "post": {
         "summary": "Verify the email",
         "tags": ["Sign Up"],
@@ -1483,7 +1479,7 @@
         }
       }
     },
-    "/random_username": {
+    "/random-username": {
       "get": {
         "summary": "Get an available random username used to create a new account",
         "tags": ["Sign Up"],
@@ -1685,7 +1681,7 @@
         }
       }
     },
-    "/reset_password/{id}/{token}": {
+    "/reset-password/{id}/{token}": {
       "post": {
         "summary": "Reset the password",
         "tags": ["Login"],
@@ -1765,7 +1761,7 @@
         }
       }
     },
-    "/categories": {
+    "/saved-categories": {
       "get": {
         "summary": "Get a list of all categories",
         "tags": ["Categories"],
@@ -1906,13 +1902,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
+                    "before": {
                       "type": "string",
-                      "description": "the status code of the response"
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "after / before": {
+                    "after": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
                       "type": "array",
@@ -1923,13 +1919,9 @@
                             "type": "string",
                             "description": "Name of the community"
                           },
-                          "Members": {
+                          "members": {
                             "type": "number",
                             "description": "number of members of the community"
-                          },
-                          "Online": {
-                            "type": "number",
-                            "description": "number of online members of the community"
                           },
                           "description": {
                             "type": "string",
@@ -2011,13 +2003,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
+                    "before": {
                       "type": "string",
-                      "description": "the status code of the response"
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "after / before": {
+                    "after": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
                       "type": "array",
@@ -2028,13 +2020,9 @@
                             "type": "string",
                             "description": "Name of the community"
                           },
-                          "Members": {
+                          "members": {
                             "type": "number",
                             "description": "number of members of the community"
-                          },
-                          "Online": {
-                            "type": "number",
-                            "description": "number of online members of the community"
                           },
                           "description": {
                             "type": "string",
@@ -2076,7 +2064,7 @@
         ]
       }
     },
-    "/api/custom_random_category": {
+    "/api/custom-random-category": {
       "get": {
         "summary": "Return a listing of random communities with random category",
         "tags": ["Subreddit"],
@@ -2115,13 +2103,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
+                    "before": {
                       "type": "string",
-                      "description": "the status code of the response"
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "after / before": {
+                    "after": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
                       "type": "array",
@@ -2132,13 +2120,9 @@
                             "type": "string",
                             "description": "Name of the community"
                           },
-                          "Members": {
+                          "members": {
                             "type": "number",
                             "description": "number of members of the community"
-                          },
-                          "Online": {
-                            "type": "number",
-                            "description": "number of online members of the community"
                           },
                           "description": {
                             "type": "string",
@@ -2173,7 +2157,7 @@
         ]
       }
     },
-    "/api/trending_communities": {
+    "/api/trending-communities": {
       "get": {
         "summary": "Return a listing of the mostly viewed communities",
         "tags": ["Subreddit"],
@@ -2212,13 +2196,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
+                    "before": {
                       "type": "string",
-                      "description": "the status code of the response"
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "after / before": {
+                    "after": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
                       "type": "array",
@@ -2229,13 +2213,9 @@
                             "type": "string",
                             "description": "Name of the community"
                           },
-                          "Members": {
+                          "members": {
                             "type": "number",
                             "description": "number of members of the community"
-                          },
-                          "Online": {
-                            "type": "number",
-                            "description": "number of online members of the community"
                           },
                           "description": {
                             "type": "string",
@@ -2274,7 +2254,7 @@
         ]
       }
     },
-    "/api/random_category": {
+    "/api/random-category": {
       "get": {
         "summary": "Return two random categories to display",
         "tags": ["Subreddit"],
@@ -2286,23 +2266,23 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
-                      "type": "string",
-                      "description": "the status code of the response"
-                    },
-                    "first_category": {
+                    "firstCategory": {
                       "type": "string",
                       "description": "the name of the first category"
                     },
-                    "second_category": {
+                    "secondCategory": {
                       "type": "string",
                       "description": "the name of the first category"
                     },
-                    "after / before": {
+                    "before": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "first_category_children": {
+                    "after": {
+                      "type": "string",
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
+                    },
+                    "firstCategoryChildren": {
                       "type": "array",
                       "description": "List of [Things] to return",
                       "items": {
@@ -2311,13 +2291,9 @@
                             "type": "string",
                             "description": "Name of the community"
                           },
-                          "Members": {
+                          "members": {
                             "type": "number",
                             "description": "number of members of the community"
-                          },
-                          "Online": {
-                            "type": "number",
-                            "description": "number of online members of the community"
                           },
                           "description": {
                             "type": "string",
@@ -2330,7 +2306,7 @@
                         }
                       }
                     },
-                    "second_category_children": {
+                    "secondCategoryChildren": {
                       "type": "array",
                       "description": "List of [Things] to return",
                       "items": {
@@ -2339,13 +2315,9 @@
                             "type": "string",
                             "description": "Name of the community"
                           },
-                          "Members": {
+                          "members": {
                             "type": "number",
                             "description": "number of members of the community"
-                          },
-                          "Online": {
-                            "type": "number",
-                            "description": "number of online members of the community"
                           },
                           "description": {
                             "type": "string",
@@ -2380,14 +2352,14 @@
         ]
       }
     },
-    "/api/r/{subredditName}": {
+    "/api/r/{subreddit}": {
       "get": {
         "summary": "Return all the details of the subreddit",
         "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
-            "name": "subredditName",
+            "name": "subreddit",
             "description": "the name of the subreddit",
             "schema": {
               "type": "string"
@@ -2402,10 +2374,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
-                      "type": "string",
-                      "description": "the status code of the response"
-                    },
                     "children": {
                       "$ref": "#/components/schemas/moderator"
                     }
@@ -2431,14 +2399,14 @@
         ]
       }
     },
-    "/api/r/{subredditName}/about/moderators": {
+    "/api/r/{subreddit}/about/moderators": {
       "get": {
         "summary": "Return a listing of moderators in that specified subreddit",
         "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
-            "name": "subredditName",
+            "name": "subreddit",
             "description": "the name of the subreddit",
             "schema": {
               "type": "string"
@@ -2478,13 +2446,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
+                    "before": {
                       "type": "string",
-                      "description": "the status code of the response"
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "after / before": {
+                    "after": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
                       "type": "array",
@@ -2515,14 +2483,14 @@
         ]
       }
     },
-    "/api/r/{subredditName}/wiki/rules": {
+    "/api/r/{subreddit}/wiki/rules": {
       "get": {
-        "summary": "Return all the rules of the subbreddit in details (canceled feature)",
+        "summary": "Return all the rules of the subreddit in details (canceled feature)",
         "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
-            "name": "subredditName",
+            "name": "subreddit",
             "description": "the name of the subreddit",
             "schema": {
               "type": "string"
@@ -2537,10 +2505,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
-                      "type": "string",
-                      "description": "the status code of the response"
-                    },
                     "children": {
                       "type": "array",
                       "description": "List of [Things] to return",
@@ -2570,14 +2534,14 @@
         ]
       }
     },
-    "/api/r/{subredditName}/wiki/bans": {
+    "/api/r/{subreddit}/wiki/bans": {
       "get": {
         "summary": "Return all the ban questions of the subbreddit in details (canceled feature)",
         "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
-            "name": "subredditName",
+            "name": "subreddit",
             "description": "the name of the subreddit",
             "schema": {
               "type": "string"
@@ -2592,10 +2556,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
-                      "type": "string",
-                      "description": "the status code of the response"
-                    },
                     "children": {
                       "type": "array",
                       "description": "List of [Things] to return",
@@ -2625,14 +2585,14 @@
         ]
       }
     },
-    "/api/r/{subredditName}/add_main_topic": {
+    "/api/r/{subreddit}/add-main-topic": {
       "post": {
         "summary": "add the main topic to the community",
         "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
-            "name": "subredditName",
+            "name": "subreddit",
             "description": "the name of the subreddit",
             "schema": {
               "type": "string"
@@ -2673,14 +2633,14 @@
         ]
       }
     },
-    "/api/r/{subredditName}/add_subtopic": {
+    "/api/r/{subreddit}/add-subtopic": {
       "post": {
         "summary": "add subtopics of the community",
         "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
-            "name": "subredditName",
+            "name": "subreddit",
             "description": "the name of the subreddit",
             "schema": {
               "type": "string"
@@ -2724,14 +2684,14 @@
         ]
       }
     },
-    "/api/r/{subredditName}/add_description": {
+    "/api/r/{subreddit}/add-description": {
       "post": {
         "summary": "add description of the community",
         "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
-            "name": "subredditName",
+            "name": "subreddit",
             "description": "the name of the subreddit",
             "schema": {
               "type": "string"
@@ -2772,14 +2732,14 @@
         ]
       }
     },
-    "/api/r/{subredditName}/toggle_favorite": {
+    "/api/r/{subreddit}/toggle-favorite": {
       "patch": {
         "summary": "toggle favorite property of the community",
         "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
-            "name": "subredditName",
+            "name": "subreddit",
             "description": "the name of the subreddit",
             "schema": {
               "type": "string"
@@ -2804,14 +2764,14 @@
         ]
       }
     },
-    "/api/r/{subredditName}/toggle_community_theme": {
+    "/api/r/{subreddit}/toggle-community-theme": {
       "patch": {
         "summary": "toggle community theme option of the community (canceled feature)",
         "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
-            "name": "subredditName",
+            "name": "subreddit",
             "description": "the name of the subreddit",
             "schema": {
               "type": "string"
@@ -3423,7 +3383,7 @@
         }
       }
     },
-    "/r/{subreddit}/comments/{post}": {
+    "/r/{subreddit}/comments/{postId}": {
       "get": {
         "summary": "Get the comment tree for a given post",
         "tags": ["Comments"],
@@ -3439,7 +3399,7 @@
           },
           {
             "in": "path",
-            "name": "post",
+            "name": "postId",
             "description": "The post id",
             "required": true,
             "schema": {
@@ -3529,7 +3489,7 @@
         }
       }
     },
-    "/r/{subreddit}/comments/{post}/{comment_id}": {
+    "/r/{subreddit}/comments/{postId}/{commentId}": {
       "get": {
         "summary": "Return comment tree of a specific comment",
         "tags": ["Comments"],
@@ -3545,7 +3505,7 @@
           },
           {
             "in": "path",
-            "name": "post",
+            "name": "postId",
             "description": "The post id",
             "required": true,
             "schema": {
@@ -3554,7 +3514,7 @@
           },
           {
             "in": "path",
-            "name": "comment_id",
+            "name": "commentId",
             "description": "The comment id to show its tree",
             "required": true,
             "schema": {
@@ -3606,8 +3566,8 @@
           },
           {
             "in": "query",
-            "name": "comment",
-            "description": "Id of a comment in the comment tree to be the highlighted (optional)",
+            "name": "highlightedCommentId",
+            "description": "Id of a comment in the comment tree to be highlighted (optional)",
             "schema": {
               "type": "integer"
             }
@@ -3644,7 +3604,7 @@
         }
       }
     },
-    "/r/{subreddit}/comments/{post}/{comment_id}/parent_comments": {
+    "/r/{subreddit}/comments/{postId}/{commentId}/parent_comments": {
       "get": {
         "summary": "Return the parents of a specific comment",
         "tags": ["Comments"],
@@ -3660,7 +3620,7 @@
           },
           {
             "in": "path",
-            "name": "post",
+            "name": "postId",
             "description": "The post id",
             "required": true,
             "schema": {
@@ -3669,7 +3629,7 @@
           },
           {
             "in": "path",
-            "name": "comment_id",
+            "name": "commentId",
             "description": "The comment id to show its tree",
             "required": true,
             "schema": {
@@ -3696,7 +3656,7 @@
           },
           {
             "in": "query",
-            "name": "comment",
+            "name": "highlightedCommentId",
             "description": "Id of a comment in the comment tree to be the highlighted (optional)",
             "schema": {
               "type": "integer"
@@ -3718,7 +3678,7 @@
                             "type": "string",
                             "description": "The id of the comment"
                           },
-                          "commentBy": {
+                          "commentedBy": {
                             "type": "string",
                             "description": "The author of the comment"
                           },
@@ -3823,7 +3783,7 @@
                     "type": "string",
                     "description": "Username of the receiver"
                   },
-                  "sendingTime": {
+                  "sendAt": {
                     "type": "string",
                     "description": "Time of sending the message"
                   },
@@ -3893,13 +3853,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
+                    "before": {
                       "type": "string",
-                      "description": "the status code of the response"
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "after / before": {
+                    "after": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
                       "type": "array",
@@ -3914,7 +3874,7 @@
                             "type": "string",
                             "description": "Username of the receiver"
                           },
-                          "sendingTime": {
+                          "sendAt": {
                             "type": "string",
                             "description": "Time of sending the message"
                           },
@@ -3955,7 +3915,7 @@
           {
             "in": "query",
             "name": "before",
-            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
+            "description": "The id of last item in the listing that follows before this page. null if there is no previous page Only one of after/before will be specified.",
             "schema": {
               "type": "string"
             }
@@ -3963,7 +3923,7 @@
           {
             "in": "query",
             "name": "after",
-            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
+            "description": "The id of last item in the listing that follows after this page. null if there is no next page Only one of after/before will be specified.",
             "schema": {
               "type": "string"
             }
@@ -3986,13 +3946,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
+                    "before": {
                       "type": "string",
-                      "description": "the status code of the response"
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "after / before": {
+                    "after": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
                       "type": "array",
@@ -4007,11 +3967,11 @@
                             "type": "string",
                             "description": "describes the type of message"
                           },
-                          "subreddit_name": {
+                          "subredditName": {
                             "type": "string",
                             "description": "subreddit name that the reply or the mention was in"
                           },
-                          "post_title": {
+                          "postTitle": {
                             "type": "string",
                             "description": "the title of the post that the reply or the mention happened in"
                           },
@@ -4023,7 +3983,7 @@
                             "type": "string",
                             "description": "Username of the receiver"
                           },
-                          "sendingTime": {
+                          "sendAt": {
                             "type": "string",
                             "description": "Time of sending the message"
                           },
@@ -4104,13 +4064,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
+                    "before": {
                       "type": "string",
-                      "description": "the status code of the response"
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "after / before": {
+                    "after": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
                       "type": "array",
@@ -4125,7 +4085,7 @@
                             "type": "string",
                             "description": "Username of the sender"
                           },
-                          "sendingTime": {
+                          "sendAt": {
                             "type": "string",
                             "description": "Time of sending the message"
                           },
@@ -4162,7 +4122,7 @@
         ]
       }
     },
-    "/api/message/postreply": {
+    "/api/message/post-reply": {
       "get": {
         "summary": "Return a listing of post replies that you made sorted by time of adding the reply",
         "tags": ["Messages"],
@@ -4201,13 +4161,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
+                    "before": {
                       "type": "string",
-                      "description": "the status code of the response"
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "after / before": {
+                    "after": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
                       "type": "array",
@@ -4222,11 +4182,11 @@
                             "type": "string",
                             "description": "describes the type of message"
                           },
-                          "subreddit_name": {
+                          "subredditName": {
                             "type": "string",
                             "description": "subreddit name that the reply was in"
                           },
-                          "post_title": {
+                          "postTitle": {
                             "type": "string",
                             "description": "the title of the post that the reply happened in"
                           },
@@ -4238,7 +4198,7 @@
                             "type": "string",
                             "description": "Username of the receiver"
                           },
-                          "sendingTime": {
+                          "sendAt": {
                             "type": "string",
                             "description": "Time of sending the message"
                           },
@@ -4314,13 +4274,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
+                    "before": {
                       "type": "string",
-                      "description": "the status code of the response"
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "after / before": {
+                    "after": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
                       "type": "array",
@@ -4335,11 +4295,11 @@
                             "type": "string",
                             "description": "describes the type of message"
                           },
-                          "subreddit_name": {
+                          "subredditName": {
                             "type": "string",
                             "description": "subreddit name that the mention was in"
                           },
-                          "post_title": {
+                          "postTitle": {
                             "type": "string",
                             "description": "the title of the post that the reply happened in"
                           },
@@ -4351,7 +4311,7 @@
                             "type": "string",
                             "description": "Username of the receiver"
                           },
-                          "sendingTime": {
+                          "sendAt": {
                             "type": "string",
                             "description": "Time of sending the message"
                           },
@@ -4427,13 +4387,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
+                    "before": {
                       "type": "string",
-                      "description": "the status code of the response"
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "after / before": {
+                    "after": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
                       "type": "array",
@@ -4452,7 +4412,7 @@
                             "type": "string",
                             "description": "Username of the receiver"
                           },
-                          "sendingTime": {
+                          "sendAt": {
                             "type": "string",
                             "description": "Time of sending the message"
                           },
@@ -4494,7 +4454,7 @@
         ]
       }
     },
-    "/api/unread_a_message": {
+    "/api/unread-message": {
       "patch": {
         "summary": "Unread a Message",
         "tags": ["Messages"],
@@ -4533,7 +4493,7 @@
         ]
       }
     },
-    "/api/read_all_msgs": {
+    "/api/read-all-msgs": {
       "patch": {
         "summary": "mark all messages as read",
         "tags": ["Messages"],
@@ -4572,7 +4532,7 @@
           {
             "in": "query",
             "name": "after",
-            "description": "fullname of a thing.",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
             "schema": {
               "type": "string"
             },
@@ -4581,7 +4541,7 @@
           {
             "in": "query",
             "name": "before",
-            "description": "fullname of a thing. one of after/before should be specified",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
             "schema": {
               "type": "string"
             },
@@ -4689,7 +4649,7 @@
           {
             "in": "query",
             "name": "after",
-            "description": "fullname of a thing.",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
             "schema": {
               "type": "string"
             },
@@ -4698,7 +4658,7 @@
           {
             "in": "query",
             "name": "before",
-            "description": "fullname of a thing. one of after/before should be specified",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
             "schema": {
               "type": "string"
             },
@@ -4806,7 +4766,7 @@
           {
             "in": "query",
             "name": "after",
-            "description": "fullname of a thing.",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
             "schema": {
               "type": "string"
             },
@@ -4815,7 +4775,7 @@
           {
             "in": "query",
             "name": "before",
-            "description": "fullname of a thing. one of after/before should be specified",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
             "schema": {
               "type": "string"
             },
@@ -4896,7 +4856,7 @@
         ]
       }
     },
-    "/r/{subreddit}/api/accept_moderator_invite": {
+    "/r/{subreddit}/api/accept-moderator-invite": {
       "post": {
         "summary": "Accept an invite to moderate the specified subreddit. The authenticated user must have been invited to moderate the subreddit by one of its current moderators or the admin.",
         "tags": ["General moderation"],
@@ -4944,7 +4904,7 @@
         ]
       }
     },
-    "/r/{subreddit}/api/moderator_invite": {
+    "/r/{subreddit}/api/moderator-invite": {
       "post": {
         "summary": "Send a moderation invite to a user.",
         "tags": ["General moderation"],
@@ -5015,7 +4975,7 @@
         ]
       }
     },
-    "/api/leavemoderator": {
+    "/api/leave-moderator": {
       "post": {
         "summary": "Abdicate moderator status in a subreddit.",
         "tags": ["General moderation"],
@@ -5470,7 +5430,7 @@
           {
             "in": "query",
             "name": "after",
-            "description": "fullname of a thing.",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
             "schema": {
               "type": "string"
             },
@@ -5479,7 +5439,7 @@
           {
             "in": "query",
             "name": "before",
-            "description": "fullname of a thing. one of after/before should be specified",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
             "schema": {
               "type": "string"
             },
@@ -5605,11 +5565,11 @@
                       "type": "string",
                       "description": "The janguage of the community."
                     },
-                    "Region": {
+                    "region": {
                       "type": "string",
                       "description": "The region of the community."
                     },
-                    "Type": {
+                    "type": {
                       "type": "string",
                       "description": "The type of the community.",
                       "enum": ["Public", "Restricted", "Private"]
@@ -5681,8 +5641,8 @@
                   "acceptingRequestsToPost",
                   "acceptingRequestsToJoin",
                   "NSFW",
-                  "Type",
-                  "Region",
+                  "type",
+                  "region",
                   "language"
                 ],
                 "properties": {
@@ -5786,7 +5746,7 @@
         ]
       }
     },
-    "/r/{subreddit}/suggestedTopics": {
+    "/r/{subreddit}/suggested-topics": {
       "get": {
         "summary": "Get the suggested topics for a subreddit.",
         "tags": ["Subreddit moderation"],
@@ -5981,7 +5941,7 @@
                               "comments only"
                             ]
                           },
-                          "Report reason": {
+                          "reportReason": {
                             "type": "string",
                             "description": "The reason of the report. (maximum 100 charachter)"
                           },
@@ -6102,7 +6062,7 @@
         ]
       }
     },
-    "/r/{subreddit}/about/rulesOrder": {
+    "/r/{subreddit}/about/rules-order": {
       "post": {
         "summary": "Edit rules order of the subreddit.",
         "tags": ["Subreddit moderation"],
@@ -6182,7 +6142,7 @@
         ]
       }
     },
-    "/r/{subreddit}/about/post_flairs": {
+    "/r/{subreddit}/about/post-flairs": {
       "get": {
         "summary": "Returns all post flairs of a subreddit",
         "tags": ["Posts and comments moderation"],
@@ -6205,7 +6165,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "Post_Flairs": {
+                    "postFlairs": {
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -6214,7 +6174,7 @@
                             "type": "string",
                             "description": "id of the flair"
                           },
-                          "flair_name": {
+                          "flairName": {
                             "type": "string",
                             "description": "Name of the flair"
                           },
@@ -6222,11 +6182,11 @@
                             "type": "number",
                             "description": "Order of the flair among the rest"
                           },
-                          "background_color": {
+                          "backgroundColor": {
                             "type": "string",
                             "description": "Background color of the flair"
                           },
-                          "text_color": {
+                          "textColor": {
                             "type": "string",
                             "description": "Color of the flair name"
                           },
@@ -6293,15 +6253,15 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "flair_name": {
+                  "flairName": {
                     "type": "string",
                     "description": "Name of the flair"
                   },
-                  "background_color": {
+                  "backgroundColor": {
                     "type": "string",
                     "description": "Background color of the flair"
                   },
-                  "text_color": {
+                  "textColor": {
                     "type": "string",
                     "description": "Color of the flair name"
                   },
@@ -6349,7 +6309,7 @@
         ]
       }
     },
-    "/r/{subreddit}/about/post_flairs/{flairId}": {
+    "/r/{subreddit}/about/post-flairs/{flairId}": {
       "get": {
         "summary": "Returns details of a specific post flair",
         "tags": ["Posts and comments moderation"],
@@ -6381,11 +6341,11 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "flair_name": {
+                    "flairName": {
                       "type": "string",
                       "description": "Name of the flair"
                     },
-                    "background_color": {
+                    "backgroundColor": {
                       "type": "string",
                       "description": "Background color of the flair"
                     },
@@ -6393,7 +6353,7 @@
                       "type": "number",
                       "description": "Order of the flair among the rest"
                     },
-                    "text_color": {
+                    "textColor": {
                       "type": "string",
                       "description": "Color of the flair name"
                     },
@@ -6466,15 +6426,15 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "flair_name": {
+                  "flairName": {
                     "type": "string",
                     "description": "Name of the flair"
                   },
-                  "background_color": {
+                  "backgroundColor": {
                     "type": "string",
                     "description": "Background color of the flair"
                   },
-                  "text_color": {
+                  "textColor": {
                     "type": "string",
                     "description": "Color of the flair name"
                   },
@@ -6580,7 +6540,7 @@
         ]
       }
     },
-    "/r/{subreddit}/about/postFlairsOrder": {
+    "/r/{subreddit}/about/post-flairs-order": {
       "post": {
         "summary": "Edit the order of all post flairs in a given subreddit",
         "tags": ["Posts and comments moderation"],
@@ -6602,7 +6562,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "rulesOrder": {
+                  "flairsOrder": {
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -6659,7 +6619,7 @@
         ]
       }
     },
-    "/r/{subreddit}/about/post_flairs_settings": {
+    "/r/{subreddit}/about/post-flairs-settings": {
       "get": {
         "summary": "Get settings for post flairs in a given subreddit",
         "tags": ["Posts and comments moderation"],
@@ -6682,11 +6642,11 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "enable_post_flairs": {
+                    "enablePostFlairs": {
                       "type": "boolean",
                       "description": "Indicates whether this community enabled flairs on posts or not"
                     },
-                    "allow_users": {
+                    "allowUsers": {
                       "type": "boolean",
                       "description": "This will let users select, edit, and clear post flair for their posts in this community."
                     }
@@ -6747,11 +6707,11 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "enable_post_flairs": {
+                  "enablePostFlairs": {
                     "type": "boolean",
                     "description": "Indicates whether this community enabled flairs on posts or not"
                   },
-                  "allow_users": {
+                  "allowUsers": {
                     "type": "boolean",
                     "description": "This will let users select, edit, and clear post flair for their posts in this community."
                   }
@@ -6835,24 +6795,28 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "statusCode": {
+                    "before": {
                       "type": "string",
-                      "description": "the status code of the response"
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
                     },
-                    "after / before": {
+                    "after": {
                       "type": "string",
-                      "description": "The id of last item in the listing to use as the anchor point of the slice."
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
                       "type": "array",
-                      "description": "List of [Things] to return",
+                      "description": "List of notifications",
                       "items": {
                         "properties": {
                           "title": {
                             "type": "string",
                             "description": "title of the notification"
                           },
-                          "sending_time": {
+                          "link": {
+                            "type": "string",
+                            "description": "link to the full item in the notification"
+                          },
+                          "sendAt": {
                             "type": "string",
                             "description": "time of sending the notification"
                           },
@@ -6860,7 +6824,7 @@
                             "type": "string",
                             "description": "content of the notification"
                           },
-                          "Isread": {
+                          "isRead": {
                             "type": "boolean",
                             "description": "true if notification is read false if it's not"
                           },
@@ -6868,7 +6832,7 @@
                             "type": "string",
                             "description": "the path of the icon of the notification"
                           },
-                          "SenderID": {
+                          "senderID": {
                             "type": "string",
                             "description": "Name of the sender of the notification"
                           },
@@ -6901,7 +6865,7 @@
         ]
       }
     },
-    "/api/mark_as_read": {
+    "/api/mark-all-notifications-read": {
       "patch": {
         "summary": "mark all the notifications as read",
         "tags": ["Notifications"],
@@ -6923,7 +6887,7 @@
         ]
       }
     },
-    "/api/hide_noification": {
+    "/api/hide-noification": {
       "patch": {
         "summary": "mark a specific notification as hidden",
         "tags": ["Notifications"],
@@ -7131,7 +7095,7 @@
         ]
       }
     },
-    "/api/live/by_id/names": {
+    "/api/live/by-id/names": {
       "get": {
         "summary": "Get a list all the live events (canceled feature)",
         "tags": ["Threads"],
@@ -7296,7 +7260,7 @@
         ]
       }
     },
-    "/spam": {
+    "/mark-spam": {
       "post": {
         "summary": "Mark a post, comment or message as spam",
         "tags": ["Post-comment-message actions"],
@@ -7363,7 +7327,7 @@
         ]
       }
     },
-    "/unmarkspam": {
+    "/unmark-spam": {
       "post": {
         "summary": "Unmark a post as spam",
         "tags": ["Post-comment-message actions"],
@@ -7426,7 +7390,7 @@
         ]
       }
     },
-    "/editusertext": {
+    "/edit-user-text": {
       "put": {
         "summary": "Edit the body text of a comment or post",
         "tags": ["Post-comment actions"],
@@ -7508,10 +7472,6 @@
                   "type": {
                     "type": "string",
                     "enum": ["post", "comment"]
-                  },
-                  "category": {
-                    "type": "string",
-                    "description": "A category name"
                   }
                 }
               }
@@ -7557,7 +7517,7 @@
         ]
       }
     },
-    "/sendreplies": {
+    "/send-replies": {
       "post": {
         "summary": "Enable or disable inbox replies for a Post or comment",
         "tags": ["Post-comment actions"],
@@ -7686,7 +7646,7 @@
     },
     "/vote": {
       "post": {
-        "summary": "Cast a vote on a thing",
+        "summary": "Vote on a post or comment",
         "tags": ["Post-comment actions"],
         "requestBody": {
           "required": true,
@@ -7703,9 +7663,9 @@
                     "type": "string",
                     "enum": ["post", "comment"]
                   },
-                  "dir": {
+                  "direction": {
                     "type": "number",
-                    "description": "Vote direction.. one of (1, -1)"
+                    "description": "Vote direction.. 1 for upvote and -1 for downvote"
                   }
                 }
               }
@@ -7748,7 +7708,7 @@
         ]
       }
     },
-    "/follow_post": {
+    "/follow-post": {
       "post": {
         "summary": "Follow or unfollow a post.",
         "tags": ["Posts"],
@@ -7867,7 +7827,7 @@
         ]
       }
     },
-    "/marknsfw": {
+    "/mark-nsfw": {
       "post": {
         "summary": "Mark a post NSFW (Not Safe For Work)",
         "tags": ["Posts"],
@@ -7926,7 +7886,7 @@
         ]
       }
     },
-    "/set_suggested_sort": {
+    "/set-suggested-sort": {
       "post": {
         "summary": "Set suggested sort for a post comments",
         "tags": ["Posts"],
@@ -7986,7 +7946,7 @@
         ]
       }
     },
-    "/clear_suggested_sort": {
+    "/clear-suggested-sort": {
       "post": {
         "summary": "Reset the suggested sort for a post back to default",
         "tags": ["Posts"],
@@ -8042,7 +8002,7 @@
         ]
       }
     },
-    "/spoiler": {
+    "/mark-spoiler": {
       "post": {
         "summary": "Blur the content of the post and unblur when opening it",
         "tags": ["Posts"],
@@ -8210,7 +8170,7 @@
         ]
       }
     },
-    "/unmarknsfw": {
+    "/unmark-nsfw": {
       "post": {
         "summary": "Remove the NSFW marking from a post",
         "tags": ["Posts"],
@@ -8269,7 +8229,7 @@
         ]
       }
     },
-    "/unspoiler": {
+    "/unmark-spoiler": {
       "post": {
         "summary": "Remove ability to blur the content of the post",
         "tags": ["Posts"],
@@ -8328,7 +8288,7 @@
         ]
       }
     },
-    "/post_insights": {
+    "/post-insights": {
       "get": {
         "summary": "Get the number of views on a post",
         "tags": ["Posts"],
@@ -8351,19 +8311,19 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "total_views": {
+                    "totalViews": {
                       "type": "number",
                       "description": "The number of people who viewed this post"
                     },
-                    "upvote_rate": {
+                    "upvoteRate": {
                       "type": "number",
                       "description": "Ratio between the number of upvotes and downvotes"
                     },
-                    "community_karma": {
+                    "communityKarma": {
                       "type": "number",
                       "description": "Total amount of karma earned in this community"
                     },
-                    "total_shares": {
+                    "totalShares": {
                       "type": "number",
                       "description": "How many times the post was shared"
                     }
@@ -8404,7 +8364,7 @@
         ]
       }
     },
-    "/post_details": {
+    "/post-details": {
       "get": {
         "summary": "Get details about a specific post",
         "tags": ["Posts"],
@@ -8457,7 +8417,7 @@
         }
       }
     },
-    "/pin_post": {
+    "/pin-post": {
       "post": {
         "summary": "Add a post to the user's collection of pinned posts",
         "tags": ["Posts"],
@@ -8516,7 +8476,7 @@
         ]
       }
     },
-    "/pinned_posts": {
+    "/pinned-posts": {
       "get": {
         "summary": "Returns all posts pinned by the user",
         "tags": ["Posts"],
@@ -8571,7 +8531,7 @@
         ]
       }
     },
-    "/edit_post_flair": {
+    "/edit-post-flair": {
       "put": {
         "summary": "Change the flair on a post",
         "tags": ["Posts"],
@@ -8633,7 +8593,7 @@
     },
     "/search": {
       "get": {
-        "summary": "Search posts page",
+        "summary": "General search",
         "tags": ["Search"],
         "parameters": [
           {
@@ -8700,7 +8660,7 @@
           },
           {
             "in": "query",
-            "name": "restrict_sr",
+            "name": "restrictedSubreddits",
             "description": "Search in restricted subreddits only",
             "schema": {
               "type": "boolean"
@@ -8770,7 +8730,7 @@
     },
     "/r/{subreddit}/search": {
       "get": {
-        "summary": "Search posts page",
+        "summary": "Search in a specific subreddit",
         "tags": ["Search"],
         "parameters": [
           {
@@ -8846,7 +8806,7 @@
           },
           {
             "in": "query",
-            "name": "restrict_sr",
+            "name": "restrictedSubreddits",
             "description": "Search in restricted subreddits only",
             "schema": {
               "type": "boolean"
@@ -8914,7 +8874,7 @@
         }
       }
     },
-    "/create_subreddit": {
+    "/create-subreddit": {
       "post": {
         "summary": "Create a new subreddit",
         "tags": ["Subreddit"],
@@ -8980,7 +8940,7 @@
         ]
       }
     },
-    "/subreddit_name_available": {
+    "/subreddit-name-available": {
       "get": {
         "summary": "Check if the username is used before",
         "tags": ["Subreddit"],
@@ -9024,7 +8984,7 @@
       }
     },
 
-    "/block_user": {
+    "/block-user": {
       "post": {
         "summary": "Block or unblock a user",
         "tags": ["User"],
@@ -9081,7 +9041,7 @@
         ]
       }
     },
-    "/follow_user": {
+    "/follow-user": {
       "post": {
         "summary": "Follow or unfollow a user",
         "tags": ["User"],
@@ -10016,7 +9976,7 @@
         ]
       }
     },
-    "/account_settings": {
+    "/account-settings": {
       "get": {
         "summary": "Return the preference settings of the logged in user",
         "tags": ["User settings"],
@@ -10257,7 +10217,7 @@
         ]
       }
     },
-    "/change_email": {
+    "/change-email": {
       "put": {
         "summary": "Change the email of the logged in user",
         "tags": ["User settings"],
@@ -10314,7 +10274,7 @@
         ]
       }
     },
-    "/change_password": {
+    "/change-password": {
       "put": {
         "summary": "Change the password of the logged in user",
         "tags": ["User settings"],
@@ -10379,7 +10339,7 @@
         ]
       }
     },
-    "/delete_account": {
+    "/delete-account": {
       "delete": {
         "summary": "Delete the account",
         "tags": ["User settings"],
@@ -10421,7 +10381,7 @@
         ]
       }
     },
-    "/social_link": {
+    "/social-link": {
       "post": {
         "summary": "Add a social link to the logged in user",
         "tags": ["User settings"],
@@ -10529,7 +10489,7 @@
         ]
       }
     },
-    "/profile_picture": {
+    "/profile-picture": {
       "post": {
         "summary": "Add a profile picture to the logged in user",
         "tags": ["User settings"],
@@ -10602,7 +10562,7 @@
         ]
       }
     },
-    "/banner_image": {
+    "/banner-image": {
       "post": {
         "summary": "Add a banner to the logged in user",
         "tags": ["User settings"],
@@ -10675,7 +10635,7 @@
         ]
       }
     },
-    "/blocked_users": {
+    "/blocked-users": {
       "get": {
         "summary": "Get a list of blocked users by the logged in user",
         "tags": ["User settings"],

@@ -42,33 +42,36 @@ const router = express.Router();
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
- *                            description: List of [Things] to return
+ *                            description: List of notifications
  *                            items:
  *                              properties:
  *                               title:
  *                                 type: string
  *                                 description: title of the notification
- *                               sending_time:
+ *                               link:
+ *                                 type: string
+ *                                 description: link to the full item in the notification
+ *                               sendAt:
  *                                 type: string
  *                                 description: time of sending the notification
  *                               content:
  *                                 type: string
  *                                 description: content of the notification
- *                               Isread:
+ *                               isRead:
  *                                type: boolean
  *                                description: true if notification is read false if it's not
  *                               smallIcon:
  *                                 type: string
  *                                 description: the path of the icon of the notification
- *                               SenderID:
+ *                               senderID:
  *                                 type: string
  *                                 description: Name of the sender of the notification
  *                               data:
@@ -84,11 +87,11 @@ const router = express.Router();
  *       - bearerAuth: []
  */
 
-router.get("/notifications");
+router.get("/api/notifications");
 
 /**
  * @swagger
- * /api/mark_as_read:
+ * /api/mark-all-notifications-read:
  *  patch:
  *      summary: mark all the notifications as read
  *      tags: [Notifications]
@@ -103,11 +106,11 @@ router.get("/notifications");
  *       - bearerAuth: []
  */
 
-router.patch("/mark_as_read", (req, res) => {});
+router.patch("/api/mark-all-notifications-read", (req, res) => {});
 
 /**
  * @swagger
- * /api/hide_noification:
+ * /api/hide-noification:
  *  patch:
  *      summary: mark a specific notification as hidden
  *      tags: [Notifications]
@@ -132,7 +135,7 @@ router.patch("/mark_as_read", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("hide_noification", (req, res) => {});
+router.patch("/api/hide-noification", (req, res) => {});
 
 /**
  * @swagger
@@ -180,7 +183,7 @@ router.get("/live/thread", (req, res) => {});
 
 /**
  * @swagger
- * /api/live/by_id/names:
+ * /api/live/by-id/names:
  *  get:
  *      summary: Get a list all the live events (canceled feature)
  *      tags: [Threads]
@@ -203,7 +206,7 @@ router.get("/live/thread", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("live/by_id/names", (req, res) => {});
+router.get("live/by-id/names", (req, res) => {});
 
 /**
  * @swagger

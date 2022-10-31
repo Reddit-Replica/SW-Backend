@@ -33,12 +33,12 @@ const router = express.Router();
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -47,12 +47,9 @@ const router = express.Router();
  *                               title:
  *                                 type: string
  *                                 description: Name of the community
- *                               Members:
+ *                               members:
  *                                 type: number
  *                                 description: number of members of the community
- *                               Online:
- *                                 type: number
- *                                 description: number of online members of the community
  *                               description:
  *                                type: string
  *                                description: A brief description of the community
@@ -107,12 +104,12 @@ router.get("/subreddits/leaderboard", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -121,12 +118,9 @@ router.get("/subreddits/leaderboard", (req, res) => {});
  *                               title:
  *                                 type: string
  *                                 description: Name of the community
- *                               Members:
+ *                               members:
  *                                 type: number
  *                                 description: number of members of the community
- *                               Online:
- *                                 type: number
- *                                 description: number of online members of the community
  *                               description:
  *                                type: string
  *                                description: A brief description of the community
@@ -152,7 +146,7 @@ router.get("/subreddits/leaderboard/:categoryName", (req, res) => {});
 
 /**
  * @swagger
- * /api/custom_random_category:
+ * /api/custom-random-category:
  *  get:
  *      summary: Return a listing of random communities with random category
  *      tags: [Subreddit]
@@ -181,12 +175,12 @@ router.get("/subreddits/leaderboard/:categoryName", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -195,12 +189,9 @@ router.get("/subreddits/leaderboard/:categoryName", (req, res) => {});
  *                               title:
  *                                 type: string
  *                                 description: Name of the community
- *                               Members:
+ *                               members:
  *                                 type: number
  *                                 description: number of members of the community
- *                               Online:
- *                                 type: number
- *                                 description: number of online members of the community
  *                               description:
  *                                type: string
  *                                description: A brief description of the community
@@ -217,11 +208,11 @@ router.get("/subreddits/leaderboard/:categoryName", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/custom_random_category", (req, res) => {});
+router.get("/custom-random-category", (req, res) => {});
 
 /**
  * @swagger
- * /api/trending_communities:
+ * /api/trending-communities:
  *  get:
  *      summary: Return a listing of the mostly viewed communities
  *      tags: [Subreddit]
@@ -250,12 +241,12 @@ router.get("/custom_random_category", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -264,12 +255,9 @@ router.get("/custom_random_category", (req, res) => {});
  *                               title:
  *                                 type: string
  *                                 description: Name of the community
- *                               Members:
+ *                               members:
  *                                 type: number
  *                                 description: number of members of the community
- *                               Online:
- *                                 type: number
- *                                 description: number of online members of the community
  *                               description:
  *                                type: string
  *                                description: A brief description of the community
@@ -289,11 +277,11 @@ router.get("/custom_random_category", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/trending_communities", (req, res) => {});
+router.get("/trending-communities", (req, res) => {});
 
 /**
  * @swagger
- * /api/random_category:
+ * /api/random-category:
  *  get:
  *      summary: Return two random categories to display
  *      tags: [Subreddit]
@@ -305,19 +293,19 @@ router.get("/trending_communities", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
- *                          first_category:
+ *                          firstCategory:
  *                            type: string
  *                            description: the name of the first category
- *                          second_category:
+ *                          secondCategory:
  *                            type: string
  *                            description: the name of the first category
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
- *                          first_category_children:
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *                          firstCategoryChildren:
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
@@ -325,19 +313,16 @@ router.get("/trending_communities", (req, res) => {});
  *                               title:
  *                                 type: string
  *                                 description: Name of the community
- *                               Members:
+ *                               members:
  *                                 type: number
  *                                 description: number of members of the community
- *                               Online:
- *                                 type: number
- *                                 description: number of online members of the community
  *                               description:
  *                                type: string
  *                                description: A brief description of the community
  *                               isMember:
  *                                 type: boolean
  *                                 description: True if you are a member of the community , False if you are not a member of the community
- *                          second_category_children:
+ *                          secondCategoryChildren:
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
@@ -345,12 +330,9 @@ router.get("/trending_communities", (req, res) => {});
  *                               title:
  *                                 type: string
  *                                 description: Name of the community
- *                               Members:
+ *                               members:
  *                                 type: number
  *                                 description: number of members of the community
- *                               Online:
- *                                 type: number
- *                                 description: number of online members of the community
  *                               description:
  *                                type: string
  *                                description: A brief description of the community
@@ -367,17 +349,17 @@ router.get("/trending_communities", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/random_category", (req, res) => {});
+router.get("/random-category", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subredditName}:
+ * /api/r/{subreddit}:
  *  get:
  *      summary: Return all the details of the subreddit
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
- *         name: subredditName
+ *         name: subreddit
  *         description: the name of the subreddit
  *         schema:
  *           type: string
@@ -389,9 +371,6 @@ router.get("/random_category", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
  *                          children:
  *                            $ref: '#/components/schemas/moderator'
  *          404:
@@ -404,17 +383,17 @@ router.get("/random_category", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subredditName", (req, res) => {});
+router.get("/r/:subreddit", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subredditName}/about/moderators:
+ * /api/r/{subreddit}/about/moderators:
  *  get:
  *      summary: Return a listing of moderators in that specified subreddit
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
- *         name: subredditName
+ *         name: subreddit
  *         description: the name of the subreddit
  *         schema:
  *           type: string
@@ -442,12 +421,12 @@ router.get("/r/:subredditName", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
- *                          after / before:
- *                            type: string
- *                            description: The id of last item in the listing to use as the anchor point of the slice.
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -463,17 +442,17 @@ router.get("/r/:subredditName", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subredditName/about/moderators", (req, res) => {});
+router.get("/r/:subreddit/about/moderators", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subredditName}/wiki/rules:
+ * /api/r/{subreddit}/wiki/rules:
  *  get:
- *      summary: Return all the rules of the subbreddit in details (canceled feature)
+ *      summary: Return all the rules of the subreddit in details (canceled feature)
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
- *         name: subredditName
+ *         name: subreddit
  *         description: the name of the subreddit
  *         schema:
  *           type: string
@@ -485,9 +464,6 @@ router.get("/r/:subredditName/about/moderators", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -503,17 +479,17 @@ router.get("/r/:subredditName/about/moderators", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subredditName/wiki/rules", (req, res) => {});
+router.get("/r/:subreddit/wiki/rules", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subredditName}/wiki/bans:
+ * /api/r/{subreddit}/wiki/bans:
  *  get:
  *      summary: Return all the ban questions of the subbreddit in details (canceled feature)
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
- *         name: subredditName
+ *         name: subreddit
  *         description: the name of the subreddit
  *         schema:
  *           type: string
@@ -525,9 +501,6 @@ router.get("/r/:subredditName/wiki/rules", (req, res) => {});
  *                      schema:
  *                        type: object
  *                        properties:
- *                          statusCode:
- *                            type: string
- *                            description: the status code of the response
  *                          children:
  *                            type: array
  *                            description: List of [Things] to return
@@ -543,17 +516,17 @@ router.get("/r/:subredditName/wiki/rules", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subredditName/wiki/bans", (req, res) => {});
+router.get("/r/:subreddit/wiki/bans", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subredditName}/add_main_topic:
+ * /api/r/{subreddit}/add-main-topic:
  *  post:
  *      summary: add the main topic to the community
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
- *         name: subredditName
+ *         name: subreddit
  *         description: the name of the subreddit
  *         schema:
  *           type: string
@@ -579,17 +552,17 @@ router.get("/r/:subredditName/wiki/bans", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.post("/r/:subredditName/add_main_topic", (req, res) => {});
+router.post("/r/:subreddit/add-main-topic", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subredditName}/add_subtopic:
+ * /api/r/{subreddit}/add-subtopic:
  *  post:
  *      summary: add subtopics of the community
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
- *         name: subredditName
+ *         name: subreddit
  *         description: the name of the subreddit
  *         schema:
  *           type: string
@@ -617,17 +590,17 @@ router.post("/r/:subredditName/add_main_topic", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.post("/r/:subredditName/add_subtopics", (req, res) => {});
+router.post("/r/:subreddit/add-subtopics", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subredditName}/add_description:
+ * /api/r/{subreddit}/add-description:
  *  post:
  *      summary: add description of the community
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
- *         name: subredditName
+ *         name: subreddit
  *         description: the name of the subreddit
  *         schema:
  *           type: string
@@ -653,17 +626,17 @@ router.post("/r/:subredditName/add_subtopics", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.post("/r/:subredditName/add_description", (req, res) => {});
+router.post("/r/:subreddit/add-description", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subredditName}/toggle_favorite:
+ * /api/r/{subreddit}/toggle-favorite:
  *  patch:
  *      summary: toggle favorite property of the community
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
- *         name: subredditName
+ *         name: subreddit
  *         description: the name of the subreddit
  *         schema:
  *           type: string
@@ -678,17 +651,17 @@ router.post("/r/:subredditName/add_description", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/r/:subredditName/toggle_favorite", (req, res) => {});
+router.patch("/r/:subreddit/toggle-favorite", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subredditName}/toggle_community_theme:
+ * /api/r/{subreddit}/toggle-community-theme:
  *  patch:
  *      summary: toggle community theme option of the community (canceled feature)
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
- *         name: subredditName
+ *         name: subreddit
  *         description: the name of the subreddit
  *         schema:
  *           type: string
@@ -703,10 +676,6 @@ router.patch("/r/:subredditName/toggle_favorite", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/r/:subredditName/toggle_community_theme", (req, res) => {});
+router.patch("/r/:subreddit/toggle-community-theme", (req, res) => {});
 
 export default router;
-/*edits
-
- we need to add posts from posts file
-*/
