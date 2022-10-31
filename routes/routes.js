@@ -1,5 +1,5 @@
 import express from "express";
-import loginRouter from "./login";
+import loginRouter from "./login.js";
 
 // eslint-disable-next-line new-cap
 const routes = express.Router();
