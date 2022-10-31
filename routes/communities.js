@@ -2,7 +2,6 @@ import express from "express";
 
 const router = express.Router();
 
-
 /**
  * @swagger
  * /api/subreddits/leaderboard:
