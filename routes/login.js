@@ -201,3 +201,5 @@ router.post("/login/forget", (req, res) => {});
  *         description: Internal server error
  */
 router.post("/reset-password/:id/:token", (req, res) => {});
+
+export default router;
