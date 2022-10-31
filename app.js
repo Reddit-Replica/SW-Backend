@@ -24,16 +24,16 @@ app.use((req, res, next) => {
   next();
 });
 
-var monngoURL = "mongodb://mongo-service/database";
+var monngoURL = `mongodb://${process.env.HOST}:${process.env.DB_PORT}/${process.env.DB}`;
 
-// mongoose
-//   .connect(monngoURL, { useNewUrlParser: true })
-//   .then(() => {
-//     console.log("connected to mongo");
-//   })
-//   .catch((error) => {
-//     console.log("unable to connect to mongoDB : ", error);
-//   });
+mongoose
+  .connect(monngoURL, { useNewUrlParser: true })
+  .then(() => {
+    console.log("connected to mongo");
+  })
+  .catch((error) => {
+    console.log("unable to connect to mongoDB : ", error);
+  });
 
 app.get("/api", (req, res, next) => {
   const data = process.env.DATA_TO_SEND || "Data Added Automatically";
