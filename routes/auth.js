@@ -8,8 +8,6 @@ const router = express.Router();
  *   description: Sign Up and email verfication endpoints
  */
 
-
-
 /**
  * @swagger
  * /signup:

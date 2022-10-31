@@ -6,9 +6,14 @@ import swaggerJsDoc from "swagger-jsdoc";
 import messageRouter from "./routes/message.js";
 import categoriesRouter from "./routes/communities.js";
 import notificationsRouter from "./routes/notification.js";
+import bodyParser from "body-parser";
+import morgan from "morgan";
 const app = express();
 
 dotenv.config();
+
+app.use(bodyParser.json());
+app.use(morgan("dev"));
 
 const port = process.env.PORT || 3000;
 
@@ -52,9 +57,9 @@ const options = {
 const specs = swaggerJsDoc(options);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
-app.use("/api",messageRouter);
-app.use("/api",categoriesRouter);
-app.use("/api",notificationsRouter);
+app.use("/api", messageRouter);
+app.use("/api", categoriesRouter);
+app.use("/api", notificationsRouter);
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
 });
