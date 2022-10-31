@@ -11,7 +11,8 @@
     "doc": "swagger-jsdoc-generator config.json > documentation.json",
     "doc2": "redoc-cli bundle -o apidoc/index.html documentation.json",
     "lint": "eslint ./**/*.js",
-    "prettier": "prettier ./**/*.js --write"
+    "prettier": "prettier ./**/*.js --write",
+    "jsdoc": "jsdoc -c jsdoc.json"
   },
   "repository": {
     "type": "git",
@@ -36,18 +37,19 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.8.0",
-    "nodemailer-sendgrid-transport": "^0.2.0",
-    "swagger-jsdoc": "^6.2.5",
-    "swagger-ui-express": "^4.5.0"
+    "nodemailer-sendgrid-transport": "^0.2.0"
   },
   "devDependencies": {
     "eslint": "^8.25.0",
     "eslint-plugin-prettier": "^4.2.1",
     "jasmine": "^4.4.0",
     "jasmine-spec-reporter": "^7.0.0",
+    "jsdoc": "^3.6.11",
     "nodemon": "^2.0.20",
     "prettier": "2.7.1",
     "redoc-cli": "^0.13.20",
-    "swagger-jsdoc-generator": "^1.0.3"
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-jsdoc-generator": "^1.0.3",
+    "swagger-ui-express": "^4.5.0"
   }
 }
