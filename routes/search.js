@@ -6,7 +6,7 @@ const router = express.Router();
  * @swagger
  * /search:
  *  get:
- *      summary: Search posts page
+ *      summary: General search
  *      tags: [Search]
  *      parameters:
  *          - in: query
@@ -61,7 +61,7 @@ const router = express.Router();
  *            schema:
  *                  type: string
  *          - in: query
- *            name: restrict_sr
+ *            name: restrictedSubreddits
  *            description: Search in restricted subreddits only
  *            schema:
  *                  type: boolean
@@ -116,7 +116,7 @@ router.get("/search", (req, res, next) => {});
  * @swagger
  * /r/{subreddit}/search:
  *  get:
- *      summary: Search posts page
+ *      summary: Search in a specific subreddit
  *      tags: [Search]
  *      parameters:
  *          - in: path
@@ -177,7 +177,7 @@ router.get("/search", (req, res, next) => {});
  *            schema:
  *                  type: string
  *          - in: query
- *            name: restrict_sr
+ *            name: restrictedSubreddits
  *            description: Search in restricted subreddits only
  *            schema:
  *                  type: boolean
