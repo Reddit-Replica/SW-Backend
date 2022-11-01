@@ -5,7 +5,7 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "dev": "set NODE_ENV=dev && nodemon app.js",
+    "dev": "set NODE_ENV=development && nodemon app.js",
     "start": "node app.js",
     "test": "jasmine",
     "doc": "swagger-jsdoc-generator config.json > documentation.json",
