@@ -3,6 +3,6 @@ import moderationRouter from "./moderation.js";
 
 const mainRouter = express.Router();
 
-mainRouter.use("/api", moderationRouter);
+mainRouter.use(moderationRouter);
 
 export default mainRouter;
