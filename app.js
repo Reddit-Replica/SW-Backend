@@ -8,7 +8,7 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 const app = express();
 
-dotenv.config({ path: `./.env.${process.env.NODE_ENV}` });
+dotenv.config({ path: `./.env.${process.env.NODE_ENV.trim()}` });
 
 app.use(bodyParser.json());
 app.use(morgan("dev"));
