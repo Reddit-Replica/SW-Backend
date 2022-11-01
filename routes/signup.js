@@ -107,4 +107,41 @@ signupRouter.get(
   signupController.usernameAvailable
 );
 
+/**
+ * @swagger
+ * /email-available:
+ *   get:
+ *     summary: Check if the email is used before
+ *     tags: [Sign Up]
+ *     parameters:
+ *       - in: query
+ *         required: true
+ *         name: email
+ *         description: Email to check
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: The email is available
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       409:
+ *         description: Email is already taken
+ *       500:
+ *         description: Internal server error
+ */
+signupRouter.get(
+  "/email-available",
+  signupController.emailValidator,
+  validateRequestSchema,
+  signupController.emailAvailable
+);
+
 export default signupRouter;

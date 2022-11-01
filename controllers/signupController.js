@@ -29,6 +29,15 @@ const usernameValidator = [
     .escape(),
 ];
 
+const emailValidator = [
+  query("email")
+    .trim()
+    .not()
+    .isEmpty()
+    .isEmail()
+    .withMessage("Email must be a valid email"),
+];
+
 const signup = async (req, res) => {
   const user = new User({
     username: req.body.username,
@@ -36,9 +45,14 @@ const signup = async (req, res) => {
     password: req.body.password,
   });
 
-  // Check for the ReCAPTCHAs [later]
+  // Check for the ReCAPTCHAs [TODO]
   try {
     await user.save();
+
+    // Send verification email [TODO]
+
+    // Create jwt [TODO]
+
     res.send(user);
   } catch (err) {
     res.status(500).send("Internal server error");
@@ -47,11 +61,29 @@ const signup = async (req, res) => {
 
 const usernameAvailable = async (req, res) => {
   try {
-    let user = await User.findOne({ username: req.query.username.trim() });
+    const user = await User.findOne({ username: req.query.username.trim() });
     if (user) {
       return res.status(409).send("Username is already taken");
     }
     res.send("The username is available");
+  } catch (err) {
+    res.status(500).send("Internal server error");
+  }
+};
+
+const emailAvailable = async (req, res) => {
+  try {
+    const email = req.query.email.trim();
+    const user = await User.findOne().or([
+      { email: email },
+      { googleEmail: email },
+      { facebookEmail: email },
+    ]);
+
+    if (user) {
+      return res.status(409).send("Email is already taken");
+    }
+    res.send("The email is available");
   } catch (err) {
     res.status(500).send("Internal server error");
   }
@@ -62,4 +94,6 @@ export default {
   signup,
   usernameValidator,
   usernameAvailable,
+  emailValidator,
+  emailAvailable,
 };
