@@ -1,5 +1,5 @@
 import express from "express";
-import moderationRouter from "./moderation";
+import moderationRouter from "./moderation.js";
 
 const mainRouter = express.Router();
 

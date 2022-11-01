@@ -1329,7 +1329,7 @@ moderationRouter.post(
  *      security:
  *          - bearerAuth: []
  */
-router.get("/r/:subreddit/about/post-flairs", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/post-flairs", (req, res, next) => {});
 
 /**
  * @swagger
@@ -1390,7 +1390,7 @@ router.get("/r/:subreddit/about/post-flairs", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.get("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
 
 /**
  * @swagger
@@ -1444,7 +1444,7 @@ router.get("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.post("/r/:subreddit/about/post-flairs", (req, res, next) => {});
+moderationRouter.post("/r/:subreddit/about/post-flairs", (req, res, next) => {});
 
 /**
  * @swagger
@@ -1504,7 +1504,7 @@ router.post("/r/:subreddit/about/post-flairs", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.put("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
+moderationRouter.put("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
 
 /**
  * @swagger
@@ -1546,7 +1546,7 @@ router.put("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.delete(
+moderationRouter.delete(
   "/r/:subreddit/about/post-flairs/:flairId",
   (req, res, next) => {}
 );
@@ -1603,7 +1603,7 @@ router.delete(
  *      security:
  *          - bearerAuth: []
  */
-router.post("/r/:subreddit/about/post-flairs-order", (req, res, next) => {});
+moderationRouter.post("/r/:subreddit/about/post-flairs-order", (req, res, next) => {});
 
 /**
  * @swagger
@@ -1650,7 +1650,7 @@ router.post("/r/:subreddit/about/post-flairs-order", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.get("/r/:subreddit/about/post-flairs-settings", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/post-flairs-settings", (req, res, next) => {});
 
 /**
  * @swagger
@@ -1699,6 +1699,6 @@ router.get("/r/:subreddit/about/post-flairs-settings", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.post("/r/:subreddit/about/post-flairs-settings", (req, res, next) => {});
+moderationRouter.post("/r/:subreddit/about/post-flairs-settings", (req, res, next) => {});
 
 export default moderationRouter;

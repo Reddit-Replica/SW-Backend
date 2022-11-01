@@ -3,7 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
-import mainRouter from "./routes/routes";
+import mainRouter from "./routes/routes.js";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 const app = express();
@@ -17,23 +17,23 @@ app.use(morgan("dev"));
 
 const port = process.env.PORT || 3000;
 
-app.use((req, res, next) => {
+app.use((_req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
   next();
 });
 
-const DB_URL = `mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=admin`;
+const DB_URL = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`;
 
-// mongoose
-//   .connect(DB_URL, { useNewUrlParser: true })
-//   .then(() => {
-//     console.log("connected to mongo");
-//   })
-//   .catch((error) => {
-//     console.log("unable to connect to mongoDB : ", error);
-//   });
+mongoose
+  .connect(DB_URL, { useNewUrlParser: true })
+  .then(() => {
+    console.log("connected to mongo");
+  })
+  .catch((error) => {
+    console.log("unable to connect to mongoDB : ", error);
+  });
 
 // swagger options
 const options = {
