@@ -7,6 +7,7 @@ const signupValidator = [
     .trim()
     .not()
     .isEmpty()
+    .isEmail()
     .withMessage("Email must be a valid email"),
   body("username")
     .not()
@@ -26,13 +27,13 @@ const signup = async (req, res) => {
     password: req.body.password,
   });
 
-  user.save((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
+  // Check for the ReCAPTCHAs [later]
+  try {
+    await user.save();
     res.send(user);
-  });
+  } catch (err) {
+    res.status(500).send({ error: err });
+  }
 };
 
 export default {
