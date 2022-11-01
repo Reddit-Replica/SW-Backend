@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import { body, query } from "express-validator";
+import bcrypt from "bcryptjs";
 // // import jwt from "jsonwebtoken";
 
 const signupValidator = [
@@ -39,21 +40,28 @@ const emailValidator = [
 ];
 
 const signup = async (req, res) => {
-  const user = new User({
-    username: req.body.username,
-    email: req.body.email,
-    password: req.body.password,
-  });
-
   // Check for the ReCAPTCHAs [TODO]
+  const { username, email, password } = req.body;
+
   try {
+    const hashedPass = bcrypt.hashSync(
+      password + process.env.BCRYPT_PASSWORD,
+      parseInt(process.env.SALT_ROUNDS)
+    );
+
+    const user = new User({
+      username: username,
+      email: email,
+      password: hashedPass,
+    });
+
     await user.save();
 
     // Send verification email [TODO]
 
     // Create jwt [TODO]
 
-    res.send(user);
+    res.send(user); // Change to res.status(201).send("The account has been successfully created");
   } catch (err) {
     res.status(500).send("Internal server error");
   }
