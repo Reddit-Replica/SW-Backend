@@ -1,8 +1,21 @@
 import bcrypt from "bcryptjs";
-import { validationResult } from "express-validator";
+import { body } from "express-validator";
 import { User } from "../models/User.js";
+import jwt from "jsonwebtoken";
 
-export const postLogin = (req, res) => {
+const loginValidator = [
+  body("username")
+    .not()
+    .isEmpty()
+    .withMessage("Username must not be empty")
+    .trim()
+    .escape(),
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 chars long"),
+];
+
+const login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const errors = validationResult(req);
@@ -43,4 +56,9 @@ export const postLogin = (req, res) => {
       console.log("Internal Server Error", err);
       return res.status(500);
     });
+};
+
+export default {
+  loginValidator,
+  login,
 };
