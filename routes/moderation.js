@@ -1,5 +1,6 @@
 import express from "express";
 
+// eslint-disable-next-line new-cap
 const moderationRouter = express.Router();
 
 /**
@@ -108,7 +109,7 @@ const moderationRouter = express.Router();
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/spam");
 
 /**
  * @swagger
@@ -195,7 +196,7 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/edited");
 
 /**
  * @swagger
@@ -273,7 +274,7 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/unmoderated");
 
 /**
  * @swagger
@@ -310,8 +311,7 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
  */
 
 moderationRouter.post(
-  "/r/:subreddit/accept-moderator-invite",
-  (req, res, next) => {}
+  "/r/:subreddit/accept-moderator-invite"
 );
 
 /**
@@ -365,10 +365,7 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post(
-  "/r/:subreddit/moderator-invite",
-  (req, res, next) => {}
-);
+moderationRouter.post("/r/:subreddit/moderator-invite");
 
 /**
  * @swagger
@@ -410,7 +407,7 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/leave-moderator", (req, res, next) => {});
+moderationRouter.post("/leave-moderator");
 
 /**
  * @swagger
@@ -456,7 +453,7 @@ moderationRouter.post("/leave-moderator", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/approve", (req, res, next) => {});
+moderationRouter.post("/approve");
 
 /**
  * @swagger
@@ -502,7 +499,7 @@ moderationRouter.post("/approve", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/remove", (req, res, next) => {});
+moderationRouter.post("/remove");
 
 /**
  * @swagger
@@ -548,7 +545,7 @@ moderationRouter.post("/remove", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/lock", (req, res, next) => {});
+moderationRouter.post("/lock");
 
 /**
  * @swagger
@@ -594,7 +591,7 @@ moderationRouter.post("/lock", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/unlock", (req, res, next) => {});
+moderationRouter.post("/unlock");
 
 /**
  * @swagger
@@ -658,7 +655,7 @@ moderationRouter.post("/unlock", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/ban", (req, res, next) => {});
+moderationRouter.post("/ban");
 
 /**
  * @swagger
@@ -704,7 +701,7 @@ moderationRouter.post("/ban", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/unban", (req, res, next) => {});
+moderationRouter.post("/unban");
 
 /**
  * @swagger
@@ -772,7 +769,7 @@ moderationRouter.post("/unban", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/banned", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/banned");
 
 /**
  * @swagger
@@ -856,7 +853,7 @@ moderationRouter.get("/r/:subreddit/about/banned", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/edit", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/edit");
 
 /**
  * @swagger
@@ -963,7 +960,7 @@ moderationRouter.get("/r/:subreddit/about/edit", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.put("/r/:subreddit/about/edit", (req, res, next) => {});
+moderationRouter.put("/r/:subreddit/about/edit");
 
 /**
  * @swagger
@@ -1006,7 +1003,7 @@ moderationRouter.put("/r/:subreddit/about/edit", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/suggested-topics", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/suggested-topics");
 
 /**
  * @swagger
@@ -1069,7 +1066,7 @@ moderationRouter.get("/r/:subreddit/suggested-topics", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/r/:subreddit/about/rules", (req, res, next) => {});
+moderationRouter.post("/r/:subreddit/about/rules");
 
 /**
  * @swagger
@@ -1135,7 +1132,7 @@ moderationRouter.post("/r/:subreddit/about/rules", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/rules", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/rules");
 
 /**
  * @swagger
@@ -1203,8 +1200,7 @@ moderationRouter.get("/r/:subreddit/about/rules", (req, res, next) => {});
  */
 
 moderationRouter.put(
-  "/r/:subreddit/about/rules/:ruleId",
-  (req, res, next) => {}
+  "/r/:subreddit/about/rules/:ruleId"
 );
 
 /**
@@ -1264,8 +1260,7 @@ moderationRouter.put(
  */
 
 moderationRouter.post(
-  "/r/:subreddit/about/rules-order",
-  (req, res, next) => {}
+  "/r/:subreddit/about/rules-order"
 );
 
 /**
@@ -1329,7 +1324,7 @@ moderationRouter.post(
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.get("/r/:subreddit/about/post-flairs", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/post-flairs");
 
 /**
  * @swagger
@@ -1390,7 +1385,9 @@ moderationRouter.get("/r/:subreddit/about/post-flairs", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.get("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
+moderationRouter.get(
+  "/r/:subreddit/about/post-flairs/:flairId"
+);
 
 /**
  * @swagger
@@ -1444,7 +1441,9 @@ moderationRouter.get("/r/:subreddit/about/post-flairs/:flairId", (req, res, next
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.post("/r/:subreddit/about/post-flairs", (req, res, next) => {});
+moderationRouter.post(
+  "/r/:subreddit/about/post-flairs"
+);
 
 /**
  * @swagger
@@ -1504,7 +1503,9 @@ moderationRouter.post("/r/:subreddit/about/post-flairs", (req, res, next) => {})
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.put("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
+moderationRouter.put(
+  "/r/:subreddit/about/post-flairs/:flairId"
+);
 
 /**
  * @swagger
@@ -1547,8 +1548,7 @@ moderationRouter.put("/r/:subreddit/about/post-flairs/:flairId", (req, res, next
  *          - bearerAuth: []
  */
 moderationRouter.delete(
-  "/r/:subreddit/about/post-flairs/:flairId",
-  (req, res, next) => {}
+  "/r/:subreddit/about/post-flairs/:flairId"
 );
 
 /**
@@ -1603,7 +1603,9 @@ moderationRouter.delete(
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.post("/r/:subreddit/about/post-flairs-order", (req, res, next) => {});
+moderationRouter.post(
+  "/r/:subreddit/about/post-flairs-order"
+);
 
 /**
  * @swagger
@@ -1650,7 +1652,9 @@ moderationRouter.post("/r/:subreddit/about/post-flairs-order", (req, res, next) 
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.get("/r/:subreddit/about/post-flairs-settings", (req, res, next) => {});
+moderationRouter.get(
+  "/r/:subreddit/about/post-flairs-settings"
+);
 
 /**
  * @swagger
@@ -1699,6 +1703,8 @@ moderationRouter.get("/r/:subreddit/about/post-flairs-settings", (req, res, next
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.post("/r/:subreddit/about/post-flairs-settings", (req, res, next) => {});
+moderationRouter.post(
+  "/r/:subreddit/about/post-flairs-settings"
+);
 
 export default moderationRouter;

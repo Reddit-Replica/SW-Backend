@@ -1,4 +1,6 @@
 import express from "express";
+
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -40,7 +42,7 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.get("/best", (req, res) => {});
+router.get("/best");
 
 /**
  * @swagger
@@ -74,7 +76,7 @@ router.get("/best", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/hot", (req, res) => {});
+router.get("/hot");
 
 /**
  * @swagger
@@ -121,7 +123,7 @@ router.get("/hot", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/r/:subreddit/hot", (req, res) => {});
+router.get("/r/:subreddit/hot");
 
 /**
  * @swagger
@@ -155,7 +157,7 @@ router.get("/r/:subreddit/hot", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/trending", (req, res) => {});
+router.get("/trending");
 
 /**
  * @swagger
@@ -202,7 +204,7 @@ router.get("/trending", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/r/:subreddit/trending", (req, res) => {});
+router.get("/r/:subreddit/trending");
 
 /**
  * @swagger
@@ -236,7 +238,7 @@ router.get("/r/:subreddit/trending", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/new", (req, res) => {});
+router.get("/new");
 
 /**
  * @swagger
@@ -283,7 +285,7 @@ router.get("/new", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/r/:subreddit/new", (req, res) => {});
+router.get("/r/:subreddit/new");
 
 /**
  * @swagger
@@ -303,7 +305,7 @@ router.get("/r/:subreddit/new", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/random", (req, res) => {});
+router.get("/random");
 
 /**
  * @swagger
@@ -332,7 +334,7 @@ router.get("/random", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/r/:subreddit/random", (req, res) => {});
+router.get("/r/:subreddit/random");
 
 /**
  * @swagger
@@ -379,7 +381,7 @@ router.get("/r/:subreddit/random", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/top", (req, res) => {});
+router.get("/top");
 
 /**
  * @swagger
@@ -439,7 +441,7 @@ router.get("/top", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/r/:subreddit/top", (req, res) => {});
+router.get("/r/:subreddit/top");
 
 /**
  * @swagger
@@ -515,7 +517,7 @@ router.get("/r/:subreddit/top", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/r/:subreddit/comments/:postId", (req, res) => {});
+router.get("/r/:subreddit/comments/:postId");
 
 /**
  * @swagger
@@ -597,7 +599,7 @@ router.get("/r/:subreddit/comments/:postId", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/r/:subreddit/comments/:postId/:commentId", (req, res) => {});
+router.get("/r/:subreddit/comments/:postId/:commentId");
 
 /**
  * @swagger
@@ -708,8 +710,7 @@ router.get("/r/:subreddit/comments/:postId/:commentId", (req, res) => {});
  *         description: Internal server error
  */
 router.get(
-  "/r/:subreddit/comments/:postId/:commentId/parent_comments",
-  (req, res) => {}
+  "/r/:subreddit/comments/:postId/:commentId/parent_comments"
 );
 
 export default router;

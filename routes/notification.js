@@ -1,5 +1,6 @@
 import express from "express";
 
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -106,7 +107,7 @@ router.get("/notifications");
  *       - bearerAuth: []
  */
 
-router.patch("/mark-all-notifications-read", (req, res) => {});
+router.patch("/mark-all-notifications-read");
 
 /**
  * @swagger
@@ -135,7 +136,7 @@ router.patch("/mark-all-notifications-read", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/hide-noification", (req, res) => {});
+router.patch("/hide-noification");
 
 /**
  * @swagger
@@ -179,7 +180,7 @@ router.patch("/hide-noification", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/live/thread", (req, res) => {});
+router.get("/live/thread");
 
 /**
  * @swagger
@@ -206,7 +207,7 @@ router.get("/live/thread", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("live/by-id/names", (req, res) => {});
+router.get("live/by-id/names");
 
 /**
  * @swagger
@@ -234,7 +235,7 @@ router.get("live/by-id/names", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.post("/live/create", (req, res) => {});
+router.post("/live/create");
 
 /**
  * @swagger
@@ -261,7 +262,7 @@ router.post("/live/create", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/live/thread/about", (req, res) => {});
+router.get("/live/thread/about");
 
 /**
  * @swagger
@@ -290,7 +291,7 @@ router.get("/live/thread/about", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/live/thread", (req, res) => {});
+router.patch("/live/thread");
 
 /**
  * @swagger
@@ -319,7 +320,7 @@ router.patch("/live/thread", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.put("/live/thread", (req, res) => {});
+router.put("/live/thread");
 
 /**
  * @swagger
@@ -348,6 +349,6 @@ router.put("/live/thread", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.delete("/live/thread", (req, res) => {});
+router.delete("/live/thread");
 
 export default router;

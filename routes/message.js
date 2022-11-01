@@ -1,5 +1,6 @@
 import express from "express";
 
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -56,7 +57,7 @@ const router = express.Router();
  *       - bearerAuth: []
  */
 
-router.post("/message/compose", (req, res) => {});
+router.post("/message/compose");
 
 /**
  * @swagger
@@ -122,7 +123,7 @@ router.post("/message/compose", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/sent", (req, res) => {});
+router.get("/message/sent");
 
 /**
  * @swagger
@@ -207,7 +208,7 @@ router.get("/message/sent", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/inbox", (req, res) => {});
+router.get("/message/inbox");
 
 /**
  * @swagger
@@ -276,7 +277,7 @@ router.get("/message/inbox", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/unread", (req, res) => {});
+router.get("/message/unread");
 
 /**
  * @swagger
@@ -357,7 +358,7 @@ router.get("/message/unread", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/post-reply", (req, res) => {});
+router.get("/message/post-reply");
 
 /**
  * @swagger
@@ -438,7 +439,7 @@ router.get("/message/post-reply", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/mentions", (req, res) => {});
+router.get("/message/mentions");
 
 /**
  * @swagger
@@ -514,7 +515,7 @@ router.get("/message/mentions", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/messages", (req, res) => {});
+router.get("/message/messages");
 
 /**
  * @swagger
@@ -545,7 +546,7 @@ router.get("/message/messages", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/unread-message", (req, res) => {});
+router.patch("/unread-message");
 
 /**
  * @swagger
@@ -564,6 +565,6 @@ router.patch("/unread-message", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/read-all-msgs", (req, res) => {});
+router.patch("/read-all-msgs");
 
 export default router;

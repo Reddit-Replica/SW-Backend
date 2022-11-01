@@ -425,8 +425,8 @@
  *         id:
  *           type: string
  *           description: full name of the thread
- * 
- * 
+ *
+ *
  *   bans:
  *       type: object
  *       properties:
@@ -740,8 +740,8 @@
  *                  description: The replies to that comment (Will be same structure as the current comment)
  *                  items:
  *                    type: object
- * 
- * 
+ *
+ *
  *   Message:
  *       type: object
  *       properties:
@@ -787,9 +787,9 @@
  *           type: number
  *           description: Number of the spams this comment took
  *           default: 0
- * 
- * 
- * 
+ *
+ *
+ *
  *   ListItem:
  *     type: object
  *     properties:
@@ -841,7 +841,7 @@
  *               description: Total number of comments (in case that item has a type post).
  *         edited:
  *           type: boolean
- *           description: If true, then this post or comment is edited 
+ *           description: If true, then this post or comment is edited
  *         editTime:
  *           type: string
  *           format: date-time
@@ -878,7 +878,7 @@
  *       type: array
  *       items:
  *         $ref: '#/components/schemas/ListItem'
- * 
+ *
  *   ListingUserItem:
  *     type: object
  *     properties:
@@ -916,7 +916,7 @@
  *           - Personal and confidential information
  *           - Threatening, harassing, or inciting violence
  *           - Other
- * 
+ *
  *   ListingUser:
  *     type: object
  *     properties:

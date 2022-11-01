@@ -1,5 +1,6 @@
 import express from "express";
 
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -66,7 +67,7 @@ const router = express.Router();
  *       - bearerAuth: []
  */
 
-router.get("/subreddits/leaderboard", (req, res) => {});
+router.get("/subreddits/leaderboard");
 
 /**
  * @swagger
@@ -142,7 +143,7 @@ router.get("/subreddits/leaderboard", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/subreddits/leaderboard/:categoryName", (req, res) => {});
+router.get("/subreddits/leaderboard/:categoryName");
 
 /**
  * @swagger
@@ -208,7 +209,7 @@ router.get("/subreddits/leaderboard/:categoryName", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/custom-random-category", (req, res) => {});
+router.get("/custom-random-category");
 
 /**
  * @swagger
@@ -277,7 +278,7 @@ router.get("/custom-random-category", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/trending-communities", (req, res) => {});
+router.get("/trending-communities");
 
 /**
  * @swagger
@@ -349,7 +350,7 @@ router.get("/trending-communities", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/random-category", (req, res) => {});
+router.get("/random-category");
 
 /**
  * @swagger
@@ -383,7 +384,7 @@ router.get("/random-category", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subreddit", (req, res) => {});
+router.get("/r/:subreddit");
 
 /**
  * @swagger
@@ -442,7 +443,7 @@ router.get("/r/:subreddit", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subreddit/about/moderators", (req, res) => {});
+router.get("/r/:subreddit/about/moderators");
 
 /**
  * @swagger
@@ -479,7 +480,7 @@ router.get("/r/:subreddit/about/moderators", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subreddit/wiki/rules", (req, res) => {});
+router.get("/r/:subreddit/wiki/rules");
 
 /**
  * @swagger
@@ -516,7 +517,7 @@ router.get("/r/:subreddit/wiki/rules", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/r/:subreddit/wiki/bans", (req, res) => {});
+router.get("/r/:subreddit/wiki/bans");
 
 /**
  * @swagger
@@ -552,7 +553,7 @@ router.get("/r/:subreddit/wiki/bans", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.post("/r/:subreddit/add-main-topic", (req, res) => {});
+router.post("/r/:subreddit/add-main-topic");
 
 /**
  * @swagger
@@ -590,7 +591,7 @@ router.post("/r/:subreddit/add-main-topic", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.post("/r/:subreddit/add-subtopics", (req, res) => {});
+router.post("/r/:subreddit/add-subtopics");
 
 /**
  * @swagger
@@ -626,7 +627,7 @@ router.post("/r/:subreddit/add-subtopics", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.post("/r/:subreddit/add-description", (req, res) => {});
+router.post("/r/:subreddit/add-description");
 
 /**
  * @swagger
@@ -651,7 +652,7 @@ router.post("/r/:subreddit/add-description", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/r/:subreddit/toggle-favorite", (req, res) => {});
+router.patch("/r/:subreddit/toggle-favorite");
 
 /**
  * @swagger
@@ -676,6 +677,6 @@ router.patch("/r/:subreddit/toggle-favorite", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/r/:subreddit/toggle-community-theme", (req, res) => {});
+router.patch("/r/:subreddit/toggle-community-theme");
 
 export default router;
