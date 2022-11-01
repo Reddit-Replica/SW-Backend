@@ -70,4 +70,41 @@ signupRouter.post(
   signupController.signup
 );
 
+/**
+ * @swagger
+ * /username-available:
+ *   get:
+ *     summary: Check if the username is used before
+ *     tags: [Sign Up]
+ *     parameters:
+ *       - in: query
+ *         required: true
+ *         name: username
+ *         description: Username to check
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: The username is available
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       409:
+ *         description: Username is already taken
+ *       500:
+ *         description: Internal server error
+ */
+signupRouter.get(
+  "/username-available",
+  signupController.usernameValidator,
+  validateRequestSchema,
+  signupController.usernameAvailable
+);
+
 export default signupRouter;
