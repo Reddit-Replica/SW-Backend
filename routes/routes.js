@@ -1,8 +1,9 @@
 import express from "express";
-import moderationRouter from "./moderation.js";
+import signupRouter from "./signup.js";
 
+// eslint-disable-next-line new-cap
 const mainRouter = express.Router();
 
-mainRouter.use("/api", moderationRouter);
+mainRouter.use(signupRouter);
 
 export default mainRouter;
