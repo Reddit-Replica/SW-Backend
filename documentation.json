@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Read-it API",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "API Documentation for all endpoints"
   },
   "components": {
@@ -1863,7 +1863,7 @@
         ]
       }
     },
-    "/api/subreddits/leaderboard": {
+    "/subreddits/leaderboard": {
       "get": {
         "summary": "Return a listing of all the Communities",
         "tags": ["Subreddit"],
@@ -1956,7 +1956,7 @@
         ]
       }
     },
-    "/api/subreddits/leaderboard/{categoryName}": {
+    "/subreddits/leaderboard/{categoryName}": {
       "get": {
         "summary": "Return a listing of communities of a specific category",
         "tags": ["Subreddit"],
@@ -2064,7 +2064,7 @@
         ]
       }
     },
-    "/api/custom-random-category": {
+    "/custom-random-category": {
       "get": {
         "summary": "Return a listing of random communities with random category",
         "tags": ["Subreddit"],
@@ -2157,7 +2157,7 @@
         ]
       }
     },
-    "/api/trending-communities": {
+    "/trending-communities": {
       "get": {
         "summary": "Return a listing of the mostly viewed communities",
         "tags": ["Subreddit"],
@@ -2254,7 +2254,7 @@
         ]
       }
     },
-    "/api/random-category": {
+    "/random-category": {
       "get": {
         "summary": "Return two random categories to display",
         "tags": ["Subreddit"],
@@ -2352,7 +2352,7 @@
         ]
       }
     },
-    "/api/r/{subreddit}": {
+    "/r/{subreddit}": {
       "get": {
         "summary": "Return all the details of the subreddit",
         "tags": ["Subreddit"],
@@ -2399,7 +2399,7 @@
         ]
       }
     },
-    "/api/r/{subreddit}/about/moderators": {
+    "/r/{subreddit}/about/moderators": {
       "get": {
         "summary": "Return a listing of moderators in that specified subreddit",
         "tags": ["Subreddit"],
@@ -2483,7 +2483,7 @@
         ]
       }
     },
-    "/api/r/{subreddit}/wiki/rules": {
+    "/r/{subreddit}/wiki/rules": {
       "get": {
         "summary": "Return all the rules of the subreddit in details (canceled feature)",
         "tags": ["Subreddit"],
@@ -2534,7 +2534,7 @@
         ]
       }
     },
-    "/api/r/{subreddit}/wiki/bans": {
+    "/r/{subreddit}/wiki/bans": {
       "get": {
         "summary": "Return all the ban questions of the subbreddit in details (canceled feature)",
         "tags": ["Subreddit"],
@@ -2585,7 +2585,7 @@
         ]
       }
     },
-    "/api/r/{subreddit}/add-main-topic": {
+    "/r/{subreddit}/add-main-topic": {
       "post": {
         "summary": "add the main topic to the community",
         "tags": ["Subreddit"],
@@ -2633,7 +2633,7 @@
         ]
       }
     },
-    "/api/r/{subreddit}/add-subtopic": {
+    "/r/{subreddit}/add-subtopic": {
       "post": {
         "summary": "add subtopics of the community",
         "tags": ["Subreddit"],
@@ -2684,7 +2684,7 @@
         ]
       }
     },
-    "/api/r/{subreddit}/add-description": {
+    "/r/{subreddit}/add-description": {
       "post": {
         "summary": "add description of the community",
         "tags": ["Subreddit"],
@@ -2732,7 +2732,7 @@
         ]
       }
     },
-    "/api/r/{subreddit}/toggle-favorite": {
+    "/r/{subreddit}/toggle-favorite": {
       "patch": {
         "summary": "toggle favorite property of the community",
         "tags": ["Subreddit"],
@@ -2764,7 +2764,7 @@
         ]
       }
     },
-    "/api/r/{subreddit}/toggle-community-theme": {
+    "/r/{subreddit}/toggle-community-theme": {
       "patch": {
         "summary": "toggle community theme option of the community (canceled feature)",
         "tags": ["Subreddit"],
@@ -3750,7 +3750,7 @@
         }
       }
     },
-    "/api/message/compose": {
+    "/message/compose": {
       "post": {
         "summary": "Send a message to a specific user with its subject",
         "tags": ["Messages"],
@@ -3814,7 +3814,7 @@
         ]
       }
     },
-    "/api/message/sent": {
+    "/message/sent": {
       "get": {
         "summary": "Return a listing of messages that you sent sorted by time of sending the msg",
         "tags": ["Messages"],
@@ -3907,7 +3907,7 @@
         ]
       }
     },
-    "/api/message/inbox": {
+    "/message/inbox": {
       "get": {
         "summary": "Return a listing of all the messages,postreplies and mentions that you received sorted by time of sending them",
         "tags": ["Messages"],
@@ -4025,7 +4025,7 @@
         ]
       }
     },
-    "/api/message/unread": {
+    "/message/unread": {
       "get": {
         "summary": "Return a listing of unread messages that you received sorted by time of sending the msg",
         "tags": ["Messages"],
@@ -4122,7 +4122,7 @@
         ]
       }
     },
-    "/api/message/post-reply": {
+    "/message/post-reply": {
       "get": {
         "summary": "Return a listing of post replies that you made sorted by time of adding the reply",
         "tags": ["Messages"],
@@ -4235,7 +4235,7 @@
         ]
       }
     },
-    "/api/message/mentions": {
+    "/message/mentions": {
       "get": {
         "summary": "Return a listing of mentions that you made sorted by time of adding the mention",
         "tags": ["Messages"],
@@ -4348,7 +4348,7 @@
         ]
       }
     },
-    "/api/message/messages": {
+    "/message/messages": {
       "get": {
         "summary": "Return a listing of all messages that was sent or received sorted by the time",
         "tags": ["Messages"],
@@ -4454,7 +4454,7 @@
         ]
       }
     },
-    "/api/unread-message": {
+    "/unread-message": {
       "patch": {
         "summary": "Unread a Message",
         "tags": ["Messages"],
@@ -4493,7 +4493,7 @@
         ]
       }
     },
-    "/api/read-all-msgs": {
+    "/read-all-msgs": {
       "patch": {
         "summary": "mark all messages as read",
         "tags": ["Messages"],
@@ -4856,7 +4856,7 @@
         ]
       }
     },
-    "/r/{subreddit}/api/accept-moderator-invite": {
+    "/r/{subreddit}/accept-moderator-invite": {
       "post": {
         "summary": "Accept an invite to moderate the specified subreddit. The authenticated user must have been invited to moderate the subreddit by one of its current moderators or the admin.",
         "tags": ["General moderation"],
@@ -4904,7 +4904,7 @@
         ]
       }
     },
-    "/r/{subreddit}/api/moderator-invite": {
+    "/r/{subreddit}/moderator-invite": {
       "post": {
         "summary": "Send a moderation invite to a user.",
         "tags": ["General moderation"],
@@ -4975,7 +4975,7 @@
         ]
       }
     },
-    "/api/leave-moderator": {
+    "/leave-moderator": {
       "post": {
         "summary": "Abdicate moderator status in a subreddit.",
         "tags": ["General moderation"],
@@ -5031,7 +5031,7 @@
         ]
       }
     },
-    "/api/approve": {
+    "/approve": {
       "post": {
         "summary": "Approve a post or comment. for spam reports, approving means that this post / comment is not a spam.",
         "tags": ["Posts and comments moderation"],
@@ -5091,7 +5091,7 @@
         ]
       }
     },
-    "/api/remove": {
+    "/remove": {
       "post": {
         "summary": "Remove  a post or comment. for spam reports, removing means that this post / comment is a spam so it is removed.",
         "tags": ["Posts and comments moderation"],
@@ -5151,7 +5151,7 @@
         ]
       }
     },
-    "/api/lock": {
+    "/lock": {
       "post": {
         "summary": "Lock a post or comment. Prevents a post or new child comments from receiving new comments.",
         "tags": ["Posts and comments moderation"],
@@ -5211,7 +5211,7 @@
         ]
       }
     },
-    "/api/unlock": {
+    "/unlock": {
       "post": {
         "summary": "Unlock a post or comment. Allow a post or comment to receive new comments.",
         "tags": ["Posts and comments moderation"],
@@ -5271,7 +5271,7 @@
         ]
       }
     },
-    "/api/ban": {
+    "/ban": {
       "post": {
         "summary": "Ban a user from a subreddit. Banned users can't post or comment on that subreddit.",
         "tags": ["Subreddit moderation"],
@@ -5353,7 +5353,7 @@
         ]
       }
     },
-    "/api/unban": {
+    "/unban": {
       "post": {
         "summary": "Remove a ban from a user.",
         "tags": ["Subreddit moderation"],
@@ -6756,7 +6756,7 @@
         ]
       }
     },
-    "/api/notifications": {
+    "/notifications": {
       "get": {
         "summary": "get all the notifications sent to the user",
         "tags": ["Notifications"],
@@ -6865,7 +6865,7 @@
         ]
       }
     },
-    "/api/mark-all-notifications-read": {
+    "/mark-all-notifications-read": {
       "patch": {
         "summary": "mark all the notifications as read",
         "tags": ["Notifications"],
@@ -6887,7 +6887,7 @@
         ]
       }
     },
-    "/api/hide-noification": {
+    "/hide-noification": {
       "patch": {
         "summary": "mark a specific notification as hidden",
         "tags": ["Notifications"],
@@ -6925,7 +6925,7 @@
         ]
       }
     },
-    "/api/live/thread": {
+    "/live/thread": {
       "get": {
         "summary": "Get a list of updates posted in this thread. (canceled feature)",
         "tags": ["Threads"],
@@ -7095,7 +7095,7 @@
         ]
       }
     },
-    "/api/live/by-id/names": {
+    "/live/by-id/names": {
       "get": {
         "summary": "Get a list all the live events (canceled feature)",
         "tags": ["Threads"],
@@ -7130,9 +7130,9 @@
         ]
       }
     },
-    "/api/live/create": {
+    "/live/create": {
       "post": {
-        "summary": "Create a new live thread. Once created, the initial settings can be modified with /api/live/thread/edit and new updates can be posted with /api/live/thread/update. (canceled feature)",
+        "summary": "Create a new live thread. Once created, the initial settings can be modified with /live/thread/edit and new updates can be posted with /live/thread/update. (canceled feature)",
         "tags": ["Threads"],
         "responses": {
           "200": {
@@ -7165,7 +7165,7 @@
         ]
       }
     },
-    "/api/live/thread/about": {
+    "/live/thread/about": {
       "get": {
         "summary": "get a some basic info about the live thread (canceled feature)",
         "tags": ["Threads"],
