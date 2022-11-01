@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import { body, query } from "express-validator";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import generateJWT from "../util/generateJWT.js";
+import hashPassord from "../util/hashPassword.js";
 
 const signupValidator = [
   body("email")
@@ -44,25 +44,17 @@ const signup = async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    const hashedPass = bcrypt.hashSync(
-      password + process.env.BCRYPT_PASSWORD,
-      parseInt(process.env.SALT_ROUNDS)
-    );
-
     const user = new User({
       username: username,
       email: email,
-      password: hashedPass,
+      password: hashPassord(password),
     });
 
     await user.save();
 
     // Send verification email [TODO]
 
-    const token = jwt.sign(
-      { userId: user.id, username: user.username },
-      process.env.TOKEN_SECRET
-    );
+    const token = generateJWT(user);
     res.header("Authorization", "Bearer " + token);
 
     res.send(user); // Change to res.status(201).send("The account has been successfully created");
