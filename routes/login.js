@@ -1,5 +1,8 @@
 import express from "express";
 const router = express.Router();
+import { check, body } from "express-validator";
+import { User } from "../models/User.js";
+import * as loginController from "../controllers/loginController.js";
 
 /**
  * @swagger
@@ -49,7 +52,17 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/login", (req, res) => {});
+router.post(
+  "/login",
+  [
+    check("email").isEmail().withMessage("Invalid Email!").normalizeEmail(),
+    check("password", "Incorrect Password")
+      .isLength({ min: 5 })
+      .isAlphanumeric()
+      .trim(),
+  ],
+  loginController.postLogin
+);
 
 /**
  * @swagger
