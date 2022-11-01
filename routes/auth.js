@@ -1,4 +1,6 @@
 import express from "express";
+
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -57,7 +59,7 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/signup", (req, res) => {});
+router.post("/signup");
 
 /**
  * @swagger
@@ -106,7 +108,7 @@ router.post("/signup", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/signup/:type", (req, res) => {});
+router.post("/signup/:type");
 
 /**
  * @swagger
@@ -138,7 +140,7 @@ router.post("/signup/:type", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/username-available", (req, res) => {});
+router.get("/username-available");
 
 /**
  * @swagger
@@ -170,7 +172,7 @@ router.get("/username-available", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/email-available", (req, res) => {});
+router.get("/email-available");
 
 /**
  * @swagger
@@ -213,7 +215,7 @@ router.get("/email-available", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/verify-email/:id/:token", (req, res) => {});
+router.post("/verify-email/:id/:token");
 
 /**
  * @swagger
@@ -234,7 +236,7 @@ router.post("/verify-email/:id/:token", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/random-username", (req, res) => {});
+router.get("/random-username");
 
 /**
  * @swagger
@@ -284,7 +286,7 @@ router.get("/random-username", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/login", (req, res) => {});
+router.post("/login");
 
 /**
  * @swagger
@@ -333,7 +335,7 @@ router.post("/login", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/login/:type", (req, res) => {});
+router.post("/login/:type");
 
 /**
  * @swagger
@@ -377,7 +379,7 @@ router.post("/login/:type", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/login/forget", (req, res) => {});
+router.post("/login/forget");
 
 /**
  * @swagger
@@ -435,6 +437,6 @@ router.post("/login/forget", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/reset-password/:id/:token", (req, res) => {});
+router.post("/reset-password/:id/:token");
 
 export default router;

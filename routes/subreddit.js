@@ -1,4 +1,6 @@
 import express from "express";
+
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -60,7 +62,7 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.post("/create-subreddit", (req, res) => {});
+router.post("/create-subreddit");
 
 /**
  * @swagger
@@ -92,6 +94,6 @@ router.post("/create-subreddit", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/subreddit-name-available", (req, res) => {});
+router.get("/subreddit-name-available");
 
 export default router;

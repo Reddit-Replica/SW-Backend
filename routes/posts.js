@@ -1,5 +1,6 @@
 import express from "express";
 
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -42,7 +43,7 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.post("/follow-post", (req, res, next) => {});
+router.post("/follow-post");
 
 /**
  * @swagger
@@ -83,7 +84,7 @@ router.post("/follow-post", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/hide", (req, res, next) => {});
+router.post("/hide");
 
 /**
  * @swagger
@@ -124,7 +125,7 @@ router.post("/hide", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/mark-nsfw", (req, res, next) => {});
+router.post("/mark-nsfw");
 
 /**
  * @swagger
@@ -166,7 +167,7 @@ router.post("/mark-nsfw", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/set-suggested-sort", (req, res, next) => {});
+router.post("/set-suggested-sort");
 
 /**
  * @swagger
@@ -205,7 +206,7 @@ router.post("/set-suggested-sort", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/clear-suggested-sort", (req, res, next) => {});
+router.post("/clear-suggested-sort");
 
 /**
  * @swagger
@@ -246,7 +247,7 @@ router.post("/clear-suggested-sort", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/mark-spoiler", (req, res, next) => {});
+router.post("/mark-spoiler");
 
 /**
  * @swagger
@@ -281,7 +282,7 @@ router.post("/mark-spoiler", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/submit", (req, res, next) => {});
+router.post("/submit");
 
 /**
  * @swagger
@@ -322,7 +323,7 @@ router.post("/submit", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unhide", (req, res, next) => {});
+router.post("/unhide");
 
 /**
  * @swagger
@@ -363,7 +364,7 @@ router.post("/unhide", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unmark-nsfw", (req, res, next) => {});
+router.post("/unmark-nsfw");
 
 /**
  * @swagger
@@ -404,7 +405,7 @@ router.post("/unmark-nsfw", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unmark-spoiler", (req, res, next) => {});
+router.post("/unmark-spoiler");
 
 /**
  * @swagger
@@ -457,7 +458,7 @@ router.post("/unmark-spoiler", (req, res, next) => {});
  *      security:
  *         - bearerAuth: []
  */
-router.get("/post-insights", (req, res, next) => {});
+router.get("/post-insights");
 
 /**
  * @swagger
@@ -495,7 +496,7 @@ router.get("/post-insights", (req, res, next) => {});
  *          500:
  *              description: Server Error
  */
-router.get("/post-details", (req, res, next) => {});
+router.get("/post-details");
 
 /**
  * @swagger
@@ -536,7 +537,7 @@ router.get("/post-details", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/pin-post", (req, res, next) => {});
+router.post("/pin-post");
 
 /**
  * @swagger
@@ -574,7 +575,7 @@ router.post("/pin-post", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.get("/pinned-posts", (req, res, next) => {});
+router.get("/pinned-posts");
 
 /**
  * @swagger
@@ -616,6 +617,6 @@ router.get("/pinned-posts", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.put("/edit-post-flair", (req, res, next) => {});
+router.put("/edit-post-flair");
 
 export default router;

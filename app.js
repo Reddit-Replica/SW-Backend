@@ -8,9 +8,7 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 const app = express();
 
-if (process.env.NODE_ENV !== "production") {
-  dotenv.config();
-}
+dotenv.config({ path: `./.env.${process.env.NODE_ENV}` });
 
 app.use(bodyParser.json());
 app.use(morgan("dev"));
@@ -24,6 +22,7 @@ app.use((_req, res, next) => {
   next();
 });
 
+// eslint-disable-next-line max-len
 const DB_URL = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`;
 
 mongoose

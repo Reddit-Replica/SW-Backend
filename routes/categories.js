@@ -1,5 +1,6 @@
 import express from "express";
 
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -38,6 +39,6 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.get("/saved-categories", (req, res, next) => {});
+router.get("/saved-categories");
 
 export default router;

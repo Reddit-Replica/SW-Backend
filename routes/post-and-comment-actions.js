@@ -1,5 +1,6 @@
 import express from "express";
 
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -45,7 +46,7 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.delete("/delete", (req, res, next) => {});
+router.delete("/delete");
 
 /**
  * @swagger
@@ -95,7 +96,7 @@ router.delete("/delete", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/mark-spam", (req, res, next) => {});
+router.post("/mark-spam");
 
 /**
  * @swagger
@@ -142,7 +143,7 @@ router.post("/mark-spam", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unmark-spam", (req, res, next) => {});
+router.post("/unmark-spam");
 
 /**
  * @swagger
@@ -189,7 +190,7 @@ router.post("/unmark-spam", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.put("/edit-user-text", (req, res, next) => {});
+router.put("/edit-user-text");
 
 /**
  * @swagger
@@ -235,7 +236,7 @@ router.put("/edit-user-text", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/save", (req, res, next) => {});
+router.post("/save");
 
 /**
  * @swagger
@@ -282,7 +283,7 @@ router.post("/save", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/send-replies", (req, res, next) => {});
+router.post("/send-replies");
 
 /**
  * @swagger
@@ -328,7 +329,7 @@ router.post("/send-replies", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unsave", (req, res, next) => {});
+router.post("/unsave");
 
 /**
  * @swagger
@@ -375,6 +376,6 @@ router.post("/unsave", (req, res, next) => {});
  *      security:
  *       - bearerAuth: []
  */
-router.post("/vote", (req, res, next) => {});
+router.post("/vote");
 
 export default router;
