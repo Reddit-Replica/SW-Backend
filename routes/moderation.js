@@ -310,9 +310,7 @@ moderationRouter.get("/r/:subreddit/about/unmoderated");
  *    - bearerAuth: []
  */
 
-moderationRouter.post(
-  "/r/:subreddit/accept-moderator-invite"
-);
+moderationRouter.post("/r/:subreddit/accept-moderator-invite");
 
 /**
  * @swagger
@@ -1199,9 +1197,7 @@ moderationRouter.get("/r/:subreddit/about/rules");
  *    - bearerAuth: []
  */
 
-moderationRouter.put(
-  "/r/:subreddit/about/rules/:ruleId"
-);
+moderationRouter.put("/r/:subreddit/about/rules/:ruleId");
 
 /**
  * @swagger
@@ -1259,9 +1255,7 @@ moderationRouter.put(
  *    - bearerAuth: []
  */
 
-moderationRouter.post(
-  "/r/:subreddit/about/rules-order"
-);
+moderationRouter.post("/r/:subreddit/about/rules-order");
 
 /**
  * @swagger
@@ -1385,9 +1379,7 @@ moderationRouter.get("/r/:subreddit/about/post-flairs");
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.get(
-  "/r/:subreddit/about/post-flairs/:flairId"
-);
+moderationRouter.get("/r/:subreddit/about/post-flairs/:flairId");
 
 /**
  * @swagger
@@ -1441,9 +1433,7 @@ moderationRouter.get(
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.post(
-  "/r/:subreddit/about/post-flairs"
-);
+moderationRouter.post("/r/:subreddit/about/post-flairs");
 
 /**
  * @swagger
@@ -1503,9 +1493,7 @@ moderationRouter.post(
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.put(
-  "/r/:subreddit/about/post-flairs/:flairId"
-);
+moderationRouter.put("/r/:subreddit/about/post-flairs/:flairId");
 
 /**
  * @swagger
@@ -1547,9 +1535,7 @@ moderationRouter.put(
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.delete(
-  "/r/:subreddit/about/post-flairs/:flairId"
-);
+moderationRouter.delete("/r/:subreddit/about/post-flairs/:flairId");
 
 /**
  * @swagger
@@ -1603,9 +1589,7 @@ moderationRouter.delete(
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.post(
-  "/r/:subreddit/about/post-flairs-order"
-);
+moderationRouter.post("/r/:subreddit/about/post-flairs-order");
 
 /**
  * @swagger
@@ -1652,9 +1636,7 @@ moderationRouter.post(
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.get(
-  "/r/:subreddit/about/post-flairs-settings"
-);
+moderationRouter.get("/r/:subreddit/about/post-flairs-settings");
 
 /**
  * @swagger
@@ -1703,8 +1685,6 @@ moderationRouter.get(
  *      security:
  *          - bearerAuth: []
  */
-moderationRouter.post(
-  "/r/:subreddit/about/post-flairs-settings"
-);
+moderationRouter.post("/r/:subreddit/about/post-flairs-settings");
 
 export default moderationRouter;
