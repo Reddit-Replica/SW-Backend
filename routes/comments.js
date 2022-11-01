@@ -1,5 +1,6 @@
 import express from "express";
 
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -33,6 +34,6 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.post("/comment", (req, res, next) => {});
+router.post("/comment");
 
 export default router;
