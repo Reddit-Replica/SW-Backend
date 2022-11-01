@@ -5,12 +5,15 @@ const socialLinksSchema = mongoose.Schema(
   {
     type: {
       type: String,
+      required: true,
     },
     displayText: {
       type: String,
+      required: true,
     },
     link: {
       type: String,
+      required: true,
     },
   },
   { _id: false }
@@ -21,30 +24,48 @@ const userSettingsSchema = mongoose.Schema(
   {
     gender: {
       type: String,
+      required: true,
+      default: "man",
     },
     country: {
       type: String,
+      required: true,
+      default: "Egypt",
     },
     nsfw: {
       type: Boolean,
+      required: true,
+      default: false,
     },
     verifiedEmail: {
       type: Boolean,
+      required: true,
+      default: false,
     },
     allowToFollowYou: {
       type: Boolean,
+      required: true,
+      default: true,
     },
     adultContent: {
       type: Boolean,
+      required: true,
+      default: true,
     },
     autoplayMedia: {
       type: Boolean,
+      required: true,
+      default: true,
     },
     newFollowerEmail: {
       type: Boolean,
+      required: true,
+      default: true,
     },
     unsubscribeFromEmails: {
       type: Boolean,
+      required: true,
+      default: false,
     },
     socialLinks: [socialLinksSchema],
   },
@@ -62,7 +83,6 @@ const userSchema = mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
   },
   googleEmail: {
     type: String,
@@ -84,9 +104,13 @@ const userSchema = mongoose.Schema({
   },
   karma: {
     type: Number,
+    required: true,
+    default: 1,
   },
   createdAt: {
     type: Date,
+    required: true,
+    default: Date.now(),
   },
   deletedAt: {
     type: Date,
@@ -94,4 +118,6 @@ const userSchema = mongoose.Schema({
   userSettings: userSettingsSchema,
 });
 
-export const User = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+
+export default User;
