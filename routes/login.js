@@ -1,8 +1,8 @@
 import express from "express";
-const router = express.Router();
-import { check, body } from "express-validator";
-import { User } from "../models/User.js";
-import * as loginController from "../controllers/loginController.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import loginController from "../controllers/loginController.js";
+
+const loginRouter = express.Router();
 
 /**
  * @swagger
@@ -52,16 +52,11 @@ import * as loginController from "../controllers/loginController.js";
  *       500:
  *         description: Internal server error
  */
-router.post(
+loginRouter.post(
   "/login",
-  [
-    check("email").isEmail().withMessage("Invalid Email!").normalizeEmail(),
-    check("password", "Incorrect Password")
-      .isLength({ min: 5 })
-      .isAlphanumeric()
-      .trim(),
-  ],
-  loginController.postLogin
+  loginController.loginValidator,
+  validateRequestSchema,
+  loginController.login
 );
 
 /**
@@ -111,7 +106,7 @@ router.post(
  *       500:
  *         description: Internal server error
  */
-router.post("/login/:type", (req, res) => {});
+loginRouter.post("/login/:type", (req, res) => {});
 
 /**
  * @swagger
@@ -155,7 +150,7 @@ router.post("/login/:type", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/login/forget", (req, res) => {});
+loginRouter.post("/login/forget", (req, res) => {});
 
 /**
  * @swagger
@@ -213,6 +208,6 @@ router.post("/login/forget", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/reset-password/:id/:token", (req, res) => {});
+loginRouter.post("/reset-password/:id/:token", (req, res) => {});
 
-export default router;
+export default loginRouter;
