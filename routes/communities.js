@@ -4,7 +4,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/subreddits/leaderboard:
+ * /subreddits/leaderboard:
  *  get:
  *      summary: Return a listing of all the Communities
  *      tags: [Subreddit]
@@ -70,7 +70,7 @@ router.get("/subreddits/leaderboard", (req, res) => {});
 
 /**
  * @swagger
- * /api/subreddits/leaderboard/{categoryName}:
+ * /subreddits/leaderboard/{categoryName}:
  *  get:
  *      summary: Return a listing of communities of a specific category
  *      tags: [Subreddit]
@@ -146,7 +146,7 @@ router.get("/subreddits/leaderboard/:categoryName", (req, res) => {});
 
 /**
  * @swagger
- * /api/custom-random-category:
+ * /custom-random-category:
  *  get:
  *      summary: Return a listing of random communities with random category
  *      tags: [Subreddit]
@@ -212,7 +212,7 @@ router.get("/custom-random-category", (req, res) => {});
 
 /**
  * @swagger
- * /api/trending-communities:
+ * /trending-communities:
  *  get:
  *      summary: Return a listing of the mostly viewed communities
  *      tags: [Subreddit]
@@ -281,7 +281,7 @@ router.get("/trending-communities", (req, res) => {});
 
 /**
  * @swagger
- * /api/random-category:
+ * /random-category:
  *  get:
  *      summary: Return two random categories to display
  *      tags: [Subreddit]
@@ -353,7 +353,7 @@ router.get("/random-category", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subreddit}:
+ * /r/{subreddit}:
  *  get:
  *      summary: Return all the details of the subreddit
  *      tags: [Subreddit]
@@ -387,7 +387,7 @@ router.get("/r/:subreddit", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subreddit}/about/moderators:
+ * /r/{subreddit}/about/moderators:
  *  get:
  *      summary: Return a listing of moderators in that specified subreddit
  *      tags: [Subreddit]
@@ -446,7 +446,7 @@ router.get("/r/:subreddit/about/moderators", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subreddit}/wiki/rules:
+ * /r/{subreddit}/wiki/rules:
  *  get:
  *      summary: Return all the rules of the subreddit in details (canceled feature)
  *      tags: [Subreddit]
@@ -483,7 +483,7 @@ router.get("/r/:subreddit/wiki/rules", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subreddit}/wiki/bans:
+ * /r/{subreddit}/wiki/bans:
  *  get:
  *      summary: Return all the ban questions of the subbreddit in details (canceled feature)
  *      tags: [Subreddit]
@@ -520,7 +520,7 @@ router.get("/r/:subreddit/wiki/bans", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subreddit}/add-main-topic:
+ * /r/{subreddit}/add-main-topic:
  *  post:
  *      summary: add the main topic to the community
  *      tags: [Subreddit]
@@ -556,7 +556,7 @@ router.post("/r/:subreddit/add-main-topic", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subreddit}/add-subtopic:
+ * /r/{subreddit}/add-subtopic:
  *  post:
  *      summary: add subtopics of the community
  *      tags: [Subreddit]
@@ -594,7 +594,7 @@ router.post("/r/:subreddit/add-subtopics", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subreddit}/add-description:
+ * /r/{subreddit}/add-description:
  *  post:
  *      summary: add description of the community
  *      tags: [Subreddit]
@@ -630,7 +630,7 @@ router.post("/r/:subreddit/add-description", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subreddit}/toggle-favorite:
+ * /r/{subreddit}/toggle-favorite:
  *  patch:
  *      summary: toggle favorite property of the community
  *      tags: [Subreddit]
@@ -655,7 +655,7 @@ router.patch("/r/:subreddit/toggle-favorite", (req, res) => {});
 
 /**
  * @swagger
- * /api/r/{subreddit}/toggle-community-theme:
+ * /r/{subreddit}/toggle-community-theme:
  *  patch:
  *      summary: toggle community theme option of the community (canceled feature)
  *      tags: [Subreddit]

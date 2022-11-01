@@ -277,7 +277,7 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
 
 /**
  * @swagger
- * /r/{subreddit}/api/accept-moderator-invite:
+ * /r/{subreddit}/accept-moderator-invite:
  *  post:
  *   summary:
  *    Accept an invite to moderate the specified subreddit. The authenticated user must have been invited to moderate the subreddit by one of its current moderators or the admin.
@@ -310,13 +310,13 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
  */
 
 moderationRouter.post(
-  "/r/:subreddit/api/accept-moderator-invite",
+  "/r/:subreddit/accept-moderator-invite",
   (req, res, next) => {}
 );
 
 /**
  * @swagger
- * /r/{subreddit}/api/moderator-invite:
+ * /r/{subreddit}/moderator-invite:
  *  post:
  *   summary:
  *    Send a moderation invite to a user.
@@ -366,13 +366,13 @@ moderationRouter.post(
  */
 
 moderationRouter.post(
-  "/r/:subreddit/api/moderator-invite",
+  "/r/:subreddit/moderator-invite",
   (req, res, next) => {}
 );
 
 /**
  * @swagger
- * /api/leave-moderator:
+ * /leave-moderator:
  *  post:
  *   summary:
  *    Abdicate moderator status in a subreddit.
@@ -410,11 +410,11 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/leave-moderator", (req, res, next) => {});
+moderationRouter.post("/leave-moderator", (req, res, next) => {});
 
 /**
  * @swagger
- * /api/approve:
+ * /approve:
  *  post:
  *   summary:
  *    Approve a post or comment. for spam reports, approving means that this post / comment is not a spam.
@@ -456,11 +456,11 @@ moderationRouter.post("/api/leave-moderator", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/approve", (req, res, next) => {});
+moderationRouter.post("/approve", (req, res, next) => {});
 
 /**
  * @swagger
- * /api/remove:
+ * /remove:
  *  post:
  *   summary:
  *    Remove  a post or comment. for spam reports, removing means that this post / comment is a spam so it is removed.
@@ -502,11 +502,11 @@ moderationRouter.post("/api/approve", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/remove", (req, res, next) => {});
+moderationRouter.post("/remove", (req, res, next) => {});
 
 /**
  * @swagger
- * /api/lock:
+ * /lock:
  *  post:
  *   summary:
  *    Lock a post or comment. Prevents a post or new child comments from receiving new comments.
@@ -548,11 +548,11 @@ moderationRouter.post("/api/remove", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/lock", (req, res, next) => {});
+moderationRouter.post("/lock", (req, res, next) => {});
 
 /**
  * @swagger
- * /api/unlock:
+ * /unlock:
  *  post:
  *   summary:
  *    Unlock a post or comment. Allow a post or comment to receive new comments.
@@ -594,11 +594,11 @@ moderationRouter.post("/api/lock", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/unlock", (req, res, next) => {});
+moderationRouter.post("/unlock", (req, res, next) => {});
 
 /**
  * @swagger
- * /api/ban:
+ * /ban:
  *  post:
  *   summary:
  *    Ban a user from a subreddit. Banned users can't post or comment on that subreddit.
@@ -658,11 +658,11 @@ moderationRouter.post("/api/unlock", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/ban", (req, res, next) => {});
+moderationRouter.post("/ban", (req, res, next) => {});
 
 /**
  * @swagger
- * /api/unban:
+ * /unban:
  *  post:
  *   summary:
  *    Remove a ban from a user.
@@ -704,7 +704,7 @@ moderationRouter.post("/api/ban", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/unban", (req, res, next) => {});
+moderationRouter.post("/unban", (req, res, next) => {});
 
 /**
  * @swagger

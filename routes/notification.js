@@ -13,7 +13,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/notifications:
+ * /notifications:
  *  get:
  *      summary: get all the notifications sent to the user
  *      tags: [Notifications]
@@ -87,11 +87,11 @@ const router = express.Router();
  *       - bearerAuth: []
  */
 
-router.get("/api/notifications");
+router.get("/notifications");
 
 /**
  * @swagger
- * /api/mark-all-notifications-read:
+ * /mark-all-notifications-read:
  *  patch:
  *      summary: mark all the notifications as read
  *      tags: [Notifications]
@@ -106,11 +106,11 @@ router.get("/api/notifications");
  *       - bearerAuth: []
  */
 
-router.patch("/api/mark-all-notifications-read", (req, res) => {});
+router.patch("/mark-all-notifications-read", (req, res) => {});
 
 /**
  * @swagger
- * /api/hide-noification:
+ * /hide-noification:
  *  patch:
  *      summary: mark a specific notification as hidden
  *      tags: [Notifications]
@@ -135,11 +135,11 @@ router.patch("/api/mark-all-notifications-read", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/api/hide-noification", (req, res) => {});
+router.patch("/hide-noification", (req, res) => {});
 
 /**
  * @swagger
- * /api/live/thread:
+ * /live/thread:
  *  get:
  *      summary: Get a list of updates posted in this thread. (canceled feature)
  *      tags: [Threads]
@@ -183,7 +183,7 @@ router.get("/live/thread", (req, res) => {});
 
 /**
  * @swagger
- * /api/live/by-id/names:
+ * /live/by-id/names:
  *  get:
  *      summary: Get a list all the live events (canceled feature)
  *      tags: [Threads]
@@ -210,10 +210,10 @@ router.get("live/by-id/names", (req, res) => {});
 
 /**
  * @swagger
- * /api/live/create:
+ * /live/create:
  *  post:
  *      summary: Create a new live thread.
- *       Once created, the initial settings can be modified with /api/live/thread/edit and new updates can be posted with /api/live/thread/update. (canceled feature)
+ *       Once created, the initial settings can be modified with /live/thread/edit and new updates can be posted with /live/thread/update. (canceled feature)
  *      tags: [Threads]
  *      responses:
  *          200:
@@ -238,7 +238,7 @@ router.post("/live/create", (req, res) => {});
 
 /**
  * @swagger
- * /api/live/thread/about:
+ * /live/thread/about:
  *  get:
  *      summary: get a some basic info about the live thread (canceled feature)
  *      tags: [Threads]
@@ -265,7 +265,7 @@ router.get("/live/thread/about", (req, res) => {});
 
 /**
  * @swagger
- * /api/live/thread:
+ * /live/thread:
  *  patch:
  *      summary: editing a thread (canceled feature)
  *      tags: [Threads]
@@ -294,7 +294,7 @@ router.patch("/live/thread", (req, res) => {});
 
 /**
  * @swagger
- * /api/live/thread:
+ * /live/thread:
  *  put:
  *      summary: updating a thread (canceled feature)
  *      tags: [Threads]
@@ -323,7 +323,7 @@ router.put("/live/thread", (req, res) => {});
 
 /**
  * @swagger
- * /api/live/thread:
+ * /live/thread:
  *  delete:
  *      summary: closes a thread (canceled feature)
  *      tags: [Threads]

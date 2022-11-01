@@ -11,7 +11,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/message/compose:
+ * /message/compose:
  *  post:
  *      summary: Send a message to a specific user with its subject
  *      tags: [Messages]
@@ -60,7 +60,7 @@ router.post("/message/compose", (req, res) => {});
 
 /**
  * @swagger
- * /api/message/sent:
+ * /message/sent:
  *  get:
  *      summary: Return a listing of messages that you sent sorted by time of sending the msg
  *      tags: [Messages]
@@ -126,7 +126,7 @@ router.get("/message/sent", (req, res) => {});
 
 /**
  * @swagger
- * /api/message/inbox:
+ * /message/inbox:
  *  get:
  *      summary: Return a listing of all the messages,postreplies and mentions that you received sorted by time of sending them
  *      tags: [Messages]
@@ -211,7 +211,7 @@ router.get("/message/inbox", (req, res) => {});
 
 /**
  * @swagger
- * /api/message/unread:
+ * /message/unread:
  *  get:
  *      summary: Return a listing of unread messages that you received sorted by time of sending the msg
  *      tags: [Messages]
@@ -280,7 +280,7 @@ router.get("/message/unread", (req, res) => {});
 
 /**
  * @swagger
- * /api/message/post-reply:
+ * /message/post-reply:
  *  get:
  *      summary: Return a listing of post replies that you made sorted by time of adding the reply
  *      tags: [Messages]
@@ -361,7 +361,7 @@ router.get("/message/post-reply", (req, res) => {});
 
 /**
  * @swagger
- * /api/message/mentions:
+ * /message/mentions:
  *  get:
  *      summary: Return a listing of mentions that you made sorted by time of adding the mention
  *      tags: [Messages]
@@ -442,7 +442,7 @@ router.get("/message/mentions", (req, res) => {});
 
 /**
  * @swagger
- * /api/message/messages:
+ * /message/messages:
  *  get:
  *      summary: Return a listing of all messages that was sent or received sorted by the time
  *      tags: [Messages]
@@ -518,7 +518,7 @@ router.get("/message/messages", (req, res) => {});
 
 /**
  * @swagger
- * /api/unread-message:
+ * /unread-message:
  *  patch:
  *      summary: Unread a Message
  *      tags: [Messages]
@@ -549,7 +549,7 @@ router.patch("/unread-message", (req, res) => {});
 
 /**
  * @swagger
- * /api/read-all-msgs:
+ * /read-all-msgs:
  *  patch:
  *      summary: mark all messages as read
  *      tags: [Messages]
