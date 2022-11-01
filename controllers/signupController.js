@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import { body, query } from "express-validator";
 import bcrypt from "bcryptjs";
-// // import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 const signupValidator = [
   body("email")
@@ -59,7 +59,11 @@ const signup = async (req, res) => {
 
     // Send verification email [TODO]
 
-    // Create jwt [TODO]
+    const token = jwt.sign(
+      { userId: user.id, username: user.username },
+      process.env.TOKEN_SECRET
+    );
+    res.header("Authorization", "Bearer " + token);
 
     res.send(user); // Change to res.status(201).send("The account has been successfully created");
   } catch (err) {
