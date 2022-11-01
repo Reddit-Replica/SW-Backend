@@ -1,4 +1,6 @@
 import express from "express";
+
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -48,7 +50,7 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.post("/block-user", (req, res) => {});
+router.post("/block-user");
 
 /**
  * @swagger
@@ -90,7 +92,7 @@ router.post("/block-user", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.post("/follow-user", (req, res) => {});
+router.post("/follow-user");
 
 /**
  * @swagger
@@ -172,7 +174,7 @@ router.post("/follow-user", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/about", (req, res) => {});
+router.get("/user/:username/about");
 
 /**
  * @swagger
@@ -237,7 +239,7 @@ router.get("/user/:username/about", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/overview", (req, res) => {});
+router.get("/user/:username/overview");
 
 /**
  * @swagger
@@ -302,7 +304,7 @@ router.get("/user/:username/overview", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/posts", (req, res) => {});
+router.get("/user/:username/posts");
 
 /**
  * @swagger
@@ -344,7 +346,7 @@ router.get("/user/:username/posts", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/history", (req, res) => {});
+router.get("/user/:username/history");
 
 /**
  * @swagger
@@ -539,7 +541,7 @@ router.get("/user/:username/history", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/comments", (req, res) => {});
+router.get("/user/:username/comments");
 
 /**
  * @swagger
@@ -606,7 +608,7 @@ router.get("/user/:username/comments", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/upvoted", (req, res) => {});
+router.get("/user/:username/upvoted");
 
 /**
  * @swagger
@@ -673,7 +675,7 @@ router.get("/user/:username/upvoted", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/downvoted", (req, res) => {});
+router.get("/user/:username/downvoted");
 
 /**
  * @swagger
@@ -717,7 +719,7 @@ router.get("/user/:username/downvoted", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/saved", (req, res) => {});
+router.get("/user/:username/saved");
 
 /**
  * @swagger
@@ -761,6 +763,6 @@ router.get("/user/:username/saved", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/hidden", (req, res) => {});
+router.get("/user/:username/hidden");
 
 export default router;

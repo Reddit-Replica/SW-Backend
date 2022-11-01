@@ -1,5 +1,6 @@
 import express from "express";
 
+// eslint-disable-next-line new-cap
 const moderationRouter = express.Router();
 
 /**
@@ -108,7 +109,7 @@ const moderationRouter = express.Router();
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/spam");
 
 /**
  * @swagger
@@ -195,7 +196,7 @@ moderationRouter.get("/r/:subreddit/about/spam", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/edited");
 
 /**
  * @swagger
@@ -273,11 +274,11 @@ moderationRouter.get("/r/:subreddit/about/edited", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/unmoderated");
 
 /**
  * @swagger
- * /r/{subreddit}/api/accept-moderator-invite:
+ * /r/{subreddit}/accept-moderator-invite:
  *  post:
  *   summary:
  *    Accept an invite to moderate the specified subreddit. The authenticated user must have been invited to moderate the subreddit by one of its current moderators or the admin.
@@ -310,13 +311,12 @@ moderationRouter.get("/r/:subreddit/about/unmoderated", (req, res, next) => {});
  */
 
 moderationRouter.post(
-  "/r/:subreddit/api/accept-moderator-invite",
-  (req, res, next) => {}
+  "/r/:subreddit/accept-moderator-invite"
 );
 
 /**
  * @swagger
- * /r/{subreddit}/api/moderator-invite:
+ * /r/{subreddit}/moderator-invite:
  *  post:
  *   summary:
  *    Send a moderation invite to a user.
@@ -365,14 +365,11 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post(
-  "/r/:subreddit/api/moderator-invite",
-  (req, res, next) => {}
-);
+moderationRouter.post("/r/:subreddit/moderator-invite");
 
 /**
  * @swagger
- * /api/leave-moderator:
+ * /leave-moderator:
  *  post:
  *   summary:
  *    Abdicate moderator status in a subreddit.
@@ -410,11 +407,11 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/leave-moderator", (req, res, next) => {});
+moderationRouter.post("/leave-moderator");
 
 /**
  * @swagger
- * /api/approve:
+ * /approve:
  *  post:
  *   summary:
  *    Approve a post or comment. for spam reports, approving means that this post / comment is not a spam.
@@ -456,11 +453,11 @@ moderationRouter.post("/api/leave-moderator", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/approve", (req, res, next) => {});
+moderationRouter.post("/approve");
 
 /**
  * @swagger
- * /api/remove:
+ * /remove:
  *  post:
  *   summary:
  *    Remove  a post or comment. for spam reports, removing means that this post / comment is a spam so it is removed.
@@ -502,11 +499,11 @@ moderationRouter.post("/api/approve", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/remove", (req, res, next) => {});
+moderationRouter.post("/remove");
 
 /**
  * @swagger
- * /api/lock:
+ * /lock:
  *  post:
  *   summary:
  *    Lock a post or comment. Prevents a post or new child comments from receiving new comments.
@@ -548,11 +545,11 @@ moderationRouter.post("/api/remove", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/lock", (req, res, next) => {});
+moderationRouter.post("/lock");
 
 /**
  * @swagger
- * /api/unlock:
+ * /unlock:
  *  post:
  *   summary:
  *    Unlock a post or comment. Allow a post or comment to receive new comments.
@@ -594,11 +591,11 @@ moderationRouter.post("/api/lock", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/unlock", (req, res, next) => {});
+moderationRouter.post("/unlock");
 
 /**
  * @swagger
- * /api/ban:
+ * /ban:
  *  post:
  *   summary:
  *    Ban a user from a subreddit. Banned users can't post or comment on that subreddit.
@@ -658,11 +655,11 @@ moderationRouter.post("/api/unlock", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/ban", (req, res, next) => {});
+moderationRouter.post("/ban");
 
 /**
  * @swagger
- * /api/unban:
+ * /unban:
  *  post:
  *   summary:
  *    Remove a ban from a user.
@@ -704,7 +701,7 @@ moderationRouter.post("/api/ban", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/api/unban", (req, res, next) => {});
+moderationRouter.post("/unban");
 
 /**
  * @swagger
@@ -772,7 +769,7 @@ moderationRouter.post("/api/unban", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/banned", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/banned");
 
 /**
  * @swagger
@@ -856,7 +853,7 @@ moderationRouter.get("/r/:subreddit/about/banned", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/edit", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/edit");
 
 /**
  * @swagger
@@ -963,7 +960,7 @@ moderationRouter.get("/r/:subreddit/about/edit", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.put("/r/:subreddit/about/edit", (req, res, next) => {});
+moderationRouter.put("/r/:subreddit/about/edit");
 
 /**
  * @swagger
@@ -1006,7 +1003,7 @@ moderationRouter.put("/r/:subreddit/about/edit", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/suggested-topics", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/suggested-topics");
 
 /**
  * @swagger
@@ -1069,7 +1066,7 @@ moderationRouter.get("/r/:subreddit/suggested-topics", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/r/:subreddit/about/rules", (req, res, next) => {});
+moderationRouter.post("/r/:subreddit/about/rules");
 
 /**
  * @swagger
@@ -1135,7 +1132,7 @@ moderationRouter.post("/r/:subreddit/about/rules", (req, res, next) => {});
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/rules", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/rules");
 
 /**
  * @swagger
@@ -1203,8 +1200,7 @@ moderationRouter.get("/r/:subreddit/about/rules", (req, res, next) => {});
  */
 
 moderationRouter.put(
-  "/r/:subreddit/about/rules/:ruleId",
-  (req, res, next) => {}
+  "/r/:subreddit/about/rules/:ruleId"
 );
 
 /**
@@ -1264,8 +1260,7 @@ moderationRouter.put(
  */
 
 moderationRouter.post(
-  "/r/:subreddit/about/rules-order",
-  (req, res, next) => {}
+  "/r/:subreddit/about/rules-order"
 );
 
 /**
@@ -1329,7 +1324,7 @@ moderationRouter.post(
  *      security:
  *          - bearerAuth: []
  */
-router.get("/r/:subreddit/about/post-flairs", (req, res, next) => {});
+moderationRouter.get("/r/:subreddit/about/post-flairs");
 
 /**
  * @swagger
@@ -1390,7 +1385,9 @@ router.get("/r/:subreddit/about/post-flairs", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.get("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
+moderationRouter.get(
+  "/r/:subreddit/about/post-flairs/:flairId"
+);
 
 /**
  * @swagger
@@ -1444,7 +1441,9 @@ router.get("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.post("/r/:subreddit/about/post-flairs", (req, res, next) => {});
+moderationRouter.post(
+  "/r/:subreddit/about/post-flairs"
+);
 
 /**
  * @swagger
@@ -1504,7 +1503,9 @@ router.post("/r/:subreddit/about/post-flairs", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.put("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
+moderationRouter.put(
+  "/r/:subreddit/about/post-flairs/:flairId"
+);
 
 /**
  * @swagger
@@ -1546,9 +1547,8 @@ router.put("/r/:subreddit/about/post-flairs/:flairId", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.delete(
-  "/r/:subreddit/about/post-flairs/:flairId",
-  (req, res, next) => {}
+moderationRouter.delete(
+  "/r/:subreddit/about/post-flairs/:flairId"
 );
 
 /**
@@ -1603,7 +1603,9 @@ router.delete(
  *      security:
  *          - bearerAuth: []
  */
-router.post("/r/:subreddit/about/post-flairs-order", (req, res, next) => {});
+moderationRouter.post(
+  "/r/:subreddit/about/post-flairs-order"
+);
 
 /**
  * @swagger
@@ -1650,7 +1652,9 @@ router.post("/r/:subreddit/about/post-flairs-order", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.get("/r/:subreddit/about/post-flairs-settings", (req, res, next) => {});
+moderationRouter.get(
+  "/r/:subreddit/about/post-flairs-settings"
+);
 
 /**
  * @swagger
@@ -1699,6 +1703,8 @@ router.get("/r/:subreddit/about/post-flairs-settings", (req, res, next) => {});
  *      security:
  *          - bearerAuth: []
  */
-router.post("/r/:subreddit/about/post-flairs-settings", (req, res, next) => {});
+moderationRouter.post(
+  "/r/:subreddit/about/post-flairs-settings"
+);
 
 export default moderationRouter;
