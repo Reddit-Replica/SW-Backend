@@ -150,7 +150,18 @@ loginRouter.post("/login/:type", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-loginRouter.post("/login/forget", (req, res) => {});
+loginRouter.post(
+  "/login/forget?type=password",
+  loginController.passwordValidator,
+  validateRequestSchema,
+  loginController.forgetPassword
+);
+loginRouter.post(
+  "/login/forget?type=username",
+  loginController.usernameValidator,
+  validateRequestSchema,
+  loginController.forgetUsername
+);
 
 /**
  * @swagger
@@ -208,6 +219,13 @@ loginRouter.post("/login/forget", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-loginRouter.post("/reset-password/:id/:token", (req, res) => {});
+loginRouter.post(
+  "/reset-password/:id/:token",
+  loginController.passwordValidator,
+  validateRequestSchema,
+  loginController.resetPassword
+);
+
+// Endpoint for forget username (Delete it from DB)
 
 export default loginRouter;
