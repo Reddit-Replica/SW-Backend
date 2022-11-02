@@ -156,12 +156,6 @@ loginRouter.post(
   validateRequestSchema,
   loginController.forgetPassword
 );
-loginRouter.post(
-  "/login/forget?type=username",
-  loginController.usernameValidator,
-  validateRequestSchema,
-  loginController.forgetUsername
-);
 
 /**
  * @swagger
@@ -225,7 +219,5 @@ loginRouter.post(
   validateRequestSchema,
   loginController.resetPassword
 );
-
-// Endpoint for forget username (Delete it from DB)
 
 export default loginRouter;

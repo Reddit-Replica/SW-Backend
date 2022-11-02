@@ -2,6 +2,16 @@ import bcrypt from "bcryptjs";
 import { body } from "express-validator";
 import User from "../models/User.js";
 import generateJWT from "../utils/generateToken.js";
+import nodemailer from "nodemailer";
+import sendgridTransport from "nodemailer-sendgrid-transport";
+const transporter = nodemailer.createTransport(
+  sendgridTransport({
+    auth: {
+      api_key:
+        "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",
+    },
+  })
+);
 
 const loginValidator = [
   body("username")
@@ -21,22 +31,15 @@ const passwordValidator = [
     .withMessage("Password must be at least 8 chars long"),
 ];
 
-const usernameValidator = [
-  body("username")
-    .not()
-    .isEmpty()
-    .withMessage("Username must not be empty")
-    .trim()
-    .escape(),
-];
-
 const login = async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   try {
     const user = await User.findOne({ username: username });
     if (!user) {
-      return res.status(400).send("Username not found");
+      return res.status(400).send({
+        error: "Username not found",
+      });
     }
     const doMatch = await bcrypt.compare(password, user.password);
     if (doMatch) {
@@ -44,7 +47,9 @@ const login = async (req, res) => {
       res.header("Authorization", "Bearer " + token);
       return res.status(200).send("Logged in successfuly!");
     }
-    return res.status(400).send("Invalid credentials");
+    return res.status(400).send({
+      error: "Invalid credentials",
+    });
   } catch (err) {
     res.status(500).send("Internal server error");
   }
@@ -56,10 +61,14 @@ const forgetPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email: email });
     if (!user) {
-      return res.status(400).send("User not found");
+      return res.status(400).send({
+        error: "User not found",
+      });
     }
     if (user.username !== username) {
-      return res.status(400).send("Invalid username");
+      return res.status(400).send({
+        error: "Invalid username",
+      });
     }
     const token = generateJWT(user);
     user.token = token;
@@ -80,12 +89,6 @@ const forgetPassword = async (req, res) => {
   }
 };
 
-const forgetUsername = async (req, res) => {
-  const email = req.body.email;
-  try {
-  } catch (err) {}
-};
-
 const resetPassword = async (req, res) => {
   const userId = req.params.id;
   const token = req.params.token;
@@ -97,10 +100,8 @@ const resetPassword = async (req, res) => {
 
 export default {
   loginValidator,
-  usernameValidator,
   passwordValidator,
   login,
   forgetPassword,
-  forgetUsername,
   resetPassword,
 };
