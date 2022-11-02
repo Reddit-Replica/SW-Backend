@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { body } from "express-validator";
-import { User } from "../models/User.js";
+import User from "../models/User.js";
 import generateJWT from "../utils/generateToken.js";
 
 const loginValidator = [
