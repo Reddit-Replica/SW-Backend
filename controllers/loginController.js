@@ -27,7 +27,7 @@ const login = async (req, res) => {
     if (doMatch) {
       const token = generateJWT(user);
       res.header("Authorization", "Bearer " + token);
-      res.status(200).send("Logged in successfuly!");
+      return res.status(200).send("Logged in successfuly!");
     }
     return res.status(400).send("Invalid credentials");
   } catch (err) {
