@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { body } from "express-validator";
 import User from "../models/User.js";
 import jwt from "../utils/Token.js";
+import hashPassword from "../utils/hashPassword.js";
 import nodemailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
 const transporter = nodemailer.createTransport(
@@ -122,8 +123,8 @@ const resetPassword = async (req, res) => {
           error: "Passwords do not match",
         });
       }
-      hashedPassword = bcrypt.hash(newPassword, 12);
-      user.password = hashedPassword;
+      newHashedPassword = hashPassword(newPassword);
+      user.password = newHashedPassword;
       await user.save();
       return res.status(200).send("Password updated successfully");
     } else {
