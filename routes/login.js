@@ -152,7 +152,7 @@ loginRouter.post("/login/:type", (req, res) => {});
  */
 loginRouter.post(
   "/login/forget?type=password",
-  loginController.passwordValidator,
+  loginController.forgetPasswordValidator,
   validateRequestSchema,
   loginController.forgetPassword
 );
@@ -215,7 +215,7 @@ loginRouter.post(
  */
 loginRouter.post(
   "/reset-password/:id/:token",
-  loginController.passwordValidator,
+  loginController.resetPasswordValidator,
   validateRequestSchema,
   loginController.resetPassword
 );
