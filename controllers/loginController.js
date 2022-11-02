@@ -1,18 +1,9 @@
 import bcrypt from "bcryptjs";
 import { body } from "express-validator";
 import User from "../models/User.js";
-import jwt from "../utils/Token.js";
+import jwt from "../utils/token.js";
 import hashPassword from "../utils/hashPassword.js";
-import nodemailer from "nodemailer";
-import sendgridTransport from "nodemailer-sendgrid-transport";
-const transporter = nodemailer.createTransport(
-  sendgridTransport({
-    auth: {
-      api_key:
-        "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",
-    },
-  })
-);
+import sendgrid from "../utils/email.js";
 
 const loginValidator = [
   body("username")
@@ -90,18 +81,12 @@ const forgetPassword = async (req, res) => {
       });
     }
     const token = jwt.generateJWT(user);
-    transporter.sendMail({
-      to: email,
-      from: "abdelrahmanhamdy49@gmail.com",
-      subject: "Password Reset",
-      html: `
-              <p>You requested a password reset</p>
-              <p>Click this <a 
-              href="http://localhost:3000/reset-password/${user.id}/${token}">
-              link
-              </a> to set a new password.</p>
-            `,
-    });
+    sendgrid.sendResetPasswordEmail(
+      "abdelrahmanhamdy49@gmail.com",
+      email,
+      user.id,
+      token
+    );
     return res.status(200).send("Email has been sent");
   } catch (err) {
     res.status(500).send("Internal server error");
