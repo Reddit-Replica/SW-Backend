@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { body } from "express-validator";
 import { User } from "../models/User.js";
-import jwt from "jsonwebtoken";
+import generateJWT from "../utils/generateToken.js";
 
 const loginValidator = [
   body("username")
@@ -18,44 +18,21 @@ const loginValidator = [
 const login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    console.log("Validation failed!");
-    return res.status(422);
+  try {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(404).send("Username not found");
+    }
+    const doMatch = await bcrypt.compare(password, user.password);
+    if (doMatch) {
+      const token = generateJWT(user);
+      res.header("Authorization", "Bearer " + token);
+      res.status(200).send("Logged in successfuly!");
+    }
+    return res.status(400).send("Invalid credentials");
+  } catch (err) {
+    res.status(500).send("Internal server error");
   }
-  User.findOne({ email: email })
-    .then((user) => {
-      if (!user) {
-        console.log("User not found.");
-        return res.status(404);
-      }
-      bcrypt
-        .compare(password, user.password)
-        .then((doMatch) => {
-          // We make it here whether the passwords match or not
-          if (doMatch) {
-            req.session.isLoggedIn = true;
-            req.session.user = user;
-            return req.session.save((err) => {
-              if (err) {
-                console.log(err);
-              }
-              console.log("Logged In");
-              res.status(200);
-            });
-          }
-          console.log("Invalid credentials.");
-          return res.status(422);
-        })
-        .catch((err) => {
-          console.log(err);
-          res.redirect("/login");
-        });
-    })
-    .catch((err) => {
-      console.log("Internal Server Error", err);
-      return res.status(500);
-    });
 };
 
 export default {
