@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import { body } from "express-validator";
 import User from "../models/User.js";
 import jwt from "../utils/token.js";
-import hashPassword from "../utils/hashPassword.js";
+import pass from "../utils/password.js";
 import sendgrid from "../utils/email.js";
 
 const loginValidator = [
@@ -51,14 +51,14 @@ const login = async (req, res) => {
         error: "Username not found",
       });
     }
-    const doMatch = await bcrypt.compare(password, user.password);
+    const doMatch = pass.comparePasswords(password, user.password);
     if (doMatch) {
       const token = jwt.generateJWT(user);
       res.header("Authorization", "Bearer " + token);
-      return res.status(200).send("Logged in successfuly!");
+      return res.status(200).send("Logged in successfully!");
     }
     return res.status(400).send({
-      error: "Invalid credentials",
+      error: "Invalid password",
     });
   } catch (err) {
     res.status(500).send("Internal server error");
@@ -72,7 +72,7 @@ const forgetPassword = async (req, res) => {
     const user = await User.findOne({ email: email });
     if (!user) {
       return res.status(400).send({
-        error: "User not found",
+        error: "Invalid email (User not found)",
       });
     }
     if (user.username !== username) {
@@ -96,8 +96,8 @@ const forgetPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
   const userId = req.params.id;
   const token = req.params.token;
-  const newPassword = req.params.newPassword;
-  const verifyPassword = req.params.verifyPassword;
+  const newPassword = req.body.newPassword;
+  const verifyPassword = req.body.verifyPassword;
   try {
     if (jwt.verifyJWT(userId, token)) {
       const user = await User.findOne({
@@ -108,7 +108,7 @@ const resetPassword = async (req, res) => {
           error: "Passwords do not match",
         });
       }
-      newHashedPassword = hashPassword(newPassword);
+      const newHashedPassword = pass.hashPassword(newPassword);
       user.password = newHashedPassword;
       await user.save();
       return res.status(200).send("Password updated successfully");
@@ -120,11 +120,30 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const loginWithFacebook = async (token) => {};
+
+const loginWithGoogle = async (token) => {};
+
+const loginWith = async (req, res) => {
+  const type = req.params.type;
+  const token = req.params.accessToken;
+  if (type === "facebook") {
+    loginWithFacebook(token);
+  } else if (type === "google") {
+    loginWithGoogle(token);
+  } else {
+    return res.status(400).send({
+      error: "Invalid type. Should be either google or facebook only",
+    });
+  }
+};
+
 export default {
   loginValidator,
   resetPasswordValidator,
   forgetPasswordValidator,
   login,
+  loginWith,
   forgetPassword,
   resetPassword,
 };

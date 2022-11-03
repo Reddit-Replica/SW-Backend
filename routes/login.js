@@ -106,11 +106,11 @@ loginRouter.post(
  *       500:
  *         description: Internal server error
  */
-loginRouter.post("/login/:type", (req, res) => {});
+loginRouter.post("/login/:type", loginController.loginWith);
 
 /**
  * @swagger
- * /login/forget:
+ * /forget:
  *   post:
  *     summary: Forget username or password
  *     tags: [Login]
@@ -151,7 +151,7 @@ loginRouter.post("/login/:type", (req, res) => {});
  *         description: Internal server error
  */
 loginRouter.post(
-  "/login/forget?type=password",
+  "/forget",
   loginController.forgetPasswordValidator,
   validateRequestSchema,
   loginController.forgetPassword
