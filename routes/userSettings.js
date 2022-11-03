@@ -1,4 +1,6 @@
 import express from "express";
+
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -80,7 +82,7 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.get("/account-settings", (req, res) => {});
+router.get("/account-settings");
 
 /**
  * @swagger
@@ -137,7 +139,7 @@ router.get("/account-settings", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.patch("/account-settings", (req, res) => {});
+router.patch("/account-settings");
 
 /**
  * @swagger
@@ -185,7 +187,7 @@ router.patch("/account-settings", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.post("/connect/:type", (req, res) => {});
+router.post("/connect/:type");
 
 /**
  * @swagger
@@ -227,7 +229,7 @@ router.post("/connect/:type", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.put("/change-email", (req, res) => {});
+router.put("/change-email");
 
 /**
  * @swagger
@@ -273,7 +275,7 @@ router.put("/change-email", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.put("/change-password", (req, res) => {});
+router.put("/change-password");
 
 /**
  * @swagger
@@ -306,7 +308,7 @@ router.put("/change-password", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/delete-account", (req, res) => {});
+router.delete("/delete-account");
 
 /**
  * @swagger
@@ -352,7 +354,7 @@ router.delete("/delete-account", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.post("/social-link", (req, res) => {});
+router.post("/social-link");
 
 /**
  * @swagger
@@ -391,7 +393,7 @@ router.post("/social-link", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/social-link", (req, res) => {});
+router.delete("/social-link");
 
 /**
  * @swagger
@@ -429,7 +431,7 @@ router.delete("/social-link", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.post("/profile-picture", (req, res) => {});
+router.post("/profile-picture");
 
 /**
  * @swagger
@@ -447,7 +449,7 @@ router.post("/profile-picture", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/profile-picture", (req, res) => {});
+router.delete("/profile-picture");
 
 /**
  * @swagger
@@ -485,7 +487,7 @@ router.delete("/profile-picture", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.post("/banner-image", (req, res) => {});
+router.post("/banner-image");
 
 /**
  * @swagger
@@ -503,7 +505,7 @@ router.post("/banner-image", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/banner-image", (req, res) => {});
+router.delete("/banner-image");
 
 /**
  * @swagger
@@ -568,6 +570,6 @@ router.delete("/banner-image", (req, res) => {});
  *     security:
  *       - bearerAuth: []
  */
-router.get("/blocked-users", (req, res) => {});
+router.get("/blocked-users");
 
 export default router;

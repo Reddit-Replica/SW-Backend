@@ -1,5 +1,6 @@
 import express from "express";
 
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -477,7 +478,7 @@ const router = express.Router();
  *          500:
  *              description: Server Error
  */
-router.get("/search", (req, res, next) => {});
+router.get("/search");
 
 /**
  * @swagger
@@ -732,6 +733,6 @@ router.get("/search", (req, res, next) => {});
  *          500:
  *              description: Server Error
  */
-router.get("/r/:subreddit/search", (req, res, next) => {});
+router.get("/r/:subreddit/search");
 
 export default router;

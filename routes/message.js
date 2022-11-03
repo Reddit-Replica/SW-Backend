@@ -1,5 +1,6 @@
 import express from "express";
 
+// eslint-disable-next-line new-cap
 const router = express.Router();
 
 /**
@@ -11,7 +12,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/message/compose:
+ * /message/compose:
  *  post:
  *      summary: Send a message to a specific user with its subject
  *      tags: [Messages]
@@ -52,11 +53,11 @@ const router = express.Router();
  *       - bearerAuth: []
  */
 
-router.post("/message/compose", (req, res) => {});
+router.post("/message/compose");
 
 /**
  * @swagger
- * /api/message/sent:
+ * /message/sent:
  *  get:
  *      summary: Return a listing of messages that you sent sorted by time of sending the msg
  *      tags: [Messages]
@@ -118,11 +119,11 @@ router.post("/message/compose", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/sent", (req, res) => {});
+router.get("/message/sent");
 
 /**
  * @swagger
- * /api/message/inbox:
+ * /message/inbox:
  *  get:
  *      summary: Return a listing of all the messages,postreplies and mentions that you received sorted by time of sending them
  *      tags: [Messages]
@@ -203,11 +204,11 @@ router.get("/message/sent", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/inbox", (req, res) => {});
+router.get("/message/inbox");
 
 /**
  * @swagger
- * /api/message/unread:
+ * /message/unread:
  *  get:
  *      summary: Return a listing of unread messages that you received sorted by time of sending the msg
  *      tags: [Messages]
@@ -272,11 +273,11 @@ router.get("/message/inbox", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/unread", (req, res) => {});
+router.get("/message/unread");
 
 /**
  * @swagger
- * /api/message/post-reply:
+ * /message/post-reply:
  *  get:
  *      summary: Return a listing of post replies that you made sorted by time of adding the reply
  *      tags: [Messages]
@@ -353,11 +354,11 @@ router.get("/message/unread", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/post-reply", (req, res) => {});
+router.get("/message/post-reply");
 
 /**
  * @swagger
- * /api/message/mentions:
+ * /message/mentions:
  *  get:
  *      summary: Return a listing of mentions that you made sorted by time of adding the mention
  *      tags: [Messages]
@@ -434,11 +435,11 @@ router.get("/message/post-reply", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/mentions", (req, res) => {});
+router.get("/message/mentions");
 
 /**
  * @swagger
- * /api/message/messages:
+ * /message/messages:
  *  get:
  *      summary: Return a listing of all messages that was sent or received sorted by the time
  *      tags: [Messages]
@@ -510,11 +511,11 @@ router.get("/message/mentions", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.get("/message/messages", (req, res) => {});
+router.get("/message/messages");
 
 /**
  * @swagger
- * /api/unread-message:
+ * /unread-message:
  *  patch:
  *      summary: Unread a Message
  *      tags: [Messages]
@@ -541,11 +542,11 @@ router.get("/message/messages", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/unread-message", (req, res) => {});
+router.patch("/unread-message");
 
 /**
  * @swagger
- * /api/read-all-msgs:
+ * /read-all-msgs:
  *  patch:
  *      summary: mark all messages as read
  *      tags: [Messages]
@@ -560,6 +561,6 @@ router.patch("/unread-message", (req, res) => {});
  *       - bearerAuth: []
  */
 
-router.patch("/read-all-msgs", (req, res) => {});
+router.patch("/read-all-msgs");
 
 export default router;

@@ -1,0 +1,12 @@
+{
+  "source": {
+    "include": ["controllers", "middleware", "models"],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "./docs/",
+    "readme": "./README.md"
+  }
+}
