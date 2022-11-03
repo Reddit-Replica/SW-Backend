@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs";
 import { body } from "express-validator";
 import User from "../models/User.js";
 import jwt from "../utils/token.js";
