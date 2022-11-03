@@ -13,8 +13,8 @@ function generateJWT(user) {
 // Document this function [TODO]
 function verifyJWT(id, token) {
   try {
-    jwt.verify(token, process.env.TOKEN_SECRET);
-    if (token.userId === id) {
+    const decodedPayload = jwt.verify(token, process.env.TOKEN_SECRET);
+    if (decodedPayload.userId === id) {
       return true;
     } else {
       return false;
