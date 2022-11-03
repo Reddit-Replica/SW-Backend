@@ -1,8 +1,9 @@
 import User from "../models/User.js";
-import { body, query } from "express-validator";
+import { body, query, param } from "express-validator";
 import { generateJWT, generateVerifyToken } from "../utils/generateTokens.js";
 import { sendVerifyEmail } from "../utils/sendEmails.js";
 import hashPassord from "../utils/hashPassword.js";
+import Token from "../models/VerifyToken.js";
 
 const signupValidator = [
   body("email")
@@ -38,6 +39,11 @@ const emailValidator = [
     .isEmpty()
     .isEmail()
     .withMessage("Email must be a valid email"),
+];
+
+const verifyEmailValidator = [
+  param("id").trim().not().isEmpty().withMessage("Id must not be empty"),
+  param("token").trim().not().isEmpty().withMessage("Token must not be empty"),
 ];
 
 const signup = async (req, res) => {
@@ -101,6 +107,48 @@ const emailAvailable = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
+const verifyEmail = async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) {
+      return res.status(400).json({
+        error: "Invalid Link",
+      });
+    }
+
+    // there is a user with that id
+    const token = await Token.findOne({
+      userId: user._id,
+      token: req.params.token,
+    });
+    if (!token) {
+      return res.status(403).json({
+        error: "Invalid Token",
+      });
+    }
+
+    // if the token expired, delete it and don't verify the email
+    if (token.expireAt < Date.now()) {
+      await token.remove();
+      return res.status(403).json({
+        error: "Invalid Token",
+      });
+    }
+
+    user.userSettings.verifiedEmail = true;
+    await user.save();
+    await token.remove();
+
+    const jwToken = generateJWT(user);
+    res.header("Authorization", "Bearer " + jwToken);
+
+    res.send("Email verified successfully");
+  } catch (err) {
+    res.status(500).send("Internal server error");
+  }
+};
+
 export default {
   signupValidator,
   signup,
@@ -108,4 +156,6 @@ export default {
   usernameAvailable,
   emailValidator,
   emailAvailable,
+  verifyEmailValidator,
+  verifyEmail,
 };

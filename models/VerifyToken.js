@@ -12,11 +12,10 @@ const tokenSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  createdAt: {
+  expireAt: {
     type: Date,
     required: true,
-    default: Date.now(),
-    expires: 3600,
+    default: Date.now() + 3600000, // token will be expired after one hour
   },
 });
 
