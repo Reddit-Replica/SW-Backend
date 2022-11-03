@@ -333,7 +333,7 @@ router.post("/login/:type", (req, res) => {});
 
 /**
  * @swagger
- * /forget:
+ * /login/forget:
  *   post:
  *     summary: Forget username or password
  *     tags: [Login]
@@ -373,7 +373,7 @@ router.post("/login/:type", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/forget", (req, res) => {});
+router.post("/login/forget", (req, res) => {});
 
 /**
  * @swagger
