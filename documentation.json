@@ -2790,7 +2790,7 @@
     },
     "/best": {
       "get": {
-        "summary": "Return the best posts based on [time, votes, comments, number of shares]",
+        "summary": "Return the best posts based on [time, votes, comments, number of shares] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -2832,12 +2832,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/hot": {
       "get": {
-        "summary": "Return the hot posts based on [time, votes, comments]",
+        "summary": "Return the hot posts based on [time, votes, comments] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -2879,12 +2884,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/hot": {
       "get": {
-        "summary": "Return the hot posts in a specific subreddit based on [time, votes, comments]",
+        "summary": "Return the hot posts in a specific subreddit based on [time, votes, comments] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -2946,12 +2956,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/trending": {
       "get": {
-        "summary": "Return the trending posts based on [views]",
+        "summary": "Return the trending posts based on [views] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -2993,12 +3008,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/trending": {
       "get": {
-        "summary": "Return the trending posts in a specific subreddit based on [views]",
+        "summary": "Return the trending posts in a specific subreddit based on [views] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -3060,12 +3080,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/new": {
       "get": {
-        "summary": "Return the new posts",
+        "summary": "Return the new posts (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -3107,12 +3132,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/new": {
       "get": {
-        "summary": "Return the new posts in a specific subreddit",
+        "summary": "Return the new posts in a specific subreddit (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -3174,12 +3204,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/random": {
       "get": {
-        "summary": "Return the id of a random post. [can be used to get the post and the comment tree later]",
+        "summary": "Return the id of a random post. [can be used to get the post and the comment tree later] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "responses": {
           "200": {
@@ -3199,12 +3234,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/random": {
       "get": {
-        "summary": "Return the id of a random post from a specific subreddit. [can be used to get the post and the comment tree later]",
+        "summary": "Return the id of a random post from a specific subreddit. [can be used to get the post and the comment tree later] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -3238,12 +3278,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/top": {
       "get": {
-        "summary": "Return the top posts based on [votes]",
+        "summary": "Return the top posts based on [votes] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -3295,12 +3340,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/top": {
       "get": {
-        "summary": "Return the top posts in a specific subreddit based on [votes]",
+        "summary": "Return the top posts in a specific subreddit based on [votes] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -3372,12 +3422,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/comments/{postId}": {
       "get": {
-        "summary": "Get the comment tree for a given post",
+        "summary": "Get the comment tree for a given post (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
         "parameters": [
           {
@@ -3478,12 +3533,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/comments/{postId}/{commentId}": {
       "get": {
-        "summary": "Return comment tree of a specific comment",
+        "summary": "Return comment tree of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
         "parameters": [
           {
@@ -3593,12 +3653,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/comments/{postId}/{commentId}/parent_comments": {
       "get": {
-        "summary": "Return the parents of a specific comment",
+        "summary": "Return the parents of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
         "parameters": [
           {
@@ -3739,7 +3804,12 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/message/compose": {
@@ -8353,7 +8423,7 @@
     },
     "/post-details": {
       "get": {
-        "summary": "Get details about a specific post",
+        "summary": "Get details about a specific post (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Posts"],
         "parameters": [
           {
@@ -8401,7 +8471,12 @@
           "500": {
             "description": "Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/pin-post": {
