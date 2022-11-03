@@ -27,7 +27,6 @@ const signupRouter = express.Router();
  *               - username
  *               - email
  *               - password
- *               - ReCAPTCHAs
  *             properties:
  *               email:
  *                 type: string
@@ -38,9 +37,6 @@ const signupRouter = express.Router();
  *               password:
  *                 type: string
  *                 description: Password
- *               ReCAPTCHAs:
- *                 type: string
- *                 description: ReCAPTCHAs response
  *     responses:
  *       201:
  *         description: The account has been successfully created
@@ -50,8 +46,7 @@ const signupRouter = express.Router();
  *             schema:
  *               type: string
  *       400:
- *         description: The request was invalid. You may refer to response for
- *                      details around why the request was invalid
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
  *           application/json:
  *             schema:

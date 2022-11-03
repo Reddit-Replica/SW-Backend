@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import { body, query } from "express-validator";
-import generateJWT from "../util/generateJWT.js";
-import hashPassord from "../util/hashPassword.js";
+import generateJWT from "../utils/generateJWT.js";
+import hashPassord from "../utils/hashPassword.js";
 
 const signupValidator = [
   body("email")
