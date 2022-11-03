@@ -1,6 +1,12 @@
 import bcrypt from "bcryptjs";
 
-// Document this function [TODO]
+/**
+ * This function accepts a password and uses the
+ * bcrypt hashSync function to hash it
+ *
+ * @param {string} password The password to be hashed
+ * @returns {string} The hashed password
+ */
 function hashPassword(password) {
   const hashedPass = bcrypt.hashSync(
     password + process.env.BCRYPT_PASSWORD,
@@ -10,6 +16,14 @@ function hashPassword(password) {
   return hashedPass;
 }
 
+/**
+ * This function takes 2 string passwords and
+ * compares them using the bcrypt compareSync function
+ *
+ * @param {string} password The first password
+ * @param {string} dbPassword The second password which is the correct one
+ * @returns {boolean} True if both passwords match, otherwise False
+ */
 function comparePasswords(password, dbPassword) {
   const result = bcrypt.compareSync(
     password + process.env.BCRYPT_PASSWORD,
