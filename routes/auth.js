@@ -8,8 +8,6 @@ const router = express.Router();
  *   description: Sign Up and email verfication endpoints
  */
 
-
-
 /**
  * @swagger
  * /signup:
@@ -25,7 +23,6 @@ const router = express.Router();
  *               - username
  *               - email
  *               - password
- *               - ReCAPTCHAs
  *             properties:
  *               email:
  *                 type: string
@@ -36,9 +33,6 @@ const router = express.Router();
  *               password:
  *                 type: string
  *                 description: Password
- *               ReCAPTCHAs:
- *                 type: string
- *                 description: ReCAPTCHAs response
  *     responses:
  *       201:
  *         description: The account has been successfully created
@@ -339,7 +333,7 @@ router.post("/login/:type", (req, res) => {});
 
 /**
  * @swagger
- * /login/forget:
+ * /forget:
  *   post:
  *     summary: Forget username or password
  *     tags: [Login]
@@ -379,7 +373,7 @@ router.post("/login/:type", (req, res) => {});
  *       500:
  *         description: Internal server error
  */
-router.post("/login/forget", (req, res) => {});
+router.post("/forget", (req, res) => {});
 
 /**
  * @swagger
