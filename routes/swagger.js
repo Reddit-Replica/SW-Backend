@@ -129,9 +129,6 @@
  *           type: string
  *           format: time_zone
  *           description: Time zone chosen when scheduling a post
- *         recaptchaResponse:
- *           type: string
- *           description: reCAPTCHA response
  *   PostDetails:
  *       type: object
  *       properties:

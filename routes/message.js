@@ -21,15 +21,11 @@ const router = express.Router();
  *         application/json:
  *           schema:
  *            required:
- *             - ReCAPTCHAs
  *             - text
  *             - subject
  *             - senderUsername
  *             - receiverUsername
  *            properties:
- *             ReCAPTCHAs:
- *               type: string
- *               description: ReCAPTCHAs response
  *             text:
  *               type: string
  *               description: Message Content as text
