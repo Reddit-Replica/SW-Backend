@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Read-it API",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "API Documentation for all endpoints"
   },
   "components": {
@@ -158,10 +158,6 @@
             "type": "string",
             "format": "time_zone",
             "description": "Time zone chosen when scheduling a post"
-          },
-          "recaptchaResponse": {
-            "type": "string",
-            "description": "reCAPTCHA response"
           }
         }
       },
@@ -1212,7 +1208,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["username", "email", "password", "ReCAPTCHAs"],
+                "required": ["username", "email", "password"],
                 "properties": {
                   "email": {
                     "type": "string",
@@ -1225,10 +1221,6 @@
                   "password": {
                     "type": "string",
                     "description": "Password"
-                  },
-                  "ReCAPTCHAs": {
-                    "type": "string",
-                    "description": "ReCAPTCHAs response"
                   }
                 }
               }
@@ -3760,17 +3752,12 @@
             "application/json": {
               "schema": {
                 "required": [
-                  "ReCAPTCHAs",
                   "text",
                   "subject",
                   "senderUsername",
                   "receiverUsername"
                 ],
                 "properties": {
-                  "ReCAPTCHAs": {
-                    "type": "string",
-                    "description": "ReCAPTCHAs response"
-                  },
                   "text": {
                     "type": "string",
                     "description": "Message Content as text"
