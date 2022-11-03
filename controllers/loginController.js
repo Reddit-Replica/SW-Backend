@@ -81,7 +81,7 @@ const forgetPassword = async (req, res) => {
     }
     const token = jwt.generateJWT(user);
     const emailSent = sendgrid.sendResetPasswordEmail(
-      "abdelrahmanhamdy49@gmail.com",
+      process.env.SENDER_EMAIL,
       email,
       user.id,
       token
