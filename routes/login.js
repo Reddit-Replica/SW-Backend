@@ -61,6 +61,55 @@ loginRouter.post(
 
 /**
  * @swagger
+ * /login/forget:
+ *   post:
+ *     summary: Forget username or password
+ *     tags: [Login]
+ *     requestBody:
+ *       re quired: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - type
+ *               - email
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 description: Forget username or password
+ *                 enum:
+ *                   - username
+ *                   - password
+ *               username:
+ *                 type: string
+ *                 description: Username (only when type = password)
+ *               email:
+ *                 type: string
+ *                 description: Email
+ *     responses:
+ *       200:
+ *         description: Email has been sent
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       500:
+ *         description: Internal server error
+ */
+loginRouter.post(
+  "/login/forget",
+  loginController.forgetPasswordValidator,
+  validateRequestSchema,
+  loginController.forgetPassword
+);
+
+/**
+ * @swagger
  * /login/{type}:
  *   post:
  *     summary: Login with google or facebook
@@ -107,55 +156,6 @@ loginRouter.post(
  *         description: Internal server error
  */
 loginRouter.post("/login/:type", loginController.loginWith);
-
-/**
- * @swagger
- * /forget:
- *   post:
- *     summary: Forget username or password
- *     tags: [Login]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             required:
- *               - type
- *               - email
- *             properties:
- *               type:
- *                 type: string
- *                 description: Forget username or password
- *                 enum:
- *                   - username
- *                   - password
- *               username:
- *                 type: string
- *                 description: Username (only when type = password)
- *               email:
- *                 type: string
- *                 description: Email
- *     responses:
- *       200:
- *         description: Email has been sent
- *       400:
- *         description: The request was invalid. You may refer to response for details around why the request was invalid
- *         content:
- *           application/json:
- *             schema:
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Type of error
- *       500:
- *         description: Internal server error
- */
-loginRouter.post(
-  "/forget",
-  loginController.forgetPasswordValidator,
-  validateRequestSchema,
-  loginController.forgetPassword
-);
 
 /**
  * @swagger
