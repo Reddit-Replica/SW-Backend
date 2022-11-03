@@ -80,13 +80,20 @@ const forgetPassword = async (req, res) => {
       });
     }
     const token = jwt.generateJWT(user);
-    sendgrid.sendResetPasswordEmail(
+    const emailSent = sendgrid.sendResetPasswordEmail(
       "abdelrahmanhamdy49@gmail.com",
       email,
       user.id,
       token
     );
-    return res.status(200).send("Email has been sent");
+    if (emailSent) {
+      return res.status(200).send("Email has been sent");
+    } else {
+      return res.status(400).send({
+        error: `An error occured while sending the email. 
+                Check the email address and try again`,
+      });
+    }
   } catch (err) {
     res.status(500).send("Internal server error");
   }
