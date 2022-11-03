@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import { body, query } from "express-validator";
-import generateJWT from "../utils/generateJWT.js";
+import { generateJWT, generateVerifyToken } from "../utils/generateTokens.js";
+import { sendVerifyEmail } from "../utils/sendEmails.js";
 import hashPassord from "../utils/hashPassword.js";
 
 const signupValidator = [
@@ -40,7 +41,6 @@ const emailValidator = [
 ];
 
 const signup = async (req, res) => {
-  // Check for the ReCAPTCHAs [TODO]
   const { username, email, password } = req.body;
 
   try {
@@ -52,7 +52,15 @@ const signup = async (req, res) => {
 
     await user.save();
 
-    // Send verification email [TODO]
+    // Create the verify token and send an email to the user
+    const verifyToken = await generateVerifyToken(user._id);
+    const sentEmail = sendVerifyEmail(email, user._id, verifyToken);
+
+    if (!sentEmail) {
+      return res.status(400).json({
+        error: "Could not send the verification email",
+      });
+    }
 
     const token = generateJWT(user);
     res.header("Authorization", "Bearer " + token);
