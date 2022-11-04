@@ -1,12 +1,17 @@
 {
   "source": {
-    "include": ["controllers", "middleware", "models"],
+    "include": ["./middleware", "./models", "./utils"],
     "includePattern": ".js$",
     "excludePattern": "(node_modules/|docs)"
   },
+  "plugins": ["plugins/markdown"],
   "opts": {
     "recurse": true,
     "destination": "./docs/",
     "readme": "./README.md"
+  },
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": true
   }
 }
