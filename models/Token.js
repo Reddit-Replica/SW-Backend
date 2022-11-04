@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 // eslint-disable-next-line new-cap
-const userSchema = mongoose.Schema({
+const tokenSchema = mongoose.Schema({
   resetToken: {
     type: String,
     required: true,
@@ -17,6 +17,6 @@ const userSchema = mongoose.Schema({
   },
 });
 
-const Token = mongoose.model("Token", userSchema);
+const Token = mongoose.model("Token", tokenSchema);
 
 export default Token;

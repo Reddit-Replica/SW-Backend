@@ -1,5 +1,4 @@
 import { body } from "express-validator";
-import { Mongoose } from "mongoose";
 import User from "../models/User.js";
 import tokenUtils from "../utils/token.js";
 import crypto from "crypto";
