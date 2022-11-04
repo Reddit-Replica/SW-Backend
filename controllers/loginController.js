@@ -124,7 +124,7 @@ const resetPassword = async (req, res) => {
         }
         user.password = pass.hashPassword(newPassword);
         await user.save();
-        await Token.deleteOne({ resetToken: token });
+        await returnedToken.remove();
         return res.status(200).send("Password updated successfully");
       } else {
         return res.status(403).send("Token invalid or may have been expired");
