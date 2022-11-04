@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import User from "../models/User.js";
 import tokenUtils from "../utils/token.js";
 import crypto from "crypto";
@@ -19,6 +19,8 @@ const loginValidator = [
 ];
 
 const resetPasswordValidator = [
+  param("id").trim().not().isEmpty().withMessage("Id must not be empty"),
+  param("token").trim().not().isEmpty().withMessage("Token must not be empty"),
   body("newPassword")
     .isLength({ min: 8 })
     .withMessage("Password must be at least 8 chars long"),
