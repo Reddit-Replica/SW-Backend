@@ -1,4 +1,5 @@
 import express from "express";
+import postController from "../controllers/postController";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -282,7 +283,7 @@ router.post("/mark-spoiler");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/submit");
+router.post("/submit", postController.createPost);
 
 /**
  * @swagger
