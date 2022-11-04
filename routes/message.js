@@ -38,6 +38,7 @@ const router = express.Router();
  *               description: Username of the receiver
  *             sendAt:
  *               type: string
+ *               format: date-time
  *               description: Time of sending the message
  *             subject:
  *               type: string
@@ -105,6 +106,7 @@ router.post("/message/compose");
  *                                 description: Username of the receiver
  *                               sendAt:
  *                                type: string
+ *                                format: date-time
  *                                description: Time of sending the message
  *                               subject:
  *                                 type: string
@@ -183,6 +185,7 @@ router.get("/message/sent");
  *                                 description: Username of the receiver
  *                               sendAt:
  *                                type: string
+ *                                format: date-time
  *                                description: Time of sending the message
  *                               subject:
  *                                 type: string
@@ -256,6 +259,7 @@ router.get("/message/inbox");
  *                                 description: Username of the sender
  *                               sendAt:
  *                                type: string
+ *                                format: date-time
  *                                description: Time of sending the message
  *                               subject:
  *                                 type: string
@@ -337,6 +341,7 @@ router.get("/message/unread");
  *                                 description: Username of the receiver
  *                               sendAt:
  *                                type: string
+ *                                format: date-time
  *                                description: Time of sending the message
  *                               subject:
  *                                 type: string
@@ -418,6 +423,7 @@ router.get("/message/post-reply");
  *                                 description: Username of the receiver
  *                               sendAt:
  *                                type: string
+ *                                format: date-time
  *                                description: Time of sending the message
  *                               subject:
  *                                 type: string
@@ -490,6 +496,7 @@ router.get("/message/mentions");
  *                                 description: Username of the receiver
  *                               sendAt:
  *                                type: string
+ *                                format: date-time
  *                                description: Time of sending the message
  *                               subject:
  *                                 type: string

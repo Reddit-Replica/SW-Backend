@@ -3842,6 +3842,7 @@
                   },
                   "sendAt": {
                     "type": "string",
+                    "format": "date-time",
                     "description": "Time of sending the message"
                   },
                   "subject": {
@@ -3933,6 +3934,7 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "Time of sending the message"
                           },
                           "subject": {
@@ -4042,6 +4044,7 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "Time of sending the message"
                           },
                           "subject": {
@@ -4144,6 +4147,7 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "Time of sending the message"
                           },
                           "subject": {
@@ -4257,6 +4261,7 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "Time of sending the message"
                           },
                           "subject": {
@@ -4370,6 +4375,7 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "Time of sending the message"
                           },
                           "subject": {
@@ -4471,6 +4477,7 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "Time of sending the message"
                           },
                           "subject": {
