@@ -53,13 +53,9 @@ const postSchema = mongoose.Schema(
     deletedAt: {
       type: Date,
     },
-    flair: {
-      flairName: {
-        type: String,
-      },
-      flairId: {
-        type: String,
-      },
+    flairId: {
+      type: String,
+      ref: "Flair",
     },
     numberOfUpVotes: {
       type: Number,
