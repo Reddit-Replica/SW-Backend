@@ -25,7 +25,6 @@ const router = express.Router();
  *               - username
  *               - email
  *               - password
- *               - ReCAPTCHAs
  *             properties:
  *               email:
  *                 type: string
@@ -36,9 +35,6 @@ const router = express.Router();
  *               password:
  *                 type: string
  *                 description: Password
- *               ReCAPTCHAs:
- *                 type: string
- *                 description: ReCAPTCHAs response
  *     responses:
  *       201:
  *         description: The account has been successfully created
