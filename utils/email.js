@@ -1,3 +1,4 @@
+import Token from "../models/Token.js";
 import nodemailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
 const transporter = nodemailer.createTransport(
@@ -19,7 +20,13 @@ const transporter = nodemailer.createTransport(
  * @param {string} token A json web token used for verification
  * @returns {boolean} True if the email was sent and false if any error occured
  */
-function sendResetPasswordEmail(fromEmail, toEmail, userId, token) {
+async function sendResetPasswordEmail(fromEmail, toEmail, userId, token) {
+  const verificationToken = new Token({
+    resetToken: token,
+    resetTokenExpiration: Date.now() + 3600000,
+    userId: userId,
+  });
+  await verificationToken.save();
   try {
     transporter.sendMail({
       from: fromEmail,

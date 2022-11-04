@@ -1,8 +1,11 @@
 import { body } from "express-validator";
+import { Mongoose } from "mongoose";
 import User from "../models/User.js";
-import jwt from "../utils/token.js";
+import tokenUtils from "../utils/token.js";
+import crypto from "crypto";
 import pass from "../utils/password.js";
 import sendgrid from "../utils/email.js";
+import Token from "../models/Token.js";
 
 const loginValidator = [
   body("username")
@@ -52,7 +55,7 @@ const login = async (req, res) => {
     }
     const doMatch = pass.comparePasswords(password, user.password);
     if (doMatch) {
-      const token = jwt.generateJWT(user);
+      const token = tokenUtils.generateJWT(user);
       res.header("Authorization", "Bearer " + token);
       return res.status(200).send("Logged in successfully!");
     }
@@ -79,47 +82,54 @@ const forgetPassword = async (req, res) => {
         error: "Invalid username",
       });
     }
-    const token = jwt.generateJWT(user);
-    const emailSent = sendgrid.sendResetPasswordEmail(
-      process.env.SENDER_EMAIL,
-      email,
-      user.id,
-      token
-    );
-    if (emailSent) {
-      return res.status(200).send("Email has been sent");
-    } else {
-      return res.status(400).send({
-        error: `An error occured while sending the email. 
-                Check the email address and try again`,
-      });
-    }
+    crypto.randomBytes(32, (err, buffer) => {
+      const token = buffer.toString("hex");
+      const emailSent = sendgrid.sendResetPasswordEmail(
+        process.env.SENDER_EMAIL,
+        email,
+        user.id,
+        token
+      );
+      if (emailSent) {
+        return res.status(200).send("Email has been sent");
+      } else {
+        return res.status(400).send({
+          error: `An error occured while sending the email. 
+                  Check the email address and try again`,
+        });
+      }
+    });
   } catch (err) {
     res.status(500).send("Internal server error");
   }
 };
 
+// eslint-disable-next-line max-statements
 const resetPassword = async (req, res) => {
-  const userId = req.params.id;
-  const token = req.params.token;
-  const newPassword = req.body.newPassword;
-  const verifyPassword = req.body.verifyPassword;
+  const { id, token } = req.params;
+  const { newPassword, verifyPassword } = req.body;
   try {
-    if (jwt.verifyJWT(userId, token)) {
-      const user = await User.findOne({
-        _id: userId,
+    const user = await User.findOne({ id: id });
+    if (user) {
+      const returnedToken = await Token.findOne({
+        resetToken: token,
+        resetTokenExpiration: { $gt: Date.now() },
+        userId: id,
       });
-      if (newPassword !== verifyPassword) {
-        return res.status(400).send({
-          error: "Passwords do not match",
-        });
+      if (returnedToken) {
+        // eslint-disable-next-line max-depth
+        if (newPassword !== verifyPassword) {
+          return res.status(400).send({ error: "Passwords do not match" });
+        }
+        user.password = pass.hashPassword(newPassword);
+        await user.save();
+        await Token.deleteOne({ resetToken: token });
+        return res.status(200).send("Password updated successfully");
+      } else {
+        return res.status(403).send("Token invalid or may have been expired");
       }
-      const newHashedPassword = pass.hashPassword(newPassword);
-      user.password = newHashedPassword;
-      await user.save();
-      return res.status(200).send("Password updated successfully");
     } else {
-      return res.status(403).send("Invalid Token");
+      return res.status(403).send("User not found");
     }
   } catch (err) {
     res.status(500).send("Internal server error");
