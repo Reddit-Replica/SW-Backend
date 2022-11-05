@@ -1,6 +1,15 @@
 import nodemailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
 
+/**
+ * This function used to send a verification email to certain user
+ * to verify his email after sign up
+ *
+ * @param {string} toEmail Email of the receiver user
+ * @param {string} userId Id of the user that will receive the email
+ * @param {string} token Verification token that will be used to verify the email
+ * @returns {boolean} True if the email was sent successfully and false if any error occured
+ */
 export function sendVerifyEmail(toEmail, userId, token) {
   try {
     const transporter = nodemailer.createTransport(
