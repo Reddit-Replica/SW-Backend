@@ -1,9 +1,8 @@
 import { body, param } from "express-validator";
 import User from "../models/User.js";
-import tokenUtils from "../utils/token.js";
-import crypto from "crypto";
-import pass from "../utils/password.js";
-import sendgrid from "../utils/email.js";
+import { generateJWT, generateVerifyToken } from "../utils/generateTokens.js";
+import { hashPassword, comparePasswords } from "../utils/passwordUtils.js";
+import { sendResetPasswordEmail } from "../utils/sendEmails.js";
 import Token from "../models/VerifyToken.js";
 
 const loginValidator = [
@@ -44,6 +43,7 @@ const forgetPasswordValidator = [
     .escape(),
 ];
 
+// eslint-disable-next-line max-statements
 const login = async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -54,11 +54,19 @@ const login = async (req, res) => {
         error: "Username not found",
       });
     }
-    const doMatch = pass.comparePasswords(password, user.password);
+    const doMatch = comparePasswords(password, user.password);
     if (doMatch) {
-      const token = tokenUtils.generateJWT(user);
-      res.header("Authorization", "Bearer " + token);
-      return res.status(200).send("Logged in successfully!");
+      try {
+        const token = generateJWT(user);
+        res.header("Authorization", "Bearer " + token);
+        return res.status(200).json({
+          username: username,
+        });
+      } catch (err) {
+        return res.status(400).json({
+          error: "Couldn't create token",
+        });
+      }
     }
     return res.status(400).json({
       error: "Invalid password",
@@ -68,6 +76,7 @@ const login = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
 const forgetPassword = async (req, res) => {
   const username = req.body.username;
   const email = req.body.email;
@@ -83,9 +92,9 @@ const forgetPassword = async (req, res) => {
         error: "Invalid username",
       });
     }
-    crypto.randomBytes(32, (err, buffer) => {
-      const token = buffer.toString("hex");
-      const emailSent = sendgrid.sendResetPasswordEmail(
+    try {
+      const token = await generateVerifyToken(user.id);
+      const emailSent = sendResetPasswordEmail(
         process.env.SENDER_EMAIL,
         email,
         user.id,
@@ -99,7 +108,11 @@ const forgetPassword = async (req, res) => {
                   Check the email address and try again`,
         });
       }
-    });
+    } catch (err) {
+      return res.status(400).json({
+        error: "Couldn't create token",
+      });
+    }
   } catch (err) {
     res.status(500).send("Internal server error");
   }
@@ -111,28 +124,26 @@ const resetPassword = async (req, res) => {
   const { newPassword, verifyPassword } = req.body;
   try {
     const user = await User.findOne({ id: id });
-    if (user) {
-      const returnedToken = await Token.findOne({
-        resetToken: token,
-        resetTokenExpiration: { $gt: Date.now() },
-        userId: id,
-      });
-      if (returnedToken) {
-        // eslint-disable-next-line max-depth
-        if (newPassword !== verifyPassword) {
-          return res.status(400).json({
-            error: "Passwords do not match",
-          });
-        }
-        user.password = pass.hashPassword(newPassword);
-        await user.save();
-        await returnedToken.remove();
-        return res.status(200).send("Password updated successfully");
-      } else {
-        return res.status(403).send("Token invalid or may have been expired");
-      }
-    } else {
+    if (!user) {
       return res.status(403).send("User not found");
+    }
+    const returnedToken = await Token.findOne({
+      token: token,
+      expireAt: { $gt: Date.now() },
+      userId: id,
+    });
+    if (returnedToken) {
+      if (newPassword !== verifyPassword) {
+        return res.status(400).json({
+          error: "Passwords do not match",
+        });
+      }
+      user.password = hashPassword(newPassword);
+      await user.save();
+      await returnedToken.remove();
+      return res.status(200).send("Password updated successfully");
+    } else {
+      return res.status(403).send("Token invalid or may have been expired");
     }
   } catch (err) {
     res.status(500).send("Internal server error");
