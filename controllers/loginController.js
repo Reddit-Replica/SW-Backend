@@ -2,7 +2,7 @@ import { body, param } from "express-validator";
 import User from "../models/User.js";
 import { generateJWT, generateVerifyToken } from "../utils/generateTokens.js";
 import { hashPassword, comparePasswords } from "../utils/passwordUtils.js";
-import { sendResetPasswordEmail } from "../utils/sendEmails.js";
+import { sendResetPasswordEmail, sendUsernameEmail } from "../utils/sendEmails.js";
 import Token from "../models/VerifyToken.js";
 
 const loginValidator = [
@@ -41,6 +41,16 @@ const forgetPasswordValidator = [
     .withMessage("Username must not be empty")
     .trim()
     .escape(),
+];
+
+
+const forgetUsernameValidator = [
+  body("email")
+    .trim()
+    .not()
+    .isEmpty()
+    .isEmail()
+    .withMessage("Email must be a valid email"),
 ];
 
 // eslint-disable-next-line max-statements
@@ -152,11 +162,35 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const forgetUsername = async (req, res) => {
+  try {
+    const email = req.body.email;
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(400).json({ error: "No user with that email found" });
+    }
+
+    const sentEmail = sendUsernameEmail(email, user.username);
+
+    if (!sentEmail) {
+      return res.status(400).json({
+        error: "Could not send the email",
+      });
+    }
+
+    res.send("Email has been sent");
+  } catch (error) {
+    res.status(500).send("Internal server error");
+  }
+};
+
 export default {
   loginValidator,
   resetPasswordValidator,
   forgetPasswordValidator,
+  forgetUsernameValidator,
   login,
   forgetPassword,
   resetPassword,
+  forgetUsername,
 };

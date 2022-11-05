@@ -171,6 +171,10 @@ router.get("/message/sent");
  *                               type:
  *                                 type: string
  *                                 description: describes the type of message
+ *                                 enum:
+ *                                  - Post replies
+ *                                  - Mentions
+ *                                  - Messages
  *                               subredditName:
  *                                 type: string
  *                                 description: subreddit name that the reply or the mention was in

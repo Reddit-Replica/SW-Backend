@@ -2,6 +2,7 @@ import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import loginController from "../controllers/loginController.js";
 
+// eslint-disable-next-line new-cap
 const loginRouter = express.Router();
 
 /**
@@ -16,6 +17,9 @@ const loginRouter = express.Router();
  * /login:
  *   post:
  *     summary: Log in to the website
+ * /login/forget-username:
+ *   post:
+ *     summary: Forget username, used to send an email with the username inside it
  *     tags: [Login]
  *     requestBody:
  *       required: true
@@ -87,6 +91,11 @@ loginRouter.post(
  *               email:
  *                 type: string
  *                 description: Email
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: Email to send the username to
  *     responses:
  *       200:
  *         description: Email has been sent
@@ -171,5 +180,12 @@ loginRouter.post(
   validateRequestSchema,
   loginController.resetPassword
 );
+
+loginRouter.post("/login/forget-username",
+  loginController.forgetUsernameValidator,
+  validateRequestSchema,
+  loginController.forgetUsername
+);
+
 
 export default loginRouter;

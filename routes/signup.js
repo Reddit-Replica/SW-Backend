@@ -1,7 +1,10 @@
 import express from "express";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import { checkDuplicateUsernameOrEmail } from "../middleware/verifySignUp.js";
+import signupController from "../controllers/signupController.js";
 
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const signupRouter = express.Router();
 
 /**
  * @swagger
@@ -43,6 +46,13 @@ const router = express.Router();
  *             description: The jwt that will be used for authorization
  *             schema:
  *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                   description: Username of the user
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -55,56 +65,14 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/signup");
+signupRouter.post(
+  "/signup",
+  signupController.signupValidator,
+  validateRequestSchema,
+  checkDuplicateUsernameOrEmail,
+  signupController.signup
+);
 
-/**
- * @swagger
- * /signup/{type}:
- *   post:
- *     summary: Sign up with google or facebook
- *     tags: [Sign Up]
- *     parameters:
- *       - in: path
- *         name: type
- *         description: Type of sign up
- *         required: true
- *         schema:
- *           type: string
- *           enum:
- *             - google
- *             - facebook
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             required:
- *               - accessToken
- *             properties:
- *               accessToken:
- *                 type: string
- *                 description: Access token from the response of google or facebook
- *     responses:
- *       201:
- *         description: The account has been successfully created
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
- *       400:
- *         description: The request was invalid. You may refer to response for details around why the request was invalid
- *         content:
- *           application/json:
- *             schema:
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Type of error
- *       500:
- *         description: Internal server error
- */
-router.post("/signup/:type");
 
 /**
  * @swagger
@@ -136,7 +104,12 @@ router.post("/signup/:type");
  *       500:
  *         description: Internal server error
  */
-router.get("/username-available");
+signupRouter.get(
+  "/username-available",
+  signupController.usernameValidator,
+  validateRequestSchema,
+  signupController.usernameAvailable
+);
 
 /**
  * @swagger
@@ -168,7 +141,12 @@ router.get("/username-available");
  *       500:
  *         description: Internal server error
  */
-router.get("/email-available");
+signupRouter.get(
+  "/email-available",
+  signupController.emailValidator,
+  validateRequestSchema,
+  signupController.emailAvailable
+);
 
 /**
  * @swagger
@@ -211,85 +189,19 @@ router.get("/email-available");
  *       500:
  *         description: Internal server error
  */
-router.post("/verify-email/:id/:token");
+signupRouter.post(
+  "/verify-email/:id/:token",
+  signupController.verifyEmailValidator,
+  validateRequestSchema,
+  signupController.verifyEmail
+);
 
 /**
  * @swagger
- * /random-username:
- *   get:
- *     summary: Get an available random username used to create a new account
+ * /signin/{type}:
+ *   post:
+ *     summary: Sign up and Login with google or facebook
  *     tags: [Sign Up]
- *     responses:
- *       200:
- *         description: The email is available
- *         content:
- *           application/json:
- *             schema:
- *               properties:
- *                 username:
- *                   type: string
- *                   description: Random username
- *       500:
- *         description: Internal server error
- */
-router.get("/random-username");
-
-/**
- * @swagger
- * tags:
- *   name: Login
- *   description: Login and forget password endpoints used
- */
-
-/**
- * @swagger
- * /login:
- *   post:
- *     summary: Log in to the website
- *     tags: [Login]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             required:
- *               - username
- *               - password
- *             properties:
- *               username:
- *                 type: string
- *                 description: Username
- *               password:
- *                 type: string
- *                 description: Password
- *     responses:
- *       200:
- *         description: User logged in successfully
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
- *       400:
- *         description: The request was invalid. You may refer to response for details around why the request was invalid
- *         content:
- *           application/json:
- *             schema:
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Type of error
- *       500:
- *         description: Internal server error
- */
-router.post("/login");
-
-/**
- * @swagger
- * /login/{type}:
- *   post:
- *     summary: Login with google or facebook
- *     tags: [Login]
  *     parameters:
  *       - in: path
  *         name: type
@@ -319,106 +231,27 @@ router.post("/login");
  *             description: The jwt that will be used for authorization
  *             schema:
  *               type: string
- *       400:
- *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
  *           application/json:
  *             schema:
  *               properties:
- *                 error:
+ *                 username:
  *                   type: string
- *                   description: Type of error
- *       500:
- *         description: Internal server error
- */
-router.post("/login/:type");
-
-/**
- * @swagger
- * /login/forget:
- *   post:
- *     summary: Forget username or password
- *     tags: [Login]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             required:
- *               - type
- *               - email
- *             properties:
- *               type:
- *                 type: string
- *                 description: Forget username or password
- *                 enum:
- *                   - username
- *                   - password
- *               username:
- *                 type: string
- *                 description: Username (only when type = password)
- *               email:
- *                 type: string
- *                 description: Email
- *     responses:
- *       200:
- *         description: Email has been sent
- *       400:
- *         description: The request was invalid. You may refer to response for details around why the request was invalid
- *         content:
- *           application/json:
- *             schema:
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Type of error
- *       500:
- *         description: Internal server error
- */
-router.post("/login/forget");
-
-/**
- * @swagger
- * /reset-password/{id}/{token}:
- *   post:
- *     summary: Reset the password
- *     tags: [Login]
- *     parameters:
- *       - in: path
- *         name: id
- *         description: User's id
- *         required: true
- *         schema:
- *           type: string
- *       - in: path
- *         name: token
- *         description: The token created by the server to reset the password
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             required:
- *               - newPassword
- *               - verifyPassword
- *             properties:
- *               newPassword:
- *                 type: string
- *                 description: New password
- *               verifyPassword:
- *                 type: string
- *                 description: New password again to verify
- *     responses:
- *       200:
- *         description: Password updated successfully
+ *                   description: Username of the user
+ *       201:
+ *         description: The account has been successfully created
  *         headers:
  *           Authorization:
  *             description: The jwt that will be used for authorization
  *             schema:
  *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                   description: Username of the user
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -428,11 +261,35 @@ router.post("/login/forget");
  *                 error:
  *                   type: string
  *                   description: Type of error
- *       403:
- *         description: Invalid token
  *       500:
  *         description: Internal server error
  */
-router.post("/reset-password/:id/:token");
+signupRouter.post(
+  "/signin/:type",
+  signupController.gfsigninValidator,
+  validateRequestSchema,
+  signupController.signinWithGoogleFacebook
+);
 
-export default router;
+/**
+ * @swagger
+ * /random-username:
+ *   get:
+ *     summary: Get an available random username used to create a new account
+ *     tags: [Sign Up]
+ *     responses:
+ *       200:
+ *         description: The email is available
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                   description: Random username
+ *       500:
+ *         description: Internal server error
+ */
+signupRouter.get("/random-username");
+
+export default signupRouter;
