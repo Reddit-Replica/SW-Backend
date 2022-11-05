@@ -2,7 +2,10 @@ import { body, param } from "express-validator";
 import User from "../models/User.js";
 import { generateJWT, generateVerifyToken } from "../utils/generateTokens.js";
 import { hashPassword, comparePasswords } from "../utils/passwordUtils.js";
-import { sendResetPasswordEmail, sendUsernameEmail } from "../utils/sendEmails.js";
+import {
+  sendResetPasswordEmail,
+  sendUsernameEmail,
+} from "../utils/sendEmails.js";
 import Token from "../models/VerifyToken.js";
 
 const loginValidator = [
@@ -42,7 +45,6 @@ const forgetPasswordValidator = [
     .trim()
     .escape(),
 ];
-
 
 const forgetUsernameValidator = [
   body("email")
