@@ -50,7 +50,7 @@ const login = async (req, res) => {
   try {
     const user = await User.findOne({ username: username });
     if (!user) {
-      return res.status(400).send({
+      return res.status(400).json({
         error: "Username not found",
       });
     }
@@ -60,7 +60,7 @@ const login = async (req, res) => {
       res.header("Authorization", "Bearer " + token);
       return res.status(200).send("Logged in successfully!");
     }
-    return res.status(400).send({
+    return res.status(400).json({
       error: "Invalid password",
     });
   } catch (err) {
@@ -74,12 +74,12 @@ const forgetPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email: email });
     if (!user) {
-      return res.status(400).send({
+      return res.status(400).json({
         error: "Invalid email (User not found)",
       });
     }
     if (user.username !== username) {
-      return res.status(400).send({
+      return res.status(400).json({
         error: "Invalid username",
       });
     }
@@ -94,7 +94,7 @@ const forgetPassword = async (req, res) => {
       if (emailSent) {
         return res.status(200).send("Email has been sent");
       } else {
-        return res.status(400).send({
+        return res.status(400).json({
           error: `An error occured while sending the email. 
                   Check the email address and try again`,
         });
@@ -120,7 +120,9 @@ const resetPassword = async (req, res) => {
       if (returnedToken) {
         // eslint-disable-next-line max-depth
         if (newPassword !== verifyPassword) {
-          return res.status(400).send({ error: "Passwords do not match" });
+          return res.status(400).json({
+            error: "Passwords do not match",
+          });
         }
         user.password = pass.hashPassword(newPassword);
         await user.save();
@@ -149,7 +151,7 @@ const loginWith = async (req, res) => {
   } else if (type === "google") {
     loginWithGoogle(token);
   } else {
-    return res.status(400).send({
+    return res.status(400).json({
       error: "Invalid type. Should be either google or facebook only",
     });
   }
