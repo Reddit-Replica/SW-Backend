@@ -20,7 +20,7 @@ export async function sendResetPasswordEmail(toEmail, username, userId, token) {
       sendgridTransport({
         auth: {
           // eslint-disable-next-line camelcase
-          api_key: process.env.SENDGRID_KEY,
+          api_key: process.env.SENDGRID_API_KEY,
         },
       })
     );
