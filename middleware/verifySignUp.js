@@ -20,8 +20,13 @@ export async function checkDuplicateUsernameOrEmail(req, res, next) {
     }
 
     //Email
-    const email = await User.findOne({ email: req.body.email.trim() });
-    if (email) {
+    const email = req.body.email.trim();
+    const emailUser = await User.findOne().or([
+      { email: email },
+      { googleEmail: email },
+      { facebookEmail: email },
+    ]);
+    if (emailUser) {
       return res.status(400).send({ error: "Email is already in use" });
     }
 
