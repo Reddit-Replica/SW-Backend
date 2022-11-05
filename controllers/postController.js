@@ -53,6 +53,7 @@ const createPost = async (req, res) => {
     });
     user.posts.push(post.id);
     await user.save();
+    res.status(201).send("Post submitted successfully!");
   } catch (err) {
     res.status(500).send("Internal server error");
   }
