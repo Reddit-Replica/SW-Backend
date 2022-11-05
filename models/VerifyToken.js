@@ -6,7 +6,6 @@ const tokenSchema = mongoose.Schema({
     type: Schema.Types.ObjectId,
     required: true,
     ref: "User",
-    unique: true,
   },
   token: {
     type: String,
@@ -16,6 +15,10 @@ const tokenSchema = mongoose.Schema({
     type: Date,
     required: true,
     default: Date.now() + 3600000, // token will be expired after one hour
+  },
+  type: {
+    type: String,
+    required: true,
   },
 });
 

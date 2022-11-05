@@ -93,7 +93,7 @@ const forgetPassword = async (req, res) => {
       });
     }
     try {
-      const token = await generateVerifyToken(user.id);
+      const token = await generateVerifyToken(user.id, "forgetPassword");
       const emailSent = sendResetPasswordEmail(
         process.env.SENDER_EMAIL,
         email,
@@ -130,6 +130,7 @@ const resetPassword = async (req, res) => {
     }
     const returnedToken = await Token.findOne({
       token: token,
+      type: "forgetPassword",
       expireAt: { $gt: Date.now() },
       userId: id,
     });
