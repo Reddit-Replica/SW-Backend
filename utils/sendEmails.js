@@ -42,7 +42,7 @@ export async function sendResetPasswordEmail(
             <strong>${username}</strong> Read-it account. No problem! 
             You can reset your password now using the link below.</p>
             <h4>Click this <a 
-            href="http://localhost:3000/reset-password/${userId}/${token}">
+            href="http://localhost:8081/reset-password/${userId}/${token}">
             link
             </a> to set a new password.</h4>
             <p>If you didnt want to reset your password, you can safely 
