@@ -737,6 +737,6 @@ router.get("/r/:subreddit/comments/:postId/:commentId");
  *     security:
  *      - bearerAuth: []
  */
-router.get("/r/:subreddit/comments/:postId/:commentId/parent_comments");
+router.get("/r/:subreddit/comments/:postId/:commentId/parent-comments");
 
 export default router;
