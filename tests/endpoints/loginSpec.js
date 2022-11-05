@@ -12,7 +12,7 @@ describe("Testing login endpoints", () => {
   });
 
   it("try to send forget email to email dosn't exist", async () => {
-    const response = await request.post("/api/login/forget-username").send({
+    const response = await request.post("/login/forget-username").send({
       email: "beshoy@gmail.com",
     });
 
@@ -26,7 +26,7 @@ describe("Testing login endpoints", () => {
     });
     await user.save();
 
-    const response = await request.post("/api/login/forget-username").send({
+    const response = await request.post("/login/forget-username").send({
       email: "beshoy@gmail.com",
     });
 

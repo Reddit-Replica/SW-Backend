@@ -54,7 +54,7 @@ describe("Testing generate tokens", () => {
       email: "beshoy@gmail.com",
     });
     await user.save();
-    const token = await generateVerifyToken(user._id);
+    const token = await generateVerifyToken(user._id, "random");
     expect(token.length).toEqual(64);
   });
 });
