@@ -538,7 +538,7 @@ postRouter.get("/post-details");
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/pin-post");
+postRouter.post("/pin-post", postController.pinPost);
 
 /**
  * @swagger
@@ -576,7 +576,7 @@ postRouter.post("/pin-post");
  *      security:
  *          - bearerAuth: []
  */
-postRouter.get("/pinned-posts");
+postRouter.get("/pinned-posts", postController.getPinnedPosts);
 
 /**
  * @swagger
