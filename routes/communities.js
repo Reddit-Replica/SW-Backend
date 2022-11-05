@@ -373,7 +373,7 @@ router.get("/random-category");
  *                        type: object
  *                        properties:
  *                          children:
- *                            $ref: '#/components/schemas/moderator'
+ *                            $ref: '#/components/schemas/community'
  *          404:
  *              description: Page not found
  *          401:
@@ -432,7 +432,7 @@ router.get("/r/:subreddit");
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                              $ref: '#/components/schemas/community'
+ *                              $ref: '#/components/schemas/moderator'
  *          404:
  *              description: Page not found
  *          401:
