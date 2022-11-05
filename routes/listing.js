@@ -709,8 +709,6 @@ router.get("/r/:subreddit/comments/:postId/:commentId");
  *       500:
  *         description: Internal server error
  */
-router.get(
-  "/r/:subreddit/comments/:postId/:commentId/parent_comments"
-);
+router.get("/r/:subreddit/comments/:postId/:commentId/parent_comments");
 
 export default router;

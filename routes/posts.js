@@ -1,5 +1,5 @@
 import express from "express";
-import postController from "../controllers/postController";
+import postController from "../controllers/postController.js";
 
 // eslint-disable-next-line new-cap
 const postRouter = express.Router();

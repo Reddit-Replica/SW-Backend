@@ -1,6 +1,6 @@
-import Post from "../models/Post";
-import User from "../models/User";
-import verifyUser from "../utils/verifyUser";
+import Post from "../models/Post.js";
+import User from "../models/User.js";
+import verifyUser from "../utils/verifyUser.js";
 
 // eslint-disable-next-line max-statements
 const createPost = async (req, res) => {

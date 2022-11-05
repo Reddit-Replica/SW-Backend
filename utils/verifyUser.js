@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export default verifyUser = (req) => {
+export default function verifyUser(req) {
   const authorizationHeader = req.headers.authorization;
   if (!authorizationHeader) {
     return null;
@@ -12,4 +12,4 @@ export default verifyUser = (req) => {
   } catch (err) {
     return null;
   }
-};
+}
