@@ -1,9 +1,14 @@
+// models
 import User from "../models/User.js";
+import Token from "../models/VerifyToken.js";
+
+// validator
 import { body, query, param } from "express-validator";
+
+// utils
 import { generateJWT, generateVerifyToken } from "../utils/generateTokens.js";
 import { sendVerifyEmail } from "../utils/sendEmails.js";
 import hashPassord from "../utils/hashPassword.js";
-import Token from "../models/VerifyToken.js";
 
 const signupValidator = [
   body("email")
@@ -71,7 +76,7 @@ const signup = async (req, res) => {
     const token = generateJWT(user);
     res.header("Authorization", "Bearer " + token);
 
-    res.send(user); // Change to res.status(201).send("The account has been successfully created");
+    res.status(201).send("The account has been successfully created");
   } catch (err) {
     res.status(500).send("Internal server error");
   }
