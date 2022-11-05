@@ -63,7 +63,7 @@ loginRouter.post("/login");
  * @swagger
  * /login/forget-password:
  *   post:
- *     summary: Forget username or password
+ *     summary: Forget password
  *     tags: [Login]
  *     requestBody:
  *       re quired: true
