@@ -10,12 +10,16 @@ import crypto from "crypto";
  * @returns {string} JWT created for that user
  */
 export function generateJWT(user) {
-  const token = jwt.sign(
-    { userId: user.id, username: user.username },
-    process.env.TOKEN_SECRET
-  );
+  try {
+    const token = jwt.sign(
+      { userId: user.id, username: user.username },
+      process.env.TOKEN_SECRET
+    );
 
-  return token;
+    return token;
+  } catch (error) {
+    throw new Error("Could not create a token");
+  }
 }
 
 /**
