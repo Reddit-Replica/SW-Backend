@@ -40,3 +40,40 @@ export function sendVerifyEmail(toEmail, userId, token) {
     return false;
   }
 }
+
+/**
+ * This function used to send an email with the username
+ * of the user who forget his username
+ *
+ * @param {string} toEmail Email of the receiver user
+ * @param {string} username Username of the receiver user
+ * @returns {boolean} True if the email was sent successfully and false if any error occured
+ */
+export function sendUsernameEmail(toEmail, username) {
+  try {
+    const transporter = nodemailer.createTransport(
+      sendgridTransport({
+        auth: {
+          // eslint-disable-next-line camelcase
+          api_key: process.env.SENDGRID_API_KEY,
+        },
+      })
+    );
+
+    transporter.sendMail({
+      from: process.env.SENDER_EMAIL,
+      to: toEmail,
+      subject: "Read-it Forget Username",
+      html: `
+            <p>Hi there,</p>
+            <p>You forgot it didn't you? Hey, it happens. Here you go:</p>
+            <p>Your username is <b>${username}</b></p>
+            <p>If you didn’t ask to recover your username, 
+						you can safely ignore this email and carry on as usual.</p>
+        `,
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
