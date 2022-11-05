@@ -187,4 +187,58 @@ signupRouter.post(
   signupController.verifyEmail
 );
 
+/**
+ * @swagger
+ * /signin/{type}:
+ *   post:
+ *     summary: Sign up and Login with google or facebook
+ *     tags: [Sign Up]
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         description: Type of sign up
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - google
+ *             - facebook
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - accessToken
+ *             properties:
+ *               accessToken:
+ *                 type: string
+ *                 description: Access token from the response of google or facebook
+ *     responses:
+ *       200:
+ *         description: The account has been successfully created or logged in
+ *         headers:
+ *           Authorization:
+ *             description: The jwt that will be used for authorization
+ *             schema:
+ *               type: string
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       500:
+ *         description: Internal server error
+ */
+signupRouter.post(
+  "/signin/:type",
+  signupController.gfsigninValidator,
+  validateRequestSchema,
+  signupController.signinWithGoogleFacebook
+);
+
 export default signupRouter;

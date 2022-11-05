@@ -1,3 +1,6 @@
+// packages
+import jwtDecode from "jwt-decode";
+
 // models
 import User from "../models/User.js";
 import Token from "../models/VerifyToken.js";
@@ -20,7 +23,7 @@ const signupValidator = [
   body("username")
     .not()
     .isEmpty()
-    .withMessage("Username must not be empty")
+    .withMessage("Username can not be empty")
     .trim()
     .escape(),
   body("password")
@@ -32,7 +35,7 @@ const usernameValidator = [
   query("username")
     .not()
     .isEmpty()
-    .withMessage("Username must not be empty")
+    .withMessage("Username can not be empty")
     .trim()
     .escape(),
 ];
@@ -47,8 +50,17 @@ const emailValidator = [
 ];
 
 const verifyEmailValidator = [
-  param("id").trim().not().isEmpty().withMessage("Id must not be empty"),
-  param("token").trim().not().isEmpty().withMessage("Token must not be empty"),
+  param("id").trim().not().isEmpty().withMessage("Id must can be empty"),
+  param("token").trim().not().isEmpty().withMessage("Token can not be empty"),
+];
+
+const gfsigninValidator = [
+  param("type").trim().not().isEmpty().withMessage("Type can not be empty"),
+  body("accessToken")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Access Token can not be empty"),
 ];
 
 const signup = async (req, res) => {
@@ -154,6 +166,53 @@ const verifyEmail = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
+const signinWithGoogleFacebook = async (req, res) => {
+  try {
+    if (req.params.type.trim() === "google") {
+      // get the token and decode it
+      const decodedToken = jwtDecode(req.body.accessToken);
+      const email = decodedToken.email;
+
+      // check if the email was used before then login
+      const user = await User.findOne({ googleEmail: email });
+
+      if (user) {
+        const token = generateJWT(user);
+        res.header("Authorization", "Bearer " + token);
+        return res.status(200).send("Logged in successfully");
+      }
+      // if not then create a new account
+      const newUser = new User({
+        username: decodedToken.name, // TODO: Change to random username
+        email: email,
+        googleEmail: email,
+      });
+
+      await newUser.save();
+
+      // Create the verify token and send an email to the user
+      const verifyToken = await generateVerifyToken(newUser._id);
+      const sentEmail = sendVerifyEmail(email, newUser._id, verifyToken);
+
+      if (!sentEmail) {
+        return res.status(400).json({
+          error: "Could not send the verification email",
+        });
+      }
+
+      const token = generateJWT(newUser);
+      res.header("Authorization", "Bearer " + token);
+
+      res.status(200).send("The account has been successfully created");
+    } else {
+      //facebook
+    }
+  } catch (error) {
+    res.status(500).send("Internal server error");
+  }
+};
+
 export default {
   signupValidator,
   signup,
@@ -163,4 +222,6 @@ export default {
   emailAvailable,
   verifyEmailValidator,
   verifyEmail,
+  gfsigninValidator,
+  signinWithGoogleFacebook,
 };
