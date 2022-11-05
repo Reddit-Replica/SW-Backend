@@ -49,7 +49,9 @@ const options = {
 const specs = swaggerJsDoc(options);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
-app.use("/api", mainRouter);
+app.use(mainRouter);
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
 });
+
+export default app;
