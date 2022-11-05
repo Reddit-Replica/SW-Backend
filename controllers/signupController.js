@@ -76,7 +76,7 @@ const signup = async (req, res) => {
     await user.save();
 
     // Create the verify token and send an email to the user
-    const verifyToken = await generateVerifyToken(user._id);
+    const verifyToken = await generateVerifyToken(user._id, "verifyEmail");
     const sentEmail = sendVerifyEmail(email, user._id, verifyToken);
 
     if (!sentEmail) {
@@ -137,6 +137,7 @@ const verifyEmail = async (req, res) => {
     // there is a user with that id
     const token = await Token.findOne({
       userId: user._id,
+      type: "verifyEmail",
       token: req.params.token,
     });
     if (!token) {
@@ -192,7 +193,7 @@ const signinWithGoogleFacebook = async (req, res) => {
       await newUser.save();
 
       // Create the verify token and send an email to the user
-      const verifyToken = await generateVerifyToken(newUser._id);
+      const verifyToken = await generateVerifyToken(newUser._id, "verifyEmail");
       const sentEmail = sendVerifyEmail(email, newUser._id, verifyToken);
 
       if (!sentEmail) {

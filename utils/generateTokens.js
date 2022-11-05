@@ -27,13 +27,16 @@ export function generateJWT(user) {
  * that will be used later to verify email or reset password
  *
  * @param {string} userId User Id
+ * @param {string} type Type of the token (verfiy email, rest password, ...etc)
  * @returns {string} Token created for that user
  */
-export async function generateVerifyToken(userId) {
+export async function generateVerifyToken(userId, type) {
   try {
+    await Token.deleteOne({ userId: userId, type: type });
     const token = await new Token({
       userId: userId,
       token: crypto.randomBytes(32).toString("hex"),
+      type: type,
     }).save();
 
     return token.token;
