@@ -44,4 +44,6 @@ loginRouter.post(
   loginController.forgetUsername
 );
 
+loginRouter.post("/login/forget-username");
+
 export default loginRouter;

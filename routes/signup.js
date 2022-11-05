@@ -2,6 +2,7 @@ import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkDuplicateUsernameOrEmail } from "../middleware/verifySignUp.js";
 import signupController from "../controllers/signupController.js";
+
 // eslint-disable-next-line new-cap
 const signupRouter = express.Router();
 
@@ -71,6 +72,7 @@ signupRouter.post(
   checkDuplicateUsernameOrEmail,
   signupController.signup
 );
+
 
 /**
  * @swagger
@@ -268,5 +270,26 @@ signupRouter.post(
   validateRequestSchema,
   signupController.signinWithGoogleFacebook
 );
+
+/**
+ * @swagger
+ * /random-username:
+ *   get:
+ *     summary: Get an available random username used to create a new account
+ *     tags: [Sign Up]
+ *     responses:
+ *       200:
+ *         description: The email is available
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                   description: Random username
+ *       500:
+ *         description: Internal server error
+ */
+signupRouter.get("/random-username");
 
 export default signupRouter;
