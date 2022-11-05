@@ -1,13 +1,6 @@
 import Token from "../models/Token.js";
 import nodemailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
-const transporter = nodemailer.createTransport(
-  sendgridTransport({
-    auth: {
-      api_key: process.env.API_KEY,
-    },
-  })
-);
 
 /**
  * This function is responsible for sending a reset password
@@ -21,14 +14,21 @@ const transporter = nodemailer.createTransport(
  * @returns {boolean} True if the email was sent and false if any error occured
  */
 async function sendResetPasswordEmail(fromEmail, toEmail, userId, token) {
+  const transporter = nodemailer.createTransport(
+    sendgridTransport({
+      auth: {
+        api_key: process.env.SENDGRID_KEY,
+      },
+    })
+  );
   const verificationToken = new Token({
     resetToken: token,
     resetTokenExpiration: Date.now() + 3600000,
     userId: userId,
   });
   await verificationToken.save();
-  try {
-    transporter.sendMail({
+  transporter.sendMail(
+    {
       from: fromEmail,
       to: toEmail,
       subject: "Read-it Password Reset",
@@ -40,11 +40,16 @@ async function sendResetPasswordEmail(fromEmail, toEmail, userId, token) {
             link
             </a> to set a new password.</p>
         `,
-    });
-    return true;
-  } catch (err) {
-    return false;
-  }
+    },
+    (err, info) => {
+      if (err) {
+        return false;
+      } else {
+        console.log("Email sent: %s", info.message);
+        return true;
+      }
+    }
+  );
 }
 
 export default {
