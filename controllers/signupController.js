@@ -204,7 +204,7 @@ const signinWithGoogleFacebook = async (req, res) => {
       const token = generateJWT(newUser);
       res.header("Authorization", "Bearer " + token);
 
-      res.status(200).send("The account has been successfully created");
+      res.status(201).send("The account has been successfully created");
     } else {
       //facebook
     }

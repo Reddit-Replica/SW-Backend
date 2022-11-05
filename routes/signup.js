@@ -216,7 +216,14 @@ signupRouter.post(
  *                 description: Access token from the response of google or facebook
  *     responses:
  *       200:
- *         description: The account has been successfully created or logged in
+ *         description: User logged in successfully
+ *         headers:
+ *           Authorization:
+ *             description: The jwt that will be used for authorization
+ *             schema:
+ *               type: string
+ *       201:
+ *         description: The account has been successfully created
  *         headers:
  *           Authorization:
  *             description: The jwt that will be used for authorization
