@@ -4,7 +4,7 @@ import tokenUtils from "../utils/token.js";
 import crypto from "crypto";
 import pass from "../utils/password.js";
 import sendgrid from "../utils/email.js";
-import Token from "../models/Token.js";
+import Token from "../models/VerifyToken.js";
 
 const loginValidator = [
   body("username")

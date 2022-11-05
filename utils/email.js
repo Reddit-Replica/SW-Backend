@@ -1,4 +1,4 @@
-import Token from "../models/Token.js";
+import Token from "../models/VerifyToken.js";
 import nodemailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
 
