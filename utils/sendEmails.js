@@ -1,4 +1,3 @@
-import Token from "../models/VerifyToken.js";
 import nodemailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
 
@@ -10,23 +9,25 @@ import sendgridTransport from "nodemailer-sendgrid-transport";
  * @param {string} fromEmail The sender's email
  * @param {string} toEmail The receiver's email
  * @param {string} userId id of the user who requested the password reset
- * @param {string} token A json web token used for verification
+ * @param {string} token A crypto token used for verification
  * @returns {boolean} True if the email was sent and false if any error occured
  */
-async function sendResetPasswordEmail(fromEmail, toEmail, userId, token) {
+
+// eslint-disable-next-line max-len
+export async function sendResetPasswordEmail(
+  fromEmail,
+  toEmail,
+  userId,
+  token
+) {
   const transporter = nodemailer.createTransport(
     sendgridTransport({
       auth: {
+        // eslint-disable-next-line camelcase
         api_key: process.env.SENDGRID_KEY,
       },
     })
   );
-  const verificationToken = new Token({
-    resetToken: token,
-    resetTokenExpiration: Date.now() + 3600000,
-    userId: userId,
-  });
-  await verificationToken.save();
   transporter.sendMail(
     {
       from: fromEmail,
@@ -45,13 +46,8 @@ async function sendResetPasswordEmail(fromEmail, toEmail, userId, token) {
       if (err) {
         return false;
       } else {
-        console.log("Email sent: %s", info.message);
         return true;
       }
     }
   );
 }
-
-export default {
-  sendResetPasswordEmail,
-};

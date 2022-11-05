@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
  * @param {string} password The password to be hashed
  * @returns {string} The hashed password
  */
-function hashPassword(password) {
+export function hashPassword(password) {
   const hashedPass = bcrypt.hashSync(
     password + process.env.BCRYPT_PASSWORD,
     parseInt(process.env.SALT_ROUNDS)
@@ -24,7 +24,7 @@ function hashPassword(password) {
  * @param {string} dbPassword The second password which is the correct one
  * @returns {boolean} True if both passwords match, otherwise False
  */
-function comparePasswords(password, dbPassword) {
+export function comparePasswords(password, dbPassword) {
   const result = bcrypt.compareSync(
     password + process.env.BCRYPT_PASSWORD,
     dbPassword
@@ -32,8 +32,3 @@ function comparePasswords(password, dbPassword) {
 
   return result;
 }
-
-export default {
-  hashPassword,
-  comparePasswords,
-};
