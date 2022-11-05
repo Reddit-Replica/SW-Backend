@@ -1,4 +1,7 @@
 import express from "express";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import { checkDuplicateUsernameOrEmail } from "../middleware/verifySignUp.js";
+import signupController from "../controllers/signupController.js";
 
 // eslint-disable-next-line new-cap
 const signupRouter = express.Router();
@@ -62,7 +65,14 @@ const signupRouter = express.Router();
  *       500:
  *         description: Internal server error
  */
-signupRouter.post("/signup");
+signupRouter.post(
+  "/signup",
+  signupController.signupValidator,
+  validateRequestSchema,
+  checkDuplicateUsernameOrEmail,
+  signupController.signup
+);
+
 
 /**
  * @swagger
@@ -94,7 +104,12 @@ signupRouter.post("/signup");
  *       500:
  *         description: Internal server error
  */
-signupRouter.get("/username-available");
+signupRouter.get(
+  "/username-available",
+  signupController.usernameValidator,
+  validateRequestSchema,
+  signupController.usernameAvailable
+);
 
 /**
  * @swagger
@@ -126,7 +141,12 @@ signupRouter.get("/username-available");
  *       500:
  *         description: Internal server error
  */
-signupRouter.get("/email-available");
+signupRouter.get(
+  "/email-available",
+  signupController.emailValidator,
+  validateRequestSchema,
+  signupController.emailAvailable
+);
 
 /**
  * @swagger
@@ -169,7 +189,12 @@ signupRouter.get("/email-available");
  *       500:
  *         description: Internal server error
  */
-signupRouter.post("/verify-email/:id/:token");
+signupRouter.post(
+  "/verify-email/:id/:token",
+  signupController.verifyEmailValidator,
+  validateRequestSchema,
+  signupController.verifyEmail
+);
 
 /**
  * @swagger
@@ -239,7 +264,12 @@ signupRouter.post("/verify-email/:id/:token");
  *       500:
  *         description: Internal server error
  */
-signupRouter.post("/signin/:type");
+signupRouter.post(
+  "/signin/:type",
+  signupController.gfsigninValidator,
+  validateRequestSchema,
+  signupController.signinWithGoogleFacebook
+);
 
 /**
  * @swagger
