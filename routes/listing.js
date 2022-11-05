@@ -629,7 +629,7 @@ router.get("/r/:subreddit/comments/:postId/:commentId");
 
 /**
  * @swagger
- * /r/{subreddit}/comments/{postId}/{commentId}/parent_comments:
+ * /r/{subreddit}/comments/{postId}/{commentId}/parent-comments:
  *   get:
  *     summary: Return the parents of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Comments]
@@ -737,6 +737,6 @@ router.get("/r/:subreddit/comments/:postId/:commentId");
  *     security:
  *      - bearerAuth: []
  */
-router.get("/r/:subreddit/comments/:postId/:commentId/parent_comments");
+router.get("/r/:subreddit/comments/:postId/:commentId/parent-comments");
 
 export default router;

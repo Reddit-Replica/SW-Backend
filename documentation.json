@@ -2367,7 +2367,7 @@
                   "type": "object",
                   "properties": {
                     "children": {
-                      "$ref": "#/components/schemas/moderator"
+                      "$ref": "#/components/schemas/community"
                     }
                   }
                 }
@@ -2450,7 +2450,7 @@
                       "type": "array",
                       "description": "List of [Things] to return",
                       "items": {
-                        "$ref": "#/components/schemas/community"
+                        "$ref": "#/components/schemas/moderator"
                       }
                     }
                   }
@@ -3661,7 +3661,7 @@
         ]
       }
     },
-    "/r/{subreddit}/comments/{postId}/{commentId}/parent_comments": {
+    "/r/{subreddit}/comments/{postId}/{commentId}/parent-comments": {
       "get": {
         "summary": "Return the parents of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
