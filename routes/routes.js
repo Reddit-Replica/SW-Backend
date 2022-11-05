@@ -1,4 +1,5 @@
 import express from "express";
+import moderationRouter from "./moderation.js";
 import signupRouter from "./signup.js";
 import loginRouter from "./login.js";
 
