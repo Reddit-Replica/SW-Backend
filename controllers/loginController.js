@@ -139,30 +139,11 @@ const resetPassword = async (req, res) => {
   }
 };
 
-const loginWithFacebook = async (token) => {};
-
-const loginWithGoogle = async (token) => {};
-
-const loginWith = async (req, res) => {
-  const type = req.params.type;
-  const token = req.params.accessToken;
-  if (type === "facebook") {
-    loginWithFacebook(token);
-  } else if (type === "google") {
-    loginWithGoogle(token);
-  } else {
-    return res.status(400).json({
-      error: "Invalid type. Should be either google or facebook only",
-    });
-  }
-};
-
 export default {
   loginValidator,
   resetPasswordValidator,
   forgetPasswordValidator,
   login,
-  loginWith,
   forgetPassword,
   resetPassword,
 };

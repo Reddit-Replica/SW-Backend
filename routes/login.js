@@ -155,7 +155,7 @@ loginRouter.post(
  *       500:
  *         description: Internal server error
  */
-loginRouter.post("/login/:type", loginController.loginWith);
+loginRouter.post("/login/:type");
 
 /**
  * @swagger
