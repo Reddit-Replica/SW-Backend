@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 // eslint-disable-next-line new-cap
 const userSchema = mongoose.Schema({
@@ -106,6 +106,12 @@ const userSchema = mongoose.Schema({
       },
     ],
   },
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
 });
 
 const User = mongoose.model("User", userSchema);
