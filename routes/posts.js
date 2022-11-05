@@ -464,7 +464,7 @@ router.get("/post-insights");
  * @swagger
  * /post-details:
  *  get:
- *      summary: Get details about a specific post
+ *      summary: Get details about a specific post (Here the token is optional if the user is logged in add a token if not don't add it)
  *      tags: [Posts]
  *      parameters:
  *          - in: query
@@ -495,6 +495,8 @@ router.get("/post-insights");
  *              description: Unauthorized to view info of this post
  *          500:
  *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
  */
 router.get("/post-details");
 
