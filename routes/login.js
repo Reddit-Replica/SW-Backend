@@ -40,6 +40,13 @@ const loginRouter = express.Router();
  *             description: The jwt that will be used for authorization
  *             schema:
  *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                   description: Username
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -61,7 +68,7 @@ loginRouter.post(
 
 /**
  * @swagger
- * /login/forget:
+ * /login/forget-password:
  *   post:
  *     summary: Forget username or password
  *     tags: [Login]
@@ -71,18 +78,12 @@ loginRouter.post(
  *         application/json:
  *           schema:
  *             required:
- *               - type
+ *               - username
  *               - email
  *             properties:
- *               type:
- *                 type: string
- *                 description: Forget username or password
- *                 enum:
- *                   - username
- *                   - password
  *               username:
  *                 type: string
- *                 description: Username (only when type = password)
+ *                 description: Username
  *               email:
  *                 type: string
  *                 description: Email
@@ -102,60 +103,11 @@ loginRouter.post(
  *         description: Internal server error
  */
 loginRouter.post(
-  "/login/forget",
+  "/login/forget-password",
   loginController.forgetPasswordValidator,
   validateRequestSchema,
   loginController.forgetPassword
 );
-
-/**
- * @swagger
- * /login/{type}:
- *   post:
- *     summary: Login with google or facebook
- *     tags: [Login]
- *     parameters:
- *       - in: path
- *         name: type
- *         description: Type of sign up
- *         required: true
- *         schema:
- *           type: string
- *           enum:
- *             - google
- *             - facebook
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             required:
- *               - accessToken
- *             properties:
- *               accessToken:
- *                 type: string
- *                 description: Access token from the response of google or facebook
- *     responses:
- *       200:
- *         description: User logged in successfully
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
- *       400:
- *         description: The request was invalid. You may refer to response for details around why the request was invalid
- *         content:
- *           application/json:
- *             schema:
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Type of error
- *       500:
- *         description: Internal server error
- */
-loginRouter.post("/login/:type");
 
 /**
  * @swagger
