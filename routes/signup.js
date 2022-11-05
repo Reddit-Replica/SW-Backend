@@ -45,6 +45,13 @@ const signupRouter = express.Router();
  *             description: The jwt that will be used for authorization
  *             schema:
  *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                   description: Username of the user
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -222,6 +229,13 @@ signupRouter.post(
  *             description: The jwt that will be used for authorization
  *             schema:
  *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                   description: Username of the user
  *       201:
  *         description: The account has been successfully created
  *         headers:
@@ -229,6 +243,13 @@ signupRouter.post(
  *             description: The jwt that will be used for authorization
  *             schema:
  *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                   description: Username of the user
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
