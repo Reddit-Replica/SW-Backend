@@ -97,6 +97,7 @@ const forgetPassword = async (req, res) => {
       const emailSent = sendResetPasswordEmail(
         process.env.SENDER_EMAIL,
         email,
+        user.username,
         user.id,
         token
       );
