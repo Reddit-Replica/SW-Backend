@@ -1,5 +1,3 @@
-import Subreddit from "../models/subreddit.js";
-
 /*
 {
   "children": {
