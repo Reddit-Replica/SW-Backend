@@ -79,7 +79,10 @@ export function sendVerifyEmail(toEmail, userId, token) {
 						<p>By clicking on the following link,
 						you are confirming your email address.</p>
             <p>Click this link 
-						http://localhost:8081/verify-email/${userId}/${token} 
+						<a 
+							href="http://localhost:8081/verify-email/${userId}/${token} ">
+							link
+						</a>
 						to confirm your email</p>
         `,
     });
