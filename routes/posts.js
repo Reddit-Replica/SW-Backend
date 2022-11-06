@@ -493,8 +493,6 @@ postRouter.get("/post-insights", postController.postInsights);
  *                                  description: Type of error
  *          404:
  *              description: Post not found
- *          401:
- *              description: Unauthorized to view info of this post
  *          500:
  *              description: Server Error
  *      security:
