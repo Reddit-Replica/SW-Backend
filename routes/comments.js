@@ -1,7 +1,7 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import commentController from "../controllers/BcommentController.js";
-import { verifyToken } from "../middleware/verifyToken.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
 
 // eslint-disable-next-line new-cap
 const commentsRouter = express.Router();
@@ -35,8 +35,8 @@ const commentsRouter = express.Router();
  *                 type: number
  *                 description: Level of the comment (How deep is it in the comment tree)
  *      responses:
- *          200:
- *              description: Comment published successfully
+ *          201:
+ *              description: Comment created successfully
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -55,7 +55,7 @@ const commentsRouter = express.Router();
  */
 commentsRouter.post(
   "/comment",
-  verifyToken,
+  verifyAuthToken,
   commentController.createCommentValidator,
   validateRequestSchema,
   commentController.createComment
