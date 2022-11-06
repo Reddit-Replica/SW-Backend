@@ -11,7 +11,7 @@ import { body, query, param } from "express-validator";
 // utils
 import { generateJWT, generateVerifyToken } from "../utils/generateTokens.js";
 import { sendVerifyEmail } from "../utils/sendEmails.js";
-import hashPassord from "../utils/hashPassword.js";
+import { hashPassword } from "../utils/passwordUtils.js";
 
 const signupValidator = [
   body("email")
@@ -70,7 +70,7 @@ const signup = async (req, res) => {
     const user = new User({
       username: username,
       email: email,
-      password: hashPassord(password),
+      password: hashPassword(password),
     });
 
     await user.save();
