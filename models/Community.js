@@ -89,6 +89,10 @@ const communitySchema = mongoose.Schema({
         type: String,
         required: true,
       },
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
       nickname: {
         type: String,
         required: true,
