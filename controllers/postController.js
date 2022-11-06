@@ -22,23 +22,30 @@ const createPost = async (req, res) => {
     scheduleTime,
     scheduleTimeZone,
   } = req.body;
+  const userId = authorizationResult.userId;
+  const username = authorizationResult.username;
+
   try {
-    const userId = authorizationResult;
-    const post = new Post({
+    if (kind === "image") {
+      content = req.file.path;
+    }
+    const post = await new Post({
       kind: kind,
-      subreddit: subreddit,
+      ownerUsername: username,
+      ownerId: userId,
+      subredditName: subreddit,
       title: title,
+      sharePostId: sharePostId,
       content: content,
       nsfw: nsfw,
       spoiler: spoiler,
-      flairId: flairId,
+      flair: flairId,
       sendReplies: sendReplies,
       sharePostId: sharePostId,
       scheduleDate: scheduleDate,
       scheduleTime: scheduleTime,
       scheduleTimeZone: scheduleTimeZone,
-    });
-    await post.save();
+    }).save();
     const user = await User.findOne({
       id: userId,
     });
@@ -56,7 +63,7 @@ const pinPost = async (req, res) => {
     return res.status(401).send("Token may be invalid or not found");
   }
   const postId = req.body.id;
-  const userId = authorizationResult;
+  const userId = authorizationResult.userId;
   try {
     const user = await User.findOne({
       id: userId,
@@ -82,7 +89,7 @@ const getPinnedPosts = async (req, res) => {
   if (!authorizationResult) {
     return res.status(401).send("Token may be invalid or not found");
   }
-  const userId = authorizationResult;
+  const userId = authorizationResult.userId;
   try {
     const user = await User.findOne({
       id: userId,
@@ -93,8 +100,108 @@ const getPinnedPosts = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
+const postDetails = async (req, res) => {
+  const postId = req.body.id;
+  try {
+    const post = await Post.findOne({
+      id: postId,
+    }).populate("flair");
+    if (!post) {
+      return res.status(404).send("Post not found");
+    }
+    let saved = false,
+      followed = false,
+      hidden = false;
+    let upvoted = false,
+      downvoted = false,
+      spammed = false;
+    if (req.loggedIn) {
+      const userId = req.userId;
+      const user = await User.findOne({
+        id: userId,
+      });
+      if (user.savedPosts.find((id) => id === postId)) {
+        saved = true;
+      }
+      if (user.followedPosts.find((id) => id === postId)) {
+        followed = true;
+      }
+      if (user.hiddenPosts.find((id) => id === postId)) {
+        hidden = true;
+      }
+      if (user.upvotedPosts.find((id) => id === postId)) {
+        upvoted = true;
+      }
+      if (user.downvotedPosts.find((id) => id === postId)) {
+        downvoted = true;
+      }
+      if (user.spammedPosts.find((id) => id === postId)) {
+        spammed = true;
+      }
+    }
+    return res.status(200).json({
+      kind: post.kind,
+      subreddit: post.subredditName,
+      content: post.content,
+      nsfw: post.nsfw,
+      spoiler: post.spoiler,
+      title: post.title,
+      flair: {
+        id: post.flair._id,
+        flairName: post.flair.flairName,
+        order: post.flair.order,
+        backgroundColor: post.flair.backgroundColor,
+        textColor: post.flair.textColor,
+      },
+      comments: post.numberOfComments,
+      votes: post.numberOfUpvotes - post.numberOfDownvotes,
+      postedAt: post.createdAt,
+      postedBy: post.ownerUsername,
+      upvoted: upvoted,
+      downvoted: downvoted,
+      saved: saved,
+      followed: followed,
+      hidden: hidden,
+      spammed: spammed,
+    });
+  } catch (err) {
+    return res.status(500).send("Internal server error");
+  }
+};
+
+const postInsights = async (req, res) => {
+  const authorizationResult = verifyUser(req);
+  if (!authorizationResult) {
+    return res.status(401).send("Token may be invalid or not found");
+  }
+  const postId = req.body.id;
+  const userId = authorizationResult.userId;
+  try {
+    const post = await Post.findOne({
+      id: postId,
+    });
+    if (!post) {
+      return res.status(404).send("Post not found");
+    }
+    if (post.ownerId !== userId) {
+      return res.status(401).send("User is not the owner of this post");
+    }
+    return res.status(200).json({
+      totalViews: post.insights.totalViews,
+      upvoteRate: post.insights.upvoteRate,
+      communityKarma: post.insights.communityKarma,
+      totalShares: post.insights.totalShares,
+    });
+  } catch (err) {
+    res.status(500).send("Internal server error");
+  }
+};
+
 export default {
   createPost,
   pinPost,
   getPinnedPosts,
+  postDetails,
+  postInsights,
 };
