@@ -23,6 +23,14 @@ const commentSchema = mongoose.Schema({
     required: true,
     default: 0,
   },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: Date.now(),
+  },
+  editedAt: {
+    type: Date,
+  },
   deletedAt: {
     type: Date,
   },
@@ -34,9 +42,6 @@ const commentSchema = mongoose.Schema({
     type: Boolean,
     required: true,
     default: false,
-  },
-  editAt: {
-    type: Date,
   },
   children: [
     {
