@@ -10,18 +10,16 @@ import jwt from "jsonwebtoken";
  * @param {function} next Next function
  * @returns {void}
  */
-const verifyAuthToken = (req, res, next) => {
+export const verifyAuthToken = (req, res, next) => {
   try {
-    const authorizationHeader = req.headers.Authorization;
+    const authorizationHeader = req.headers.authorization;
     const token = authorizationHeader.split(" ")[1];
-    jwt.verify(token, process.env.TOKEN_SECRET);
+
+    const decodedPayload = jwt.verify(token, process.env.TOKEN_SECRET);
+    req.decodedPayload = decodedPayload;
 
     next();
   } catch (err) {
     res.status(401).send("Access Denied");
   }
-};
-
-export default {
-  verifyAuthToken,
 };
