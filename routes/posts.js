@@ -1,5 +1,6 @@
 import express from "express";
 import postController from "../controllers/postController.js";
+import { optionalToken } from "../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
 const postRouter = express.Router();
@@ -459,7 +460,7 @@ postRouter.post("/unmark-spoiler");
  *      security:
  *         - bearerAuth: []
  */
-postRouter.get("/post-insights");
+postRouter.get("/post-insights", postController.postInsights);
 
 /**
  * @swagger
@@ -497,7 +498,7 @@ postRouter.get("/post-insights");
  *          500:
  *              description: Server Error
  */
-postRouter.get("/post-details");
+postRouter.get("/post-details", optionalToken, postController.postDetails);
 
 /**
  * @swagger
