@@ -7,7 +7,6 @@ const createSubreddit = async (req, _res, next) => {
     category: "Test Category" + subreddit,
     numberOfMembers: 1,
     primaryTopic: "test",
-    dateOfCreation: Date.now(),
     type: "Private",
     image: "test.png",
     owner: "zedyad",
