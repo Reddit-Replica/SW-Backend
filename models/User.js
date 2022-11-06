@@ -40,6 +40,9 @@ const userSchema = mongoose.Schema({
     required: true,
     default: Date.now(),
   },
+  editedAt: {
+    type: Date,
+  },
   deletedAt: {
     type: Date,
   },

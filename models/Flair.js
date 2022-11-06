@@ -19,6 +19,14 @@ const flairSchema = mongoose.Schema(
       type: String,
       default: "black",
     },
+    createdAt: {
+      type: Date,
+      required: true,
+      default: Date.now(),
+    },
+    editedAt: {
+      type: Date,
+    },
     deletedAt: {
       type: Date,
     },
