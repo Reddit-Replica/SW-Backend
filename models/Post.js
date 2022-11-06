@@ -27,6 +27,10 @@ const postSchema = mongoose.Schema(
     content: {
       type: String,
     },
+    sharePostId: {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
     suggestedSort: {
       type: String,
       default: "best",
