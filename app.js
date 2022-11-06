@@ -23,7 +23,7 @@ app.use((_req, res, next) => {
 });
 
 // eslint-disable-next-line max-len
-const DB_URL = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`;
+const DB_URL = process.env.MONGO_URL.trim();
 
 mongoose
   .connect(DB_URL, { useNewUrlParser: true })
