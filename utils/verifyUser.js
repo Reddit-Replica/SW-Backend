@@ -15,7 +15,7 @@ export default function verifyUser(req) {
   const token = authorizationHeader.split(" ")[1];
   try {
     const decodedPayload = jwt.verify(token, process.env.TOKEN_SECRET);
-    return decodedPayload.userId;
+    return decodedPayload;
   } catch (err) {
     return null;
   }
