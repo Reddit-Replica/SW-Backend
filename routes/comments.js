@@ -14,7 +14,23 @@ const router = express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Comment'
+ *             type: object
+ *             properties:
+ *               text:
+ *                 type: string
+ *                 description: Comment content (raw markdown text)
+ *               parentId:
+ *                 type: string
+ *                 description: id of the thing being replied to (parent)
+ *               parentType:
+ *                 type: string
+ *                 description: Comment is a reply to post or comment
+ *                 enum:
+ *                    - post
+ *                    - comment
+ *               level:
+ *                 type: number
+ *                 description: Level of the comment (How deep is it in the comment tree)
  *      responses:
  *          200:
  *              description: Comment published successfully
