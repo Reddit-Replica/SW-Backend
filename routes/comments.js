@@ -32,8 +32,8 @@ const router = express.Router();
  *                 type: number
  *                 description: Level of the comment (How deep is it in the comment tree)
  *      responses:
- *          200:
- *              description: Comment published successfully
+ *          201:
+ *              description: Comment created successfully
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
