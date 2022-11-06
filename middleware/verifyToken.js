@@ -2,7 +2,8 @@ import jwt from "jsonwebtoken";
 
 /**
  * Middleware used to check the token in the request.
- * If it was a valid token given by the server, the next function will be called.
+ * If it was a valid token given by the server, the next function will be called
+ * and token payload will be saved in the request object
  * If it wasn't, a response with status code 401 will be sent
  *
  * @param {Object} req Request object
