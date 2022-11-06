@@ -30,7 +30,7 @@ const createSubreddit = async (req, _res, next) => {
 const checkSubreddit = async (req, res, next) => {
   const subredditName = req.params.subreddit;
   const subbredditObject = await Subreddit.findOne({
-    subredditName: subredditName,
+    title: subredditName,
   });
   if (!subbredditObject) {
     res.status(404).json({
