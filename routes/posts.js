@@ -413,7 +413,7 @@ postRouter.post("/unmark-spoiler");
  * @swagger
  * /post-insights:
  *  get:
- *      summary: Get the number of views on a post
+ *      summary: Get the insights on a post
  *      tags: [Posts]
  *      parameters:
  *          - in: query

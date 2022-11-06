@@ -154,6 +154,9 @@
  *         title:
  *           type: string
  *           description: Title of the submission
+ *         sharePostId:
+ *           type: string
+ *           description: Post id in case of containing info of a shared post
  *         flair:
  *           $ref: '#/components/schemas/Flair'
  *         comments:
