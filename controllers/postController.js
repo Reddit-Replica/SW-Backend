@@ -46,8 +46,14 @@ const createPost = async (req, res) => {
       scheduleTime: scheduleTime,
       scheduleTimeZone: scheduleTimeZone,
     }).save();
+    if (sharePostId) {
+      const sharedPost = Post.findOne({
+        _id: sharePostId,
+      });
+      sharedPost.insights.totalShares += 1;
+    }
     const user = await User.findOne({
-      id: userId,
+      _id: userId,
     });
     user.posts.push(post.id);
     await user.save();
@@ -66,7 +72,7 @@ const pinPost = async (req, res) => {
   const userId = authorizationResult.userId;
   try {
     const user = await User.findOne({
-      id: userId,
+      _id: userId,
     });
     if (user.posts.find((post) => post === postId)) {
       if (!user.pinnedPosts.find((pinnedPost) => pinnedPost === postId)) {
@@ -92,7 +98,7 @@ const getPinnedPosts = async (req, res) => {
   const userId = authorizationResult.userId;
   try {
     const user = await User.findOne({
-      id: userId,
+      _id: userId,
     }).populate("pinnedPosts");
     return res.status(200).json(user.pinnedPosts);
   } catch (err) {
@@ -105,7 +111,7 @@ const postDetails = async (req, res) => {
   const postId = req.body.id;
   try {
     const post = await Post.findOne({
-      id: postId,
+      _id: postId,
     }).populate("flair");
     if (!post) {
       return res.status(404).send("Post not found");
@@ -119,7 +125,7 @@ const postDetails = async (req, res) => {
     if (req.loggedIn) {
       const userId = req.userId;
       const user = await User.findOne({
-        id: userId,
+        _id: userId,
       });
       if (user.savedPosts.find((id) => id === postId)) {
         saved = true;
@@ -148,11 +154,11 @@ const postDetails = async (req, res) => {
       spoiler: post.spoiler,
       title: post.title,
       flair: {
-        id: post.flair._id,
-        flairName: post.flair.flairName,
-        order: post.flair.order,
-        backgroundColor: post.flair.backgroundColor,
-        textColor: post.flair.textColor,
+        id: post.flair?._id,
+        flairName: post.flair?.flairName,
+        order: post.flair?.order,
+        backgroundColor: post.flair?.backgroundColor,
+        textColor: post.flair?.textColor,
       },
       comments: post.numberOfComments,
       votes: post.numberOfUpvotes - post.numberOfDownvotes,
@@ -179,12 +185,12 @@ const postInsights = async (req, res) => {
   const userId = authorizationResult.userId;
   try {
     const post = await Post.findOne({
-      id: postId,
+      _id: postId,
     });
     if (!post) {
       return res.status(404).send("Post not found");
     }
-    if (post.ownerId !== userId) {
+    if (post.ownerId.toString() !== userId) {
       return res.status(401).send("User is not the owner of this post");
     }
     return res.status(200).json({
