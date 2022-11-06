@@ -1,9 +1,9 @@
-import Subreddit from "../models/subreddit.js";
+import Subreddit from "../models/Community.js";
 
 const createSubreddit = async (req, _res, next) => {
   const subreddit = req.params.subreddit;
   const newSubreddit = new Subreddit({
-    subredditName: subreddit,
+    title: subreddit,
     category: "Test Category" + subreddit,
     numberOfMembers: 1,
     primaryTopic: "test",
@@ -12,9 +12,6 @@ const createSubreddit = async (req, _res, next) => {
     image: "test.png",
     owner: "zedyad",
     description: "This is new subreddit",
-    communitySettings: {
-      NSFW: true,
-    },
   });
   await newSubreddit.save();
   next();

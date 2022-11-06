@@ -59,18 +59,20 @@ const subredditDetails = async (req, res) => {
 
   const resObject = {
     children: {
-      title: subreddit.subredditName,
-      nsfw: subreddit.communitySettings.NSFW,
+      title: subreddit.title,
+      nsfw: subreddit.nsfw,
       type: subreddit.type,
       category: subreddit.category,
-      members: subreddit.numberOfMembers,
-      online: subreddit.online,
+      members: subreddit.members,
+      // online: subreddit.online,
       description: subreddit.description,
       dateOfCreation: subreddit.dateOfCreation,
-      rules: subreddit.communitySettings.rules,
+      rules: subreddit.rules,
       banner: subreddit.banner,
-      picture: subreddit.image,
-      flairs: subreddit.communitySettings.flairs,
+      picture: subreddit.picture,
+      flairs: subreddit.flairs,
+      moderators: subreddit.moderators,
+      views:subreddit.views
     },
   };
   // console.log(resObject);
