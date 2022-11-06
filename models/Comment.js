@@ -2,14 +2,8 @@ import mongoose, { Schema } from "mongoose";
 
 // eslint-disable-next-line new-cap
 const commentSchema = mongoose.Schema({
-  postId: {
-    type: Schema.Types.ObjectId,
-    ref: "Post",
-    required: true,
-  },
   parentId: {
     type: Schema.Types.ObjectId,
-    ref: "Comment",
     required: true,
   },
   parentType: {
@@ -27,6 +21,7 @@ const commentSchema = mongoose.Schema({
   numberOfVotes: {
     type: Number,
     required: true,
+    default: 0,
   },
   deletedAt: {
     type: Date,
