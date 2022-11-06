@@ -169,6 +169,9 @@ router.post("/follow-user");
  *                       nsfw:
  *                         type: boolean
  *                         description: If true, this subreddit will be marked as NSFW
+ *                       followed:
+ *                         type: boolean
+ *                         description: If true, then this subreddit is followed by the logged in user
  *       404:
  *         description: Didn't find a user with that username
  *       500:
