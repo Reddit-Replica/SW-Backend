@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 // eslint-disable-next-line new-cap
 const postSchema = mongoose.Schema(
@@ -11,7 +11,12 @@ const postSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    subreddit: {
+    ownerId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    subredditName: {
       type: String,
       required: true,
     },
@@ -53,15 +58,15 @@ const postSchema = mongoose.Schema(
     deletedAt: {
       type: Date,
     },
-    flairId: {
-      type: String,
+    flair: {
+      type: Schema.Types.ObjectId,
       ref: "Flair",
     },
-    numberOfUpVotes: {
+    numberOfUpvotes: {
       type: Number,
       default: 0,
     },
-    numberOfDownVotes: {
+    numberOfDownvotes: {
       type: Number,
       default: 0,
     },
@@ -73,7 +78,7 @@ const postSchema = mongoose.Schema(
       totalViews: {
         type: Number,
       },
-      upVoteRate: {
+      upvoteRate: {
         type: Number,
       },
       communityKarma: {
