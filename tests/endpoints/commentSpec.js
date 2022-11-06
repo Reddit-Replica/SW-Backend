@@ -2,6 +2,7 @@ import supertest from "supertest";
 import app from "../../app.js";
 import Post from "./../../models/Post.js";
 import User from "../../models/User.js";
+import Comment from "../../models/Comment.js";
 import { generateJWT } from "../../utils/generateTokens.js";
 
 const request = supertest(app);
@@ -29,6 +30,12 @@ describe("Testing comment endpoints", () => {
       kind: "text",
     });
     await post.save();
+  });
+
+  afterAll(async () => {
+    await User.deleteMany({});
+    await Post.deleteMany({});
+    await Comment.deleteMany({});
   });
 
   it("try to create comment without jwt in the header", async () => {
