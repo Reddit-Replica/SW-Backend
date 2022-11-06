@@ -1,5 +1,9 @@
 import express from "express";
 
+import verifyToken from "../middleware/verifyToken.js";
+import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
+// eslint-disable-next-line max-len
+import subredditRulesController from "../controllers/subredditRulesController.js";
 // eslint-disable-next-line new-cap
 const moderationRouter = express.Router();
 
@@ -1130,7 +1134,14 @@ moderationRouter.post("/r/:subreddit/about/rules");
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/rules");
+// TODO: Add middleware to check that this user is a moderator in that subreddit
+moderationRouter.get(
+  "/r/:subreddit/about/rules",
+  verifyToken.verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  subredditRulesController.getSubredditRules
+);
 
 /**
  * @swagger

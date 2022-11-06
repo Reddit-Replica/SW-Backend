@@ -10,5 +10,6 @@ const mainRouter = express.Router();
 mainRouter.use(communitiesRouter);
 mainRouter.use(signupRouter);
 mainRouter.use(loginRouter);
+mainRouter.use(moderationRouter);
 
 export default mainRouter;

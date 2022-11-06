@@ -11,6 +11,20 @@ const createSubreddit = async (req, _res, next) => {
     image: "test.png",
     owner: "zedyad",
     description: "This is new subreddit",
+    rules: [
+      {
+        ruleTitle: "test",
+        ruleDescription: "test2",
+        ruleOrder: 0,
+        appliesTo: "posts and comments",
+        reportReason: "anything",
+      },
+      {
+        ruleTitle: "test2",
+        ruleOrder: 1,
+        appliesTo: "posts only",
+      },
+    ],
   });
   await newSubreddit.save();
   next();
