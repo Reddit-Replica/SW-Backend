@@ -411,7 +411,7 @@ router.post("/unmark-spoiler");
  * @swagger
  * /post-insights:
  *  get:
- *      summary: Get the number of views on a post
+ *      summary: Get the insights on a post
  *      tags: [Posts]
  *      parameters:
  *          - in: query
@@ -491,8 +491,6 @@ router.get("/post-insights");
  *                                  description: Type of error
  *          404:
  *              description: Post not found
- *          401:
- *              description: Unauthorized to view info of this post
  *          500:
  *              description: Server Error
  *      security:
