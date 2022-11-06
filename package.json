@@ -5,11 +5,14 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon app.js",
+    "dev": "set NODE_ENV=development && nodemon app.js",
     "start": "node app.js",
-    "test": "jasmine",
+    "test": "set NODE_ENV=testing && jasmine",
+    "doc": "swagger-jsdoc-generator config.json > documentation.json",
+    "doc2": "redoc-cli bundle -o apidoc/index.html documentation.json",
     "lint": "eslint ./**/*.js",
-    "prettier": "prettier ./**/*.js --write"
+    "prettier": "prettier ./**/*.js --write",
+    "jsdoc": "jsdoc -c jsdoc.json"
   },
   "repository": {
     "type": "git",
@@ -22,18 +25,34 @@
   },
   "homepage": "https://github.com/ZeyadTarekk/Test-Deploy#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
+    "express-validator": "^6.14.2",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^3.1.2",
+    "mongodb": "^4.11.0",
     "mongoose": "^6.6.4",
-    "swagger-jsdoc": "^6.2.5",
-    "swagger-ui-express": "^4.5.0"
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.8.0",
+    "nodemailer-sendgrid-transport": "^0.2.0"
   },
   "devDependencies": {
     "eslint": "^8.25.0",
     "eslint-plugin-prettier": "^4.2.1",
     "jasmine": "^4.4.0",
     "jasmine-spec-reporter": "^7.0.0",
+    "jsdoc": "^3.6.11",
     "nodemon": "^2.0.20",
-    "prettier": "2.7.1"
+    "prettier": "2.7.1",
+    "redoc-cli": "^0.13.20",
+    "supertest": "^6.3.1",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-jsdoc-generator": "^1.0.3",
+    "swagger-ui-express": "^4.5.0"
   }
 }
