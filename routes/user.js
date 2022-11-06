@@ -43,6 +43,8 @@ const router = express.Router();
  *                 error:
  *                   type: string
  *                   description: Type of error
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -85,6 +87,8 @@ router.post("/block-user");
  *                 error:
  *                   type: string
  *                   description: Type of error
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -344,10 +348,14 @@ router.get("/user/:username/posts");
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/ListedPost"
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
  *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
  */
 router.get("/user/:username/history");
 
@@ -604,6 +612,8 @@ router.get("/user/:username/comments");
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/ListedPost"
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -671,6 +681,8 @@ router.get("/user/:username/upvoted");
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/ListedPost"
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -715,6 +727,8 @@ router.get("/user/:username/downvoted");
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/UserOverview"
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -759,6 +773,8 @@ router.get("/user/:username/saved");
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/ListedPost"
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
