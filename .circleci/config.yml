@@ -49,9 +49,6 @@ jobs:
     - run:
         name: Run Unit Tests
         command: |
-          ls
-          pwd
-          sleep 1m
           npm run test
 
   integration-testing:
@@ -64,7 +61,7 @@ jobs:
         command: |
           npm i
     - run:
-        name: Run Unit Tests
+        name: Run integration Tests
         command: |
           ls
 

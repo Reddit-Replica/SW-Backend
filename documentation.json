@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Read-it API",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "API Documentation for all endpoints"
   },
   "components": {
@@ -1199,560 +1199,6 @@
     }
   },
   "paths": {
-    "/signup": {
-      "post": {
-        "summary": "Create a new account to the user",
-        "tags": ["Sign Up"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["username", "email", "password"],
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "description": "Email of the user"
-                  },
-                  "username": {
-                    "type": "string",
-                    "description": "Username"
-                  },
-                  "password": {
-                    "type": "string",
-                    "description": "Password"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "The account has been successfully created",
-            "headers": {
-              "Authorization": {
-                "description": "The jwt that will be used for authorization",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/signup/{type}": {
-      "post": {
-        "summary": "Sign up with google or facebook",
-        "tags": ["Sign Up"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "type",
-            "description": "Type of sign up",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": ["google", "facebook"]
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["accessToken"],
-                "properties": {
-                  "accessToken": {
-                    "type": "string",
-                    "description": "Access token from the response of google or facebook"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "The account has been successfully created",
-            "headers": {
-              "Authorization": {
-                "description": "The jwt that will be used for authorization",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/username-available": {
-      "get": {
-        "summary": "Check if the username is used before",
-        "tags": ["Sign Up"],
-        "parameters": [
-          {
-            "in": "query",
-            "required": true,
-            "name": "username",
-            "description": "Username to check",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The username is available"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Username is already taken"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/email-available": {
-      "get": {
-        "summary": "Check if the email is used before",
-        "tags": ["Sign Up"],
-        "parameters": [
-          {
-            "in": "query",
-            "required": true,
-            "name": "email",
-            "description": "Email to check",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The email is available"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Email is already taken"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/verify-email/{id}/{token}": {
-      "post": {
-        "summary": "Verify the email",
-        "tags": ["Sign Up"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "description": "User's id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "token",
-            "description": "The token created by the server to verify the email",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Email verified successfully",
-            "headers": {
-              "Authorization": {
-                "description": "The jwt that will be used for authorization",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Invalid token"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/random-username": {
-      "get": {
-        "summary": "Get an available random username used to create a new account",
-        "tags": ["Sign Up"],
-        "responses": {
-          "200": {
-            "description": "The email is available",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "username": {
-                      "type": "string",
-                      "description": "Random username"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/login": {
-      "post": {
-        "summary": "Log in to the website",
-        "tags": ["Login"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["username", "password"],
-                "properties": {
-                  "username": {
-                    "type": "string",
-                    "description": "Username"
-                  },
-                  "password": {
-                    "type": "string",
-                    "description": "Password"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User logged in successfully",
-            "headers": {
-              "Authorization": {
-                "description": "The jwt that will be used for authorization",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/login/{type}": {
-      "post": {
-        "summary": "Login with google or facebook",
-        "tags": ["Login"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "type",
-            "description": "Type of sign up",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": ["google", "facebook"]
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["accessToken"],
-                "properties": {
-                  "accessToken": {
-                    "type": "string",
-                    "description": "Access token from the response of google or facebook"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User logged in successfully",
-            "headers": {
-              "Authorization": {
-                "description": "The jwt that will be used for authorization",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/login/forget": {
-      "post": {
-        "summary": "Forget username or password",
-        "tags": ["Login"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["type", "email"],
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "description": "Forget username or password",
-                    "enum": ["username", "password"]
-                  },
-                  "username": {
-                    "type": "string",
-                    "description": "Username (only when type = password)"
-                  },
-                  "email": {
-                    "type": "string",
-                    "description": "Email"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Email has been sent"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/reset-password/{id}/{token}": {
-      "post": {
-        "summary": "Reset the password",
-        "tags": ["Login"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "description": "User's id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "token",
-            "description": "The token created by the server to reset the password",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["newPassword", "verifyPassword"],
-                "properties": {
-                  "newPassword": {
-                    "type": "string",
-                    "description": "New password"
-                  },
-                  "verifyPassword": {
-                    "type": "string",
-                    "description": "New password again to verify"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Password updated successfully",
-            "headers": {
-              "Authorization": {
-                "description": "The jwt that will be used for authorization",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Invalid token"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
     "/saved-categories": {
       "get": {
         "summary": "Get a list of all categories",
@@ -2367,7 +1813,7 @@
                   "type": "object",
                   "properties": {
                     "children": {
-                      "$ref": "#/components/schemas/moderator"
+                      "$ref": "#/components/schemas/community"
                     }
                   }
                 }
@@ -2450,7 +1896,7 @@
                       "type": "array",
                       "description": "List of [Things] to return",
                       "items": {
-                        "$ref": "#/components/schemas/community"
+                        "$ref": "#/components/schemas/moderator"
                       }
                     }
                   }
@@ -2790,7 +2236,7 @@
     },
     "/best": {
       "get": {
-        "summary": "Return the best posts based on [time, votes, comments, number of shares]",
+        "summary": "Return the best posts based on [time, votes, comments, number of shares] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -2832,12 +2278,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/hot": {
       "get": {
-        "summary": "Return the hot posts based on [time, votes, comments]",
+        "summary": "Return the hot posts based on [time, votes, comments] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -2879,12 +2330,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/hot": {
       "get": {
-        "summary": "Return the hot posts in a specific subreddit based on [time, votes, comments]",
+        "summary": "Return the hot posts in a specific subreddit based on [time, votes, comments] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -2946,12 +2402,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/trending": {
       "get": {
-        "summary": "Return the trending posts based on [views]",
+        "summary": "Return the trending posts based on [views] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -2993,12 +2454,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/trending": {
       "get": {
-        "summary": "Return the trending posts in a specific subreddit based on [views]",
+        "summary": "Return the trending posts in a specific subreddit based on [views] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -3060,12 +2526,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/new": {
       "get": {
-        "summary": "Return the new posts",
+        "summary": "Return the new posts (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -3107,12 +2578,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/new": {
       "get": {
-        "summary": "Return the new posts in a specific subreddit",
+        "summary": "Return the new posts in a specific subreddit (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -3174,12 +2650,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/random": {
       "get": {
-        "summary": "Return the id of a random post. [can be used to get the post and the comment tree later]",
+        "summary": "Return the id of a random post. [can be used to get the post and the comment tree later] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "responses": {
           "200": {
@@ -3199,12 +2680,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/random": {
       "get": {
-        "summary": "Return the id of a random post from a specific subreddit. [can be used to get the post and the comment tree later]",
+        "summary": "Return the id of a random post from a specific subreddit. [can be used to get the post and the comment tree later] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -3238,12 +2724,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/top": {
       "get": {
-        "summary": "Return the top posts based on [votes]",
+        "summary": "Return the top posts based on [votes] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -3295,12 +2786,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/top": {
       "get": {
-        "summary": "Return the top posts in a specific subreddit based on [votes]",
+        "summary": "Return the top posts in a specific subreddit based on [votes] (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Listing"],
         "parameters": [
           {
@@ -3372,12 +2868,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/comments/{postId}": {
       "get": {
-        "summary": "Get the comment tree for a given post",
+        "summary": "Get the comment tree for a given post (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
         "parameters": [
           {
@@ -3478,12 +2979,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/r/{subreddit}/comments/{postId}/{commentId}": {
       "get": {
-        "summary": "Return comment tree of a specific comment",
+        "summary": "Return comment tree of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
         "parameters": [
           {
@@ -3593,12 +3099,17 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
-    "/r/{subreddit}/comments/{postId}/{commentId}/parent_comments": {
+    "/r/{subreddit}/comments/{postId}/{commentId}/parent-comments": {
       "get": {
-        "summary": "Return the parents of a specific comment",
+        "summary": "Return the parents of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
         "parameters": [
           {
@@ -3739,6 +3250,254 @@
           "500": {
             "description": "Internal server error"
           }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Log in to the website",
+        "tags": ["Login"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["username", "password"],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Username"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "headers": {
+              "Authorization": {
+                "description": "The jwt that will be used for authorization",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "description": "Username"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/login/forget-password": {
+      "post": {
+        "summary": "Forget password",
+        "tags": ["Login"],
+        "requestBody": {
+          "re quired": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["username", "email"],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Username"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email has been sent"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/reset-password/{id}/{token}": {
+      "post": {
+        "summary": "Reset the password",
+        "tags": ["Login"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "User's id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "token",
+            "description": "The token created by the server to reset the password",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["newPassword", "verifyPassword"],
+                "properties": {
+                  "newPassword": {
+                    "type": "string",
+                    "description": "New password"
+                  },
+                  "verifyPassword": {
+                    "type": "string",
+                    "description": "New password again to verify"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password updated successfully",
+            "headers": {
+              "Authorization": {
+                "description": "The jwt that will be used for authorization",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Invalid token"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/login/forget-username": {
+      "post": {
+        "summary": "Forget username, used to send an email with the username inside it",
+        "tags": ["Login"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "Email to send the username to"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email has been sent"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
         }
       }
     },
@@ -3772,6 +3531,7 @@
                   },
                   "sendAt": {
                     "type": "string",
+                    "format": "date-time",
                     "description": "Time of sending the message"
                   },
                   "subject": {
@@ -3863,6 +3623,7 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "Time of sending the message"
                           },
                           "subject": {
@@ -3952,7 +3713,8 @@
                           },
                           "type": {
                             "type": "string",
-                            "description": "describes the type of message"
+                            "description": "describes the type of message",
+                            "enum": ["Post replies", "Mentions", "Messages"]
                           },
                           "subredditName": {
                             "type": "string",
@@ -3972,6 +3734,7 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "Time of sending the message"
                           },
                           "subject": {
@@ -4074,6 +3837,7 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "Time of sending the message"
                           },
                           "subject": {
@@ -4187,6 +3951,7 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "Time of sending the message"
                           },
                           "subject": {
@@ -4300,6 +4065,7 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "Time of sending the message"
                           },
                           "subject": {
@@ -4401,6 +4167,7 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "Time of sending the message"
                           },
                           "subject": {
@@ -8353,7 +8120,7 @@
     },
     "/post-details": {
       "get": {
-        "summary": "Get details about a specific post",
+        "summary": "Get details about a specific post (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Posts"],
         "parameters": [
           {
@@ -8401,7 +8168,12 @@
           "500": {
             "description": "Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/pin-post": {
@@ -9512,6 +9284,351 @@
           },
           "500": {
             "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/signup": {
+      "post": {
+        "summary": "Create a new account to the user",
+        "tags": ["Sign Up"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["username", "email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "Email of the user"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "Username"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The account has been successfully created",
+            "headers": {
+              "Authorization": {
+                "description": "The jwt that will be used for authorization",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "description": "Username of the user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/username-available": {
+      "get": {
+        "summary": "Check if the username is used before",
+        "tags": ["Sign Up"],
+        "parameters": [
+          {
+            "in": "query",
+            "required": true,
+            "name": "username",
+            "description": "Username to check",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The username is available"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Username is already taken"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/email-available": {
+      "get": {
+        "summary": "Check if the email is used before",
+        "tags": ["Sign Up"],
+        "parameters": [
+          {
+            "in": "query",
+            "required": true,
+            "name": "email",
+            "description": "Email to check",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The email is available"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email is already taken"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/verify-email/{id}/{token}": {
+      "post": {
+        "summary": "Verify the email",
+        "tags": ["Sign Up"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "User's id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "token",
+            "description": "The token created by the server to verify the email",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email verified successfully",
+            "headers": {
+              "Authorization": {
+                "description": "The jwt that will be used for authorization",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Invalid token"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/signin/{type}": {
+      "post": {
+        "summary": "Sign up and Login with google or facebook",
+        "tags": ["Sign Up"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "type",
+            "description": "Type of sign up",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["google", "facebook"]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["accessToken"],
+                "properties": {
+                  "accessToken": {
+                    "type": "string",
+                    "description": "Access token from the response of google or facebook"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "headers": {
+              "Authorization": {
+                "description": "The jwt that will be used for authorization",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "description": "Username of the user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "The account has been successfully created",
+            "headers": {
+              "Authorization": {
+                "description": "The jwt that will be used for authorization",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "description": "Username of the user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/random-username": {
+      "get": {
+        "summary": "Get an available random username used to create a new account",
+        "tags": ["Sign Up"],
+        "responses": {
+          "200": {
+            "description": "The email is available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "description": "Random username"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -11378,16 +11495,12 @@
   "securityDefinitions": {},
   "tags": [
     {
-      "name": "Sign Up",
-      "description": "Sign Up and email verfication endpoints"
+      "name": "Listing",
+      "description": "Listing endpoints"
     },
     {
       "name": "Login",
       "description": "Login and forget password endpoints used"
-    },
-    {
-      "name": "Listing",
-      "description": "Listing endpoints"
     },
     {
       "name": "Messages",
@@ -11412,6 +11525,10 @@
     {
       "name": "Threads",
       "description": "Containers that help us to send notifications"
+    },
+    {
+      "name": "Sign Up",
+      "description": "Sign Up and email verfication endpoints"
     },
     {
       "name": "Subreddit",

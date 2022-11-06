@@ -14,7 +14,7 @@ const router = express.Router();
  * @swagger
  * /best:
  *   get:
- *     summary: Return the best posts based on [time, votes, comments, number of shares]
+ *     summary: Return the best posts based on [time, votes, comments, number of shares] (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Listing]
  *     parameters:
  *       - in: query
@@ -41,6 +41,8 @@ const router = express.Router();
  *               $ref: "#/components/schemas/ListedPost"
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/best");
 
@@ -48,7 +50,7 @@ router.get("/best");
  * @swagger
  * /hot:
  *   get:
- *     summary: Return the hot posts based on [time, votes, comments]
+ *     summary: Return the hot posts based on [time, votes, comments] (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Listing]
  *     parameters:
  *       - in: query
@@ -75,6 +77,8 @@ router.get("/best");
  *                $ref: "#/components/schemas/ListedPost"
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/hot");
 
@@ -82,7 +86,7 @@ router.get("/hot");
  * @swagger
  * /r/{subreddit}/hot:
  *   get:
- *     summary: Return the hot posts in a specific subreddit based on [time, votes, comments]
+ *     summary: Return the hot posts in a specific subreddit based on [time, votes, comments] (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Listing]
  *     parameters:
  *       - in: path
@@ -122,6 +126,8 @@ router.get("/hot");
  *         description: Didn't find a subreddit with that name
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/r/:subreddit/hot");
 
@@ -129,7 +135,7 @@ router.get("/r/:subreddit/hot");
  * @swagger
  * /trending:
  *   get:
- *     summary: Return the trending posts based on [views]
+ *     summary: Return the trending posts based on [views] (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Listing]
  *     parameters:
  *       - in: query
@@ -156,6 +162,8 @@ router.get("/r/:subreddit/hot");
  *                $ref: "#/components/schemas/ListedPost"
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/trending");
 
@@ -163,7 +171,7 @@ router.get("/trending");
  * @swagger
  * /r/{subreddit}/trending:
  *   get:
- *     summary: Return the trending posts in a specific subreddit based on [views]
+ *     summary: Return the trending posts in a specific subreddit based on [views] (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Listing]
  *     parameters:
  *       - in: path
@@ -203,6 +211,8 @@ router.get("/trending");
  *         description: Didn't find a subreddit with that name
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/r/:subreddit/trending");
 
@@ -210,7 +220,7 @@ router.get("/r/:subreddit/trending");
  * @swagger
  * /new:
  *   get:
- *     summary: Return the new posts
+ *     summary: Return the new posts (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Listing]
  *     parameters:
  *       - in: query
@@ -237,6 +247,8 @@ router.get("/r/:subreddit/trending");
  *                $ref: "#/components/schemas/ListedPost"
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/new");
 
@@ -244,7 +256,7 @@ router.get("/new");
  * @swagger
  * /r/{subreddit}/new:
  *   get:
- *     summary: Return the new posts in a specific subreddit
+ *     summary: Return the new posts in a specific subreddit (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Listing]
  *     parameters:
  *       - in: path
@@ -284,6 +296,8 @@ router.get("/new");
  *         description: Didn't find a subreddit with that name
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/r/:subreddit/new");
 
@@ -291,7 +305,7 @@ router.get("/r/:subreddit/new");
  * @swagger
  * /random:
  *   get:
- *     summary: Return the id of a random post. [can be used to get the post and the comment tree later]
+ *     summary: Return the id of a random post. [can be used to get the post and the comment tree later] (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Listing]
  *     responses:
  *       200:
@@ -304,6 +318,8 @@ router.get("/r/:subreddit/new");
  *                    description: Post id that can be used to request for the post and its comments
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/random");
 
@@ -311,7 +327,7 @@ router.get("/random");
  * @swagger
  * /r/{subreddit}/random:
  *   get:
- *     summary: Return the id of a random post from a specific subreddit. [can be used to get the post and the comment tree later]
+ *     summary: Return the id of a random post from a specific subreddit. [can be used to get the post and the comment tree later] (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Listing]
  *     parameters:
  *       - in: path
@@ -333,6 +349,8 @@ router.get("/random");
  *         description: Didn't find a subreddit with that name
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/r/:subreddit/random");
 
@@ -340,7 +358,7 @@ router.get("/r/:subreddit/random");
  * @swagger
  * /top:
  *   get:
- *     summary: Return the top posts based on [votes]
+ *     summary: Return the top posts based on [votes] (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Listing]
  *     parameters:
  *       - in: query
@@ -380,6 +398,8 @@ router.get("/r/:subreddit/random");
  *                $ref: "#/components/schemas/ListedPost"
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/top");
 
@@ -387,7 +407,7 @@ router.get("/top");
  * @swagger
  * /r/{subreddit}/top:
  *   get:
- *     summary: Return the top posts in a specific subreddit based on [votes]
+ *     summary: Return the top posts in a specific subreddit based on [votes] (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Listing]
  *     parameters:
  *       - in: path
@@ -440,6 +460,8 @@ router.get("/top");
  *         description: Didn't find a subreddit with that name
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/r/:subreddit/top");
 
@@ -447,7 +469,7 @@ router.get("/r/:subreddit/top");
  * @swagger
  * /r/{subreddit}/comments/{postId}:
  *   get:
- *     summary: Get the comment tree for a given post
+ *     summary: Get the comment tree for a given post (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Comments]
  *     parameters:
  *       - in: path
@@ -516,6 +538,8 @@ router.get("/r/:subreddit/top");
  *                   description: Type of error
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/r/:subreddit/comments/:postId");
 
@@ -523,7 +547,7 @@ router.get("/r/:subreddit/comments/:postId");
  * @swagger
  * /r/{subreddit}/comments/{postId}/{commentId}:
  *   get:
- *     summary: Return comment tree of a specific comment
+ *     summary: Return comment tree of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Comments]
  *     parameters:
  *       - in: path
@@ -598,14 +622,16 @@ router.get("/r/:subreddit/comments/:postId");
  *                   description: Type of error
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
 router.get("/r/:subreddit/comments/:postId/:commentId");
 
 /**
  * @swagger
- * /r/{subreddit}/comments/{postId}/{commentId}/parent_comments:
+ * /r/{subreddit}/comments/{postId}/{commentId}/parent-comments:
  *   get:
- *     summary: Return the parents of a specific comment
+ *     summary: Return the parents of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Comments]
  *     parameters:
  *       - in: path
@@ -708,7 +734,9 @@ router.get("/r/:subreddit/comments/:postId/:commentId");
  *                   description: Type of error
  *       500:
  *         description: Internal server error
+ *     security:
+ *      - bearerAuth: []
  */
-router.get("/r/:subreddit/comments/:postId/:commentId/parent_comments");
+router.get("/r/:subreddit/comments/:postId/:commentId/parent-comments");
 
 export default router;

@@ -23,7 +23,7 @@ app.use((_req, res, next) => {
 });
 
 // eslint-disable-next-line max-len
-const DB_URL = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`;
+const DB_URL = process.env.MONGO_URL.trim();
 
 mongoose
   .connect(DB_URL, { useNewUrlParser: true })
@@ -49,7 +49,9 @@ const options = {
 const specs = swaggerJsDoc(options);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
-app.use("/api", mainRouter);
+app.use(mainRouter);
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
 });
+
+export default app;
