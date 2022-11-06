@@ -8,7 +8,7 @@ const flairSchema = mongoose.Schema(
       required: true,
     },
     order: {
-      type: number,
+      type: Number,
       required: true,
     },
     backgroundColor: {
@@ -18,6 +18,9 @@ const flairSchema = mongoose.Schema(
     textColor: {
       type: String,
       default: "black",
+    },
+    deletedAt: {
+      type: Date,
     },
     flairSettings: {
       modOnly: {
