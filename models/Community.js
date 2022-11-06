@@ -62,7 +62,6 @@ const communitySchema = mongoose.Schema({
       },
       ruleDescription: {
         type: String,
-        required: true,
       },
       ruleOrder: {
         type: Number,
@@ -79,7 +78,6 @@ const communitySchema = mongoose.Schema({
       },
       reportReason: {
         type: String,
-        required: true,
       },
     },
   ],
