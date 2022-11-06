@@ -1,141 +1,154 @@
 import mongoose, { Schema } from "mongoose";
 
-
+// eslint-disable-next-line new-cap
 const communitySchema = mongoose.Schema({
-    title: {
+  title: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+  },
+  category: {
+    type: String,
+    required: true,
+  },
+  banner: {
+    type: String,
+  },
+  picture: {
+    type: String,
+  },
+  type: {
+    type: String,
+    required: true,
+  },
+  mainTopic: {
+    type: String,
+  },
+  subTopics: [
+    {
+      type: String,
+    },
+  ],
+  flairs: [
+    {
+      type: String,
+    },
+  ],
+  dateOfCreation: {
+    type: Date,
+    required: true,
+    default: Date.now(),
+  },
+  views: {
+    type: Number,
+  },
+  members: {
+    type: Number,
+    required: true,
+    default: 1,
+  },
+  nsfw: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  rules: [
+    {
+      ruleTitle: {
         type: String,
         required: true,
-    },
-    description: {
-        type: String,
-    },
-    category: {
+      },
+      ruleDescription: {
         type: String,
         required: true,
-    },
-    banner: {
-        type: String,
-    },
-    picture: {
-        type: String,
-    },
-    type: {
-        type: String,
+      },
+      ruleOrder: {
+        type: Number,
         required: true,
-    },
-    mainTopic: {
-        type: String,
-    },
-    subTopics:[
-        {
-            type: String
-        }
-    ],
-    flairs: [
-        {
-            type: String,
-        }
-    ],
-    dateOfCreation:{
+      },
+      createdAt: {
         type: Date,
         required: true,
         default: Date.now(),
-    },
-    views: {
-        type: Number,
-    },
-    members: {
-        type: Number,
+      },
+      appliesTo: {
+        type: String,
         required: true,
-        default: 1,
-    },
-    nsfw: {
-        type: Boolean,
+      },
+      reportReason: {
+        type: String,
         required: true,
-        default: false,
+      },
     },
-    rules: [
+  ],
+  moderators: [
+    {
+      username: {
+        type: String,
+        required: true,
+      },
+      nickname: {
+        type: String,
+        required: true,
+      },
+      dateOfModeration: {
+        type: Date,
+        required: true,
+        default: Date.now(),
+      },
+      permissions: [
         {
-            ruleTitle: {
-                type: String,
-                required: true,
-            },
-            ruleDescription: {
-                type: String,
-                required: true,
-            },
+          type: String,
         },
-    ],
-    moderators: [
-        {
-            username: {
-                type: String,
-                required: true,
-            },
-            nickname: {
-                type: String,
-                required: true,
-            },
-            dateOfModeration: {
-                type: Date,
-                required: true,
-                default: Date.now(),
-            },
-            permissions: [
-                {
-                    type: String
-                }
-            ]
-        },
-    ],
-    bannedUsers: [
-        {
-            username: {
-                type: String,
-                required: true,
-            },
-            userID: {
-                type: Schema.Types.ObjectId,
-                ref: "User",
-            },
-        }
-    ],
-    mutedUsers: [
-        {
-            username: {
-                type: String,
-                required: true,
-            },
-            userID: {
-                type: Schema.Types.ObjectId,
-                ref: "User",
-            },
-        }
-    ],
-    approvedUsers: [
-        {
-            username: {
-                type: String,
-                required: true,
-            },
-            userID: {
-                type: Schema.Types.ObjectId,
-                ref: "User",
-            },
-        }
-    ],
-    subredditPosts: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "Post",
-        }
-    ]
-
+      ],
+    },
+  ],
+  bannedUsers: [
+    {
+      username: {
+        type: String,
+        required: true,
+      },
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    },
+  ],
+  mutedUsers: [
+    {
+      username: {
+        type: String,
+        required: true,
+      },
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    },
+  ],
+  approvedUsers: [
+    {
+      username: {
+        type: String,
+        required: true,
+      },
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    },
+  ],
+  subredditPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
 });
 
-
-
-const Community = mongoose.model("Community",communitySchema);
+const Community = mongoose.model("Community", communitySchema);
 
 export default Community;
-
