@@ -1,7 +1,7 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import commentController from "../controllers/BcommentController.js";
-import { verifyAuthToken } from "../middleware/verifyToken.js";
+import verifyToken from "../middleware/verifyToken.js";
 
 // eslint-disable-next-line new-cap
 const commentsRouter = express.Router();
@@ -55,7 +55,7 @@ const commentsRouter = express.Router();
  */
 commentsRouter.post(
   "/comment",
-  verifyAuthToken,
+  verifyToken.verifyAuthToken,
   commentController.createCommentValidator,
   validateRequestSchema,
   commentController.createComment
