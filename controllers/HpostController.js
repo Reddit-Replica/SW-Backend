@@ -26,7 +26,7 @@ const createPost = async (req, res) => {
   const username = authorizationResult.username;
 
   try {
-    if (kind === "image") {
+    if (kind === "image" || kind === "video") {
       content = req.file.path;
     }
     const post = await new Post({
