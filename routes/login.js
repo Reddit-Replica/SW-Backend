@@ -1,5 +1,8 @@
 import express from "express";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import loginController from "../controllers/loginController.js";
 
+// eslint-disable-next-line new-cap
 const loginRouter = express.Router();
 
 /**
@@ -57,7 +60,12 @@ const loginRouter = express.Router();
  *       500:
  *         description: Internal server error
  */
-loginRouter.post("/login");
+loginRouter.post(
+  "/login",
+  loginController.loginValidator,
+  validateRequestSchema,
+  loginController.login
+);
 
 /**
  * @swagger
@@ -95,7 +103,12 @@ loginRouter.post("/login");
  *       500:
  *         description: Internal server error
  */
-loginRouter.post("/login/forget-password");
+loginRouter.post(
+  "/login/forget-password",
+  loginController.forgetPasswordValidator,
+  validateRequestSchema,
+  loginController.forgetPassword
+);
 
 /**
  * @swagger
@@ -153,7 +166,12 @@ loginRouter.post("/login/forget-password");
  *       500:
  *         description: Internal server error
  */
-loginRouter.post("/reset-password/:id/:token");
+loginRouter.post(
+  "/reset-password/:id/:token",
+  loginController.resetPasswordValidator,
+  validateRequestSchema,
+  loginController.resetPassword
+);
 
 /**
  * @swagger
@@ -187,6 +205,11 @@ loginRouter.post("/reset-password/:id/:token");
  *       500:
  *         description: Internal server error
  */
-loginRouter.post("/login/forget-username");
+loginRouter.post(
+  "/login/forget-username",
+  loginController.forgetUsernameValidator,
+  validateRequestSchema,
+  loginController.forgetUsername
+);
 
 export default loginRouter;

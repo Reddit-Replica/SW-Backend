@@ -8,7 +8,7 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 const app = express();
 
-dotenv.config({ path: `./.env.${process.env.NODE_ENV.trim()}` });
+dotenv.config();
 
 app.use(bodyParser.json());
 app.use(morgan("dev"));
@@ -22,8 +22,13 @@ app.use((_req, res, next) => {
   next();
 });
 
+let DB_URL;
 // eslint-disable-next-line max-len
-const DB_URL = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`;
+if (process.env.NODE_ENV.trim() === "testing") {
+  DB_URL = process.env.MONGO_URL_TESTING.trim();
+} else {
+  DB_URL = process.env.MONGO_URL.trim();
+}
 
 mongoose
   .connect(DB_URL, { useNewUrlParser: true })
