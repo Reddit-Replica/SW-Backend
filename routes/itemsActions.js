@@ -1,11 +1,10 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
-// eslint-disable-next-line max-len
-import poComMesActionsController from "../controllers/BpoComMesActionsController.js";
+import itemsActionController from "../controllers/BitemsActionsController.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
 
 // eslint-disable-next-line new-cap
-const postCommentMessageActionsRouter = express.Router();
+const itemsActionsRouter = express.Router();
 
 /**
  * @swagger
@@ -50,12 +49,12 @@ const postCommentMessageActionsRouter = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-postCommentMessageActionsRouter.delete(
+itemsActionsRouter.delete(
   "/delete",
   verifyAuthToken,
-  poComMesActionsController.deleteValidator,
+  itemsActionController.deleteValidator,
   validateRequestSchema,
-  poComMesActionsController.deletePoComMes
+  itemsActionController.deletePoComMes
 );
 
-export default postCommentMessageActionsRouter;
+export default itemsActionsRouter;

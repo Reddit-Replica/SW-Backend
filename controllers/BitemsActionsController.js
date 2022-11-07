@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 import Comment from "../models/Comment.js";
-import Post from "./../models/Post.js";
+import Post from "../models/Post.js";
 
 const deleteValidator = [
   body("id").not().isEmpty().withMessage("Id can not be empty"),
