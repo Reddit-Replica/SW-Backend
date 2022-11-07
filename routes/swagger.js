@@ -168,6 +168,12 @@
  *         postedAt:
  *           type: string
  *           description: The time in which this post was published
+ *         deletedAt:
+ *           type: string
+ *           description: The time in which this post was deleted
+ *         editedAt:
+ *           type: string
+ *           description: The time in which this post was edited
  *         postedBy:
  *           type: string
  *           description: Name of the user associated with the post
@@ -888,7 +894,6 @@
  *             - 0
  *             - -1
  *           description: Used to know if that moderator voted up [1] or down [-1] or didn't vote [0] to that post or comment
-
  *   ListingPost:
  *     type: object
  *     properties:
