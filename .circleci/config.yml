@@ -39,7 +39,7 @@ commands:
 jobs:
   unit-testing:
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:lts
     steps:
     - checkout
     - run:
