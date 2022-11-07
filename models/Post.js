@@ -26,6 +26,20 @@ const postSchema = mongoose.Schema({
   content: {
     type: String,
   },
+  images: [
+    {
+      path: {
+        type: String,
+        required: true,
+      },
+      caption: {
+        type: String,
+      },
+      link: {
+        type: String,
+      },
+    },
+  ],
   sharePostId: {
     type: Schema.Types.ObjectId,
     ref: "Post",
