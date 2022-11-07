@@ -151,6 +151,6 @@ const communitySchema = mongoose.Schema({
   ],
 });
 
-const Community = mongoose.model("Community", communitySchema);
+const Subreddit = mongoose.model("Subreddit", communitySchema);
 
-export default Community;
+export default Subreddit;
