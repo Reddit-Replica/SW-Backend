@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const communitySchema = mongoose.Schema({
+const subredditSchema = mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -131,6 +131,6 @@ const communitySchema = mongoose.Schema({
   ],
 });
 
-const Community = mongoose.model("Community", communitySchema);
+const Subreddit = mongoose.model("Subreddit", subredditSchema);
 
-export default Community;
+export default Subreddit;
