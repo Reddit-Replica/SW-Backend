@@ -1,4 +1,4 @@
-import Subreddit from "../models/Community.js";
+import Subreddit from "../models/Subreddit.js";
 
 const createSubreddit = async (req, _res, next) => {
   const subreddit = req.params.subreddit;
@@ -11,6 +11,13 @@ const createSubreddit = async (req, _res, next) => {
     image: "test.png",
     owner: "zedyad",
     description: "This is new subreddit",
+    moderators: [
+      {
+        username: "zeyadtarekk",
+        userID: "6368f28e311af194fd6285a4",
+        nickname: "anything",
+      },
+    ],
     rules: [
       {
         ruleTitle: "test",
