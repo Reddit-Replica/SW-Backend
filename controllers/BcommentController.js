@@ -23,6 +23,7 @@ const createComment = async (req, res) => {
       level: level,
       content: text,
       ownerUsername: username,
+      ownerId: userId,
     });
 
     await comment.save();
