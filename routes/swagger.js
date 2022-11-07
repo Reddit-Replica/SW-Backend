@@ -154,6 +154,9 @@
  *         title:
  *           type: string
  *           description: Title of the submission
+ *         sharePostId:
+ *           type: string
+ *           description: Post id in case of containing info of a shared post
  *         flair:
  *           $ref: '#/components/schemas/Flair'
  *         comments:
@@ -168,6 +171,30 @@
  *         postedBy:
  *           type: string
  *           description: Name of the user associated with the post
+ *         upvoted:
+ *           type: boolean
+ *           default: false
+ *           description: If true, then the post was upvoted by the logged in user
+ *         downvoted:
+ *           type: boolean
+ *           default: false
+ *           description: If true, then the post was downvoted by the logged in user
+ *         saved:
+ *           type: boolean
+ *           default: false
+ *           description: If true, then the post was saved by the logged in user
+ *         followed:
+ *           type: boolean
+ *           default: false
+ *           description: If true, then the post was followed by the logged in user
+ *         hidden:
+ *           type: boolean
+ *           default: false
+ *           description: If true, then the post was marked hidden by the logged in user
+ *         spammed:
+ *           type: boolean
+ *           default: false
+ *           description: If true, then the post was marked spam by the logged in user
  *   Post:
  *       type: object
  *       properties:
