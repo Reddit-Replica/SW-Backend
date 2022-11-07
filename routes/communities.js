@@ -1,7 +1,9 @@
 import express from "express";
-
+import subredditDetailsController from "../controllers/subredditDetails.js";
+import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
+import verifyToken from "../middleware/verifyToken.js";
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const communitiesRouter = express.Router();
 
 /**
  * @swagger
@@ -67,7 +69,7 @@ const router = express.Router();
  *       - bearerAuth: []
  */
 
-router.get("/subreddits/leaderboard");
+communitiesRouter.get("/subreddits/leaderboard");
 
 /**
  * @swagger
@@ -143,7 +145,7 @@ router.get("/subreddits/leaderboard");
  *       - bearerAuth: []
  */
 
-router.get("/subreddits/leaderboard/:categoryName");
+communitiesRouter.get("/subreddits/leaderboard/:categoryName");
 
 /**
  * @swagger
@@ -209,7 +211,7 @@ router.get("/subreddits/leaderboard/:categoryName");
  *       - bearerAuth: []
  */
 
-router.get("/custom-random-category");
+communitiesRouter.get("/custom-random-category");
 
 /**
  * @swagger
@@ -278,7 +280,7 @@ router.get("/custom-random-category");
  *       - bearerAuth: []
  */
 
-router.get("/trending-communities");
+communitiesRouter.get("/trending-communities");
 
 /**
  * @swagger
@@ -350,7 +352,7 @@ router.get("/trending-communities");
  *       - bearerAuth: []
  */
 
-router.get("/random-category");
+communitiesRouter.get("/random-category");
 
 /**
  * @swagger
@@ -384,7 +386,13 @@ router.get("/random-category");
  *       - bearerAuth: []
  */
 
-router.get("/r/:subreddit");
+communitiesRouter.get(
+  "/r/:subreddit",
+  verifyToken.verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  subredditDetailsController.subredditDetails
+);
 
 /**
  * @swagger
@@ -443,7 +451,7 @@ router.get("/r/:subreddit");
  *       - bearerAuth: []
  */
 
-router.get("/r/:subreddit/about/moderators");
+communitiesRouter.get("/r/:subreddit/about/moderators");
 
 /**
  * @swagger
@@ -480,7 +488,7 @@ router.get("/r/:subreddit/about/moderators");
  *       - bearerAuth: []
  */
 
-router.get("/r/:subreddit/wiki/rules");
+communitiesRouter.get("/r/:subreddit/wiki/rules");
 
 /**
  * @swagger
@@ -517,7 +525,7 @@ router.get("/r/:subreddit/wiki/rules");
  *       - bearerAuth: []
  */
 
-router.get("/r/:subreddit/wiki/bans");
+communitiesRouter.get("/r/:subreddit/wiki/bans");
 
 /**
  * @swagger
@@ -553,7 +561,7 @@ router.get("/r/:subreddit/wiki/bans");
  *       - bearerAuth: []
  */
 
-router.post("/r/:subreddit/add-main-topic");
+communitiesRouter.post("/r/:subreddit/add-main-topic");
 
 /**
  * @swagger
@@ -591,7 +599,7 @@ router.post("/r/:subreddit/add-main-topic");
  *       - bearerAuth: []
  */
 
-router.post("/r/:subreddit/add-subtopics");
+communitiesRouter.post("/r/:subreddit/add-subtopics");
 
 /**
  * @swagger
@@ -627,7 +635,7 @@ router.post("/r/:subreddit/add-subtopics");
  *       - bearerAuth: []
  */
 
-router.post("/r/:subreddit/add-description");
+communitiesRouter.post("/r/:subreddit/add-description");
 
 /**
  * @swagger
@@ -652,7 +660,7 @@ router.post("/r/:subreddit/add-description");
  *       - bearerAuth: []
  */
 
-router.patch("/r/:subreddit/toggle-favorite");
+communitiesRouter.patch("/r/:subreddit/toggle-favorite");
 
 /**
  * @swagger
@@ -677,6 +685,6 @@ router.patch("/r/:subreddit/toggle-favorite");
  *       - bearerAuth: []
  */
 
-router.patch("/r/:subreddit/toggle-community-theme");
+communitiesRouter.patch("/r/:subreddit/toggle-community-theme");
 
-export default router;
+export default communitiesRouter;
