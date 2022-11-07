@@ -89,7 +89,7 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(409);
   });
 
-  it("check the availability of an available username", async () => {
+  xit("check the availability of an available username", async () => {
     const response = await request.get("/username-available").query({
       username: "Philip",
     });
@@ -105,7 +105,7 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(409);
   });
 
-  it("check the availability of an available email", async () => {
+  xit("check the availability of an available email", async () => {
     const response = await request.get("/email-available").query({
       email: "beshoy1@gmail.com",
     });
@@ -113,13 +113,13 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(200);
   });
 
-  it("try to sign up with google without access token", async () => {
+  xit("try to sign up with google without access token", async () => {
     const response = await request.post("/signin/google");
 
     expect(response.status).toEqual(400);
   });
 
-  it("try to sign up with google with valid access token", async () => {
+  xit("try to sign up with google with valid access token", async () => {
     const response = await request.post("/signin/google").send({
       accessToken:
         // eslint-disable-next-line max-len
@@ -129,7 +129,7 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(201);
   });
 
-  it("try to sign up with google with same access token again", async () => {
+  xit("try to sign up with google with same access token again", async () => {
     const response = await request.post("/signin/google").send({
       accessToken:
         // eslint-disable-next-line max-len
