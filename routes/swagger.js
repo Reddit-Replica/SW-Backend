@@ -168,6 +168,12 @@
  *         postedAt:
  *           type: string
  *           description: The time in which this post was published
+ *         deletedAt:
+ *           type: string
+ *           description: The time in which this post was deleted
+ *         editedAt:
+ *           type: string
+ *           description: The time in which this post was edited
  *         postedBy:
  *           type: string
  *           description: Name of the user associated with the post
