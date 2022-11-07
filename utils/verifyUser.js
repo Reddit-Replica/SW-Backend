@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
  * @returns {string} Returns the user id if the token is verified, otherwise null
  */
 export default function verifyUser(req) {
-  const authorizationHeader = req.headers.authorization;
+  const authorizationHeader = req.headers.Authorization;
   if (!authorizationHeader) {
     return null;
   }
