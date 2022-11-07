@@ -1134,7 +1134,6 @@ moderationRouter.post("/r/:subreddit/about/rules");
  *    - bearerAuth: []
  */
 
-// TODO: Add middleware to check that this user is a moderator in that subreddit
 moderationRouter.get(
   "/r/:subreddit/about/rules",
   verifyToken.verifyAuthToken,
