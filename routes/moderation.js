@@ -1140,6 +1140,7 @@ moderationRouter.get(
   verifyToken.verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
+  verifyToken.verifyAuthTokenModerator,
   subredditRulesController.getSubredditRules
 );
 
