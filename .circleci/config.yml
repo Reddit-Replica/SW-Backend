@@ -66,6 +66,9 @@ jobs:
           ls
 
   build-backend:
+    branches:
+      only:
+         master
     docker:
       - image: docker:17.05.0-ce-git
     steps:
