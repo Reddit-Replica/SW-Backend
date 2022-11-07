@@ -1,5 +1,6 @@
 import { body } from "express-validator";
 import Comment from "../models/Comment.js";
+import User from "./../models/User.js";
 
 const createCommentValidator = [
   body("text").not().isEmpty().withMessage("Text can not be empty"),
@@ -14,7 +15,7 @@ const createCommentValidator = [
 const createComment = async (req, res) => {
   try {
     const { text, parentId, parentType, level } = req.body;
-    const username = req.decodedPayload.username;
+    const { username, userId } = req.decodedPayload;
 
     const comment = new Comment({
       parentId: parentId,
@@ -25,6 +26,11 @@ const createComment = async (req, res) => {
     });
 
     await comment.save();
+
+    const user = await User.findById(userId);
+    user.comments.push(comment._id);
+    await user.save();
+
     res.status(201).send("Comment created successfully");
   } catch (error) {
     console.log(error);
