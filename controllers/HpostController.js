@@ -16,6 +16,8 @@ const createPost = async (req, res) => {
     content,
     nsfw,
     spoiler,
+    imageCaptions,
+    imageLinks,
     flairId,
     sendReplies,
     sharePostId,
@@ -34,6 +36,18 @@ const createPost = async (req, res) => {
     if (!postSubreddit) {
       return res.status(404).send("Subreddit not found");
     }
+    let images = [];
+    if (kind === "image") {
+      req.files.forEach((file) => {
+        images.push({
+          path: file.path,
+          caption: imageCaptions?.length > 0 ? imageCaptions[0] : "",
+          link: imageLinks?.length > 0 ? imageLinks[0] : "",
+        });
+        imageCaptions?.shift();
+        imageLinks?.shift();
+      });
+    }
     const post = await new Post({
       kind: sharePostId ? "post" : kind,
       ownerUsername: username,
@@ -41,7 +55,8 @@ const createPost = async (req, res) => {
       subredditName: subreddit,
       title: title,
       sharePostId: sharePostId,
-      content: kind === "image" || kind === "video" ? req.file.path : content,
+      content: kind === "video" ? req.files[0].path : content,
+      images: images,
       nsfw: nsfw,
       spoiler: spoiler,
       flair: flairId,
