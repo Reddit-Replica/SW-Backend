@@ -1,5 +1,5 @@
 import express from "express";
-import postController from "../controllers/postController.js";
+import postController from "../controllers/HpostController.js";
 import { optionalToken } from "../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
