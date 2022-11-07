@@ -26,9 +26,6 @@ const createPost = async (req, res) => {
   const username = authorizationResult.username;
 
   try {
-    if (kind === "image" || kind === "video") {
-      content = req.file.path;
-    }
     const post = await new Post({
       kind: sharePostId ? "post" : kind,
       ownerUsername: username,
@@ -36,7 +33,7 @@ const createPost = async (req, res) => {
       subredditName: subreddit,
       title: title,
       sharePostId: sharePostId,
-      content: content,
+      content: kind === "image" || kind === "video" ? req.file.path : content,
       nsfw: nsfw,
       spoiler: spoiler,
       flair: flairId,
