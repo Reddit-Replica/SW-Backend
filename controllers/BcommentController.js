@@ -14,7 +14,7 @@ const createCommentValidator = [
 const createComment = async (req, res) => {
   try {
     const { text, parentId, parentType, level } = req.body;
-    const username = req.decodedPayload.username;
+    const { username, userId } = req.decodedPayload;
 
     const comment = new Comment({
       parentId: parentId,
@@ -22,6 +22,7 @@ const createComment = async (req, res) => {
       level: level,
       content: text,
       ownerUsername: username,
+      ownerId: userId,
     });
 
     await comment.save();
