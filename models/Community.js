@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
-const subredditSchema = mongoose.Schema({
+// eslint-disable-next-line new-cap
+const communitySchema = mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -61,7 +62,22 @@ const subredditSchema = mongoose.Schema({
       },
       ruleDescription: {
         type: String,
+      },
+      ruleOrder: {
+        type: Number,
         required: true,
+      },
+      createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now(),
+      },
+      appliesTo: {
+        type: String,
+        required: true,
+      },
+      reportReason: {
+        type: String,
       },
     },
   ],
@@ -70,6 +86,10 @@ const subredditSchema = mongoose.Schema({
       username: {
         type: String,
         required: true,
+      },
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
       },
       nickname: {
         type: String,
@@ -131,6 +151,6 @@ const subredditSchema = mongoose.Schema({
   ],
 });
 
-const Subreddit = mongoose.model("Subreddit", subredditSchema);
+const Community = mongoose.model("Community", communitySchema);
 
-export default Subreddit;
+export default Community;
