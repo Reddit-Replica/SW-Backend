@@ -1,3 +1,9 @@
+/**
+ * A function used to validate the request body to create a rule to a subreddit
+ * If the request  body is valid it adds to the request the ruleObject
+ * @param {Object} req Request object
+ * @returns {boolean} boolean indicates if the request body is valid
+ */
 const validateCreatingRuleBody = (req) => {
   if (!req.body.ruleName || !req.body.appliesTo) {
     return false;
