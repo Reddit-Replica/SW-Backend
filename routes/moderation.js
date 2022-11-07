@@ -1068,7 +1068,14 @@ moderationRouter.get("/r/:subreddit/suggested-topics");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/r/:subreddit/about/rules");
+moderationRouter.post(
+  "/r/:subreddit/about/rules",
+  verifyToken.verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyToken.verifyAuthTokenModerator,
+  subredditRulesController.addSubredditRule
+);
 
 /**
  * @swagger
