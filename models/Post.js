@@ -88,15 +88,19 @@ const postSchema = mongoose.Schema({
   insights: {
     totalViews: {
       type: Number,
+      default: 0,
     },
     upvoteRate: {
       type: Number,
+      default: 0,
     },
     communityKarma: {
       type: Number,
+      default: 0,
     },
     totalShares: {
       type: Number,
+      default: 0,
     },
   },
   scheduleDate: {

@@ -109,6 +109,32 @@ const userSchema = mongoose.Schema({
       },
     ],
   },
+  joinedSubreddits: [
+    {
+      id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  ownedSubreddits: [
+    {
+      id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
   posts: [
     {
       type: Schema.Types.ObjectId,
