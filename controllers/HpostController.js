@@ -1,4 +1,5 @@
 import Post from "../models/Post.js";
+import Subreddit from "../models/Subreddit.js";
 import User from "../models/User.js";
 import verifyUser from "../utils/verifyUser.js";
 
@@ -26,6 +27,13 @@ const createPost = async (req, res) => {
   const username = authorizationResult.username;
 
   try {
+    // Check if the subreddit is available
+    const postSubreddit = await Subreddit.findOne({
+      title: subreddit,
+    });
+    if (!postSubreddit) {
+      return res.status(404).send("Subreddit not found");
+    }
     const post = await new Post({
       kind: sharePostId ? "post" : kind,
       ownerUsername: username,
