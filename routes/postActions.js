@@ -1,7 +1,7 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import postActionsController from "../controllers/BpostActionsController.js";
-import { verifyAuthToken } from "../middleware/verifyToken.js";
+import verifyToken from "../middleware/verifyToken.js";
 import { verifyPostActions } from "../middleware/verifyPostActions.js";
 
 // eslint-disable-next-line new-cap
@@ -48,7 +48,7 @@ const postActionsRouter = express.Router();
  */
 postActionsRouter.patch(
   "/mark-spoiler",
-  verifyAuthToken,
+  verifyToken.verifyAuthToken,
   postActionsController.postActionsValidator,
   validateRequestSchema,
   verifyPostActions,
@@ -96,7 +96,7 @@ postActionsRouter.patch(
  */
 postActionsRouter.patch(
   "/unmark-spoiler",
-  verifyAuthToken,
+  verifyToken.verifyAuthToken,
   postActionsController.postActionsValidator,
   validateRequestSchema,
   verifyPostActions,
@@ -144,7 +144,7 @@ postActionsRouter.patch(
  */
 postActionsRouter.patch(
   "/mark-nsfw",
-  verifyAuthToken,
+  verifyToken.verifyAuthToken,
   postActionsController.postActionsValidator,
   validateRequestSchema,
   verifyPostActions,
@@ -192,7 +192,7 @@ postActionsRouter.patch(
  */
 postActionsRouter.patch(
   "/unmark-nsfw",
-  verifyAuthToken,
+  verifyToken.verifyAuthToken,
   postActionsController.postActionsValidator,
   validateRequestSchema,
   verifyPostActions,
