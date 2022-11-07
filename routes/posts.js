@@ -45,7 +45,7 @@ const postRouter = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.post("/follow-post");
+postRouter.post("/follow-post");
 
 /**
  * @swagger
@@ -86,7 +86,7 @@ router.post("/follow-post");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/hide");
+postRouter.post("/hide");
 
 /**
  * @swagger
@@ -127,7 +127,7 @@ router.post("/hide");
  *      security:
  *       - bearerAuth: []
  */
-router.patch("/mark-nsfw");
+postRouter.patch("/mark-nsfw");
 
 /**
  * @swagger
@@ -169,7 +169,7 @@ router.patch("/mark-nsfw");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/set-suggested-sort");
+postRouter.post("/set-suggested-sort");
 
 /**
  * @swagger
@@ -208,7 +208,7 @@ router.post("/set-suggested-sort");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/clear-suggested-sort");
+postRouter.post("/clear-suggested-sort");
 
 /**
  * @swagger
@@ -249,7 +249,7 @@ router.post("/clear-suggested-sort");
  *      security:
  *       - bearerAuth: []
  */
-router.patch("/mark-spoiler");
+postRouter.patch("/mark-spoiler");
 
 /**
  * @swagger
@@ -325,7 +325,7 @@ postRouter.post("/submit", postController.createPost);
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unhide");
+postRouter.post("/unhide");
 
 /**
  * @swagger
@@ -366,7 +366,7 @@ router.post("/unhide");
  *      security:
  *       - bearerAuth: []
  */
-router.patch("/unmark-nsfw");
+postRouter.patch("/unmark-nsfw");
 
 /**
  * @swagger
@@ -407,7 +407,7 @@ router.patch("/unmark-nsfw");
  *      security:
  *       - bearerAuth: []
  */
-router.patch("/unmark-spoiler");
+postRouter.patch("/unmark-spoiler");
 
 /**
  * @swagger
@@ -622,6 +622,6 @@ postRouter.get("/pinned-posts", postController.getPinnedPosts);
  *      security:
  *       - bearerAuth: []
  */
-router.put("/edit-post-flair");
+postRouter.put("/edit-post-flair");
 
-export default router;
+export default postRouter;
