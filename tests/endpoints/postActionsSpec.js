@@ -45,33 +45,33 @@ describe("Testing post actions endpoints", () => {
   });
 
   it("try to mark a post as spoiler without jwt in the header", async () => {
-    const response = await request.post("/mark-spoiler");
+    const response = await request.patch("/mark-spoiler");
     expect(response.statusCode).toEqual(401);
   });
   it("try to mark a post as nsfw without jwt in the header", async () => {
-    const response = await request.post("/mark-nsfw");
+    const response = await request.patch("/mark-nsfw");
     expect(response.statusCode).toEqual(401);
   });
 
   it("try to unmark a post as spoiler without jwt in the header", async () => {
-    const response = await request.post("/unmark-spoiler");
+    const response = await request.patch("/unmark-spoiler");
     expect(response.statusCode).toEqual(401);
   });
   it("try to unmark a post as nsfw without jwt in the header", async () => {
-    const response = await request.post("/unmark-nsfw");
+    const response = await request.patch("/unmark-nsfw");
     expect(response.statusCode).toEqual(401);
   });
 
   it("try to mark a post as spoiler without id in the body", async () => {
     const response = await request
-      .post("/mark-spoiler")
+      .patch("/mark-spoiler")
       .set("Authorization", "Bearer " + token1);
 
     expect(response.statusCode).toEqual(400);
   });
   it("try to mark a post as nsfw without id in the body", async () => {
     const response = await request
-      .post("/mark-nsfw")
+      .patch("/mark-nsfw")
       .set("Authorization", "Bearer " + token1);
 
     expect(response.statusCode).toEqual(400);
@@ -79,14 +79,14 @@ describe("Testing post actions endpoints", () => {
 
   it("try to unmark a post as spoiler without id in the body", async () => {
     const response = await request
-      .post("/unmark-spoiler")
+      .patch("/unmark-spoiler")
       .set("Authorization", "Bearer " + token1);
 
     expect(response.statusCode).toEqual(400);
   });
   it("try to unmark a post as nsfw without id in the body", async () => {
     const response = await request
-      .post("/unmark-nsfw")
+      .patch("/unmark-nsfw")
       .set("Authorization", "Bearer " + token1);
 
     expect(response.statusCode).toEqual(400);
@@ -94,7 +94,7 @@ describe("Testing post actions endpoints", () => {
 
   it("try to mark a post of other user as spoiler", async () => {
     const response = await request
-      .post("/mark-spoiler")
+      .patch("/mark-spoiler")
       .send({
         id: post._id,
       })
@@ -104,7 +104,7 @@ describe("Testing post actions endpoints", () => {
   });
   it("try to mark a post of other user as nsfw", async () => {
     const response = await request
-      .post("/mark-nsfw")
+      .patch("/mark-nsfw")
       .send({
         id: post._id,
       })
@@ -115,7 +115,7 @@ describe("Testing post actions endpoints", () => {
 
   it("try to unmark a post of other user as spoiler", async () => {
     const response = await request
-      .post("/unmark-spoiler")
+      .patch("/unmark-spoiler")
       .send({
         id: post._id,
       })
@@ -125,7 +125,7 @@ describe("Testing post actions endpoints", () => {
   });
   it("try to unmark a post of other user as nsfw", async () => {
     const response = await request
-      .post("/unmark-nsfw")
+      .patch("/unmark-nsfw")
       .send({
         id: post._id,
       })
@@ -136,7 +136,7 @@ describe("Testing post actions endpoints", () => {
 
   it("try to mark a post as spoiler with all valid parameters", async () => {
     const response = await request
-      .post("/mark-spoiler")
+      .patch("/mark-spoiler")
       .send({
         id: post._id,
       })
@@ -146,7 +146,7 @@ describe("Testing post actions endpoints", () => {
   });
   it("try to mark a post as nsfw with all valid parameters", async () => {
     const response = await request
-      .post("/mark-nsfw")
+      .patch("/mark-nsfw")
       .send({
         id: post._id,
       })
@@ -157,7 +157,7 @@ describe("Testing post actions endpoints", () => {
 
   it("try to mark the same post as spoiler again", async () => {
     const response = await request
-      .post("/mark-spoiler")
+      .patch("/mark-spoiler")
       .send({
         id: post._id,
       })
@@ -167,7 +167,7 @@ describe("Testing post actions endpoints", () => {
   });
   it("try to mark the same post as nsfw again", async () => {
     const response = await request
-      .post("/mark-nsfw")
+      .patch("/mark-nsfw")
       .send({
         id: post._id,
       })
@@ -178,7 +178,7 @@ describe("Testing post actions endpoints", () => {
 
   it("try to unmark a post as spoiler with all valid parameters", async () => {
     const response = await request
-      .post("/unmark-spoiler")
+      .patch("/unmark-spoiler")
       .send({
         id: post._id,
       })
@@ -188,7 +188,7 @@ describe("Testing post actions endpoints", () => {
   });
   it("try to unmark a post as nsfw with all valid parameters", async () => {
     const response = await request
-      .post("/unmark-nsfw")
+      .patch("/unmark-nsfw")
       .send({
         id: post._id,
       })
@@ -199,7 +199,7 @@ describe("Testing post actions endpoints", () => {
 
   it("try to unmark the same post as spoiler again", async () => {
     const response = await request
-      .post("/unmark-spoiler")
+      .patch("/unmark-spoiler")
       .send({
         id: post._id,
       })
@@ -209,7 +209,7 @@ describe("Testing post actions endpoints", () => {
   });
   it("try to unmark the same post as nsfw again", async () => {
     const response = await request
-      .post("/unmark-nsfw")
+      .patch("/unmark-nsfw")
       .send({
         id: post._id,
       })
