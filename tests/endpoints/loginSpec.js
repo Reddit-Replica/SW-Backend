@@ -5,13 +5,13 @@ import Token from "./../../models/VerifyToken.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-describe("Testing login endpoints", () => {
+xdescribe("Testing login endpoints", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Token.deleteMany({});
   });
 
-  xit("try to send forget username email to email dosn't exist", async () => {
+  it("try to send forget email to email dosn't exist", async () => {
     const response = await request.post("/login/forget-username").send({
       email: "beshoy@gmail.com",
     });
@@ -19,7 +19,7 @@ describe("Testing login endpoints", () => {
     expect(response.status).toEqual(400);
   });
 
-  xit("try to send forget email to a valid email", async () => {
+  it("try to send forget email to a valid email", async () => {
     const user = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",

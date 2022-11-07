@@ -76,7 +76,7 @@ jobs:
           command: |
             docker build -t backend:v1 .
             docker tag backend:v1  waer/backend
-            docker push  waer/backend
+            docker push  waer/backend:latest
 
 workflows:
   main:
@@ -88,3 +88,6 @@ workflows:
       - build-backend:
           requires: 
             - integration-testing
+          filters:
+            branches:
+              only: master

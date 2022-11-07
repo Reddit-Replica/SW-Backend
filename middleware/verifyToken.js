@@ -1,26 +1,56 @@
 import jwt from "jsonwebtoken";
 
 /**
- * Middleware used to check the token in the request.
- * If it was a valid token given by the server, the next function will be called
- * and token payload will be saved in the request object
- * If it wasn't, a response with status code 401 will be sent
+ * A middleware used to verify the token and send back status code 401 with error message if the token is invalid or not provided
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
  * @param {function} next Next function
  * @returns {void}
  */
-export const verifyAuthToken = (req, res, next) => {
+const verifyAuthToken = (req, res, next) => {
   try {
     const authorizationHeader = req.headers.authorization;
+    // console.log(authorizationHeader);
     const token = authorizationHeader.split(" ")[1];
+    const payload = jwt.verify(token, process.env.TOKEN_SECRET);
 
-    const decodedPayload = jwt.verify(token, process.env.TOKEN_SECRET);
-    req.decodedPayload = decodedPayload;
-
+    req.payload = payload;
     next();
   } catch (err) {
-    res.status(401).send("Access Denied");
+    res.status(401).json({
+      error: "Invalid Token",
+    });
   }
+};
+
+/**
+ * A middleware used to verify that the user requesting the subreddits rules is a moderator in that subreddit
+ * If not it returns status code 401 Unauthorized Access
+ * Else it pass the request to the next middleware
+ *
+ * @param {Object} req Request object
+ * @param {Object} res Response object
+ * @param {function} next Next function
+ * @returns {void}
+ */
+
+const verifyAuthTokenModerator = (req, res, next) => {
+  const moderators = req.subreddit.moderators;
+  const payload = req.payload;
+  const moderator = moderators.find(
+    (mod) => mod.userID.toString() === payload.userId
+  );
+  if (!moderator) {
+    res.status(401).json({
+      error: "Unauthorized Access",
+    });
+  } else {
+    next();
+  }
+};
+
+export default {
+  verifyAuthToken,
+  verifyAuthTokenModerator,
 };
