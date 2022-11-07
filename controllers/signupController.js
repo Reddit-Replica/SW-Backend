@@ -90,6 +90,7 @@ const signup = async (req, res) => {
 
     res.status(201).json({ username: user.username });
   } catch (err) {
+    console.log(err);
     res.status(500).send("Internal server error");
   }
 };
@@ -102,6 +103,7 @@ const usernameAvailable = async (req, res) => {
     }
     res.send("The username is available");
   } catch (err) {
+    console.log(err);
     res.status(500).send("Internal server error");
   }
 };
@@ -120,6 +122,7 @@ const emailAvailable = async (req, res) => {
     }
     res.send("The email is available");
   } catch (err) {
+    console.log(err);
     res.status(500).send("Internal server error");
   }
 };
@@ -163,6 +166,7 @@ const verifyEmail = async (req, res) => {
 
     res.send("Email verified successfully");
   } catch (err) {
+    console.log(err);
     res.status(500).send("Internal server error");
   }
 };
@@ -210,6 +214,7 @@ const signinWithGoogleFacebook = async (req, res) => {
       //facebook
     }
   } catch (error) {
+    console.log(error);
     res.status(500).send("Internal server error");
   }
 };
