@@ -63,6 +63,7 @@ const createPost = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
 const pinPost = async (req, res) => {
   const authorizationResult = verifyUser(req);
   if (!authorizationResult) {
@@ -74,8 +75,13 @@ const pinPost = async (req, res) => {
     const user = await User.findOne({
       _id: userId,
     });
-    if (user.posts.find((post) => post === postId)) {
-      if (!user.pinnedPosts.find((pinnedPost) => pinnedPost === postId)) {
+    if (!user.posts.find((post) => post.toString() === postId)) {
+      return res.status(401).send("User is not the owner of this post");
+    }
+    if (req.body.pin) {
+      if (
+        !user.pinnedPosts.find((pinnedPost) => pinnedPost.toString() === postId)
+      ) {
         user.pinnedPosts.push(postId);
         await user.save();
         res.status(200).send("Post pinned successfully!");
@@ -83,7 +89,17 @@ const pinPost = async (req, res) => {
         return res.status(409).send("Post is already pinned");
       }
     } else {
-      return res.status(401).send("User is not the owner of this post");
+      if (
+        user.pinnedPosts.find((pinnedPost) => pinnedPost.toString() === postId)
+      ) {
+        user.pinnedPosts = user.pinnedPosts.filter(
+          (id) => id.toString() !== postId
+        );
+        await user.save();
+        res.status(200).send("Post unpinned successfully!");
+      } else {
+        return res.status(409).send("Post is already unpinned");
+      }
     }
   } catch (err) {
     res.status(500).send("Internal server error");
@@ -127,22 +143,22 @@ const postDetails = async (req, res) => {
       const user = await User.findOne({
         _id: userId,
       });
-      if (user.savedPosts.find((id) => id === postId)) {
+      if (user.savedPosts.find((id) => id.toString() === postId)) {
         saved = true;
       }
-      if (user.followedPosts.find((id) => id === postId)) {
+      if (user.followedPosts.find((id) => id.toString() === postId)) {
         followed = true;
       }
-      if (user.hiddenPosts.find((id) => id === postId)) {
+      if (user.hiddenPosts.find((id) => id.toString() === postId)) {
         hidden = true;
       }
-      if (user.upvotedPosts.find((id) => id === postId)) {
+      if (user.upvotedPosts.find((id) => id.toString() === postId)) {
         upvoted = true;
       }
-      if (user.downvotedPosts.find((id) => id === postId)) {
+      if (user.downvotedPosts.find((id) => id.toString() === postId)) {
         downvoted = true;
       }
-      if (user.spammedPosts.find((id) => id === postId)) {
+      if (user.spammedPosts.find((id) => id.toString() === postId)) {
         spammed = true;
       }
     }

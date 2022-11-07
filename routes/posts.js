@@ -504,7 +504,7 @@ postRouter.get("/post-details", optionalToken, postController.postDetails);
  * @swagger
  * /pin-post:
  *  post:
- *      summary: Add a post to the user's collection of pinned posts
+ *      summary: Pin or unpin a post
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -516,9 +516,12 @@ postRouter.get("/post-details", optionalToken, postController.postDetails);
  *               id:
  *                 type: string
  *                 description: id of a post
+ *               pin:
+ *                 type: boolean
+ *                 description: True for pin and False for unpin
  *      responses:
  *          200:
- *              description: Post pinned successfully
+ *              description: Post pinned/unpinned successfully
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
