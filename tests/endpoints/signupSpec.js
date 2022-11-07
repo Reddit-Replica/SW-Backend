@@ -51,25 +51,25 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(400);
   });
 
-  it("try to sign up with all valid parameters", async () => {
-    const response = await request.post("/signup").send({
-      email: "beshoy@gmail.com",
-      username: "Beshoy",
-      password: "123456789",
-    });
+  // it("try to sign up with all valid parameters", async () => {
+  //   const response = await request.post("/signup").send({
+  //     email: "beshoy@gmail.com",
+  //     username: "Beshoy",
+  //     password: "123456789",
+  //   });
 
-    expect(response.status).toEqual(201);
-  });
+  //   expect(response.status).toEqual(201);
+  // });
 
-  it("try to sign up with unavailable username", async () => {
-    const response = await request.post("/signup").send({
-      email: "beshoy1@gmail.com",
-      username: "Beshoy",
-      password: "123456789",
-    });
+  // it("try to sign up with unavailable username", async () => {
+  //   const response = await request.post("/signup").send({
+  //     email: "beshoy1@gmail.com",
+  //     username: "Beshoy",
+  //     password: "123456789",
+  //   });
 
-    expect(response.status).toEqual(400);
-  });
+  //   expect(response.status).toEqual(400);
+  // });
 
   it("try to sign up with unavailable email", async () => {
     const response = await request.post("/signup").send({
