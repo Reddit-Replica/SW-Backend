@@ -1,7 +1,9 @@
 import express from "express";
+import postController from "../controllers/HpostController.js";
+import { optionalToken } from "../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const postRouter = express.Router();
 
 /**
  * @swagger
@@ -282,7 +284,7 @@ router.patch("/mark-spoiler");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/submit");
+postRouter.post("/submit", postController.createPost);
 
 /**
  * @swagger
@@ -458,7 +460,7 @@ router.patch("/unmark-spoiler");
  *      security:
  *         - bearerAuth: []
  */
-router.get("/post-insights");
+postRouter.get("/post-insights", postController.postInsights);
 
 /**
  * @swagger
@@ -496,13 +498,13 @@ router.get("/post-insights");
  *      security:
  *       - bearerAuth: []
  */
-router.get("/post-details");
+postRouter.get("/post-details", optionalToken, postController.postDetails);
 
 /**
  * @swagger
  * /pin-post:
  *  post:
- *      summary: Add a post to the user's collection of pinned posts
+ *      summary: Pin or unpin a post
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -514,9 +516,12 @@ router.get("/post-details");
  *               id:
  *                 type: string
  *                 description: id of a post
+ *               pin:
+ *                 type: boolean
+ *                 description: True for pin and False for unpin
  *      responses:
  *          200:
- *              description: Post pinned successfully
+ *              description: Post pinned/unpinned successfully
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -537,7 +542,7 @@ router.get("/post-details");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/pin-post");
+postRouter.post("/pin-post", postController.pinPost);
 
 /**
  * @swagger
@@ -575,7 +580,7 @@ router.post("/pin-post");
  *      security:
  *          - bearerAuth: []
  */
-router.get("/pinned-posts");
+postRouter.get("/pinned-posts", postController.getPinnedPosts);
 
 /**
  * @swagger
