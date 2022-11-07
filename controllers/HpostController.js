@@ -30,7 +30,7 @@ const createPost = async (req, res) => {
       content = req.file.path;
     }
     const post = await new Post({
-      kind: kind,
+      kind: sharePostId ? "post" : kind,
       ownerUsername: username,
       ownerId: userId,
       subredditName: subreddit,
