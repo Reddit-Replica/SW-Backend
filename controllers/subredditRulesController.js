@@ -11,7 +11,9 @@ const getSubredditRules = (req, res) => {
     };
   });
   // console.log(rules);
-  res.status(200).json(rules);
+  res.status(200).json({
+    rules: rules,
+  });
 };
 
 export default {
