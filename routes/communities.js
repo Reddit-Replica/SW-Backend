@@ -577,7 +577,7 @@ router.post("/r/:subreddit/add-main-topic");
  *            properties:
  *             title:
  *               type: array
- *               description: title of the main topic in the community
+ *               description: array of subtopics to be added to community
  *               items:
  *                 type: object
  *      responses:

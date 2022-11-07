@@ -44,8 +44,8 @@ const router = express.Router();
  *               type: string
  *               description: Subject of the message
  *      responses:
- *          200:
- *              description: Your message is delivered successfully
+ *          201:
+ *              description: Your message is sent successfully
  *          401:
  *              description: Unauthorized to send a message
  *          500:
@@ -98,6 +98,9 @@ router.post("/message/compose");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
+ *                               msgID:
+ *                                 type: string
+ *                                 description: Message id
  *                               text:
  *                                 type: string
  *                                 description: Message Content as text
@@ -165,6 +168,9 @@ router.get("/message/sent");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
+ *                               msgID:
+ *                                 type: string
+ *                                 description: Message ID
  *                               text:
  *                                 type: string
  *                                 description: Message Content as text
@@ -255,6 +261,9 @@ router.get("/message/inbox");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
+ *                               msgID:
+ *                                 type: string
+ *                                 description: Message id
  *                               text:
  *                                 type: string
  *                                 description: Message Content as text
@@ -325,6 +334,9 @@ router.get("/message/unread");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
+ *                               msgID:
+ *                                 type: string
+ *                                 description: Message id
  *                               text:
  *                                 type: string
  *                                 description: Message Content as text
@@ -407,6 +419,9 @@ router.get("/message/post-reply");
  *                            description: List of [Things] to return
  *                            items:
  *                             properties:
+ *                               msgID:
+ *                                 type: string
+ *                                 description: Message id
  *                               text:
  *                                 type: string
  *                                 description: Message Content as text
@@ -485,6 +500,9 @@ router.get("/message/mentions");
  *                           type: string
  *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
+ *                            msgID:
+ *                                 type: string
+ *                                 description: Message id
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
