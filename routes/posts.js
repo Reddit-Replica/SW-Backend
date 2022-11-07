@@ -89,7 +89,7 @@ router.post("/hide");
 /**
  * @swagger
  * /mark-nsfw:
- *  post:
+ *  patch:
  *      summary: Mark a post NSFW (Not Safe For Work)
  *      tags: [Posts]
  *      requestBody:
@@ -125,7 +125,7 @@ router.post("/hide");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/mark-nsfw");
+router.patch("/mark-nsfw");
 
 /**
  * @swagger
@@ -211,7 +211,7 @@ router.post("/clear-suggested-sort");
 /**
  * @swagger
  * /mark-spoiler:
- *  post:
+ *  patch:
  *      summary: Blur the content of the post and unblur when opening it
  *      tags: [Posts]
  *      requestBody:
@@ -247,7 +247,7 @@ router.post("/clear-suggested-sort");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/mark-spoiler");
+router.patch("/mark-spoiler");
 
 /**
  * @swagger
@@ -328,7 +328,7 @@ router.post("/unhide");
 /**
  * @swagger
  * /unmark-nsfw:
- *  post:
+ *  patch:
  *      summary: Remove the NSFW marking from a post
  *      tags: [Posts]
  *      requestBody:
@@ -364,12 +364,12 @@ router.post("/unhide");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unmark-nsfw");
+router.patch("/unmark-nsfw");
 
 /**
  * @swagger
  * /unmark-spoiler:
- *  post:
+ *  patch:
  *      summary: Remove ability to blur the content of the post
  *      tags: [Posts]
  *      requestBody:
@@ -405,7 +405,7 @@ router.post("/unmark-nsfw");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unmark-spoiler");
+router.patch("/unmark-spoiler");
 
 /**
  * @swagger
