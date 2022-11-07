@@ -38,6 +38,11 @@ const commentSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  ownerId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
   markedSpam: {
     type: Boolean,
     required: true,
