@@ -1,7 +1,7 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import itemsActionController from "../controllers/BitemsActionsController.js";
-import { verifyAuthToken } from "../middleware/verifyToken.js";
+import verifyToken from "../middleware/verifyToken.js";
 
 // eslint-disable-next-line new-cap
 const itemsActionsRouter = express.Router();
@@ -51,7 +51,7 @@ const itemsActionsRouter = express.Router();
  */
 itemsActionsRouter.delete(
   "/delete",
-  verifyAuthToken,
+  verifyToken.verifyAuthToken,
   itemsActionController.deleteValidator,
   validateRequestSchema,
   itemsActionController.deletePoComMes

@@ -31,7 +31,7 @@ const deletePoComMes = async (req, res) => {
     }
 
     // check if the item was created by the same user making the request
-    const { userId } = req.decodedPayload;
+    const { userId } = req.payload;
     if (item.ownerId.toString() !== userId) {
       return res.status(401).send("Access Denied");
     }
