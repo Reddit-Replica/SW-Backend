@@ -86,9 +86,7 @@ const signup = async (req, res) => {
     }
 
     const token = generateJWT(user);
-    res.header("Authorization", "Bearer " + token);
-
-    res.status(201).json({ username: user.username });
+    res.status(201).json({ username: user.username, token: token });
   } catch (err) {
     res.status(500).send("Internal server error");
   }
@@ -158,9 +156,6 @@ const verifyEmail = async (req, res) => {
     await user.save();
     await token.remove();
 
-    const jwToken = generateJWT(user);
-    res.header("Authorization", "Bearer " + jwToken);
-
     res.send("Email verified successfully");
   } catch (err) {
     res.status(500).send("Internal server error");
@@ -180,8 +175,7 @@ const signinWithGoogleFacebook = async (req, res) => {
 
       if (user) {
         const token = generateJWT(user);
-        res.header("Authorization", "Bearer " + token);
-        return res.status(200).json({ username: user.username });
+        return res.status(200).json({ username: user.username, token: token });
       }
       // if not then create a new account
       const newUser = new User({
@@ -203,9 +197,7 @@ const signinWithGoogleFacebook = async (req, res) => {
       }
 
       const token = generateJWT(newUser);
-      res.header("Authorization", "Bearer " + token);
-
-      res.status(201).json({ username: newUser.username });
+      res.status(201).json({ username: newUser.username, token: token });
     } else {
       //facebook
     }
