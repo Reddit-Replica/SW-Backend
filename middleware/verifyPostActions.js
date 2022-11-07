@@ -12,7 +12,7 @@ import Post from "../models/Post.js";
  */
 export async function verifyPostActions(req, res, next) {
   const { id } = req.body;
-  const { userId } = req.decodedPayload;
+  const { userId } = req.payload;
   const post = await Post.findById(id);
 
   if (!post || post.deletedAt) {
