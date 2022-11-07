@@ -66,9 +66,6 @@ jobs:
           ls
 
   build-backend:
-    branches:
-      only:
-         master
     docker:
       - image: docker:17.05.0-ce-git
     steps:
@@ -91,3 +88,6 @@ workflows:
       - build-backend:
           requires: 
             - integration-testing
+          filters:
+            branches:
+              only: master
