@@ -1,7 +1,9 @@
 import express from "express";
+import postController from "../controllers/HpostController.js";
+import { optionalToken } from "../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const postRouter = express.Router();
 
 /**
  * @swagger
@@ -43,7 +45,7 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.post("/follow-post");
+postRouter.post("/follow-post");
 
 /**
  * @swagger
@@ -84,7 +86,7 @@ router.post("/follow-post");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/hide");
+postRouter.post("/hide");
 
 /**
  * @swagger
@@ -125,7 +127,7 @@ router.post("/hide");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/mark-nsfw");
+postRouter.post("/mark-nsfw");
 
 /**
  * @swagger
@@ -167,7 +169,7 @@ router.post("/mark-nsfw");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/set-suggested-sort");
+postRouter.post("/set-suggested-sort");
 
 /**
  * @swagger
@@ -206,7 +208,7 @@ router.post("/set-suggested-sort");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/clear-suggested-sort");
+postRouter.post("/clear-suggested-sort");
 
 /**
  * @swagger
@@ -247,7 +249,7 @@ router.post("/clear-suggested-sort");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/mark-spoiler");
+postRouter.post("/mark-spoiler");
 
 /**
  * @swagger
@@ -282,7 +284,7 @@ router.post("/mark-spoiler");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/submit");
+postRouter.post("/submit", postController.createPost);
 
 /**
  * @swagger
@@ -323,7 +325,7 @@ router.post("/submit");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unhide");
+postRouter.post("/unhide");
 
 /**
  * @swagger
@@ -364,7 +366,7 @@ router.post("/unhide");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unmark-nsfw");
+postRouter.post("/unmark-nsfw");
 
 /**
  * @swagger
@@ -405,13 +407,13 @@ router.post("/unmark-nsfw");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unmark-spoiler");
+postRouter.post("/unmark-spoiler");
 
 /**
  * @swagger
  * /post-insights:
  *  get:
- *      summary: Get the number of views on a post
+ *      summary: Get the insights on a post
  *      tags: [Posts]
  *      parameters:
  *          - in: query
@@ -458,7 +460,7 @@ router.post("/unmark-spoiler");
  *      security:
  *         - bearerAuth: []
  */
-router.get("/post-insights");
+postRouter.get("/post-insights", postController.postInsights);
 
 /**
  * @swagger
@@ -491,14 +493,12 @@ router.get("/post-insights");
  *                                  description: Type of error
  *          404:
  *              description: Post not found
- *          401:
- *              description: Unauthorized to view info of this post
  *          500:
  *              description: Server Error
  *      security:
  *       - bearerAuth: []
  */
-router.get("/post-details");
+postRouter.get("/post-details", optionalToken, postController.postDetails);
 
 /**
  * @swagger
@@ -539,7 +539,7 @@ router.get("/post-details");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/pin-post");
+postRouter.post("/pin-post", postController.pinPost);
 
 /**
  * @swagger
@@ -577,7 +577,7 @@ router.post("/pin-post");
  *      security:
  *          - bearerAuth: []
  */
-router.get("/pinned-posts");
+postRouter.get("/pinned-posts", postController.getPinnedPosts);
 
 /**
  * @swagger
@@ -619,6 +619,6 @@ router.get("/pinned-posts");
  *      security:
  *       - bearerAuth: []
  */
-router.put("/edit-post-flair");
+postRouter.put("/edit-post-flair");
 
-export default router;
+export default postRouter;
