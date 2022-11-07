@@ -11,7 +11,7 @@ xdescribe("Testing login endpoints", () => {
     await Token.deleteMany({});
   });
 
-  it("try to send forget email to email dosn't exist", async () => {
+  it("try to send forget-username email to email dosn't exist", async () => {
     const response = await request.post("/login/forget-username").send({
       email: "beshoy@gmail.com",
     });
