@@ -10,7 +10,7 @@ const postActionsRouter = express.Router();
 /**
  * @swagger
  * /mark-spoiler:
- *  post:
+ *  patch:
  *      summary: Blur the content of the post and unblur when opening it
  *      tags: [Posts]
  *      requestBody:
@@ -46,7 +46,7 @@ const postActionsRouter = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-postActionsRouter.post(
+postActionsRouter.patch(
   "/mark-spoiler",
   verifyAuthToken,
   postActionsController.postActionsValidator,
@@ -58,7 +58,7 @@ postActionsRouter.post(
 /**
  * @swagger
  * /unmark-spoiler:
- *  post:
+ *  patch:
  *      summary: Remove ability to blur the content of the post
  *      tags: [Posts]
  *      requestBody:
@@ -94,7 +94,7 @@ postActionsRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postActionsRouter.post(
+postActionsRouter.patch(
   "/unmark-spoiler",
   verifyAuthToken,
   postActionsController.postActionsValidator,
@@ -106,7 +106,7 @@ postActionsRouter.post(
 /**
  * @swagger
  * /mark-nsfw:
- *  post:
+ *  patch:
  *      summary: Mark a post NSFW (Not Safe For Work)
  *      tags: [Posts]
  *      requestBody:
@@ -142,7 +142,7 @@ postActionsRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postActionsRouter.post(
+postActionsRouter.patch(
   "/mark-nsfw",
   verifyAuthToken,
   postActionsController.postActionsValidator,
@@ -154,7 +154,7 @@ postActionsRouter.post(
 /**
  * @swagger
  * /unmark-nsfw:
- *  post:
+ *  patch:
  *      summary: Remove the NSFW marking from a post
  *      tags: [Posts]
  *      requestBody:
@@ -190,7 +190,7 @@ postActionsRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postActionsRouter.post(
+postActionsRouter.patch(
   "/unmark-nsfw",
   verifyAuthToken,
   postActionsController.postActionsValidator,
