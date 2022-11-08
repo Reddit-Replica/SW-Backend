@@ -22,12 +22,12 @@ const router = express.Router();
  *         application/json:
  *           schema:
  *             required:
- *               - subredditName
+ *               - title
  *               - type
  *               - nsfw
  *               - category
  *             properties:
- *               subredditName:
+ *               title:
  *                 type: string
  *                 description: Subreddit name(maximum 23)
  *               type:
