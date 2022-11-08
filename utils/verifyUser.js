@@ -9,7 +9,8 @@ import jwt from "jsonwebtoken";
  * containing the userId and username, else null
  */
 export default function verifyUser(req) {
-  const token = req.body.token;
+  const authorizationHeader = req.headers.authorization;
+  const token = authorizationHeader.split(" ")[1];
   if (!token) {
     return null;
   }
