@@ -33,6 +33,7 @@ export async function checkDuplicateUsernameOrEmail(req, res, next) {
     // if everything is good then continue
     next();
   } catch (error) {
+    console.log(error);
     res.status(500).send("Internal server error");
   }
 }
