@@ -1,7 +1,12 @@
 import express from "express";
-
+import { validateRequestSchema } from "../middleware/validationResult.js";
+// eslint-disable-next-line max-len
+import { checkDuplicateSubredditTitle } from "../middleware/NverifySubredditName.js";
+import subredditController from "../controllers/NcommunityController.js";
+import { checkJoinedBefore } from "../middleware/NJoiningValidation.js";
+import { checkModerator } from "../middleware/NverifyModerator.js";
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const subRedditRouter = express.Router();
 
 /**
  * @swagger
@@ -62,7 +67,20 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.post("/create-subreddit");
+// eslint-disable-next-line max-len
+subRedditRouter.post(
+  "/create-subreddit",
+  subredditController.subredditValidator,
+  validateRequestSchema,
+  checkDuplicateSubredditTitle,
+  subredditController.createSubreddit
+);
+
+subRedditRouter.post(
+  "/join-subreddit",
+  checkJoinedBefore,
+  subredditController.joinSubreddit
+);
 
 /**
  * @swagger
@@ -94,40 +112,64 @@ router.post("/create-subreddit");
  *       500:
  *         description: Internal server error
  */
-router.get("/subreddit-name-available");
+subRedditRouter.get("/subreddit-name-available");
 
 /**
  * @swagger
- * /join-subreddit:
- *   post:
- *     summary: make the user join a subreddit
- *     tags: [Subreddit]
- *     requestBody:
+ * /r/{subreddit}/add-description:
+ *  post:
+ *      summary: add description of the community
+ *      tags: [Subreddit]
+ *      parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: the name of the subreddit
+ *         schema:
+ *           type: string
+ *      requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             properties:
- *               subredditId:
- *                 type: string
- *                 description: Id of the subreddit
- *     responses:
- *       200:
- *         description: you joined the subreddit successfully
- *       401:
- *         description: Token may be invalid or not found
- *         content:
- *           application/json:
- *             schema:
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Type of error
- *       400:
- *         description: subreddit isn't found
- *       500:
- *         description: Internal server error
+ *            required:
+ *             - title
+ *            properties:
+ *             description:
+ *               type: string
+ *               description: description of the community (maximum 300)
+ *      responses:
+ *          200:
+ *              description: description is submitted successfully
+ *          401:
+ *              description: Unauthorized add description
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
  */
- router.post("/join-subreddit");
 
-export default router;
+subRedditRouter.post(
+  "/r/:subreddit/add-description",
+  subredditController.descriptionValidator,
+  validateRequestSchema,
+  checkModerator,
+  subredditController.addDescription
+);
+
+subRedditRouter.post(
+  "/r/:subreddit/add-mainTopic",
+  subredditController.mainTopicValidator,
+  validateRequestSchema,
+  checkModerator,
+  subredditController.addMainTopic
+);
+
+subRedditRouter.post(
+  "/r/:subreddit/add-subTopic",
+  subredditController.subTopicValidator,
+  validateRequestSchema,
+  checkModerator,
+  subredditController.addSubTopics
+);
+
+export default subRedditRouter;

@@ -1,7 +1,8 @@
 import express from "express";
-import { validateRequestSchema } from "../middleware/validationResult.js";
 import itemsActionController from "../controllers/BitemsActionsController.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
 import verifyToken from "../middleware/verifyToken.js";
+import { checkId } from "./../middleware/checkId.js";
 
 // eslint-disable-next-line new-cap
 const itemsActionsRouter = express.Router();
@@ -54,6 +55,7 @@ itemsActionsRouter.delete(
   verifyToken.verifyAuthToken,
   itemsActionController.deleteValidator,
   validateRequestSchema,
+  checkId,
   itemsActionController.deletePoComMes
 );
 
@@ -102,6 +104,13 @@ itemsActionsRouter.delete(
  *      security:
  *       - bearerAuth: []
  */
-itemsActionsRouter.put("/edit-user-text");
+itemsActionsRouter.put(
+  "/edit-user-text",
+  verifyToken.verifyAuthToken,
+  itemsActionController.editPoComValidator,
+  validateRequestSchema,
+  checkId,
+  itemsActionController.editPoCom
+);
 
 export default itemsActionsRouter;

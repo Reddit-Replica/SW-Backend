@@ -110,8 +110,7 @@ const emailAvailable = async (req, res) => {
     }
     res.status(200).json("The email is available");
   } catch (err) {
-    console.log(err);
-    res.status(500).json("Internal server error");
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -141,7 +140,7 @@ const verifyEmail = async (req, res) => {
     if (token.expireAt < Date.now()) {
       await token.remove();
       return res.status(403).json({
-        error: "Invalid Token",
+        error: "Token Expired",
       });
     }
 
@@ -149,7 +148,7 @@ const verifyEmail = async (req, res) => {
     await user.save();
     await token.remove();
 
-    res.send("Email verified successfully");
+    res.status(200).json("Email verified successfully");
   } catch (err) {
     console.log(err);
     res.status(500).send("Internal server error");

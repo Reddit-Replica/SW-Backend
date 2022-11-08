@@ -2,7 +2,7 @@ import supertest from "supertest";
 import app from "../../app.js";
 import User from "../../models/User.js";
 import Post from "../../models/Post.js";
-import Subreddit from "../../models/Subreddit.js";
+import Subreddit from "../../models/Community.js";
 import { generateJWT } from "../../utils/generateTokens.js";
 import { hashPassword } from "../../utils/passwordUtils.js";
 const request = supertest(app);
@@ -22,10 +22,15 @@ describe("Testing Post endpoints", () => {
       email: "abdelrahmanhamdy49@gmail.com",
       password: hashPassword("12345678"),
     }).save();
+    const owner = {
+      username: user.username,
+      userId: user.id,
+    };
     subreddit = await new Subreddit({
       title: "TestSW",
       category: "Software",
       type: "private",
+      owner: owner,
     }).save();
   });
 

@@ -2,6 +2,7 @@ import express from "express";
 
 import verifyToken from "../middleware/verifyToken.js";
 import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
+import subredditRulesMiddleware from "../middleware/subredditRules.js";
 // eslint-disable-next-line max-len
 import subredditRulesController from "../controllers/subredditRulesController.js";
 // eslint-disable-next-line new-cap
@@ -1068,7 +1069,14 @@ moderationRouter.get("/r/:subreddit/suggested-topics");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/r/:subreddit/about/rules");
+moderationRouter.post(
+  "/r/:subreddit/about/rules",
+  verifyToken.verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyToken.verifyAuthTokenModerator,
+  subredditRulesController.addSubredditRule
+);
 
 /**
  * @swagger
@@ -1134,7 +1142,6 @@ moderationRouter.post("/r/:subreddit/about/rules");
  *    - bearerAuth: []
  */
 
-// TODO: Add middleware to check that this user is a moderator in that subreddit
 moderationRouter.get(
   "/r/:subreddit/about/rules",
   verifyToken.verifyAuthToken,
@@ -1209,7 +1216,16 @@ moderationRouter.get(
  *    - bearerAuth: []
  */
 
-moderationRouter.put("/r/:subreddit/about/rules/:ruleId");
+moderationRouter.put(
+  "/r/:subreddit/about/rules/:ruleId",
+  verifyToken.verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyToken.verifyAuthTokenModerator,
+  subredditRulesMiddleware.validateRuleId,
+  subredditRulesMiddleware.checkRule,
+  subredditRulesController.editSubredditRule
+);
 
 /**
  * @swagger
