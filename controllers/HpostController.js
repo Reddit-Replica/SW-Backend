@@ -53,13 +53,15 @@ const createPost = async (req, res) => {
         error: "Subreddit not found",
       });
     }
-    let images = [];
-    if (kind === "image") {
+    if (kind === "image" || kind === "video") {
       if (!req.files) {
         return res.status(404).json({
-          error: "Images not found",
+          error: "File(s) not found",
         });
       }
+    }
+    let images = [];
+    if (kind === "image") {
       req.files.forEach((file) => {
         images.push({
           path: file.path,
@@ -77,7 +79,7 @@ const createPost = async (req, res) => {
       subredditName: subreddit,
       title: title,
       sharePostId: sharePostId,
-      content: kind === "video" ? req.files[0].path : content,
+      content: kind === "video" ? req.files[0]?.path : content,
       images: images,
       nsfw: nsfw,
       spoiler: spoiler,
