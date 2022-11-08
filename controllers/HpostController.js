@@ -1,14 +1,28 @@
 import Post from "../models/Post.js";
 import Subreddit from "../models/Subreddit.js";
 import User from "../models/User.js";
-import verifyUser from "../utils/verifyUser.js";
+import { body } from "express-validator";
+
+const postIdValidator = [
+  body("id").not().isEmpty().withMessage("Id can't be empty"),
+];
+
+const pinPostValidator = [
+  body("id").not().isEmpty().withMessage("Id can't be empty"),
+  body("pin").not().isEmpty().withMessage("Pin/unpin flag is required"),
+];
+
+const submitValidator = [
+  body("kind").not().isEmpty().withMessage("Post kind can't be empty"),
+  body("title").not().isEmpty().withMessage("Post title can't be empty"),
+  body("subreddit")
+    .not()
+    .isEmpty()
+    .withMessage("Subreddit name should be given"),
+];
 
 // eslint-disable-next-line max-statements
 const createPost = async (req, res) => {
-  const authorizationResult = verifyUser(req);
-  if (!authorizationResult) {
-    return res.status(401).send("Token may be invalid or not found");
-  }
   const {
     kind,
     subreddit,
@@ -25,8 +39,8 @@ const createPost = async (req, res) => {
     scheduleTime,
     scheduleTimeZone,
   } = req.body;
-  const userId = authorizationResult.userId;
-  const username = authorizationResult.username;
+  const userId = req.payload.userId;
+  const username = req.payload.username;
 
   try {
     // Check if the subreddit is available
@@ -85,19 +99,10 @@ const createPost = async (req, res) => {
 
 // eslint-disable-next-line max-statements
 const pinPost = async (req, res) => {
-  const authorizationResult = verifyUser(req);
-  if (!authorizationResult) {
-    return res.status(401).send("Token may be invalid or not found");
-  }
   const postId = req.body.id;
-  const userId = authorizationResult.userId;
+  const userId = req.payload.userId;
   try {
-    const user = await User.findOne({
-      _id: userId,
-    });
-    if (!user.posts.find((post) => post.toString() === postId)) {
-      return res.status(401).send("User is not the owner of this post");
-    }
+    const user = await User.findById(userId);
     if (req.body.pin) {
       if (
         !user.pinnedPosts.find((pinnedPost) => pinnedPost.toString() === postId)
@@ -127,11 +132,7 @@ const pinPost = async (req, res) => {
 };
 
 const getPinnedPosts = async (req, res) => {
-  const authorizationResult = verifyUser(req);
-  if (!authorizationResult) {
-    return res.status(401).send("Token may be invalid or not found");
-  }
-  const userId = authorizationResult.userId;
+  const userId = req.payload.userId;
   try {
     const user = await User.findOne({
       _id: userId,
@@ -214,27 +215,12 @@ const postDetails = async (req, res) => {
 };
 
 const postInsights = async (req, res) => {
-  const authorizationResult = verifyUser(req);
-  if (!authorizationResult) {
-    return res.status(401).send("Token may be invalid or not found");
-  }
-  const postId = req.body.id;
-  const userId = authorizationResult.userId;
   try {
-    const post = await Post.findOne({
-      _id: postId,
-    });
-    if (!post) {
-      return res.status(404).send("Post not found");
-    }
-    if (post.ownerId.toString() !== userId) {
-      return res.status(401).send("User is not the owner of this post");
-    }
     return res.status(200).json({
-      totalViews: post.insights.totalViews,
-      upvoteRate: post.insights.upvoteRate,
-      communityKarma: post.insights.communityKarma,
-      totalShares: post.insights.totalShares,
+      totalViews: req.post.insights.totalViews,
+      upvoteRate: req.post.insights.upvoteRate,
+      communityKarma: req.post.insights.communityKarma,
+      totalShares: req.post.insights.totalShares,
     });
   } catch (err) {
     res.status(500).send("Internal server error");
@@ -242,6 +228,9 @@ const postInsights = async (req, res) => {
 };
 
 export default {
+  postIdValidator,
+  pinPostValidator,
+  submitValidator,
   createPost,
   pinPost,
   getPinnedPosts,
