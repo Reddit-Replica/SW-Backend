@@ -6,7 +6,9 @@ import verifyUser from "../utils/verifyUser.js";
 const createPost = async (req, res) => {
   const authorizationResult = verifyUser(req);
   if (!authorizationResult) {
-    return res.status(401).send("Token may be invalid or not found");
+    return res.status(401).json({
+      error: "Token may be invalid or not found",
+    });
   }
   const {
     kind,

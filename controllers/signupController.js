@@ -77,7 +77,9 @@ const signup = async (req, res) => {
     res.status(result.statusCode).json(result.body);
   } catch (err) {
     console.log(err);
-    res.status(500).send("Internal server error");
+    res.status(500).json({
+      error: "Internal server error",
+    });
   }
 };
 
