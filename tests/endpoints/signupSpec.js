@@ -170,7 +170,7 @@ xdescribe("Testing sign up endpoints", () => {
     await token.save();
 
     const response = await request.post(
-      `/verify-email/6367fc48a261e800020457f9/${token.token}`
+      `/verify-email/invalidId/${token.token}`
     );
 
     expect(response.status).toEqual(400);
