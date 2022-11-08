@@ -76,7 +76,10 @@ const signup = async (req, res) => {
     const result = await finalizeCreateUser(user);
     res.status(result.statusCode).json(result.body);
   } catch (err) {
-    res.status(500).json("Internal server error");
+    console.log(err);
+    res.status(500).json({
+      error: "Internal server error",
+    });
   }
 };
 
@@ -88,6 +91,7 @@ const usernameAvailable = async (req, res) => {
     }
     res.status(200).json("The username is available");
   } catch (err) {
+    console.log(err);
     res.status(500).json("Internal server error");
   }
 };
@@ -106,7 +110,7 @@ const emailAvailable = async (req, res) => {
     }
     res.status(200).json("The email is available");
   } catch (err) {
-    res.status(500).json("Internal server error");
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -146,7 +150,8 @@ const verifyEmail = async (req, res) => {
 
     res.status(200).json("Email verified successfully");
   } catch (err) {
-    res.status(500).json("Internal server error");
+    console.log(err);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -178,7 +183,8 @@ const signinWithGoogleFacebook = async (req, res) => {
       // TODO facebook
     }
   } catch (error) {
-    res.status(500).json("Internal server error");
+    console.log(error);
+    res.status(500).send("Internal server error");
   }
 };
 
