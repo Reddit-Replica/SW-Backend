@@ -32,10 +32,10 @@ const createComment = async (req, res) => {
     user.comments.push(comment._id);
     await user.save();
 
-    res.status(201).send("Comment created successfully");
+    res.status(201).json("Comment created successfully");
   } catch (error) {
     console.log(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json("Internal Server Error");
   }
 };
 
