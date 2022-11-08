@@ -59,6 +59,15 @@ describe("Testing login endpoints", () => {
     expect(response.status).toEqual(400);
   });
 
+  it("Try to login with a short password", async () => {
+    const response = await request.post("/login").send({
+      username: "Hamdy",
+      password: "1234",
+    });
+
+    expect(response.status).toEqual(400);
+  });
+
   it("Try to login with a not-found username", async () => {
     const response = await request.post("/login").send({
       username: "Ahmed",
