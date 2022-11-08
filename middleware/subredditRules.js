@@ -1,4 +1,3 @@
-import Subreddit from "../models/Community.js";
 import mongoose from "mongoose";
 
 /**
