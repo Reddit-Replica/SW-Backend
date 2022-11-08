@@ -11,18 +11,11 @@ const subredditValidator = [
     .not()
     .isEmpty()
     .withMessage("title can not be empty")
-    .isLength({ min:0,max:23 })
+    .isLength({ min: 0, max: 23 })
     .withMessage("title must be less than 23 character"),
-  body("category")
-    .not()
-    .isEmpty()
-    .withMessage("category can not be empty"),
-  body("type")
-    .not()
-    .isEmpty()
-    .withMessage("type can not be empty"),
+  body("category").not().isEmpty().withMessage("category can not be empty"),
+  body("type").not().isEmpty().withMessage("type can not be empty"),
 ];
-
 
 //CHECKING ON DESCRIPTION
 const descriptionValidator = [
@@ -30,22 +23,16 @@ const descriptionValidator = [
     .not()
     .isEmpty()
     .withMessage("description can not be empty")
-    .isLength({ min:0,max:300 })
-    .withMessage("description must be less than 300 character")
+    .isLength({ min: 0, max: 300 })
+    .withMessage("description must be less than 300 character"),
 ];
 //CHECKING ON MAIN TOPICS
 const mainTopicValidator = [
-  body("title")
-    .not()
-    .isEmpty()
-    .withMessage("main topic can not be empty")
+  body("title").not().isEmpty().withMessage("main topic can not be empty"),
 ];
 //CHECKING ON SUB TOPICS
 const subTopicValidator = [
-  body("title")
-    .not()
-    .isEmpty()
-    .withMessage("sub topic can not be empty")
+  body("title").not().isEmpty().withMessage("sub topic can not be empty"),
 ];
 
 //CREATE SUBREDDIT
@@ -57,49 +44,48 @@ const createSubreddit = async (req, res) => {
     return res.status(401).send("Token may be invalid or not found");
   }
   //GETTING USER DATA
-  const creatorUsername=authPayload.username;
-  const creatorId=authPayload.userId;
-  const { title,category,type,nsfw }=req.body;
-  const owner={
-    username:creatorUsername,
-    userID:creatorId,
+  const creatorUsername = authPayload.username;
+  const creatorId = authPayload.userId;
+  const { title, category, type, nsfw } = req.body;
+  const owner = {
+    username: creatorUsername,
+    userID: creatorId,
   };
-  const moderators=[];
+  const moderators = [];
   moderators.push({
-    username:creatorUsername,
-    userID:creatorId,
+    username: creatorUsername,
+    userID: creatorId,
   });
   try {
     //ADDING NEW SUBREDDIT
-  const subreddit=await new Subreddit({
-    title:title,
-    category:category,
-    type:type,
-    nsfw:nsfw,
-    owner:owner,
-    moderators:moderators,
-  }).save();
-  //MAKE THE USER OWNER OF THE SUBREDDIT
-  const moderator=await User.findById(creatorId);
-  moderator.ownedSubreddits.push({
-    subredditId:subreddit.id,
-    name:title,
-  });
-  //ADD THIS SUBREDDIT TO THE ONES HE FOLLOWS
-  await moderator.save();
-  moderator.joinedSubreddits.push({
-    subredditId:subreddit.id,
-    name:title,
-  });
-  await moderator.save();
-  //RETURN RESPONSE
-  res.status(201).send({
-    subreddit:subreddit,
-  });
-
+    const subreddit = await new Subreddit({
+      title: title,
+      category: category,
+      type: type,
+      nsfw: nsfw,
+      owner: owner,
+      moderators: moderators,
+    }).save();
+    //MAKE THE USER OWNER OF THE SUBREDDIT
+    const moderator = await User.findById(creatorId);
+    moderator.ownedSubreddits.push({
+      subredditId: subreddit.id,
+      name: title,
+    });
+    //ADD THIS SUBREDDIT TO THE ONES HE FOLLOWS
+    await moderator.save();
+    moderator.joinedSubreddits.push({
+      subredditId: subreddit.id,
+      name: title,
+    });
+    await moderator.save();
+    //RETURN RESPONSE
+    res.status(201).send({
+      subreddit: subreddit,
+    });
   } catch (err) {
     res.status(400).send({
-      error:err,
+      error: err,
     });
   }
 };
@@ -112,32 +98,32 @@ const joinSubreddit = async (req, res) => {
     return res.status(401).send("Token may be invalid or not found");
   }
   //GETTING USER ID
-  const userId=authPayload.userId;
+  const userId = authPayload.userId;
   try {
     //GETTING USER DATA
-    const user=await User.findById(userId);
-    if (!user){
+    const user = await User.findById(userId);
+    if (!user) {
       throw new Error("this user isn't found");
     }
     //GETTING SUBREDDIT DATA
-    const subreddit=await Subreddit.findById(req.body.subredditId);
-    if (!subreddit){
+    const subreddit = await Subreddit.findById(req.body.subredditId);
+    if (!subreddit) {
       throw new Error("this subreddit isn't found");
     }
     //ADDING THIS SUB REDDIT TO JOINED SUBREDDITS LIST
     user.joinedSubreddits.push({
-      subredditId:subreddit.id,
-      name:subreddit.title,
+      subredditId: subreddit.id,
+      name: subreddit.title,
     });
     await user.save();
     //INCREASING NUMBER OF MEMBERS OF SUBREDDIT
-    subreddit.members+=1;
+    subreddit.members += 1;
     await subreddit.save();
     //SENDING RESPONSES
     res.status(201).send("you joined the subreddit successfully");
   } catch (err) {
     res.status(400).send({
-      error:err,
+      error: err,
     });
   }
 };
@@ -151,18 +137,18 @@ const addDescription = async (req, res) => {
   }
   try {
     //GETTING SUBREDDIT DATA
-    const subreddit=await Subreddit.findOne({ title:req.params.subreddit });
-    if (!subreddit){
+    const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
+    if (!subreddit) {
       throw new Error("this subreddit isn't found");
     }
     //ADDING DESCRIPTION OF THE SUBREDDIT
-    subreddit.description=req.body.description;
+    subreddit.description = req.body.description;
     await subreddit.save();
     //SENDING RESPONSES
     res.status(201).send("Subreddit settings updated successfully");
   } catch (err) {
     res.status(400).send({
-      error:err,
+      error: err,
     });
   }
 };
@@ -175,18 +161,18 @@ const addMainTopic = async (req, res) => {
   }
   try {
     //GETTING SUBREDDIT DATA
-    const subreddit=await Subreddit.findOne({ title:req.params.subreddit });
-    if (!subreddit){
+    const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
+    if (!subreddit) {
       throw new Error("this subreddit isn't found");
     }
     //ADDING DESCRIPTION OF THE SUBREDDIT
-    subreddit.mainTopic=req.body.title;
+    subreddit.mainTopic = req.body.title;
     await subreddit.save();
     //SENDING RESPONSES
     res.status(201).send("Successfully updated primary topic!");
   } catch (err) {
     res.status(400).send({
-      error:err,
+      error: err,
     });
   }
 };
@@ -199,23 +185,21 @@ const addSubTopics = async (req, res) => {
   }
   try {
     //GETTING SUBREDDIT DATA
-    const subreddit=await Subreddit.findOne({ title:req.params.subreddit });
-    if (!subreddit){
+    const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
+    if (!subreddit) {
       throw new Error("this subreddit isn't found");
     }
     //ADDING DESCRIPTION OF THE SUBREDDIT
-    subreddit.subTopics=req.body.title;
+    subreddit.subTopics = req.body.title;
     await subreddit.save();
     //SENDING RESPONSES
     res.status(201).send("Community topics saved");
   } catch (err) {
     res.status(400).send({
-      error:err,
+      error: err,
     });
   }
 };
-
-
 
 /* we need to add moderated subreddits in user then we will push this user to them
 const moderate = async(req,res)=>{
@@ -252,5 +236,5 @@ export default {
   addMainTopic,
   addSubTopics,
   mainTopicValidator,
-  subTopicValidator
+  subTopicValidator,
 };
