@@ -4,6 +4,7 @@ import { optionalToken } from "../middleware/optionalToken.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import verifyToken from "../middleware/verifyToken.js";
 import { verifyPostActions } from "../middleware/verifyPostActions.js";
+import { checkId } from "../middleware/checkId.js";
 
 // eslint-disable-next-line new-cap
 const postRouter = express.Router();
@@ -471,6 +472,7 @@ postRouter.patch("/unmark-spoiler");
  */
 postRouter.get(
   "/post-insights",
+  checkId,
   postController.postIdValidator,
   validateRequestSchema,
   verifyToken.verifyAuthToken,
@@ -516,6 +518,7 @@ postRouter.get(
  */
 postRouter.get(
   "/post-details",
+  checkId,
   postController.postIdValidator,
   validateRequestSchema,
   optionalToken,
@@ -566,6 +569,7 @@ postRouter.get(
  */
 postRouter.post(
   "/pin-post",
+  checkId,
   postController.pinPostValidator,
   validateRequestSchema,
   verifyToken.verifyAuthToken,

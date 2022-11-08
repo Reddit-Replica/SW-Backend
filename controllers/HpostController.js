@@ -49,12 +49,16 @@ const createPost = async (req, res) => {
       title: subreddit,
     });
     if (!postSubreddit) {
-      return res.status(404).send("Subreddit not found");
+      return res.status(404).json({
+        error: "Subreddit not found",
+      });
     }
     let images = [];
     if (kind === "image") {
       if (!req.files) {
-        return res.status(404).send("Images not found");
+        return res.status(404).json({
+          error: "Images not found",
+        });
       }
       req.files.forEach((file) => {
         images.push({
@@ -94,9 +98,11 @@ const createPost = async (req, res) => {
     });
     user.posts.push(post.id);
     await user.save();
-    res.status(201).send("Post submitted successfully!");
+    res.status(201).json("Post submitted successfully!");
   } catch (err) {
-    res.status(500).send("Internal server error");
+    res.status(500).json({
+      error: "Internal server error",
+    });
   }
 };
 
@@ -112,9 +118,11 @@ const pinPost = async (req, res) => {
       ) {
         user.pinnedPosts.push(postId);
         await user.save();
-        res.status(200).send("Post pinned successfully!");
+        res.status(200).json("Post pinned successfully!");
       } else {
-        return res.status(409).send("Post is already pinned");
+        return res.status(409).json({
+          error: "Post is already pinned",
+        });
       }
     } else {
       if (
@@ -126,11 +134,15 @@ const pinPost = async (req, res) => {
         await user.save();
         res.status(200).send("Post unpinned successfully!");
       } else {
-        return res.status(409).send("Post is already unpinned");
+        return res.status(409).json({
+          error: "Post is already unpinned",
+        });
       }
     }
   } catch (err) {
-    res.status(500).send("Internal server error");
+    res.status(500).json({
+      error: "Internal server error",
+    });
   }
 };
 
@@ -143,7 +155,9 @@ const getPinnedPosts = async (req, res) => {
     user.pinnedPosts = user.pinnedPosts.filter((post) => !post.deletedAt);
     return res.status(200).json(user.pinnedPosts);
   } catch (err) {
-    res.status(500).send("Internal server error");
+    res.status(500).json({
+      error: "Internal server error",
+    });
   }
 };
 
@@ -155,7 +169,9 @@ const postDetails = async (req, res) => {
       _id: postId,
     }).populate("flair");
     if (!post) {
-      return res.status(404).send("Post not found");
+      return res.status(404).json({
+        error: "Post not found",
+      });
     }
     let saved = false,
       followed = false,
@@ -213,7 +229,9 @@ const postDetails = async (req, res) => {
       spammed: spammed,
     });
   } catch (err) {
-    return res.status(500).send("Internal server error");
+    return res.status(500).json({
+      error: "Internal server error",
+    });
   }
 };
 
@@ -226,7 +244,9 @@ const postInsights = async (req, res) => {
       totalShares: req.post.insights.totalShares,
     });
   } catch (err) {
-    res.status(500).send("Internal server error");
+    res.status(500).json({
+      error: "Internal server error",
+    });
   }
 };
 
