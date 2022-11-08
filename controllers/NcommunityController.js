@@ -52,7 +52,6 @@ const subTopicValidator = [
 // eslint-disable-next-line max-statements
 const createSubreddit = async (req, res) => {
   //CHECK FOR TOKEN
-  console.log("gwa");
   const authPayload = verifyUser(req);
   if (!authPayload) {
     return res.status(401).send("Token may be invalid or not found");
@@ -177,7 +176,6 @@ const addMainTopic = async (req, res) => {
   try {
     //GETTING SUBREDDIT DATA
     const subreddit=await Subreddit.findOne({ title:req.params.subreddit });
-    console.log(subreddit);
     if (!subreddit){
       throw new Error("this subreddit isn't found");
     }
