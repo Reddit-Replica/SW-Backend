@@ -134,7 +134,7 @@ const pinPost = async (req, res) => {
           (id) => id.toString() !== postId
         );
         await user.save();
-        res.status(200).send("Post unpinned successfully!");
+        res.status(200).json("Post unpinned successfully!");
       } else {
         return res.status(409).json({
           error: "Post is already unpinned",
