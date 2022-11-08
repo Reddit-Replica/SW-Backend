@@ -53,6 +53,9 @@ const createPost = async (req, res) => {
     }
     let images = [];
     if (kind === "image") {
+      if (!req.files) {
+        return res.status(404).send("Images not found");
+      }
       req.files.forEach((file) => {
         images.push({
           path: file.path,
