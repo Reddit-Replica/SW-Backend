@@ -134,6 +134,27 @@ describe("Testing post actions endpoints", () => {
     expect(response.statusCode).toEqual(401);
   });
 
+  it("try to mark a post as spoiler with invalid id", async () => {
+    const response = await request
+      .patch("/mark-spoiler")
+      .send({
+        id: "invalid",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+  it("try to mark a post as nsfw with invalid id", async () => {
+    const response = await request
+      .patch("/mark-nsfw")
+      .send({
+        id: "invalid",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+
   it("try to mark a post as spoiler with all valid parameters", async () => {
     const response = await request
       .patch("/mark-spoiler")
@@ -174,6 +195,27 @@ describe("Testing post actions endpoints", () => {
       .set("Authorization", "Bearer " + token1);
 
     expect(response.statusCode).toEqual(409);
+  });
+
+  it("try to unmark a post as spoiler with invalid id", async () => {
+    const response = await request
+      .patch("/unmark-spoiler")
+      .send({
+        id: "invalid",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+  it("try to unmark a post as nsfw with invalid id", async () => {
+    const response = await request
+      .patch("/unmark-nsfw")
+      .send({
+        id: "invalid",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
   });
 
   it("try to unmark a post as spoiler with all valid parameters", async () => {
