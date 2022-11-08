@@ -23,8 +23,8 @@ describe("Testing verifying a user is logged in", () => {
     };
     const token = generateJWT(user);
     const req = {
-      body: {
-        token: token,
+      headers: {
+        authorization: `Bearer ${token}`,
       },
     };
     const decodedPayload = verifyUser(req);
@@ -34,8 +34,8 @@ describe("Testing verifying a user is logged in", () => {
 
   it("Send an invalid token to verifyUser", () => {
     const req = {
-      body: {
-        token: "invalidToken",
+      headers: {
+        authorization: "Bearer invalidToken",
       },
     };
     const decodedPayload = verifyUser(req);
