@@ -1,7 +1,7 @@
 import Post from "../models/Post.js";
 import Subreddit from "../models/Subreddit.js";
 import User from "../models/User.js";
-import { body } from "express-validator";
+import { body, check } from "express-validator";
 
 const postIdValidator = [
   body("id").not().isEmpty().withMessage("Id can't be empty"),
@@ -14,6 +14,7 @@ const pinPostValidator = [
 
 const submitValidator = [
   body("kind").not().isEmpty().withMessage("Post kind can't be empty"),
+  check("kind").isIn(["text", "link", "image", "video", "post"]),
   body("title").not().isEmpty().withMessage("Post title can't be empty"),
   body("subreddit")
     .not()

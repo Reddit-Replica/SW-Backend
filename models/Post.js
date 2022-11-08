@@ -21,6 +21,8 @@ const postSchema = mongoose.Schema({
   },
   kind: {
     type: String,
+    enum: ["text", "image", "video", "post", "link"],
+    default: "text",
     required: true,
   },
   content: {
