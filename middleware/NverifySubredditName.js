@@ -14,16 +14,16 @@ import Subreddit from "../models/Community.js";
  */
 
 export async function checkDuplicateSubredditTitle(req, res, next) {
-	try {
-		// eslint-disable-next-line max-len
-		const title = await Subreddit.findOne({ title: req.body.title });
-		if (title) {
-		return res.status(409).json({ error: "title is already in use" });
-		}
-		next();
-	} catch (err) {
-			res.status(500).send({
-			error:err
-			});
-	}
+  try {
+    // eslint-disable-next-line max-len
+    const title = await Subreddit.findOne({ title: req.body.title });
+    if (title) {
+      return res.status(409).json({ error: "title is already in use" });
+    }
+    next();
+  } catch (err) {
+    res.status(500).send({
+      error: err,
+    });
+  }
 }

@@ -1,4 +1,3 @@
-
 import verifyUser from "../utils/verifyUser.js";
 import Subreddit from "../models/Community.js";
 
@@ -18,36 +17,35 @@ import Subreddit from "../models/Community.js";
  */
 // eslint-disable-next-line max-statements
 export async function checkModerator(req, res, next) {
-	const authPayload = verifyUser(req);
+  const authPayload = verifyUser(req);
   if (!authPayload) {
     res.status(401).send("Token may be invalid or not found");
-		res.end();
+    res.end();
   }
-	try {
-		const subreddit= await Subreddit.findOne({ title:req.params.subreddit });
-		if (!subreddit){
-			throw new Error("this subreddit isn't found");
-		}
-		// eslint-disable-next-line max-len
-		const { moderators } = subreddit;
-		let isThere=false;
-		const userId=authPayload.userId;
-		moderators.forEach(function(moderator){
-			if ((moderator.userID).toString()===userId){
-			isThere=true;
-			}
-		});
-		if (isThere){
-			next();
-		} else {
-			// eslint-disable-next-line max-len
-			throw new Error("you don't have the right to do this action");
-			res.end();
-		}
-	} catch (err) {
-		res.status(400).json({
-			error:err.message,
-		});
-
-	}
+  try {
+    const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
+    if (!subreddit) {
+      throw new Error("this subreddit isn't found");
+    }
+    // eslint-disable-next-line max-len
+    const { moderators } = subreddit;
+    let isThere = false;
+    const userId = authPayload.userId;
+    moderators.forEach(function (moderator) {
+      if (moderator.userID.toString() === userId) {
+        isThere = true;
+      }
+    });
+    if (isThere) {
+      next();
+    } else {
+      // eslint-disable-next-line max-len
+      throw new Error("you don't have the right to do this action");
+      res.end();
+    }
+  } catch (err) {
+    res.status(400).json({
+      error: err.message,
+    });
+  }
 }

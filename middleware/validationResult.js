@@ -15,8 +15,8 @@ export function validateRequestSchema(req, res, next) {
   console.log("2");
   if (!result.isEmpty()) {
     return res.status(400).json({ error: result.array() });
-  console.log("4");
+    console.log("4");
   }
   console.log("3");
   next();
-};
+}

@@ -1,6 +1,7 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkDuplicateUsernameOrEmail } from "../middleware/verifySignUp.js";
+import { checkId } from "../middleware/checkId.js";
 import signupController from "../controllers/signupController.js";
 
 // eslint-disable-next-line new-cap
@@ -185,6 +186,7 @@ signupRouter.post(
   "/verify-email/:id/:token",
   signupController.verifyEmailValidator,
   validateRequestSchema,
+  checkId,
   signupController.verifyEmail
 );
 

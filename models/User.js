@@ -183,6 +183,12 @@ const userSchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  comments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
 });
 
 const User = mongoose.model("User", userSchema);

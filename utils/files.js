@@ -1,9 +1,13 @@
 import multer from "multer";
 export const fileStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "images");
+  destination: (_req, file, cb) => {
+    if (file.mimetype.split("/")[0] === "video") {
+      cb(null, "videos");
+    } else {
+      cb(null, "images");
+    }
   },
-  filename: (req, file, cb) => {
+  filename: (_req, file, cb) => {
     cb(
       null,
       new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname
@@ -11,11 +15,16 @@ export const fileStorage = multer.diskStorage({
   },
 });
 
-export const fileFilter = (req, file, cb) => {
+export const fileFilter = (_req, file, cb) => {
   if (
     file.mimetype === "image/png" ||
     file.mimetype === "image/jpg" ||
-    file.mimetype === "image/jpeg"
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/gif" ||
+    file.mimetype === "video/mp4" ||
+    file.mimetype === "video/webm" ||
+    file.mimetype === "video/x-m4v" ||
+    file.mimetype === "video/x-matroska"
   ) {
     cb(null, true);
   } else {

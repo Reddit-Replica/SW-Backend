@@ -68,16 +68,18 @@ const subRedditRouter = express.Router();
  *       - bearerAuth: []
  */
 // eslint-disable-next-line max-len
-subRedditRouter.post("/create-subreddit",
-	subredditController.subredditValidator,
-	validateRequestSchema,
-	checkDuplicateSubredditTitle,
-	subredditController.createSubreddit,
+subRedditRouter.post(
+  "/create-subreddit",
+  subredditController.subredditValidator,
+  validateRequestSchema,
+  checkDuplicateSubredditTitle,
+  subredditController.createSubreddit
 );
 
-subRedditRouter.post("/join-subreddit",
-	checkJoinedBefore,
-	subredditController.joinSubreddit,
+subRedditRouter.post(
+  "/join-subreddit",
+  checkJoinedBefore,
+  subredditController.joinSubreddit
 );
 
 /**
@@ -146,27 +148,28 @@ subRedditRouter.get("/subreddit-name-available");
  *       - bearerAuth: []
  */
 
-subRedditRouter.post("/r/:subreddit/add-description",
-	subredditController.descriptionValidator,
-	validateRequestSchema,
-	checkModerator,
-	subredditController.addDescription,
+subRedditRouter.post(
+  "/r/:subreddit/add-description",
+  subredditController.descriptionValidator,
+  validateRequestSchema,
+  checkModerator,
+  subredditController.addDescription
 );
 
-subRedditRouter.post("/r/:subreddit/add-mainTopic",
-	subredditController.mainTopicValidator,
-	validateRequestSchema,
-	checkModerator,
-	subredditController.addMainTopic,
+subRedditRouter.post(
+  "/r/:subreddit/add-mainTopic",
+  subredditController.mainTopicValidator,
+  validateRequestSchema,
+  checkModerator,
+  subredditController.addMainTopic
 );
 
-subRedditRouter.post("/r/:subreddit/add-subTopic",
-	subredditController.subTopicValidator,
-	validateRequestSchema,
-	checkModerator,
-	subredditController.addSubTopics,
+subRedditRouter.post(
+  "/r/:subreddit/add-subTopic",
+  subredditController.subTopicValidator,
+  validateRequestSchema,
+  checkModerator,
+  subredditController.addSubTopics
 );
-
-
 
 export default subRedditRouter;
