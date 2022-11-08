@@ -10,9 +10,7 @@ import { validationResult } from "express-validator";
  * @returns {void}
  */
 export function validateRequestSchema(req, res, next) {
-  console.log("1");
   const result = validationResult(req);
-  console.log("2");
   if (!result.isEmpty()) {
     let message = result.array()[0].msg;
 
@@ -22,6 +20,5 @@ export function validateRequestSchema(req, res, next) {
 
     return res.status(400).json({ error: message });
   }
-  console.log("3");
   next();
 }

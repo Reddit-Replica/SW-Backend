@@ -181,29 +181,22 @@ const addMainTopic = async (req, res) => {
 // eslint-disable-next-line max-statements
 const addSubTopics = async (req, res) => {
   //CHECKING FOR USER
-  console.log("a");
   const authPayload = verifyUser(req);
   if (!authPayload) {
     throw new Error("Token may be invalid or not found");
   }
   try {
     //GETTING SUBREDDIT DATA
-    console.log("b");
     const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
     if (!subreddit) {
       throw new Error("this subreddit isn't found");
     }
-    console.log("c");
     //ADDING DESCRIPTION OF THE SUBREDDIT
     subreddit.subTopics = req.body.title;
-    console.log("d");
     await subreddit.save();
     //SENDING RESPONSES
-    console.log("e");
     res.status(201).json("Community topics saved");
-    console.log("f");
   } catch (err) {
-    console.log("g");
     res.status(400).json({
       error: err.message,
     });
