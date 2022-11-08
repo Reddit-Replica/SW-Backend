@@ -1,5 +1,4 @@
 import supertest from "supertest";
-import FormData from "form-data";
 import app from "../../app.js";
 import User from "../../models/User.js";
 import Post from "../../models/Post.js";
