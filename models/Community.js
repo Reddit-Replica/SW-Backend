@@ -93,7 +93,6 @@ const communitySchema = mongoose.Schema({
       },
       nickname: {
         type: String,
-        required: true,
       },
       dateOfModeration: {
         type: Date,
@@ -143,6 +142,16 @@ const communitySchema = mongoose.Schema({
       },
     },
   ],
+  owner:{
+      username: {
+        type: String,
+        required: true,
+      },
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    },
   subredditPosts: [
     {
       type: Schema.Types.ObjectId,
