@@ -1,4 +1,5 @@
 import supertest from "supertest";
+import FormData from "form-data";
 import app from "../../app.js";
 import User from "../../models/User.js";
 import Post from "../../models/Post.js";
@@ -89,12 +90,55 @@ fdescribe("Testing Post endpoints", () => {
     expect(response.status).toEqual(201);
   });
 
+  // it("Normally create a post with images content", async () => {
+  //   const postSubmission = {
+  //     kind: "image",
+  //     title: "Post with images (Test)",
+  //     subreddit: subreddit.title,
+  //   };
+  //   const files = [
+  //     {
+  //       fieldname: "files",
+  //       originalname: "Coding.jpg",
+  //       encoding: "7bit",
+  //       mimetype: "image/jpeg",
+  //       destination: "images",
+  //       filename: "2022-11-08T12-11-20.703Z-Coding.jpg",
+  //       path: "images\\2022-11-08T12-11-20.703Z-Coding.jpg",
+  //       size: 553672,
+  //     },
+  //     {
+  //       fieldname: "files",
+  //       originalname: "Hacker.jpg",
+  //       encoding: "7bit",
+  //       mimetype: "image/jpeg",
+  //       destination: "images",
+  //       filename: "2022-11-08T12-11-20.709Z-Hacker.jpg",
+  //       path: "images\\2022-11-08T12-11-20.709Z-Hacker.jpg",
+  //       size: 343823,
+  //     },
+  //   ];
+  //   const formdata = new FormData();
+  //   formdata.append("title", "Post with images (Test)");
+  //   formdata.append("kind", "image");
+  //   formdata.append("subreddit", subreddit.title);
+  //   formdata.append("files", JSON.stringify(files[0]));
+  //   console.log(JSON.stringify(files[0]));
+  //   const response = await request
+  //     .post("/submit")
+  //     .send(formdata)
+  //     .set("Content-type", "multipart/form-data")
+  //     .set("Authorization", "Bearer " + token);
+
+  //   expect(response.status).toEqual(201);
+  // });
+
   it("Share a post", async () => {
     let post = await Post.findOne({
       title: "First post (Test)",
     });
     const postSubmission = {
-      kind: "text",
+      kind: "post",
       sharePostId: post.id.toString(),
       title: "Second post (Test)",
       subreddit: subreddit.title,
