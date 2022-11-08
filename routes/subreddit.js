@@ -96,4 +96,38 @@ router.post("/create-subreddit");
  */
 router.get("/subreddit-name-available");
 
+/**
+ * @swagger
+ * /join-subreddit:
+ *   post:
+ *     summary: make the user join a subreddit
+ *     tags: [Subreddit]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             properties:
+ *               subredditId:
+ *                 type: string
+ *                 description: Id of the subreddit
+ *     responses:
+ *       200:
+ *         description: you joined the subreddit successfully
+ *       401:
+ *         description: Token may be invalid or not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       400:
+ *         description: subreddit isn't found
+ *       500:
+ *         description: Internal server error
+ */
+ router.get("/join-subreddit");
+
 export default router;
