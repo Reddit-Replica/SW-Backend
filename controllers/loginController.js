@@ -70,9 +70,9 @@ const login = async (req, res) => {
     if (doMatch) {
       try {
         const token = generateJWT(user);
-        res.header("Authorization", "Bearer " + token);
         return res.status(200).json({
           username: username,
+          token: token,
         });
       } catch (err) {
         return res.status(400).json({
