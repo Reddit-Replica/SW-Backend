@@ -29,7 +29,7 @@ const router = express.Router();
  *             properties:
  *               subredditName:
  *                 type: string
- *                 description: Subreddit name
+ *                 description: Subreddit name(maximum 23)
  *               type:
  *                 type: string
  *                 description: Subreddit type

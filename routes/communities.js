@@ -537,9 +537,9 @@ router.get("/r/:subreddit/wiki/bans");
  *         application/json:
  *           schema:
  *            required:
- *             - title
+ *             - mainTopic
  *            properties:
- *             title:
+ *             mainTopic:
  *               type: string
  *               description: title of the main topic in the community
  *      responses:
@@ -573,20 +573,20 @@ router.post("/r/:subreddit/add-main-topic");
  *         application/json:
  *           schema:
  *            required:
- *             - title
+ *             - subTopics
  *            properties:
- *             title:
+ *             subTopics:
  *               type: array
  *               description: array of subtopics to be added to community
  *               items:
  *                 type: object
  *      responses:
- *          200:
- *              description: subtopics is submitted successfully
+ *          201:
+ *              description: Community topics saved
  *          401:
- *              description: Unauthorized add subtopic
+ *              description: Token may be invalid or not found
  *          500:
- *              description: Server Error
+ *              description: Server Error like("this subreddit isn't found")
  *      security:
  *       - bearerAuth: []
  */
@@ -611,18 +611,18 @@ router.post("/r/:subreddit/add-subtopics");
  *         application/json:
  *           schema:
  *            required:
- *             - title
+ *             - description
  *            properties:
- *             title:
+ *             description:
  *               type: string
- *               description: description of the community (maximum 500)
+ *               description: description of the community (maximum 300)
  *      responses:
- *          200:
- *              description: description is submitted successfully
+ *          201:
+ *              description: Subreddit settings updated successfully
  *          401:
- *              description: Unauthorized add description
+ *              description: Token may be invalid or not found
  *          500:
- *              description: Server Error
+ *              description: Server Error like("this subreddit isn't found")
  *      security:
  *       - bearerAuth: []
  */
