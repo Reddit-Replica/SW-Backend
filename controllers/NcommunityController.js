@@ -3,6 +3,7 @@ import verifyUser from "../utils/verifyUser.js";
 import Subreddit from "./../models/Community.js";
 import User from "./../models/User.js";
 import { body } from "express-validator";
+import { generateUsername } from "unique-username-generator";
 //CHECKING ON SUBREDDIT DATA
 // eslint-disable-next-line max-statements
 const subredditValidator = [
@@ -131,7 +132,6 @@ const joinSubreddit = async (req, res) => {
 // eslint-disable-next-line max-statements
 const addDescription = async (req, res) => {
   //CHECKING FOR USER
-  console.log("a");
   const authPayload = verifyUser(req);
   if (!authPayload) {
     throw new Error("Token may be invalid or not found");
@@ -230,29 +230,6 @@ const moderate = async(req,res)=>{
 };
 */
 
-/* random username generator
-const generateRandomUsername= async (req, res) => {
-  try{
-  while(true){
-    int typeOfUsername= Math.floor(Math.random() * 2);
-    int numOfDigits= Math.floor(Math.random() * 6);
-    let RandomUsername;
-    if(typeOfUsername){
-    RandomUsername = generateUsername("",numOfDigits,15);
-    }else{
-    RandomUsername = generateUsername("-",numOfDigits,15);
-    }
-    const user= User.findOne(username:RandomUsername);
-    if(!user){
-        res.status(200).json({username:RandomUsername});
-        break;
-    }
-  }
-} catch (err) {
-  res.status(400).json({error:err.message});
-}
-}
-*/
 export default {
   createSubreddit,
   joinSubreddit,

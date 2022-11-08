@@ -12,7 +12,6 @@ import mongoose from "mongoose";
  * @returns {void}
  */
 
-
 const checkRule = (req, res, next) => {
   const ruleId = req.params.ruleId;
   const neededRule = req.subreddit.rules.find(
@@ -39,7 +38,6 @@ const checkRule = (req, res, next) => {
  * @param {function} next Next function
  * @returns {void}
  */
-
 
 const validateRuleId = (req, res, next) => {
   const ruleId = req.params.ruleId;

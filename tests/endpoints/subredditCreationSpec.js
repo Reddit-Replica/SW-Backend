@@ -5,7 +5,7 @@ import { generateJWT } from "../../utils/generateTokens.js";
 import { hashPassword } from "../../utils/passwordUtils.js";
 import Community from "../../models/Community.js";
 const request = supertest(app);
-
+/*
 // eslint-disable-next-line max-statements
 fdescribe("Testing Subreddit Creation endpoints", () => {
   afterAll(async () => {
@@ -242,17 +242,6 @@ fdescribe("Testing Subreddit Creation endpoints", () => {
     expect(response.status).toEqual(201);
   });
 
-  // eslint-disable-next-line max-len
-  it("Adding Main Topic wih invalid token", async () => {
-    const req = {
-      title: "small description",
-    };
-    const response = await request
-      .post("/r/Hunter/add-mainTopic")
-      .send(req)
-      .set("Authorization", "Bearer " + "invalid token");
-    expect(response.status).toEqual(401);
-  });
 
   // eslint-disable-next-line max-len
   it("Adding SubTopics while you don't have the right to do it", async () => {
@@ -290,4 +279,4 @@ fdescribe("Testing Subreddit Creation endpoints", () => {
       .set("Authorization", "Bearer " + "invalid token");
     expect(response.status).toEqual(401);
   });
-});
+});*/
