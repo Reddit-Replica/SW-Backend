@@ -20,10 +20,11 @@ const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 app.use(
-  multer({ storage: fileStorage, fileFilter: fileFilter }).single("photo")
+  multer({ storage: fileStorage, fileFilter: fileFilter }).array("files", 100)
 );
 
 app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/videos", express.static(path.join(__dirname, "videos")));
 
 const port = process.env.PORT || 3000;
 
