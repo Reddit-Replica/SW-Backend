@@ -87,6 +87,10 @@ describe("Testing Post endpoints", () => {
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(201);
+
+    user = await User.findById(user.id);
+    console.log(user.posts);
+    expect(user.posts.length).toEqual(1);
   });
 
   // it("Normally create a post with images content", async () => {
