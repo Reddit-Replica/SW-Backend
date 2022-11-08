@@ -1,12 +1,13 @@
 import supertest from "supertest";
 import app from "../../app.js";
 import User from "../../models/User.js";
+import { generateVerifyToken } from "../../utils/generateTokens.js";
 import { hashPassword } from "../../utils/passwordUtils.js";
 import Token from "./../../models/VerifyToken.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-describe("Testing login endpoints", () => {
+fdescribe("Testing login endpoints", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Token.deleteMany({});
@@ -173,15 +174,39 @@ describe("Testing login endpoints", () => {
     expect(response.status).toEqual(400);
   });
 
-  it("Try to reset password with the correct id and token", async () => {
+  it("Try to reset password with an expired token", async () => {
     const user = await User.findOne({
       username: "Hamdy",
     });
     const token = await Token.findOne({
       userId: user.id,
     });
+    token.expireAt = Date.now() - 360000000;
+    await token.save();
     let response = await request
       .post(`/reset-password/${user.id}/${token.token}`)
+      .send({
+        newPassword: "123456789",
+        verifyPassword: "123456789",
+      });
+
+    expect(response.status).toEqual(403);
+
+    response = await request.post("/login").send({
+      username: "Hamdy",
+      password: "123456789",
+    });
+
+    expect(response.status).toEqual(400);
+  });
+
+  it("Try to reset password with the correct id and token", async () => {
+    const user = await User.findOne({
+      username: "Hamdy",
+    });
+    const token = await generateVerifyToken(user.id, "forgetPassword");
+    let response = await request
+      .post(`/reset-password/${user.id.toString()}/${token}`)
       .send({
         newPassword: "123456789",
         verifyPassword: "123456789",
