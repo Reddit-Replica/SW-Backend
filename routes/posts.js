@@ -1,6 +1,9 @@
 import express from "express";
 import postController from "../controllers/HpostController.js";
 import { optionalToken } from "../middleware/optionalToken.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import verifyToken from "../middleware/verifyToken.js";
+import { verifyPostActions } from "../middleware/verifyPostActions.js";
 
 // eslint-disable-next-line new-cap
 const postRouter = express.Router();
@@ -284,7 +287,13 @@ postRouter.patch("/mark-spoiler");
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/submit", postController.createPost);
+postRouter.post(
+  "/submit",
+  postController.submitValidator,
+  validateRequestSchema,
+  verifyToken.verifyAuthToken,
+  postController.createPost
+);
 
 /**
  * @swagger
@@ -460,7 +469,14 @@ postRouter.patch("/unmark-spoiler");
  *      security:
  *         - bearerAuth: []
  */
-postRouter.get("/post-insights", postController.postInsights);
+postRouter.get(
+  "/post-insights",
+  postController.postIdValidator,
+  validateRequestSchema,
+  verifyToken.verifyAuthToken,
+  verifyPostActions,
+  postController.postInsights
+);
 
 /**
  * @swagger
@@ -498,7 +514,13 @@ postRouter.get("/post-insights", postController.postInsights);
  *      security:
  *       - bearerAuth: []
  */
-postRouter.get("/post-details", optionalToken, postController.postDetails);
+postRouter.get(
+  "/post-details",
+  postController.postIdValidator,
+  validateRequestSchema,
+  optionalToken,
+  postController.postDetails
+);
 
 /**
  * @swagger
@@ -542,7 +564,14 @@ postRouter.get("/post-details", optionalToken, postController.postDetails);
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/pin-post", postController.pinPost);
+postRouter.post(
+  "/pin-post",
+  postController.pinPostValidator,
+  validateRequestSchema,
+  verifyToken.verifyAuthToken,
+  verifyPostActions,
+  postController.pinPost
+);
 
 /**
  * @swagger
@@ -580,7 +609,11 @@ postRouter.post("/pin-post", postController.pinPost);
  *      security:
  *          - bearerAuth: []
  */
-postRouter.get("/pinned-posts", postController.getPinnedPosts);
+postRouter.get(
+  "/pinned-posts",
+  verifyToken.verifyAuthToken,
+  postController.getPinnedPosts
+);
 
 /**
  * @swagger
