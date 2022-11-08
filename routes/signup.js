@@ -1,6 +1,7 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkDuplicateUsernameOrEmail } from "../middleware/verifySignUp.js";
+import { checkId } from "../middleware/checkId.js";
 import signupController from "../controllers/signupController.js";
 
 // eslint-disable-next-line new-cap
@@ -41,11 +42,6 @@ const signupRouter = express.Router();
  *     responses:
  *       201:
  *         description: The account has been successfully created
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
  *         content:
  *           application/json:
  *             schema:
@@ -53,6 +49,9 @@ const signupRouter = express.Router();
  *                 username:
  *                   type: string
  *                   description: Username of the user
+ *                 token:
+ *                   type: string
+ *                   description: Token that will be used for authorization
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -72,7 +71,6 @@ signupRouter.post(
   checkDuplicateUsernameOrEmail,
   signupController.signup
 );
-
 
 /**
  * @swagger
@@ -170,11 +168,6 @@ signupRouter.get(
  *     responses:
  *       200:
  *         description: Email verified successfully
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -193,6 +186,7 @@ signupRouter.post(
   "/verify-email/:id/:token",
   signupController.verifyEmailValidator,
   validateRequestSchema,
+  checkId,
   signupController.verifyEmail
 );
 
@@ -226,11 +220,6 @@ signupRouter.post(
  *     responses:
  *       200:
  *         description: User logged in successfully
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
  *         content:
  *           application/json:
  *             schema:
@@ -238,13 +227,11 @@ signupRouter.post(
  *                 username:
  *                   type: string
  *                   description: Username of the user
+ *                 token:
+ *                   type: string
+ *                   description: Token that will be used for authorization
  *       201:
  *         description: The account has been successfully created
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
  *         content:
  *           application/json:
  *             schema:
@@ -252,6 +239,9 @@ signupRouter.post(
  *                 username:
  *                   type: string
  *                   description: Username of the user
+ *                 token:
+ *                   type: string
+ *                   description: Token that will be used for authorization
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
