@@ -136,7 +136,7 @@ const verifyEmail = async (req, res) => {
     if (token.expireAt < Date.now()) {
       await token.remove();
       return res.status(403).json({
-        error: "Invalid Token",
+        error: "Token Expired",
       });
     }
 
