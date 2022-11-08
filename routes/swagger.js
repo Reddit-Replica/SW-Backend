@@ -111,6 +111,16 @@
  *         flairId:
  *           type: string
  *           description: Flair ID
+ *         imageCaptions:
+ *           type: array
+ *           description: Captions written for the images submitted
+ *           items:
+ *              type: string
+ *         imageLinks:
+ *           type: array
+ *           description: Links written for the images submitted
+ *           items:
+ *              type: string
  *         sendReplies:
  *           type: boolean
  *           description: Allow post reply notifications

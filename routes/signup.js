@@ -268,8 +268,8 @@ signupRouter.post(
  *     summary: Get an available random username used to create a new account
  *     tags: [Sign Up]
  *     responses:
- *       200:
- *         description: The email is available
+ *       201:
+ *         description: random username is generated successfully
  *         content:
  *           application/json:
  *             schema:

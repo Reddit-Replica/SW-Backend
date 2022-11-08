@@ -22,14 +22,14 @@ const router = express.Router();
  *         application/json:
  *           schema:
  *             required:
- *               - subredditName
+ *               - title
  *               - type
  *               - nsfw
  *               - category
  *             properties:
- *               subredditName:
+ *               title:
  *                 type: string
- *                 description: Subreddit name
+ *                 description: Subreddit name(maximum 23)
  *               type:
  *                 type: string
  *                 description: Subreddit type
@@ -95,5 +95,39 @@ router.post("/create-subreddit");
  *         description: Internal server error
  */
 router.get("/subreddit-name-available");
+
+/**
+ * @swagger
+ * /join-subreddit:
+ *   post:
+ *     summary: make the user join a subreddit
+ *     tags: [Subreddit]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             properties:
+ *               subredditId:
+ *                 type: string
+ *                 description: Id of the subreddit
+ *     responses:
+ *       200:
+ *         description: you joined the subreddit successfully
+ *       401:
+ *         description: Token may be invalid or not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       400:
+ *         description: subreddit isn't found
+ *       500:
+ *         description: Internal server error
+ */
+ router.post("/join-subreddit");
 
 export default router;
