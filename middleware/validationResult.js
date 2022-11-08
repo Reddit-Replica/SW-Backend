@@ -14,8 +14,13 @@ export function validateRequestSchema(req, res, next) {
   const result = validationResult(req);
   console.log("2");
   if (!result.isEmpty()) {
-    return res.status(400).json({ error: result.array() });
-    console.log("4");
+    let message = result.array()[0].msg;
+
+    for (let i = 1; i < result.array().length; i++) {
+      message += ` - ${result.array()[i].msg}`;
+    }
+
+    return res.status(400).json({ error: message });
   }
   console.log("3");
   next();

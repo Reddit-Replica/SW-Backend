@@ -10,6 +10,7 @@ const request = supertest(app);
 // eslint-disable-next-line max-statements
 describe("Testing post, comment, and message actions endpoints", () => {
   let post = {},
+    post1 = {},
     comment = {},
     // message = {},
     user1 = {},
@@ -35,6 +36,15 @@ describe("Testing post, comment, and message actions endpoints", () => {
     });
     await post.save();
 
+    post1 = new Post({
+      title: "post title",
+      ownerUsername: user1.username,
+      ownerId: user1._id,
+      subredditName: "subreddit",
+      kind: "link",
+    });
+    await post1.save();
+
     comment = new Comment({
       parentId: post._id,
       parentType: "post",
@@ -59,6 +69,206 @@ describe("Testing post, comment, and message actions endpoints", () => {
     await User.deleteMany({});
     await Post.deleteMany({});
     await Comment.deleteMany({});
+  });
+
+  // testing edit posts and comments
+  it("try to edit a post without jwt in the header", async () => {
+    const response = await request.put("/edit-user-text").send({
+      id: post._id,
+      type: "post",
+      text: "new text",
+    });
+    expect(response.statusCode).toEqual(401);
+  });
+  it("try to edit a comment without jwt in the header", async () => {
+    const response = await request.put("/edit-user-text").send({
+      id: comment._id,
+      type: "comment",
+      text: "new text",
+    });
+    expect(response.statusCode).toEqual(401);
+  });
+
+  it("try to edit a post of other user", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: post._id,
+        type: "post",
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token2);
+
+    expect(response.statusCode).toEqual(401);
+  });
+  it("try to edit a comment of other user", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: comment._id,
+        type: "comment",
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token2);
+
+    expect(response.statusCode).toEqual(401);
+  });
+
+  it("try to edit a post that have no text", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: post1._id,
+        type: "post",
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it("try to edit a post with invalid id", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: "invalid",
+        type: "post",
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+  it("try to edit a comment with invalid id", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: "invalid",
+        type: "comment",
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it("try to edit a post without id in body", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        type: "post",
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+  it("try to edit a comment without id in body", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        type: "comment",
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it("try to edit a post without type in body", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: post._id,
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+  it("try to edit a comment without type in body", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: comment._id,
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it("try to edit a post with invalid type", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: post._id,
+        type: "invalid",
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+  it("try to edit a comment with invalid type", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: comment._id,
+        type: "invalid",
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it("try to edit a post without text in body", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: post._id,
+        type: "post",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+  it("try to edit a comment without text in body", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: comment._id,
+        type: "comment",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it("try to edit a post with all valid parameters", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: post._id,
+        type: "post",
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(200);
+  });
+  it("try to edit a comment with all valid parameters", async () => {
+    const response = await request
+      .put("/edit-user-text")
+      .send({
+        id: comment._id,
+        type: "comment",
+        text: "new text",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(200);
   });
 
   it("try to delete a post without jwt in the header", async () => {
