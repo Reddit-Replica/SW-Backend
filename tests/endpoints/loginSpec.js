@@ -38,7 +38,7 @@ describe("Testing login endpoints", () => {
   it("Try to login with correct credentials", async () => {
     const user = new User({
       username: "Hamdy",
-      email: "abdelrahmanhamdy49@gmail.com",
+      email: "abdelrahman@gmail.com",
       password: hashPassword("12345678"),
     });
     await user.save();
@@ -90,7 +90,7 @@ describe("Testing login endpoints", () => {
   it("Try to send a forget password email to an invalid username", async () => {
     const response = await request.post("/login/forget-password").send({
       username: "Ahmed",
-      email: "abdelrahmanhamdy49@gmail.com",
+      email: "abdelrahman@gmail.com",
     });
 
     expect(response.status).toEqual(400);
@@ -99,7 +99,7 @@ describe("Testing login endpoints", () => {
   it("Try to send a forget password email to the correct user", async () => {
     const response = await request.post("/login/forget-password").send({
       username: "Hamdy",
-      email: "abdelrahmanhamdy49@gmail.com",
+      email: "abdelrahman@gmail.com",
     });
 
     expect(response.status).toEqual(200);
