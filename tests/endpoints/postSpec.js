@@ -8,7 +8,7 @@ import { hashPassword } from "../../utils/passwordUtils.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-describe("Testing Post endpoints", () => {
+fdescribe("Testing Post endpoints", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
@@ -31,7 +31,7 @@ describe("Testing Post endpoints", () => {
 
   it("Create post with invalid subreddit name", async () => {
     token = generateJWT(user);
-    const postSubmissionAndToken = {
+    const postSubmission = {
       kind: "link",
       content: "reddit.com",
       title: "Second post (Test)",
@@ -39,28 +39,28 @@ describe("Testing Post endpoints", () => {
     };
     const response = await request
       .post("/submit")
-      .send(postSubmissionAndToken)
+      .send(postSubmission)
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(404);
   });
 
   it("Create post with a missing kind (required parameter)", async () => {
-    const postSubmissionAndToken = {
+    const postSubmission = {
       content: "reddit.com",
       title: "Third post (Test)",
       subreddit: subreddit.title,
     };
     const response = await request
       .post("/submit")
-      .send(postSubmissionAndToken)
+      .send(postSubmission)
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(400);
   });
 
   it("Create post with an invalid token", async () => {
-    const postSubmissionAndToken = {
+    const postSubmission = {
       kind: "link",
       content: "reddit.com",
       title: "Fourth post (Test)",
@@ -68,14 +68,14 @@ describe("Testing Post endpoints", () => {
     };
     const response = await request
       .post("/submit")
-      .send(postSubmissionAndToken)
+      .send(postSubmission)
       .set("Authorization", "Bearer " + "invalidToken");
 
     expect(response.status).toEqual(401);
   });
 
   it("Normally create a post with text content", async () => {
-    const postSubmissionAndToken = {
+    const postSubmission = {
       kind: "text",
       content: "Text content of this post",
       title: "First post (Test)",
@@ -83,10 +83,32 @@ describe("Testing Post endpoints", () => {
     };
     const response = await request
       .post("/submit")
-      .send(postSubmissionAndToken)
+      .send(postSubmission)
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(201);
+  });
+
+  it("Share a post", async () => {
+    let post = await Post.findOne({
+      title: "First post (Test)",
+    });
+    const postSubmission = {
+      kind: "text",
+      sharePostId: post.id.toString(),
+      title: "Second post (Test)",
+      subreddit: subreddit.title,
+    };
+    const response = await request
+      .post("/submit")
+      .send(postSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(201);
+    post = await Post.findOne({
+      title: "First post (Test)",
+    });
+    expect(post.insights.totalShares).toBeGreaterThan(0);
   });
 
   it("Pin a post with invalid ID", async () => {

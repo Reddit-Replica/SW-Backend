@@ -43,8 +43,7 @@ const postSchema = mongoose.Schema({
     },
   ],
   sharePostId: {
-    type: Schema.Types.ObjectId,
-    ref: "Post",
+    type: String,
   },
   suggestedSort: {
     type: String,

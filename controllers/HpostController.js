@@ -82,10 +82,9 @@ const createPost = async (req, res) => {
       scheduleTimeZone: scheduleTimeZone,
     }).save();
     if (sharePostId) {
-      const sharedPost = Post.findOne({
-        _id: sharePostId,
-      });
+      const sharedPost = await Post.findById(sharePostId);
       sharedPost.insights.totalShares += 1;
+      await sharedPost.save();
     }
     const user = await User.findOne({
       _id: userId,

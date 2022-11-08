@@ -6,7 +6,7 @@ import supertest from "supertest";
 import app from "../../app.js";
 supertest(app);
 
-fdescribe("Testing verifying a user is logged in", () => {
+describe("Testing verifying a user is logged in", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Token.deleteMany({});
