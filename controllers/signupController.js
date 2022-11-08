@@ -85,12 +85,12 @@ const usernameAvailable = async (req, res) => {
   try {
     const user = await User.findOne({ username: req.query.username });
     if (user) {
-      return res.status(409).send("Username is already taken");
+      return res.status(409).json("Username is already taken");
     }
-    res.send("The username is available");
+    res.status(200).json("The username is available");
   } catch (err) {
     console.log(err);
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -104,12 +104,12 @@ const emailAvailable = async (req, res) => {
     ]);
 
     if (user) {
-      return res.status(409).send("Email is already taken");
+      return res.status(409).json("Email is already taken");
     }
-    res.send("The email is available");
+    res.status(200).json("The email is available");
   } catch (err) {
     console.log(err);
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 };
 
