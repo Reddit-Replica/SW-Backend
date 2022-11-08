@@ -9,7 +9,7 @@ import { hashPassword } from "../../utils/passwordUtils.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-describe("Testing Post endpoints", () => {
+fdescribe("Testing Post endpoints", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
@@ -91,11 +91,6 @@ describe("Testing Post endpoints", () => {
   });
 
   // it("Normally create a post with images content", async () => {
-  //   const postSubmission = {
-  //     kind: "image",
-  //     title: "Post with images (Test)",
-  //     subreddit: subreddit.title,
-  //   };
   //   const files = [
   //     {
   //       fieldname: "files",
@@ -122,12 +117,11 @@ describe("Testing Post endpoints", () => {
   //   formdata.append("title", "Post with images (Test)");
   //   formdata.append("kind", "image");
   //   formdata.append("subreddit", subreddit.title);
-  //   formdata.append("files", JSON.stringify(files[0]));
-  //   console.log(JSON.stringify(files[0]));
+  //   formdata.append("files[]", JSON.stringify(files[0]));
+  //   formdata.append("files[]", JSON.stringify(files[1]));
   //   const response = await request
   //     .post("/submit")
-  //     .send(formdata)
-  //     .set("Content-type", "multipart/form-data")
+  //     .attach(formdata)
   //     .set("Authorization", "Bearer " + token);
 
   //   expect(response.status).toEqual(201);
