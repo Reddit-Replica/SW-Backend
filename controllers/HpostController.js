@@ -1,5 +1,5 @@
 import Post from "../models/Post.js";
-import Subreddit from "../models/Subreddit.js";
+import Subreddit from "../models/Community.js";
 import User from "../models/User.js";
 import { body, check } from "express-validator";
 
