@@ -591,5 +591,44 @@ router.patch("/unread-message");
  */
 
 router.patch("/read-all-msgs");
+/**
+ * @swagger
+ * /suggested-sender:
+ *  get:
+ *      summary: Return all subreddits that you can send message from
+ *      tags: [Messages]
+ *      responses:
+ *          200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: object
+ *                        properties:
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *                          children:
+ *                            type: array
+ *                            description: List of [Things] to return
+ *                            items:
+ *                              properties:
+ *                               titles:
+ *                                 type: string
+ *                                 description: the titles of the subreddits that the user can send messages from and his own username
+ *          404:
+ *              description: Page not found
+ *          401:
+ *              description: User unauthorized to view this info
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+ router.get("/suggested-sender");
 
 export default router;

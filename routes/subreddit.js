@@ -128,6 +128,6 @@ router.get("/subreddit-name-available");
  *       500:
  *         description: Internal server error
  */
- router.get("/join-subreddit");
+ router.post("/join-subreddit");
 
 export default router;
