@@ -11,19 +11,23 @@ import Post from "../models/Post.js";
  * @returns {void}
  */
 export async function verifyPostActions(req, res, next) {
-  const { id } = req.body;
-  const { userId } = req.payload;
-  const post = await Post.findById(id);
+  try {
+    const { id } = req.body;
+    const { userId } = req.payload;
+    const post = await Post.findById(id);
 
-  if (!post || post.deletedAt) {
-    return res.status(404).send("Post not found");
+    if (!post || post.deletedAt) {
+      return res.status(404).json("Post not found");
+    }
+
+    // check if the post does not belong to the user making the request
+    if (post.ownerId.toString() !== userId) {
+      return res.status(401).json("Access Denied");
+    }
+
+    req.post = post;
+    next();
+  } catch (error) {
+    res.status(500).json("Internal Server Error");
   }
-
-  // check if the post does not belong to the user making the request
-  if (post.ownerId.toString() !== userId) {
-    return res.status(401).send("Access Denied");
-  }
-
-  req.post = post;
-  next();
 }
