@@ -30,6 +30,16 @@ const validateCreatingRuleBody = (req) => {
   }
 };
 
+const validateEditingRuleBody = (req) => {
+  const firstValidate = validateCreatingRuleBody(req);
+  if (!firstValidate || !req.body.ruleOrder) {
+    return false;
+  }
+  req.ruleObject.ruleOrder = req.body.ruleOrder;
+  return true;
+};
+
 export default {
   validateCreatingRuleBody,
+  validateEditingRuleBody,
 };
