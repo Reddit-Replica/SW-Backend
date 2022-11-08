@@ -54,7 +54,7 @@ const createSubreddit = async (req, res) => {
   //CHECK FOR TOKEN
   const authPayload = verifyUser(req);
   if (!authPayload) {
-    return res.status(401).send("Token may be invalid or not found");
+    throw new Error("Token may be invalid or not found");
   }
   //GETTING USER DATA
   const creatorUsername=authPayload.username;
@@ -98,8 +98,8 @@ const createSubreddit = async (req, res) => {
   });
 
   } catch (err) {
-    res.status(400).send({
-      error:err,
+    res.status(400).json({
+      error:err.message,
     });
   }
 };
@@ -109,7 +109,7 @@ const joinSubreddit = async (req, res) => {
   //CHECKING FOR USER
   const authPayload = verifyUser(req);
   if (!authPayload) {
-    return res.status(401).send("Token may be invalid or not found");
+     throw new Error("Token may be invalid or not found");
   }
   //GETTING USER ID
   const userId=authPayload.userId;
@@ -134,10 +134,10 @@ const joinSubreddit = async (req, res) => {
     subreddit.members+=1;
     await subreddit.save();
     //SENDING RESPONSES
-    res.status(201).send("you joined the subreddit successfully");
+    res.status(200).json({ message:"you joined the subreddit successfully" });
   } catch (err) {
-    res.status(400).send({
-      error:err,
+    res.status(400).json({
+      error:err.message,
     });
   }
 };
@@ -145,9 +145,10 @@ const joinSubreddit = async (req, res) => {
 // eslint-disable-next-line max-statements
 const addDescription = async (req, res) => {
   //CHECKING FOR USER
+  console.log("a");
   const authPayload = verifyUser(req);
   if (!authPayload) {
-    return res.status(401).send("Token may be invalid or not found");
+    throw new Error("Token may be invalid or not found");
   }
   try {
     //GETTING SUBREDDIT DATA
@@ -159,10 +160,10 @@ const addDescription = async (req, res) => {
     subreddit.description=req.body.description;
     await subreddit.save();
     //SENDING RESPONSES
-    res.status(201).send("Subreddit settings updated successfully");
+    res.status(201).json("Subreddit settings updated successfully");
   } catch (err) {
-    res.status(400).send({
-      error:err,
+    res.status(400).json({
+      error:err.message,
     });
   }
 };
@@ -171,7 +172,7 @@ const addMainTopic = async (req, res) => {
   //CHECKING FOR USER
   const authPayload = verifyUser(req);
   if (!authPayload) {
-    return res.status(401).send("Token may be invalid or not found");
+    throw new Error("Token may be invalid or not found");
   }
   try {
     //GETTING SUBREDDIT DATA
@@ -183,34 +184,42 @@ const addMainTopic = async (req, res) => {
     subreddit.mainTopic=req.body.title;
     await subreddit.save();
     //SENDING RESPONSES
-    res.status(201).send("Successfully updated primary topic!");
+    res.status(201).json("Successfully updated primary topic!");
   } catch (err) {
-    res.status(400).send({
-      error:err,
+    res.status(400).json({
+      error:err.message,
     });
   }
 };
 
+// eslint-disable-next-line max-statements
 const addSubTopics = async (req, res) => {
   //CHECKING FOR USER
+  console.log("a");
   const authPayload = verifyUser(req);
   if (!authPayload) {
-    return res.status(401).send("Token may be invalid or not found");
+    throw new Error("Token may be invalid or not found");
   }
   try {
     //GETTING SUBREDDIT DATA
+    console.log("b");
     const subreddit=await Subreddit.findOne({ title:req.params.subreddit });
     if (!subreddit){
       throw new Error("this subreddit isn't found");
     }
+    console.log("c");
     //ADDING DESCRIPTION OF THE SUBREDDIT
     subreddit.subTopics=req.body.title;
+    console.log("d");
     await subreddit.save();
     //SENDING RESPONSES
-    res.status(201).send("Community topics saved");
+    console.log("e");
+    res.status(201).json("Community topics saved");
+    console.log("f");
   } catch (err) {
-    res.status(400).send({
-      error:err,
+    console.log("g");
+    res.status(400).json({
+      error:err.message,
     });
   }
 };

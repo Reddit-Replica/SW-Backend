@@ -3,8 +3,8 @@ import { validateRequestSchema } from "../middleware/validationResult.js";
 // eslint-disable-next-line max-len
 import { checkDuplicateSubredditTitle } from "../middleware/NverifySubredditName.js";
 import subredditController from "../controllers/NcommunityController.js";
-import { checkJoinedBefore } from "../middleware/NJoiningValidation.js";
 import { checkModerator } from "../middleware/NverifyModerator.js";
+import { checkJoinedBefore } from "../middleware/NJoiningValidation.js";
 // eslint-disable-next-line new-cap
 const subRedditRouter = express.Router();
 

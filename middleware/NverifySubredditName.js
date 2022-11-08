@@ -18,7 +18,7 @@ export async function checkDuplicateSubredditTitle(req, res, next) {
 		// eslint-disable-next-line max-len
 		const title = await Subreddit.findOne({ title: req.body.title });
 		if (title) {
-		return res.status(400).send({ error: "title is already in use" });
+		return res.status(409).json({ error: "title is already in use" });
 		}
 		next();
 	} catch (err) {

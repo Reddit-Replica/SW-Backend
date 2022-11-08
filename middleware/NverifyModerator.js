@@ -20,10 +20,14 @@ import Subreddit from "../models/Community.js";
 export async function checkModerator(req, res, next) {
 	const authPayload = verifyUser(req);
   if (!authPayload) {
-    return res.status(401).send("Token may be invalid or not found");
+    res.status(401).send("Token may be invalid or not found");
+		res.end();
   }
 	try {
-		subreddit= await Subreddit.findOne({ title:req.params.subreddit });
+		const subreddit= await Subreddit.findOne({ title:req.params.subreddit });
+		if (!subreddit){
+			throw new Error("this subreddit isn't found");
+		}
 		// eslint-disable-next-line max-len
 		const { moderators } = subreddit;
 		let isThere=false;
@@ -36,11 +40,14 @@ export async function checkModerator(req, res, next) {
 		if (isThere){
 			next();
 		} else {
-			res.status(400).send("you don't have the right to do this action");
+			// eslint-disable-next-line max-len
+			throw new Error("you don't have the right to do this action");
+			res.end();
 		}
 	} catch (err) {
-			res.status(500).send({
-			error:err
-			});
+		res.status(400).json({
+			error:err.message,
+		});
+
 	}
 }
