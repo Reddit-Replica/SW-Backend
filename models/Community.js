@@ -74,9 +74,13 @@ const communitySchema = mongoose.Schema({
       },
       updatedAt: {
         type: Date,
+        required: true,
+        default: null,
       },
       deletedAt: {
         type: Date,
+        required: true,
+        default: null,
       },
       appliesTo: {
         type: String,
