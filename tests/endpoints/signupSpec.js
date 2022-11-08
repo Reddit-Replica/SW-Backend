@@ -5,7 +5,7 @@ import Token from "./../../models/VerifyToken.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-xdescribe("Testing sign up endpoints", () => {
+describe("Testing sign up endpoints", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Token.deleteMany({});
