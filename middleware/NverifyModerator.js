@@ -17,11 +17,7 @@ import Subreddit from "../models/Community.js";
  */
 // eslint-disable-next-line max-statements
 export async function checkModerator(req, res, next) {
-  const authPayload = verifyUser(req);
-  if (!authPayload) {
-    res.status(401).send("Token may be invalid or not found");
-    res.end();
-  }
+  const authPayload = req.payload;
   try {
     const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
     if (!subreddit) {
@@ -41,10 +37,9 @@ export async function checkModerator(req, res, next) {
     } else {
       // eslint-disable-next-line max-len
       throw new Error("you don't have the right to do this action");
-      res.end();
     }
   } catch (err) {
-    res.status(400).json({
+    return res.status(400).json({
       error: err.message,
     });
   }

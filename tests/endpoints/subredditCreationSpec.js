@@ -5,7 +5,7 @@ import { generateJWT } from "../../utils/generateTokens.js";
 import { hashPassword } from "../../utils/passwordUtils.js";
 import Community from "../../models/Community.js";
 const request = supertest(app);
-/*
+
 // eslint-disable-next-line max-statements
 fdescribe("Testing Subreddit Creation endpoints", () => {
   afterAll(async () => {
@@ -133,8 +133,7 @@ fdescribe("Testing Subreddit Creation endpoints", () => {
       .post("/create-subreddit")
       .send(subreddit)
       .set("Authorization", "Bearer " + "invalid token");
-
-    expect(response.status).toEqual(409);
+    expect(response.status).toEqual(401);
   });
 
   it("joining subreddit that you are already in", async () => {
@@ -242,7 +241,6 @@ fdescribe("Testing Subreddit Creation endpoints", () => {
     expect(response.status).toEqual(201);
   });
 
-
   // eslint-disable-next-line max-len
   it("Adding SubTopics while you don't have the right to do it", async () => {
     token = generateJWT(normalUser);
@@ -279,4 +277,4 @@ fdescribe("Testing Subreddit Creation endpoints", () => {
       .set("Authorization", "Bearer " + "invalid token");
     expect(response.status).toEqual(401);
   });
-});*/
+});

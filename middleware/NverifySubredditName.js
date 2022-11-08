@@ -22,7 +22,7 @@ export async function checkDuplicateSubredditTitle(req, res, next) {
     }
     next();
   } catch (err) {
-    res.status(500).send({
+    return res.status(500).send({
       error: err,
     });
   }

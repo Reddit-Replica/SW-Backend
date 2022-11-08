@@ -40,10 +40,7 @@ const subTopicValidator = [
 // eslint-disable-next-line max-statements
 const createSubreddit = async (req, res) => {
   //CHECK FOR TOKEN
-  const authPayload = verifyUser(req);
-  if (!authPayload) {
-    throw new Error("Token may be invalid or not found");
-  }
+  const authPayload = req.payload;
   //GETTING USER DATA
   const creatorUsername = authPayload.username;
   const creatorId = authPayload.userId;
@@ -81,11 +78,11 @@ const createSubreddit = async (req, res) => {
     });
     await moderator.save();
     //RETURN RESPONSE
-    res.status(201).send({
+    return res.status(201).send({
       subreddit: subreddit,
     });
   } catch (err) {
-    res.status(400).json({
+    return res.status(400).json({
       error: err.message,
     });
   }
@@ -94,10 +91,7 @@ const createSubreddit = async (req, res) => {
 // eslint-disable-next-line max-statements
 const joinSubreddit = async (req, res) => {
   //CHECKING FOR USER
-  const authPayload = verifyUser(req);
-  if (!authPayload) {
-    throw new Error("Token may be invalid or not found");
-  }
+  const authPayload = req.payload;
   //GETTING USER ID
   const userId = authPayload.userId;
   try {
@@ -121,9 +115,11 @@ const joinSubreddit = async (req, res) => {
     subreddit.members += 1;
     await subreddit.save();
     //SENDING RESPONSES
-    res.status(200).json({ message: "you joined the subreddit successfully" });
+    return res
+      .status(200)
+      .json({ message: "you joined the subreddit successfully" });
   } catch (err) {
-    res.status(400).json({
+    return res.status(400).json({
       error: err.message,
     });
   }
@@ -131,11 +127,6 @@ const joinSubreddit = async (req, res) => {
 
 // eslint-disable-next-line max-statements
 const addDescription = async (req, res) => {
-  //CHECKING FOR USER
-  const authPayload = verifyUser(req);
-  if (!authPayload) {
-    throw new Error("Token may be invalid or not found");
-  }
   try {
     //GETTING SUBREDDIT DATA
     const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
@@ -146,33 +137,29 @@ const addDescription = async (req, res) => {
     subreddit.description = req.body.description;
     await subreddit.save();
     //SENDING RESPONSES
-    res.status(201).json("Subreddit settings updated successfully");
+    return res.status(201).json("Subreddit settings updated successfully");
   } catch (err) {
-    res.status(400).json({
+    return res.status(400).json({
       error: err.message,
     });
   }
 };
 
 const addMainTopic = async (req, res) => {
-  //CHECKING FOR USER
-  const authPayload = verifyUser(req);
-  if (!authPayload) {
-    throw new Error("Token may be invalid or not found");
-  }
   try {
     //GETTING SUBREDDIT DATA
     const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
     if (!subreddit) {
-      throw new Error("this subreddit isn't found");
+      throw new Error("this subreddit isn't found", { statusCode: 401 });
     }
     //ADDING DESCRIPTION OF THE SUBREDDIT
     subreddit.mainTopic = req.body.title;
     await subreddit.save();
     //SENDING RESPONSES
-    res.status(201).json("Successfully updated primary topic!");
+    return res.status(201).json("Successfully updated primary topic!");
   } catch (err) {
-    res.status(400).json({
+    console.log(err);
+    return res.status(err.statusCode).json({
       error: err.message,
     });
   }
@@ -180,11 +167,6 @@ const addMainTopic = async (req, res) => {
 
 // eslint-disable-next-line max-statements
 const addSubTopics = async (req, res) => {
-  //CHECKING FOR USER
-  const authPayload = verifyUser(req);
-  if (!authPayload) {
-    throw new Error("Token may be invalid or not found");
-  }
   try {
     //GETTING SUBREDDIT DATA
     const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
@@ -195,9 +177,9 @@ const addSubTopics = async (req, res) => {
     subreddit.subTopics = req.body.title;
     await subreddit.save();
     //SENDING RESPONSES
-    res.status(201).json("Community topics saved");
+    return res.status(201).json("Community topics saved");
   } catch (err) {
-    res.status(400).json({
+    return res.status(400).json({
       error: err.message,
     });
   }
