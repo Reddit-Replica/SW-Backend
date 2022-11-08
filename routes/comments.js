@@ -1,7 +1,10 @@
 import express from "express";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import commentController from "../controllers/BcommentController.js";
+import verifyToken from "../middleware/verifyToken.js";
 
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const commentsRouter = express.Router();
 
 /**
  * @swagger
@@ -50,6 +53,12 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.post("/comment");
+commentsRouter.post(
+  "/comment",
+  verifyToken.verifyAuthToken,
+  commentController.createCommentValidator,
+  validateRequestSchema,
+  commentController.createComment
+);
 
-export default router;
+export default commentsRouter;

@@ -1,17 +1,30 @@
 import dotenv from "dotenv";
 import express from "express";
+import multer from "multer";
+import path from "path";
+import { fileURLToPath } from "url";
 import mongoose from "mongoose";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import mainRouter from "./routes/routes.js";
 import bodyParser from "body-parser";
 import morgan from "morgan";
+import { fileStorage, fileFilter } from "./utils/files.js";
 const app = express();
 
 dotenv.config();
 
 app.use(bodyParser.json());
 app.use(morgan("dev"));
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).array("files", 100)
+);
+
+app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/videos", express.static(path.join(__dirname, "videos")));
 
 const port = process.env.PORT || 3000;
 
