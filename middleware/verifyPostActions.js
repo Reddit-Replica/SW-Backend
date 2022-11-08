@@ -12,8 +12,13 @@ import Post from "../models/Post.js";
  */
 export async function verifyPostActions(req, res, next) {
   const { id } = req.body;
-  const { userId } = req.decodedPayload;
-  const post = await Post.findById(id);
+  const { userId } = req.payload;
+  let post;
+  try {
+    post = await Post.findById(id);
+  } catch (err) {
+    return res.status(500).send("Internal server error");
+  }
 
   if (!post || post.deletedAt) {
     return res.status(404).send("Post not found");
