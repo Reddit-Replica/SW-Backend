@@ -16,7 +16,7 @@ export async function checkDuplicateUsernameOrEmail(req, res, next) {
     // Username
     const username = await User.findOne({ username: req.body.username.trim() });
     if (username) {
-      return res.status(400).send({ error: "Username is already in use" });
+      return res.status(400).json({ error: "Username is already in use" });
     }
 
     //Email
@@ -27,12 +27,12 @@ export async function checkDuplicateUsernameOrEmail(req, res, next) {
       { facebookEmail: email },
     ]);
     if (emailUser) {
-      return res.status(400).send({ error: "Email is already in use" });
+      return res.status(400).json({ error: "Email is already in use" });
     }
 
     // if everything is good then continue
     next();
   } catch (error) {
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 }
