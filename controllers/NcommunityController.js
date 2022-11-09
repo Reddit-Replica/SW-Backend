@@ -4,7 +4,92 @@ import User from "./../models/User.js";
 import { body } from "express-validator";
 //CHECKING ON SUBREDDIT DATA
 // eslint-disable-next-line max-statements
-let Categories=["Sports","Gaming","News","TV","Aww","Memes","Pics & Gifs","Travel","Tech","Music","Art & Design","Beauty","Books & Writing","Crypto","Discussion","E3","Fashion","Finance & Business","Food","Health & Fitness","Learning","Mindblowing","ourdoors","parenting","Photography","Relationships","Science","Videos","Vroom","Wholesome"];
+let Categories = [
+  "Sports",
+  "Gaming",
+  "News",
+  "TV",
+  "Aww",
+  "Memes",
+  "Pics & Gifs",
+  "Travel",
+  "Tech",
+  "Music",
+  "Art & Design",
+  "Beauty",
+  "Books & Writing",
+  "Crypto",
+  "Discussion",
+  "E3",
+  "Fashion",
+  "Finance & Business",
+  "Food",
+  "Health & Fitness",
+  "Learning",
+  "Mindblowing",
+  "ourdoors",
+  "parenting",
+  "Photography",
+  "Relationships",
+  "Science",
+  "Videos",
+  "Vroom",
+  "Wholesome",
+];
+let MainTopics = [
+  "Activism",
+  "Addition Support",
+  "Animals And Pets",
+  "Anime",
+  "Art",
+  "Beauty And Makeup",
+  "Bussiness, Economics, And Finance",
+  "Careers",
+  "Cars And Motor Vehicles",
+  "Celebrity",
+  "Crafts And DIY",
+  "Crypto",
+  "Culture, Race, And Ethnicity",
+  "Family And Relationships",
+  "Fashion",
+  "Fitness And Nutrition",
+  "Funny/Humor",
+  "Food And Drink",
+  "Gaming",
+  "Gender",
+  "History",
+  "Hobbies",
+  "Home and Garden",
+  "Internet Culture and Memes",
+  "Law",
+  "Learning and Education",
+  "Marketplace and Deals",
+  "Mature Themes and Adults",
+  "Medical and Mental Health",
+  "Men's Health",
+  "Meta/Reddit",
+  "Military",
+  "Movies",
+  "Music",
+  "Ourdoors and Nature",
+  "Place",
+  "Podcasts and Streamers",
+  "Politics",
+  "Programming",
+  "Reading, Writing and Literature",
+  "Religion and Spirituality",
+  "Science",
+  "Sexual Orientation",
+  "Sports",
+  "Tabletop Games",
+  "Technology",
+  "Television",
+  "Trauma Support",
+  "Travel",
+  "Woman's Health",
+  "World News",
+  "None Of These Topics",
+];
 const subredditValidator = [
   body("title")
     .trim()
@@ -13,8 +98,15 @@ const subredditValidator = [
     .withMessage("title can not be empty")
     .isLength({ min: 0, max: 23 })
     .withMessage("title must be less than 23 character"),
-  body("category").not().isEmpty().withMessage("category can not be empty").isIn(Categories).withMessage("This category is not available"),
+  body("category")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("category can not be empty")
+    .isIn(Categories)
+    .withMessage("This category is not available"),
   body("type")
+    .trim()
     .not()
     .isEmpty()
     .withMessage("type can not be empty")
@@ -35,7 +127,12 @@ const descriptionValidator = [
 ];
 //CHECKING ON MAIN TOPICS
 const mainTopicValidator = [
-  body("title").not().isEmpty().withMessage("main topic can not be empty"),
+  body("title")
+    .not()
+    .isEmpty()
+    .withMessage("main topic can not be empty")
+    .isIn(MainTopics)
+    .withMessage("This Main Topic is not available"),
 ];
 //CHECKING ON SUB TOPICS
 const subTopicValidator = [
