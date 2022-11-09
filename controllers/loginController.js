@@ -84,7 +84,9 @@ const login = async (req, res) => {
       error: "Invalid password",
     });
   } catch (err) {
-    res.status(500).send("Internal server error");
+    res.status(500).json({
+      error: "Internal server error",
+    });
   }
 };
 
@@ -113,7 +115,7 @@ const forgetPassword = async (req, res) => {
         token
       );
       if (emailSent) {
-        return res.status(200).send("Email has been sent");
+        return res.status(200).json("Email has been sent");
       } else {
         return res.status(400).json({
           error: `An error occured while sending the email. 
@@ -126,7 +128,9 @@ const forgetPassword = async (req, res) => {
       });
     }
   } catch (err) {
-    res.status(500).send("Internal server error");
+    res.status(500).json({
+      error: "Internal server error",
+    });
   }
 };
 
@@ -137,29 +141,40 @@ const resetPassword = async (req, res) => {
   try {
     const user = await User.findOne({ _id: id });
     if (!user) {
-      return res.status(403).send("User not found");
+      return res.status(403).json({
+        error: "User not found",
+      });
     }
     const returnedToken = await Token.findOne({
-      token: token,
+      userId: user._id,
       type: "forgetPassword",
-      expireAt: { $gt: Date.now() },
-      userId: id,
+      token: token,
     });
-    if (returnedToken) {
-      if (newPassword !== verifyPassword) {
-        return res.status(400).json({
-          error: "Passwords do not match",
-        });
-      }
-      user.password = hashPassword(newPassword);
-      await user.save();
-      await returnedToken.remove();
-      return res.status(200).send("Password updated successfully");
-    } else {
-      return res.status(403).send("Token invalid or may have been expired");
+    if (!returnedToken) {
+      return res.status(403).json({
+        error: "Invalid Token",
+      });
     }
+
+    if (returnedToken.expireAt < Date.now()) {
+      await returnedToken.remove();
+      return res.status(403).json({
+        error: "Token is expired",
+      });
+    }
+    if (newPassword !== verifyPassword) {
+      return res.status(400).json({
+        error: "Passwords do not match",
+      });
+    }
+    user.password = hashPassword(newPassword);
+    await user.save();
+    await returnedToken.remove();
+    return res.status(200).json("Password updated successfully");
   } catch (err) {
-    res.status(500).send("Internal server error");
+    res.status(500).json({
+      error: "Internal server error",
+    });
   }
 };
 
@@ -179,9 +194,11 @@ const forgetUsername = async (req, res) => {
       });
     }
 
-    res.send("Email has been sent");
+    res.status(200).json("Email has been sent");
   } catch (error) {
-    res.status(500).send("Internal server error");
+    res.status(500).json({
+      error: "Internal server error",
+    });
   }
 };
 

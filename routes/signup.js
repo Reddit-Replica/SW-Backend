@@ -3,6 +3,7 @@ import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkDuplicateUsernameOrEmail } from "../middleware/verifySignUp.js";
 import { checkId } from "../middleware/checkId.js";
 import signupController from "../controllers/signupController.js";
+import GenerateUsernameController from "../controllers/NgenerateUsername.js";
 
 // eslint-disable-next-line new-cap
 const signupRouter = express.Router();
@@ -268,8 +269,8 @@ signupRouter.post(
  *     summary: Get an available random username used to create a new account
  *     tags: [Sign Up]
  *     responses:
- *       200:
- *         description: The email is available
+ *       201:
+ *         description: random username is generated successfully
  *         content:
  *           application/json:
  *             schema:
@@ -280,6 +281,10 @@ signupRouter.post(
  *       500:
  *         description: Internal server error
  */
-signupRouter.get("/random-username");
+// eslint-disable-next-line max-len
+signupRouter.get(
+  "/random-username",
+  GenerateUsernameController.generateRandomUsername
+);
 
 export default signupRouter;

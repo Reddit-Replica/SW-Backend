@@ -1,7 +1,13 @@
 import express from "express";
-
+import { validateRequestSchema } from "../middleware/validationResult.js";
+// eslint-disable-next-line max-len
+import { checkDuplicateSubredditTitle } from "../middleware/NverifySubredditName.js";
+import subredditController from "../controllers/NcommunityController.js";
+import { checkModerator } from "../middleware/NverifyModerator.js";
+import { checkJoinedBefore } from "../middleware/NJoiningValidation.js";
+import verifyTokenMiddelware from "../middleware/verifyToken.js";
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const subRedditRouter = express.Router();
 
 /**
  * @swagger
@@ -22,14 +28,14 @@ const router = express.Router();
  *         application/json:
  *           schema:
  *             required:
- *               - subredditName
+ *               - title
  *               - type
  *               - nsfw
  *               - category
  *             properties:
- *               subredditName:
+ *               title:
  *                 type: string
- *                 description: Subreddit name
+ *                 description: Subreddit name(maximum 23)
  *               type:
  *                 type: string
  *                 description: Subreddit type
@@ -62,7 +68,22 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.post("/create-subreddit");
+// eslint-disable-next-line max-len
+subRedditRouter.post(
+  "/create-subreddit",
+  verifyTokenMiddelware.verifyAuthToken,
+  subredditController.subredditValidator,
+  validateRequestSchema,
+  checkDuplicateSubredditTitle,
+  subredditController.createSubreddit
+);
+
+subRedditRouter.post(
+  "/join-subreddit",
+  verifyTokenMiddelware.verifyAuthToken,
+  checkJoinedBefore,
+  subredditController.joinSubreddit
+);
 
 /**
  * @swagger
@@ -94,6 +115,67 @@ router.post("/create-subreddit");
  *       500:
  *         description: Internal server error
  */
-router.get("/subreddit-name-available");
+subRedditRouter.get("/subreddit-name-available");
 
-export default router;
+/**
+ * @swagger
+ * /r/{subreddit}/add-description:
+ *  post:
+ *      summary: add description of the community
+ *      tags: [Subreddit]
+ *      parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: the name of the subreddit
+ *         schema:
+ *           type: string
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *            required:
+ *             - title
+ *            properties:
+ *             description:
+ *               type: string
+ *               description: description of the community (maximum 300)
+ *      responses:
+ *          200:
+ *              description: description is submitted successfully
+ *          401:
+ *              description: Unauthorized add description
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+subRedditRouter.post(
+  "/r/:subreddit/add-description",
+  verifyTokenMiddelware.verifyAuthToken,
+  subredditController.descriptionValidator,
+  validateRequestSchema,
+  checkModerator,
+  subredditController.addDescription
+);
+
+subRedditRouter.post(
+  "/r/:subreddit/add-mainTopic",
+  verifyTokenMiddelware.verifyAuthToken,
+  subredditController.mainTopicValidator,
+  validateRequestSchema,
+  checkModerator,
+  subredditController.addMainTopic
+);
+
+subRedditRouter.post(
+  "/r/:subreddit/add-subTopic",
+  verifyTokenMiddelware.verifyAuthToken,
+  subredditController.subTopicValidator,
+  validateRequestSchema,
+  checkModerator,
+  subredditController.addSubTopics
+);
+
+export default subRedditRouter;

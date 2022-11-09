@@ -72,6 +72,12 @@ const communitySchema = mongoose.Schema({
         required: true,
         default: Date.now(),
       },
+      updatedAt: {
+        type: Date,
+      },
+      deletedAt: {
+        type: Date,
+      },
       appliesTo: {
         type: String,
         required: true,
@@ -93,7 +99,6 @@ const communitySchema = mongoose.Schema({
       },
       nickname: {
         type: String,
-        required: true,
       },
       dateOfModeration: {
         type: Date,
@@ -143,6 +148,16 @@ const communitySchema = mongoose.Schema({
       },
     },
   ],
+  owner: {
+    username: {
+      type: String,
+      required: true,
+    },
+    userID: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
   subredditPosts: [
     {
       type: Schema.Types.ObjectId,
@@ -151,6 +166,6 @@ const communitySchema = mongoose.Schema({
   ],
 });
 
-const Community = mongoose.model("Community", communitySchema);
+const Subreddit = mongoose.model("Subreddit", communitySchema);
 
-export default Community;
+export default Subreddit;

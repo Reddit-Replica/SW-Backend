@@ -72,7 +72,7 @@ const subredditDetails = async (req, res) => {
       picture: subreddit.picture,
       flairs: subreddit.flairs,
       moderators: subreddit.moderators,
-      views:subreddit.views
+      views: subreddit.views,
     },
   };
   // console.log(resObject);
