@@ -36,11 +36,6 @@ const loginRouter = express.Router();
  *     responses:
  *       200:
  *         description: User logged in successfully
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
  *         content:
  *           application/json:
  *             schema:
@@ -48,6 +43,9 @@ const loginRouter = express.Router();
  *                 username:
  *                   type: string
  *                   description: Username
+ *                 token:
+ *                   type: string
+ *                   description: JWT Access token to verify that the user is logged in
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:

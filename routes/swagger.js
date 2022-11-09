@@ -111,6 +111,16 @@
  *         flairId:
  *           type: string
  *           description: Flair ID
+ *         imageCaptions:
+ *           type: array
+ *           description: Captions written for the images submitted
+ *           items:
+ *              type: string
+ *         imageLinks:
+ *           type: array
+ *           description: Links written for the images submitted
+ *           items:
+ *              type: string
  *         sendReplies:
  *           type: boolean
  *           description: Allow post reply notifications
@@ -168,6 +178,12 @@
  *         postedAt:
  *           type: string
  *           description: The time in which this post was published
+ *         deletedAt:
+ *           type: string
+ *           description: The time in which this post was deleted
+ *         editedAt:
+ *           type: string
+ *           description: The time in which this post was edited
  *         postedBy:
  *           type: string
  *           description: Name of the user associated with the post
@@ -888,7 +904,6 @@
  *             - 0
  *             - -1
  *           description: Used to know if that moderator voted up [1] or down [-1] or didn't vote [0] to that post or comment
-
  *   ListingPost:
  *     type: object
  *     properties:

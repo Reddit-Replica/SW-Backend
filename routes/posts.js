@@ -1,6 +1,10 @@
 import express from "express";
 import postController from "../controllers/HpostController.js";
 import { optionalToken } from "../middleware/optionalToken.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import verifyToken from "../middleware/verifyToken.js";
+import { verifyPostActions } from "../middleware/verifyPostActions.js";
+import { checkId } from "../middleware/checkId.js";
 
 // eslint-disable-next-line new-cap
 const postRouter = express.Router();
@@ -202,7 +206,13 @@ postRouter.post("/clear-suggested-sort");
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/submit", postController.createPost);
+postRouter.post(
+  "/submit",
+  postController.submitValidator,
+  validateRequestSchema,
+  verifyToken.verifyAuthToken,
+  postController.createPost
+);
 
 /**
  * @swagger
@@ -296,7 +306,15 @@ postRouter.post("/unhide");
  *      security:
  *         - bearerAuth: []
  */
-postRouter.get("/post-insights", postController.postInsights);
+postRouter.get(
+  "/post-insights",
+  checkId,
+  postController.postIdValidator,
+  validateRequestSchema,
+  verifyToken.verifyAuthToken,
+  verifyPostActions,
+  postController.postInsights
+);
 
 /**
  * @swagger
@@ -329,18 +347,27 @@ postRouter.get("/post-insights", postController.postInsights);
  *                                  description: Type of error
  *          404:
  *              description: Post not found
+ *          401:
+ *              description: Unauthorized to view info of this post
  *          500:
  *              description: Server Error
  *      security:
  *       - bearerAuth: []
  */
-postRouter.get("/post-details", optionalToken, postController.postDetails);
+postRouter.get(
+  "/post-details",
+  checkId,
+  postController.postIdValidator,
+  validateRequestSchema,
+  optionalToken,
+  postController.postDetails
+);
 
 /**
  * @swagger
  * /pin-post:
  *  post:
- *      summary: Add a post to the user's collection of pinned posts
+ *      summary: Pin or unpin a post
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -352,9 +379,12 @@ postRouter.get("/post-details", optionalToken, postController.postDetails);
  *               id:
  *                 type: string
  *                 description: id of a post
+ *               pin:
+ *                 type: boolean
+ *                 description: True for pin and False for unpin
  *      responses:
  *          200:
- *              description: Post pinned successfully
+ *              description: Post pinned/unpinned successfully
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -375,7 +405,15 @@ postRouter.get("/post-details", optionalToken, postController.postDetails);
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/pin-post", postController.pinPost);
+postRouter.post(
+  "/pin-post",
+  checkId,
+  postController.pinPostValidator,
+  validateRequestSchema,
+  verifyToken.verifyAuthToken,
+  verifyPostActions,
+  postController.pinPost
+);
 
 /**
  * @swagger
@@ -413,7 +451,11 @@ postRouter.post("/pin-post", postController.pinPost);
  *      security:
  *          - bearerAuth: []
  */
-postRouter.get("/pinned-posts", postController.getPinnedPosts);
+postRouter.get(
+  "/pinned-posts",
+  verifyToken.verifyAuthToken,
+  postController.getPinnedPosts
+);
 
 /**
  * @swagger
