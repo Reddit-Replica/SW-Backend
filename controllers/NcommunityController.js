@@ -1,9 +1,7 @@
 /* eslint-disable max-len */
-import verifyUser from "../utils/verifyUser.js";
 import Subreddit from "./../models/Community.js";
 import User from "./../models/User.js";
 import { body } from "express-validator";
-import { generateUsername } from "unique-username-generator";
 //CHECKING ON SUBREDDIT DATA
 // eslint-disable-next-line max-statements
 const subredditValidator = [
@@ -15,7 +13,14 @@ const subredditValidator = [
     .isLength({ min: 0, max: 23 })
     .withMessage("title must be less than 23 character"),
   body("category").not().isEmpty().withMessage("category can not be empty"),
-  body("type").not().isEmpty().withMessage("type can not be empty"),
+  body("type")
+    .not()
+    .isEmpty()
+    .withMessage("type can not be empty")
+    .isIn(["Private", "Public", "Restricted"])
+    .withMessage(
+      "Subreddit type must be either 'Public' or 'Restricted or 'Private"
+    ),
 ];
 
 //CHECKING ON DESCRIPTION
