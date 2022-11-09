@@ -3,8 +3,9 @@ import { validateRequestSchema } from "../middleware/validationResult.js";
 // eslint-disable-next-line max-len
 import { checkDuplicateSubredditTitle } from "../middleware/NverifySubredditName.js";
 import subredditController from "../controllers/NcommunityController.js";
-import { checkJoinedBefore } from "../middleware/NJoiningValidation.js";
 import { checkModerator } from "../middleware/NverifyModerator.js";
+import { checkJoinedBefore } from "../middleware/NJoiningValidation.js";
+import verifyTokenMiddelware from "../middleware/verifyToken.js";
 // eslint-disable-next-line new-cap
 const subRedditRouter = express.Router();
 
@@ -70,6 +71,7 @@ const subRedditRouter = express.Router();
 // eslint-disable-next-line max-len
 subRedditRouter.post(
   "/create-subreddit",
+  verifyTokenMiddelware.verifyAuthToken,
   subredditController.subredditValidator,
   validateRequestSchema,
   checkDuplicateSubredditTitle,
@@ -78,6 +80,7 @@ subRedditRouter.post(
 
 subRedditRouter.post(
   "/join-subreddit",
+  verifyTokenMiddelware.verifyAuthToken,
   checkJoinedBefore,
   subredditController.joinSubreddit
 );
@@ -150,6 +153,7 @@ subRedditRouter.get("/subreddit-name-available");
 
 subRedditRouter.post(
   "/r/:subreddit/add-description",
+  verifyTokenMiddelware.verifyAuthToken,
   subredditController.descriptionValidator,
   validateRequestSchema,
   checkModerator,
@@ -158,6 +162,7 @@ subRedditRouter.post(
 
 subRedditRouter.post(
   "/r/:subreddit/add-mainTopic",
+  verifyTokenMiddelware.verifyAuthToken,
   subredditController.mainTopicValidator,
   validateRequestSchema,
   checkModerator,
@@ -166,6 +171,7 @@ subRedditRouter.post(
 
 subRedditRouter.post(
   "/r/:subreddit/add-subTopic",
+  verifyTokenMiddelware.verifyAuthToken,
   subredditController.subTopicValidator,
   validateRequestSchema,
   checkModerator,
