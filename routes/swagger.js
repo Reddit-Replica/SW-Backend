@@ -233,6 +233,7 @@
  *           description: If true, then the post was marked spam by the logged in user
  *         inYourSubreddit:
  *           type: boolean
+ *           default: false
  *           description: If true, then you can approve, remove, or spam that post
  *         moderation:
  *           type: object
