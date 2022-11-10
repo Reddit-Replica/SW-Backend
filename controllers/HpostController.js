@@ -52,7 +52,10 @@ const createPost = async (req, res) => {
       return res.status(404).json("Subreddit not found");
     }
     const user = await User.findById(userId);
-    if (!user.joinedSubreddits.find((sr) => sr.name === subreddit)) {
+    if (
+      !user.joinedSubreddits.find((sr) => sr.name === subreddit) ||
+      !user.moderatedSubreddits.find((sr) => sr.name === subreddit)
+    ) {
       return res.status(401).json("User is not a member of this subreddit");
     }
     if (kind === "image" || kind === "video") {
