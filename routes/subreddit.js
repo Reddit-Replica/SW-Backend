@@ -222,7 +222,7 @@ subRedditRouter.post(
 
 /**
  * @swagger
- * /r/{subreddit}/add-mainTopic:
+ * /r/{subreddit}/add-maintopic:
  *  post:
  *      summary: add the main topic to the community
  *      tags: [Subreddit]
@@ -263,7 +263,7 @@ subRedditRouter.post(
  *       - bearerAuth: []
  */
 subRedditRouter.post(
-  "/r/:subreddit/add-mainTopic",
+  "/r/:subreddit/add-maintopic",
   verifyTokenMiddelware.verifyAuthToken,
   subredditController.mainTopicValidator,
   validateRequestSchema,
@@ -273,7 +273,7 @@ subRedditRouter.post(
 
 /**
  * @swagger
- * /r/{subreddit}/add-subTopic:
+ * /r/{subreddit}/add-subtopic:
  *  post:
  *      summary: add subtopics to the community
  *      tags: [Subreddit]
@@ -317,7 +317,7 @@ subRedditRouter.post(
  */
 
 subRedditRouter.post(
-  "/r/:subreddit/add-subTopic",
+  "/r/:subreddit/add-subtopic",
   verifyTokenMiddelware.verifyAuthToken,
   subredditController.subTopicValidator,
   validateRequestSchema,
