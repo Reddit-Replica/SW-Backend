@@ -53,10 +53,10 @@ const createPost = async (req, res) => {
     }
     const user = await User.findById(userId);
     if (
-      !user.joinedSubreddits.find((sr) => sr.name === subreddit) ||
+      !user.joinedSubreddits.find((sr) => sr.name === subreddit) &&
       !user.moderatedSubreddits.find((sr) => sr.name === subreddit)
     ) {
-      return res.status(401).json("User is not a member of this subreddit");
+      return res.status(401).json("User is not a member/mod of this subreddit");
     }
     if (kind === "image" || kind === "video") {
       if (!req.files) {
