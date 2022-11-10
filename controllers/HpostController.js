@@ -65,8 +65,8 @@ const createPost = async (req, res) => {
       req.files.forEach((file) => {
         images.push({
           path: file.path,
-          caption: imageCaptions?.length > 0 ? imageCaptions[0] : "",
-          link: imageLinks?.length > 0 ? imageLinks[0] : "",
+          caption: imageCaptions?.length > 0 ? imageCaptions[0] : null,
+          link: imageLinks?.length > 0 ? imageLinks[0] : null,
         });
         imageCaptions?.shift();
         imageLinks?.shift();
@@ -209,8 +209,10 @@ const postDetails = async (req, res) => {
       kind: post.kind,
       subreddit: post.subredditName,
       content: post.content,
+      images: post.images,
       nsfw: post.nsfw,
       spoiler: post.spoiler,
+      sharePostId: post.sharePostId,
       title: post.title,
       flair: {
         id: post.flair?._id,
