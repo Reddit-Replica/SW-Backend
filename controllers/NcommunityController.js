@@ -186,9 +186,7 @@ const createSubreddit = async (req, res) => {
         error: err.message,
       });
     } else {
-      return res.status(500).json({
-        error: "Internal Server Error",
-      });
+      return res.status(500).json("Internal Server Error");
     }
   }
 };
@@ -223,7 +221,7 @@ const joinSubreddit = async (req, res) => {
       await subreddit.save();
       return res
         .status(200)
-        .json({ message: "Your request is sent successfully" });
+        .json("Your request is sent successfully" );
     }
     //ADDING THIS SUB REDDIT TO JOINED SUBREDDITS LIST
     user.joinedSubreddits.push({
@@ -235,18 +233,14 @@ const joinSubreddit = async (req, res) => {
     subreddit.members += 1;
     await subreddit.save();
     //SENDING RESPONSES
-    return res
-      .status(200)
-      .json({ message: "you joined the subreddit successfully" });
+    return res.status(200).json("you joined the subreddit successfully");
   } catch (err) {
     if (err.cause) {
       return res.status(err.cause).json({
         error: err.message,
       });
     } else {
-      return res.status(500).json({
-        error: "Internal Server Error",
-      });
+      return res.status(500).json("Internal Server Error");
     }
   }
 };
@@ -273,9 +267,7 @@ const addDescription = async (req, res) => {
         error: err.message,
       });
     } else {
-      return res.status(500).json({
-        error: "Internal Server Error",
-      });
+      return res.status(500).json("Internal Server Error");
     }
   }
 };
@@ -301,9 +293,7 @@ const addMainTopic = async (req, res) => {
         error: err.message,
       });
     } else {
-      return res.status(500).json({
-        error: "Internal Server Error",
-      });
+      return res.status(500).json("Internal Server Error");
     }
   }
 };
@@ -338,9 +328,7 @@ const addSubTopics = async (req, res) => {
         error: err.message,
       });
     } else {
-      return res.status(500).json({
-        error: "Internal Server Error",
-      });
+      return res.status(500).json("Internal Server Error");
     }
   }
 };
