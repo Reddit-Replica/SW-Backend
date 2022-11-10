@@ -37,6 +37,7 @@ const addSubredditRule = async (req, res) => {
 
       res.status(201).json("Created");
     } catch (err) {
+      console.log(err);
       res.status(500).json({
         error: "Internal server error",
       });
@@ -67,8 +68,8 @@ const editSubredditRule = async (req, res) => {
       req.neededRule.ruleDescription = req.ruleObject.ruleDescription;
     }
     try {
-      req.neededRule.updatedAt = Date.now();
-      console.log(req.neededRule);
+      req.neededRule.updatedAt = new Date().toISOString();
+      // console.log(req.neededRule);
       await req.subreddit.save();
       res.status(200).json("Updated successfully");
     } catch (err) {
@@ -79,8 +80,28 @@ const editSubredditRule = async (req, res) => {
   }
 };
 
+const deleteSubredditRule = async (req, res) => {
+  req.neededRule.deletedAt = new Date().toISOString();
+  const neededRuleOrder = req.neededRule.ruleOrder;
+  req.subreddit.rules.forEach((element) => {
+    if (Number(element.ruleOrder) > Number(neededRuleOrder)) {
+      element.ruleOrder--;
+    }
+  });
+  try {
+    await req.subreddit.save();
+    res.status(200).json("Deleted successfully");
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error: "Internal server error",
+    });
+  }
+};
+
 export default {
   getSubredditRules,
   addSubredditRule,
   editSubredditRule,
+  deleteSubredditRule,
 };
