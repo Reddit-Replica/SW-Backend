@@ -64,6 +64,15 @@ const gfsigninValidator = [
     .withMessage("Access Token can not be empty"),
 ];
 
+const editUsernameValidator = [
+  body("username")
+    .not()
+    .isEmpty()
+    .trim()
+    .escape()
+    .withMessage("Username can not be empty"),
+];
+
 const signup = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -111,7 +120,7 @@ const emailAvailable = async (req, res) => {
     }
     res.status(200).json("The email is available");
   } catch (err) {
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -152,7 +161,7 @@ const verifyEmail = async (req, res) => {
     res.status(200).json("Email verified successfully");
   } catch (err) {
     console.log(err);
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -193,7 +202,34 @@ const signinWithGoogleFacebook = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
+  }
+};
+
+const editUsername = async (req, res) => {
+  try {
+    const { username } = req.body;
+    const { userId } = req.payload;
+
+    const user = await User.findById(userId);
+    if (user.editedAt) {
+      return res
+        .status(400)
+        .json({ error: "Can not change the username for this user again" });
+    }
+
+    const userWithUsername = await User.findOne({ username: username });
+    if (userWithUsername) {
+      return res.status(400).json({ error: "Username already exists" });
+    }
+
+    user.editedAt = Date.now();
+    user.username = username;
+    await user.save();
+
+    res.status(200).json("Username updated successfully");
+  } catch (error) {
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -208,4 +244,6 @@ export default {
   verifyEmail,
   gfsigninValidator,
   signinWithGoogleFacebook,
+  editUsernameValidator,
+  editUsername,
 };
