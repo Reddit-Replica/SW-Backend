@@ -30,7 +30,16 @@ const addSubredditRule = async (req, res) => {
       error: "Bad request",
     });
   } else {
-    req.ruleObject.ruleOrder = req.subreddit.rules.length;
+    req.ruleObject.ruleOrder = 0;
+    /*
+    loop through the rules array for it's end to find the last non deleted rule to know the order of the new rule
+    */
+    for (let i = req.subreddit.rules.length - 1; i >= 0; i--) {
+      if (!req.subreddit.rules[i].deletedAt) {
+        req.ruleObject.ruleOrder = req.subreddit.rules[i].ruleOrder + 1;
+        break;
+      }
+    }
 
     req.ruleObject.createdAt = new Date().toISOString();
 
