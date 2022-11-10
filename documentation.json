@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Read-it API",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "API Documentation for all endpoints"
   },
   "components": {
@@ -136,6 +136,20 @@
             "type": "string",
             "description": "Flair ID"
           },
+          "imageCaptions": {
+            "type": "array",
+            "description": "Captions written for the images submitted",
+            "items": {
+              "type": "string"
+            }
+          },
+          "imageLinks": {
+            "type": "array",
+            "description": "Links written for the images submitted",
+            "items": {
+              "type": "string"
+            }
+          },
           "sendReplies": {
             "type": "boolean",
             "description": "Allow post reply notifications"
@@ -188,6 +202,10 @@
             "type": "string",
             "description": "Title of the submission"
           },
+          "sharePostId": {
+            "type": "string",
+            "description": "Post id in case of containing info of a shared post"
+          },
           "flair": {
             "$ref": "#/components/schemas/Flair"
           },
@@ -203,9 +221,47 @@
             "type": "string",
             "description": "The time in which this post was published"
           },
+          "deletedAt": {
+            "type": "string",
+            "description": "The time in which this post was deleted"
+          },
+          "editedAt": {
+            "type": "string",
+            "description": "The time in which this post was edited"
+          },
           "postedBy": {
             "type": "string",
             "description": "Name of the user associated with the post"
+          },
+          "upvoted": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, then the post was upvoted by the logged in user"
+          },
+          "downvoted": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, then the post was downvoted by the logged in user"
+          },
+          "saved": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, then the post was saved by the logged in user"
+          },
+          "followed": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, then the post was followed by the logged in user"
+          },
+          "hidden": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, then the post was marked hidden by the logged in user"
+          },
+          "spammed": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, then the post was marked spam by the logged in user"
           }
         }
       },
@@ -1263,14 +1319,33 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Comment"
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "Comment content (raw markdown text)"
+                  },
+                  "parentId": {
+                    "type": "string",
+                    "description": "id of the thing being replied to (parent)"
+                  },
+                  "parentType": {
+                    "type": "string",
+                    "description": "Comment is a reply to post or comment",
+                    "enum": ["post", "comment"]
+                  },
+                  "level": {
+                    "type": "number",
+                    "description": "Level of the comment (How deep is it in the comment tree)"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Comment published successfully"
+          "201": {
+            "description": "Comment created successfully"
           },
           "400": {
             "description": "The request was invalid. You may refer to response for details around why this happened.",
@@ -2042,9 +2117,9 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["title"],
+                "required": ["mainTopic"],
                 "properties": {
-                  "title": {
+                  "mainTopic": {
                     "type": "string",
                     "description": "title of the main topic in the community"
                   }
@@ -2090,11 +2165,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["title"],
+                "required": ["subTopics"],
                 "properties": {
-                  "title": {
+                  "subTopics": {
                     "type": "array",
-                    "description": "title of the main topic in the community",
+                    "description": "array of subtopics to be added to community",
                     "items": {
                       "type": "object"
                     }
@@ -2105,14 +2180,14 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "subtopics is submitted successfully"
+          "201": {
+            "description": "Community topics saved"
           },
           "401": {
-            "description": "Unauthorized add subtopic"
+            "description": "Token may be invalid or not found"
           },
           "500": {
-            "description": "Server Error"
+            "description": "Server Error like(\"this subreddit isn't found\")"
           }
         },
         "security": [
@@ -2143,9 +2218,9 @@
               "schema": {
                 "required": ["title"],
                 "properties": {
-                  "title": {
+                  "description": {
                     "type": "string",
-                    "description": "description of the community (maximum 500)"
+                    "description": "description of the community (maximum 300)"
                   }
                 }
               }
@@ -2222,6 +2297,130 @@
           },
           "401": {
             "description": "Unauthorized to toggle community theme"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/delete": {
+      "delete": {
+        "summary": "Delete a Post, Comment or Message",
+        "tags": ["Post-comment-message actions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "id of a thing created by the user"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["post", "comment", "message"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successfully deleted"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized to delete this thing"
+          },
+          "404": {
+            "description": "Item already deleted (Not Found)"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/edit-user-text": {
+      "put": {
+        "summary": "Edit the body text of a comment or post",
+        "tags": ["Post-comment actions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "New text entered"
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "id of the thing being edited"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["post", "comment"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post/Comment edited successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized to edit this post/comment"
+          },
+          "404": {
+            "description": "Content requested for editing is unavailable"
           },
           "500": {
             "description": "Server Error"
@@ -3285,14 +3484,6 @@
         "responses": {
           "200": {
             "description": "User logged in successfully",
-            "headers": {
-              "Authorization": {
-                "description": "The jwt that will be used for authorization",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -3300,6 +3491,10 @@
                     "username": {
                       "type": "string",
                       "description": "Username"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "JWT Access token to verify that the user is logged in"
                     }
                   }
                 }
@@ -3544,8 +3739,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Your message is delivered successfully"
+          "201": {
+            "description": "Your message is sent successfully"
           },
           "401": {
             "description": "Unauthorized to send a message"
@@ -3613,6 +3808,10 @@
                       "description": "List of [Things] to return",
                       "items": {
                         "properties": {
+                          "msgID": {
+                            "type": "string",
+                            "description": "Message id"
+                          },
                           "text": {
                             "type": "string",
                             "description": "Message Content as text"
@@ -3707,6 +3906,10 @@
                       "description": "List of [Things] to return",
                       "items": {
                         "properties": {
+                          "msgID": {
+                            "type": "string",
+                            "description": "Message ID"
+                          },
                           "text": {
                             "type": "string",
                             "description": "Message Content as text"
@@ -3827,6 +4030,10 @@
                       "description": "List of [Things] to return",
                       "items": {
                         "properties": {
+                          "msgID": {
+                            "type": "string",
+                            "description": "Message id"
+                          },
                           "text": {
                             "type": "string",
                             "description": "Message Content as text"
@@ -3925,6 +4132,10 @@
                       "description": "List of [Things] to return",
                       "items": {
                         "properties": {
+                          "msgID": {
+                            "type": "string",
+                            "description": "Message id"
+                          },
                           "text": {
                             "type": "string",
                             "description": "Message Content as text"
@@ -4039,6 +4250,10 @@
                       "description": "List of [Things] to return",
                       "items": {
                         "properties": {
+                          "msgID": {
+                            "type": "string",
+                            "description": "Message id"
+                          },
                           "text": {
                             "type": "string",
                             "description": "Message Content as text"
@@ -4149,6 +4364,10 @@
                       "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
                     "children": {
+                      "msgID": {
+                        "type": "string",
+                        "description": "Message id"
+                      },
                       "type": "array",
                       "description": "List of [Things] to return",
                       "items": {
@@ -4257,6 +4476,60 @@
           },
           "401": {
             "description": "Unauthorized to read all the messages"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/suggested-sender": {
+      "get": {
+        "summary": "Return all subreddits that you can send message from",
+        "tags": ["Messages"],
+        "responses": {
+          "200": {
+            "description": "Returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "before": {
+                      "type": "string",
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
+                    },
+                    "after": {
+                      "type": "string",
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
+                    },
+                    "children": {
+                      "type": "array",
+                      "description": "List of [Things] to return",
+                      "items": {
+                        "properties": {
+                          "titles": {
+                            "type": "string",
+                            "description": "the titles of the subreddits that the user can send messages from and his own username"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to view this info"
+          },
+          "404": {
+            "description": "Page not found"
           },
           "500": {
             "description": "Server Error"
@@ -6954,66 +7227,6 @@
         ]
       }
     },
-    "/delete": {
-      "delete": {
-        "summary": "Delete a Post, Comment or Message",
-        "tags": ["Post-comment-message actions"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "id of a thing created by the user"
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": ["post", "comment", "message"]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Successfully deleted"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized to delete this thing"
-          },
-          "404": {
-            "description": "Item already deleted (Not Found)"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/mark-spam": {
       "post": {
         "summary": "Mark a post, comment or message as spam",
@@ -7132,70 +7345,6 @@
           },
           "409": {
             "description": "Already unmarked as spam"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/edit-user-text": {
-      "put": {
-        "summary": "Edit the body text of a comment or post",
-        "tags": ["Post-comment actions"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "text": {
-                    "type": "string",
-                    "description": "New text entered"
-                  },
-                  "id": {
-                    "type": "string",
-                    "description": "id of the thing being edited"
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": ["post", "comment"]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Post/Comment edited successfully"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized to edit this post/comment"
-          },
-          "404": {
-            "description": "Content requested for editing is unavailable"
           },
           "500": {
             "description": "Server Error"
@@ -7462,6 +7611,242 @@
         ]
       }
     },
+    "/mark-spoiler": {
+      "patch": {
+        "summary": "Blur the content of the post and unblur when opening it",
+        "tags": ["Posts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "id of a post"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Spoiler set successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to set post spoiler"
+          },
+          "404": {
+            "description": "Post not found"
+          },
+          "409": {
+            "description": "Post content already blurred"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/unmark-spoiler": {
+      "patch": {
+        "summary": "Remove ability to blur the content of the post",
+        "tags": ["Posts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "id of a post"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post spoiler turned off successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to turn off spoiler"
+          },
+          "404": {
+            "description": "Post not found"
+          },
+          "409": {
+            "description": "Post spoiler already turned off"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/mark-nsfw": {
+      "patch": {
+        "summary": "Mark a post NSFW (Not Safe For Work)",
+        "tags": ["Posts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "id of a post"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post marked NSFW successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to mark post as NSFW"
+          },
+          "404": {
+            "description": "Post not found"
+          },
+          "409": {
+            "description": "Post already marked NSFW"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/unmark-nsfw": {
+      "patch": {
+        "summary": "Remove the NSFW marking from a post",
+        "tags": ["Posts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "id of a post"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "NSFW unmarked successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to remove nsfw marking"
+          },
+          "404": {
+            "description": "Post not found"
+          },
+          "409": {
+            "description": "NSFW mark already removed"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/follow-post": {
       "post": {
         "summary": "Follow or unfollow a post.",
@@ -7569,65 +7954,6 @@
           },
           "409": {
             "description": "Post already hidden"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/mark-nsfw": {
-      "post": {
-        "summary": "Mark a post NSFW (Not Safe For Work)",
-        "tags": ["Posts"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "id of a post"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Post marked NSFW successfully"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to mark post as NSFW"
-          },
-          "404": {
-            "description": "Post not found"
-          },
-          "409": {
-            "description": "Post already marked NSFW"
           },
           "500": {
             "description": "Server Error"
@@ -7756,65 +8082,6 @@
         ]
       }
     },
-    "/mark-spoiler": {
-      "post": {
-        "summary": "Blur the content of the post and unblur when opening it",
-        "tags": ["Posts"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "id of a post"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Spoiler set successfully"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to set post spoiler"
-          },
-          "404": {
-            "description": "Post not found"
-          },
-          "409": {
-            "description": "Post content already blurred"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/submit": {
       "post": {
         "summary": "Submit or share a post to a subreddit",
@@ -7924,127 +8191,9 @@
         ]
       }
     },
-    "/unmark-nsfw": {
-      "post": {
-        "summary": "Remove the NSFW marking from a post",
-        "tags": ["Posts"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "id of a post"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "NSFW unmarked successfully"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to remove nsfw marking"
-          },
-          "404": {
-            "description": "Post not found"
-          },
-          "409": {
-            "description": "NSFW mark already removed"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/unmark-spoiler": {
-      "post": {
-        "summary": "Remove ability to blur the content of the post",
-        "tags": ["Posts"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "id of a post"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Post spoiler turned off successfully"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to turn off spoiler"
-          },
-          "404": {
-            "description": "Post not found"
-          },
-          "409": {
-            "description": "Post spoiler already turned off"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/post-insights": {
       "get": {
-        "summary": "Get the number of views on a post",
+        "summary": "Get the insights on a post",
         "tags": ["Posts"],
         "parameters": [
           {
@@ -8178,7 +8327,7 @@
     },
     "/pin-post": {
       "post": {
-        "summary": "Add a post to the user's collection of pinned posts",
+        "summary": "Pin or unpin a post",
         "tags": ["Posts"],
         "requestBody": {
           "required": true,
@@ -8190,6 +8339,10 @@
                   "id": {
                     "type": "string",
                     "description": "id of a post"
+                  },
+                  "pin": {
+                    "type": "boolean",
+                    "description": "True for pin and False for unpin"
                   }
                 }
               }
@@ -8198,7 +8351,7 @@
         },
         "responses": {
           "200": {
-            "description": "Post pinned successfully"
+            "description": "Post pinned/unpinned successfully"
           },
           "400": {
             "description": "The request was invalid. You may refer to response for details around why this happened.",
@@ -9319,14 +9472,6 @@
         "responses": {
           "201": {
             "description": "The account has been successfully created",
-            "headers": {
-              "Authorization": {
-                "description": "The jwt that will be used for authorization",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -9334,6 +9479,10 @@
                     "username": {
                       "type": "string",
                       "description": "Username of the user"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "Token that will be used for authorization"
                     }
                   }
                 }
@@ -9473,15 +9622,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Email verified successfully",
-            "headers": {
-              "Authorization": {
-                "description": "The jwt that will be used for authorization",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "description": "Email verified successfully"
           },
           "400": {
             "description": "The request was invalid. You may refer to response for details around why the request was invalid",
@@ -9542,14 +9683,6 @@
         "responses": {
           "200": {
             "description": "User logged in successfully",
-            "headers": {
-              "Authorization": {
-                "description": "The jwt that will be used for authorization",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -9557,6 +9690,10 @@
                     "username": {
                       "type": "string",
                       "description": "Username of the user"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "Token that will be used for authorization"
                     }
                   }
                 }
@@ -9565,14 +9702,6 @@
           },
           "201": {
             "description": "The account has been successfully created",
-            "headers": {
-              "Authorization": {
-                "description": "The jwt that will be used for authorization",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -9580,6 +9709,10 @@
                     "username": {
                       "type": "string",
                       "description": "Username of the user"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "Token that will be used for authorization"
                     }
                   }
                 }
@@ -9612,8 +9745,8 @@
         "summary": "Get an available random username used to create a new account",
         "tags": ["Sign Up"],
         "responses": {
-          "200": {
-            "description": "The email is available",
+          "201": {
+            "description": "random username is generated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -9642,11 +9775,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["subredditName", "type", "nsfw", "category"],
+                "required": ["title", "type", "nsfw", "category"],
                 "properties": {
-                  "subredditName": {
+                  "title": {
                     "type": "string",
-                    "description": "Subreddit name"
+                    "description": "Subreddit name(maximum 23)"
                   },
                   "type": {
                     "type": "string",
@@ -9786,6 +9919,9 @@
               }
             }
           },
+          "401": {
+            "description": "Access Denied"
+          },
           "404": {
             "description": "Didn't find a user with that username"
           },
@@ -9842,6 +9978,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Access Denied"
           },
           "404": {
             "description": "Didn't find a user with that username"
@@ -9951,6 +10090,10 @@
                           "nsfw": {
                             "type": "boolean",
                             "description": "If true, this subreddit will be marked as NSFW"
+                          },
+                          "followed": {
+                            "type": "boolean",
+                            "description": "If true, then this subreddit is followed by the logged in user"
                           }
                         }
                       }
@@ -10177,13 +10320,21 @@
               }
             }
           },
+          "401": {
+            "description": "Access Denied"
+          },
           "404": {
             "description": "Didn't find a user with that username"
           },
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/user/{username}/comments": {
@@ -10509,6 +10660,9 @@
               }
             }
           },
+          "401": {
+            "description": "Access Denied"
+          },
           "404": {
             "description": "Didn't find a user with that username"
           },
@@ -10593,6 +10747,9 @@
               }
             }
           },
+          "401": {
+            "description": "Access Denied"
+          },
           "404": {
             "description": "Didn't find a user with that username"
           },
@@ -10657,6 +10814,9 @@
               }
             }
           },
+          "401": {
+            "description": "Access Denied"
+          },
           "404": {
             "description": "Didn't find a user with that username"
           },
@@ -10720,6 +10880,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Access Denied"
           },
           "404": {
             "description": "Didn't find a user with that username"
