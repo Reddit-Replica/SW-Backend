@@ -21,14 +21,29 @@ const postSchema = mongoose.Schema({
   },
   kind: {
     type: String,
+    enum: ["text", "image", "video", "post", "link"],
+    default: "text",
     required: true,
   },
   content: {
     type: String,
   },
+  images: [
+    {
+      path: {
+        type: String,
+        required: true,
+      },
+      caption: {
+        type: String,
+      },
+      link: {
+        type: String,
+      },
+    },
+  ],
   sharePostId: {
-    type: Schema.Types.ObjectId,
-    ref: "Post",
+    type: String,
   },
   suggestedSort: {
     type: String,

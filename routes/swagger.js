@@ -101,7 +101,12 @@
  *           description: Title of the submission
  *         content:
  *           type: string
- *           description: Post content (text/url/image/video)
+ *           description: Post content (text/url)
+ *         files:
+ *           type: array
+ *           description: Post content (images/video)
+ *           items:
+ *              type: object
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
@@ -111,6 +116,16 @@
  *         flairId:
  *           type: string
  *           description: Flair ID
+ *         imageCaptions:
+ *           type: array
+ *           description: Captions written for the images submitted (only when kind = images)
+ *           items:
+ *              type: string
+ *         imageLinks:
+ *           type: array
+ *           description: Links written for the images submitted (only when kind = images)
+ *           items:
+ *              type: string
  *         sendReplies:
  *           type: boolean
  *           description: Allow post reply notifications
@@ -139,12 +154,28 @@
  *              - text
  *              - image
  *              - video
+ *              - post
  *         subreddit:
  *           type: string
  *           description: Subreddit name
  *         content:
  *           type: string
- *           description: Post content (text/url/image/video)
+ *           description: Post content (text/url/video) - will contain path of a video in case (kind = video)
+ *         images:
+ *           type: array
+ *           description: Post content (kind = images)
+ *           items:
+ *              type: object
+ *              properties:
+ *                 path:
+ *                   type: string
+ *                   description: Image path
+ *                 caption:
+ *                   type: string
+ *                   description: Image caption
+ *                 link:
+ *                   type: string
+ *                   description: Image link
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
@@ -156,7 +187,7 @@
  *           description: Title of the submission
  *         sharePostId:
  *           type: string
- *           description: Post id in case of containing info of a shared post
+ *           description: Post id in case of containing info of a shared post (kind = post)
  *         flair:
  *           $ref: '#/components/schemas/Flair'
  *         comments:
@@ -168,6 +199,12 @@
  *         postedAt:
  *           type: string
  *           description: The time in which this post was published
+ *         deletedAt:
+ *           type: string
+ *           description: The time in which this post was deleted
+ *         editedAt:
+ *           type: string
+ *           description: The time in which this post was edited
  *         postedBy:
  *           type: string
  *           description: Name of the user associated with the post
@@ -198,6 +235,9 @@
  *   Post:
  *       type: object
  *       properties:
+ *         id:
+ *           type: string
+ *           description: id of a post
  *         kind:
  *           type: string
  *           enum:
@@ -205,15 +245,28 @@
  *              - text
  *              - image
  *              - video
- *         id:
- *           type: string
- *           description: id of a post
+ *              - post
  *         subreddit:
  *           type: string
  *           description: Subreddit name
  *         content:
  *           type: string
- *           description: Post content (text/url/image/video)
+ *           description: Post content (text/url/video) - will contain path of a video in case (kind = video)
+ *         images:
+ *           type: array
+ *           description: Post content (images)
+ *           items:
+ *              type: object
+ *              properties:
+ *                 path:
+ *                   type: string
+ *                   description: Image path
+ *                 caption:
+ *                   type: string
+ *                   description: Image caption
+ *                 link:
+ *                   type: string
+ *                   description: Image link
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
@@ -223,6 +276,9 @@
  *         title:
  *           type: string
  *           description: Title of the submission
+ *         sharePostId:
+ *           type: string
+ *           description: Post id in case of containing info of a shared post (kind = post)
  *         flair:
  *           $ref: '#/components/schemas/Flair'
  *         comments:
@@ -888,7 +944,6 @@
  *             - 0
  *             - -1
  *           description: Used to know if that moderator voted up [1] or down [-1] or didn't vote [0] to that post or comment
-
  *   ListingPost:
  *     type: object
  *     properties:
