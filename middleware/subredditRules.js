@@ -17,7 +17,7 @@ const checkRule = (req, res, next) => {
     (el) => el._id.toString() === ruleId
   );
 
-  if (!neededRule) {
+  if (!neededRule || neededRule.deletedAt) {
     res.status(404).json({
       error: "Rule not found!",
     });
