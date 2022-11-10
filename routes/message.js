@@ -629,6 +629,6 @@ router.patch("/read-all-msgs");
  *       - bearerAuth: []
  */
 
- router.get("/suggested-sender");
+router.get("/suggested-sender");
 
 export default router;
