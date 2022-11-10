@@ -211,6 +211,9 @@ const joinSubreddit = async (req, res) => {
     if (!subreddit) {
       throw new Error("this subreddit isn't found", { cause: 400 });
     }
+    if (!subreddit.deletedAt) {
+      throw new Error("this subreddit is deleted", { cause: 400 });
+    }
     if (subreddit.type === "Private") {
       subreddit.waitedUsers.push({
         username: username,
@@ -256,6 +259,9 @@ const addDescription = async (req, res) => {
     if (!subreddit) {
       throw new Error("this subreddit isn't found", { cause: 400 });
     }
+    if (!subreddit.deletedAt) {
+      throw new Error("this subreddit is deleted", { cause: 400 });
+    }
     //ADDING DESCRIPTION OF THE SUBREDDIT
     subreddit.description = req.body.description;
     await subreddit.save();
@@ -280,6 +286,9 @@ const addMainTopic = async (req, res) => {
     const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
     if (!subreddit) {
       throw new Error("this subreddit isn't found", { cause: 400 });
+    }
+    if (!subreddit.deletedAt) {
+      throw new Error("this subreddit is deleted", { cause: 400 });
     }
     //ADDING DESCRIPTION OF THE SUBREDDIT
     subreddit.mainTopic = req.body.title;
@@ -306,6 +315,9 @@ const addSubTopics = async (req, res) => {
     const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
     if (!subreddit) {
       throw new Error("this subreddit isn't found", { cause: 400 });
+    }
+    if (!subreddit.deletedAt) {
+      throw new Error("this subreddit is deleted", { cause: 400 });
     }
     //ADDING DESCRIPTION OF THE SUBREDDIT
     const validateArr = req.body.title;

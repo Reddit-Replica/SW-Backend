@@ -22,6 +22,9 @@ export async function checkModerator(req, res, next) {
     if (!subreddit) {
       throw new Error("this subreddit isn't found", { cause: 400 });
     }
+    if (!subreddit.deletedAt) {
+      throw new Error("this subreddit is deleted", { cause: 400 });
+    }
     // eslint-disable-next-line max-len
     const { moderators } = subreddit;
     let isThere = false;

@@ -41,6 +41,9 @@ const communitySchema = mongoose.Schema({
     required: true,
     default: Date.now(),
   },
+  deletedAt:{
+    type: Date,
+  },
   views: {
     type: Number,
   },
