@@ -206,12 +206,18 @@ const signinWithGoogleFacebook = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
 const editUsername = async (req, res) => {
   try {
     const { username } = req.body;
     const { userId } = req.payload;
 
     const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(400)
+        .json({ error: "Can not find a user with that id" });
+    }
     if (user.editedAt) {
       return res
         .status(400)
@@ -229,6 +235,7 @@ const editUsername = async (req, res) => {
 
     res.status(200).json("Username updated successfully");
   } catch (error) {
+    console.log(error);
     res.status(500).json("Internal server error");
   }
 };
