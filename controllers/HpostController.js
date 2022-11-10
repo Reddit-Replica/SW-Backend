@@ -166,7 +166,7 @@ const postDetails = async (req, res) => {
     let saved = false,
       followed = false,
       hidden = false;
-    let vote = 0,
+    let votingType = 0,
       spammed = false,
       inYourSubreddit = false;
     if (req.loggedIn) {
@@ -184,10 +184,10 @@ const postDetails = async (req, res) => {
         hidden = true;
       }
       if (user.upvotedPosts.find((id) => id.toString() === postId)) {
-        vote = 1;
+        votingType = 1;
       }
       if (user.downvotedPosts.find((id) => id.toString() === postId)) {
-        vote = -1;
+        votingType = -1;
       }
       if (user.spammedPosts.find((id) => id.toString() === postId)) {
         spammed = true;
@@ -216,7 +216,7 @@ const postDetails = async (req, res) => {
       votes: post.numberOfUpvotes - post.numberOfDownvotes,
       postedAt: post.createdAt,
       postedBy: post.ownerUsername,
-      vote: vote,
+      votingType: votingType,
       saved: saved,
       followed: followed,
       hidden: hidden,
