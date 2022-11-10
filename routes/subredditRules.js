@@ -49,8 +49,8 @@ const subredditRulesRouter = express.Router();
  *          type: string
  *          description: The full description of the report. (maximum 500 charachter)
  *   responses:
- *    200:
- *     description: Accepted
+ *    201:
+ *     description: Created
  *    400:
  *     description: Bad Request
  *     content:
@@ -166,6 +166,12 @@ subredditRulesRouter.get(
  *      schema:
  *       type: string
  *      required: true
+ *    - in: path
+ *      name: ruleId
+ *      description: id of the rule.
+ *      schema:
+ *       type: string
+ *      required: true
  *   requestBody:
  *    required: true
  *    content:
@@ -181,7 +187,7 @@ subredditRulesRouter.get(
  *          description: The name of the rule.
  *         ruleOrder:
  *          type: integer
- *          description: Order of the rule
+ *          description: Order of the rule (add it as it is.. don't edit it.. if you want to edit it use the /r/{subreddit}/about/rules-order endpoint to edit the rules order)
  *         appliesTo:
  *          type: string
  *          description: Where to apply the rule
@@ -197,7 +203,7 @@ subredditRulesRouter.get(
  *          description: The full description of the report. (maximum 500 charachter)
  *   responses:
  *    200:
- *     description: Accepted
+ *     description: Updated successfully
  *    400:
  *     description: Bad Request
  *     content:
@@ -227,6 +233,50 @@ subredditRulesRouter.put(
   subredditRulesMiddleware.checkRule,
   subredditRulesController.editSubredditRule
 );
+
+/**
+ * @swagger
+ * /r/{subreddit}/about/rules/{ruleId}:
+ *  delete:
+ *   summary:
+ *    Delete a rule at subreddit.
+ *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
+ *    - in: path
+ *      name: ruleId
+ *      description: id of the rule.
+ *      schema:
+ *       type: string
+ *      required: true
+ *   responses:
+ *    200:
+ *     description: Deleted successfully
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+subredditRulesRouter.delete("/r/:subreddit/about/rules/:ruleId");
 
 /**
  * @swagger

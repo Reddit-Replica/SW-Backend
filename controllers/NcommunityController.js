@@ -1,11 +1,95 @@
 /* eslint-disable max-len */
-import verifyUser from "../utils/verifyUser.js";
 import Subreddit from "./../models/Community.js";
 import User from "./../models/User.js";
 import { body } from "express-validator";
-import { generateUsername } from "unique-username-generator";
 //CHECKING ON SUBREDDIT DATA
 // eslint-disable-next-line max-statements
+let Categories = [
+  "Sports",
+  "Gaming",
+  "News",
+  "TV",
+  "Aww",
+  "Memes",
+  "Pics & Gifs",
+  "Travel",
+  "Tech",
+  "Music",
+  "Art & Design",
+  "Beauty",
+  "Books & Writing",
+  "Crypto",
+  "Discussion",
+  "E3",
+  "Fashion",
+  "Finance & Business",
+  "Food",
+  "Health & Fitness",
+  "Learning",
+  "Mindblowing",
+  "ourdoors",
+  "parenting",
+  "Photography",
+  "Relationships",
+  "Science",
+  "Videos",
+  "Vroom",
+  "Wholesome",
+];
+let MainTopics = [
+  "Activism",
+  "Addition Support",
+  "Animals And Pets",
+  "Anime",
+  "Art",
+  "Beauty And Makeup",
+  "Bussiness, Economics, And Finance",
+  "Careers",
+  "Cars And Motor Vehicles",
+  "Celebrity",
+  "Crafts And DIY",
+  "Crypto",
+  "Culture, Race, And Ethnicity",
+  "Family And Relationships",
+  "Fashion",
+  "Fitness And Nutrition",
+  "Funny/Humor",
+  "Food And Drink",
+  "Gaming",
+  "Gender",
+  "History",
+  "Hobbies",
+  "Home and Garden",
+  "Internet Culture and Memes",
+  "Law",
+  "Learning and Education",
+  "Marketplace and Deals",
+  "Mature Themes and Adults",
+  "Medical and Mental Health",
+  "Men's Health",
+  "Meta/Reddit",
+  "Military",
+  "Movies",
+  "Music",
+  "Ourdoors and Nature",
+  "Place",
+  "Podcasts and Streamers",
+  "Politics",
+  "Programming",
+  "Reading, Writing and Literature",
+  "Religion and Spirituality",
+  "Science",
+  "Sexual Orientation",
+  "Sports",
+  "Tabletop Games",
+  "Technology",
+  "Television",
+  "Trauma Support",
+  "Travel",
+  "Woman's Health",
+  "World News",
+  "None Of These Topics",
+];
 const subredditValidator = [
   body("title")
     .trim()
@@ -14,8 +98,22 @@ const subredditValidator = [
     .withMessage("title can not be empty")
     .isLength({ min: 0, max: 23 })
     .withMessage("title must be less than 23 character"),
-  body("category").not().isEmpty().withMessage("category can not be empty"),
-  body("type").not().isEmpty().withMessage("type can not be empty"),
+  body("category")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("category can not be empty")
+    .isIn(Categories)
+    .withMessage("This category is not available"),
+  body("type")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("type can not be empty")
+    .isIn(["Private", "Public", "Restricted"])
+    .withMessage(
+      "Subreddit type must be either 'Public' or 'Restricted or 'Private"
+    ),
 ];
 
 //CHECKING ON DESCRIPTION
@@ -29,7 +127,12 @@ const descriptionValidator = [
 ];
 //CHECKING ON MAIN TOPICS
 const mainTopicValidator = [
-  body("title").not().isEmpty().withMessage("main topic can not be empty"),
+  body("title")
+    .not()
+    .isEmpty()
+    .withMessage("main topic can not be empty")
+    .isIn(MainTopics)
+    .withMessage("This Main Topic is not available"),
 ];
 //CHECKING ON SUB TOPICS
 const subTopicValidator = [
@@ -66,25 +169,27 @@ const createSubreddit = async (req, res) => {
     }).save();
     //MAKE THE USER OWNER OF THE SUBREDDIT
     const moderator = await User.findById(creatorId);
-    moderator.ownedSubreddits.push({
+    const addedSubreddit = {
       subredditId: subreddit.id,
       name: title,
-    });
-    //ADD THIS SUBREDDIT TO THE ONES HE FOLLOWS
-    await moderator.save();
-    moderator.joinedSubreddits.push({
-      subredditId: subreddit.id,
-      name: title,
-    });
+    };
+    moderator.ownedSubreddits.push(addedSubreddit);
+    moderator.joinedSubreddits.push(addedSubreddit);
     await moderator.save();
     //RETURN RESPONSE
     return res.status(201).send({
       subreddit: subreddit,
     });
   } catch (err) {
-    return res.status(400).json({
-      error: err.message,
-    });
+    if (err.cause) {
+      return res.status(err.cause).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json({
+        error: "Internal Server Error",
+      });
+    }
   }
 };
 //JOINING A SUBREDDIT
@@ -94,16 +199,31 @@ const joinSubreddit = async (req, res) => {
   const authPayload = req.payload;
   //GETTING USER ID
   const userId = authPayload.userId;
+  const username = authPayload.username;
   try {
     //GETTING USER DATA
     const user = await User.findById(userId);
     if (!user) {
-      throw new Error("this user isn't found");
+      throw new Error("this user isn't found", { cause: 400 });
     }
     //GETTING SUBREDDIT DATA
     const subreddit = await Subreddit.findById(req.body.subredditId);
     if (!subreddit) {
-      throw new Error("this subreddit isn't found");
+      throw new Error("this subreddit isn't found", { cause: 400 });
+    }
+    if (!subreddit.deletedAt) {
+      throw new Error("this subreddit is deleted", { cause: 400 });
+    }
+    if (subreddit.type === "Private") {
+      subreddit.waitedUsers.push({
+        username: username,
+        userID: userId,
+        message: req.body.message,
+      });
+      await subreddit.save();
+      return res
+        .status(200)
+        .json({ message: "Your request is sent successfully" });
     }
     //ADDING THIS SUB REDDIT TO JOINED SUBREDDITS LIST
     user.joinedSubreddits.push({
@@ -119,9 +239,15 @@ const joinSubreddit = async (req, res) => {
       .status(200)
       .json({ message: "you joined the subreddit successfully" });
   } catch (err) {
-    return res.status(400).json({
-      error: err.message,
-    });
+    if (err.cause) {
+      return res.status(err.cause).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json({
+        error: "Internal Server Error",
+      });
+    }
   }
 };
 
@@ -131,7 +257,10 @@ const addDescription = async (req, res) => {
     //GETTING SUBREDDIT DATA
     const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
     if (!subreddit) {
-      throw new Error("this subreddit isn't found");
+      throw new Error("this subreddit isn't found", { cause: 400 });
+    }
+    if (!subreddit.deletedAt) {
+      throw new Error("this subreddit is deleted", { cause: 400 });
     }
     //ADDING DESCRIPTION OF THE SUBREDDIT
     subreddit.description = req.body.description;
@@ -139,9 +268,15 @@ const addDescription = async (req, res) => {
     //SENDING RESPONSES
     return res.status(201).json("Subreddit settings updated successfully");
   } catch (err) {
-    return res.status(400).json({
-      error: err.message,
-    });
+    if (err.cause) {
+      return res.status(err.cause).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json({
+        error: "Internal Server Error",
+      });
+    }
   }
 };
 
@@ -150,7 +285,10 @@ const addMainTopic = async (req, res) => {
     //GETTING SUBREDDIT DATA
     const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
     if (!subreddit) {
-      throw new Error("this subreddit isn't found", { statusCode: 401 });
+      throw new Error("this subreddit isn't found", { cause: 400 });
+    }
+    if (!subreddit.deletedAt) {
+      throw new Error("this subreddit is deleted", { cause: 400 });
     }
     //ADDING DESCRIPTION OF THE SUBREDDIT
     subreddit.mainTopic = req.body.title;
@@ -158,10 +296,15 @@ const addMainTopic = async (req, res) => {
     //SENDING RESPONSES
     return res.status(201).json("Successfully updated primary topic!");
   } catch (err) {
-    console.log(err);
-    return res.status(err.statusCode).json({
-      error: err.message,
-    });
+    if (err.cause) {
+      return res.status(err.cause).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json({
+        error: "Internal Server Error",
+      });
+    }
   }
 };
 
@@ -171,17 +314,34 @@ const addSubTopics = async (req, res) => {
     //GETTING SUBREDDIT DATA
     const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
     if (!subreddit) {
-      throw new Error("this subreddit isn't found");
+      throw new Error("this subreddit isn't found", { cause: 400 });
+    }
+    if (!subreddit.deletedAt) {
+      throw new Error("this subreddit is deleted", { cause: 400 });
     }
     //ADDING DESCRIPTION OF THE SUBREDDIT
+    const validateArr = req.body.title;
+    validateArr.forEach(function (subtopic) {
+      if (!MainTopics.includes(subtopic)) {
+        throw new Error(`subtopic ${subtopic} is not available`, {
+          cause: 400,
+        });
+      }
+    });
     subreddit.subTopics = req.body.title;
     await subreddit.save();
     //SENDING RESPONSES
     return res.status(201).json("Community topics saved");
   } catch (err) {
-    return res.status(400).json({
-      error: err.message,
-    });
+    if (err.cause) {
+      return res.status(err.cause).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json({
+        error: "Internal Server Error",
+      });
+    }
   }
 };
 
