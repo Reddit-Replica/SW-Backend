@@ -192,7 +192,9 @@ const postDetails = async (req, res) => {
       if (user.spammedPosts.find((id) => id.toString() === postId)) {
         spammed = true;
       }
-      if (user.moderatedSubreddits.find((sr) => sr.name === post.subreddit)) {
+      if (
+        user.moderatedSubreddits.find((sr) => sr.name === post.subredditName)
+      ) {
         inYourSubreddit = true;
       }
     }
