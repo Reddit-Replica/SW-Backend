@@ -181,7 +181,7 @@ subredditRulesRouter.get(
  *          description: The name of the rule.
  *         ruleOrder:
  *          type: integer
- *          description: Order of the rule
+ *          description: Order of the rule (add it as it is.. don't edit it.. if you want to edit it use the /r/{subreddit}/about/rules-order endpoint to edit the rules order)
  *         appliesTo:
  *          type: string
  *          description: Where to apply the rule
