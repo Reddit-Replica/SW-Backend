@@ -221,9 +221,7 @@ const joinSubreddit = async (req, res) => {
         message: req.body.message,
       });
       await subreddit.save();
-      return res
-        .status(200)
-        .json("Your request is sent successfully" );
+      return res.status(200).json("Your request is sent successfully");
     }
     //ADDING THIS SUB REDDIT TO JOINED SUBREDDITS LIST
     user.joinedSubreddits.push({

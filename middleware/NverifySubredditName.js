@@ -19,13 +19,15 @@ export async function checkDuplicateSubredditTitle(req, res, next) {
     const subreddit = await Subreddit.findOne({
       title: req.body.title,
     });
-    if (!subreddit){
+    if (!subreddit) {
       next();
       return;
     }
     if (subreddit.title && !subreddit.deletedAt) {
       // eslint-disable-next-line max-len
-      return res.status(409).json({ error: "Subreddit's name is already taken" });
+      return res
+        .status(409)
+        .json({ error: "Subreddit's name is already taken" });
     }
   } catch (err) {
     if (err.cause) {
