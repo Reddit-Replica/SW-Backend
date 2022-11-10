@@ -1,4 +1,3 @@
-import verifyUser from "../utils/verifyUser.js";
 import Subreddit from "../models/Community.js";
 
 /**
@@ -21,7 +20,7 @@ export async function checkModerator(req, res, next) {
   try {
     const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
     if (!subreddit) {
-      throw new Error("this subreddit isn't found");
+      throw new Error("this subreddit isn't found", { cause: 400 });
     }
     // eslint-disable-next-line max-len
     const { moderators } = subreddit;
@@ -36,11 +35,19 @@ export async function checkModerator(req, res, next) {
       next();
     } else {
       // eslint-disable-next-line max-len
-      throw new Error("you don't have the right to do this action");
+      throw new Error("you don't have the right to do this action", {
+        cause: 403,
+      });
     }
   } catch (err) {
-    return res.status(400).json({
-      error: err.message,
-    });
+    if (err.cause) {
+      return res.status(err.cause).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json({
+        error: "Internal Server Error",
+      });
+    }
   }
 }

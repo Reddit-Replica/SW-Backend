@@ -22,8 +22,14 @@ export async function checkDuplicateSubredditTitle(req, res, next) {
     }
     next();
   } catch (err) {
-    return res.status(500).send({
-      error: err,
-    });
+    if (err.cause) {
+      return res.status(err.cause).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json({
+        error: "Internal Server Error",
+      });
+    }
   }
 }

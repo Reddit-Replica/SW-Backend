@@ -148,6 +148,21 @@ const communitySchema = mongoose.Schema({
       },
     },
   ],
+  waitedUsers: [
+    {
+      username: {
+        type: String,
+        required: true,
+      },
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      message: {
+        type: String,
+      },
+    },
+  ],
   owner: {
     username: {
       type: String,

@@ -1,6 +1,5 @@
 import supertest from "supertest";
 import app from "../../app.js";
-import User from "../../models/User.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
