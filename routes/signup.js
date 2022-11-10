@@ -281,7 +281,6 @@ signupRouter.post(
  *       500:
  *         description: Internal server error
  */
-// eslint-disable-next-line max-len
 signupRouter.get(
   "/random-username",
   GenerateUsernameController.generateRandomUsername

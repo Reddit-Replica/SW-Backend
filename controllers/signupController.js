@@ -12,6 +12,7 @@ import { body, query, param } from "express-validator";
 import { generateJWT } from "../utils/generateTokens.js";
 import { finalizeCreateUser } from "../utils/createUser.js";
 import { hashPassword } from "./../utils/passwordUtils.js";
+import { generateRandomUsernameUtil } from "../utils/generateRandomUsername.js";
 
 const signupValidator = [
   body("email")
@@ -155,6 +156,7 @@ const verifyEmail = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
 const signinWithGoogleFacebook = async (req, res) => {
   try {
     if (req.params.type.trim() === "google") {
@@ -169,9 +171,16 @@ const signinWithGoogleFacebook = async (req, res) => {
         const token = generateJWT(user);
         return res.status(200).json({ username: user.username, token: token });
       }
+
+      // generate random username
+      const randomUsername = await generateRandomUsernameUtil();
+      if (randomUsername === "Couldn't generate") {
+        throw new Error("Couldn't generate");
+      }
+      console.log(randomUsername);
       // if not then create a new account
       const newUser = new User({
-        username: decodedToken.name, // TODO: Change to random username
+        username: randomUsername,
         email: email,
         googleEmail: email,
       });
