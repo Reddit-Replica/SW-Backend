@@ -7,7 +7,7 @@ import Community from "../../models/Community.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-fdescribe("Testing Subreddit Creation endpoints", () => {
+describe("Testing Subreddit Creation endpoints", () => {
   afterAll(async () => {
     //await User.deleteMany({});
     //await Community.deleteMany({});

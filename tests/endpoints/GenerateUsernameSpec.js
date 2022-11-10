@@ -3,7 +3,7 @@ import app from "../../app.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-fdescribe("Testing Generating random usernames", () => {
+describe("Testing Generating random usernames", () => {
   it("Generate random username", async () => {
     const response = await request.get("/random-username");
     const username1 = response.body.username;

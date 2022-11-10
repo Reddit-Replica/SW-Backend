@@ -16,7 +16,9 @@ import Subreddit from "../models/Community.js";
 export async function checkDuplicateSubredditTitle(req, res, next) {
   try {
     // eslint-disable-next-line max-len
-    const { title,deletedAt } = await Subreddit.findOne({ title: req.body.title });
+    const { title, deletedAt } = await Subreddit.findOne({
+      title: req.body.title,
+    });
     if (title && !deletedAt) {
       return res.status(409).json({ error: "title is already in use" });
     }
