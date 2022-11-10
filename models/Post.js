@@ -118,6 +118,36 @@ const postSchema = mongoose.Schema({
       default: 0,
     },
   },
+  moderation: {
+    approve: {
+      approvedBy: {
+        type: String,
+      },
+      approvedDate: {
+        type: Date,
+      },
+    },
+    remove: {
+      removedBy: {
+        type: String,
+      },
+      removedDate: {
+        type: Date,
+      },
+    },
+    spam: {
+      spammedBy: {
+        type: String,
+      },
+      spammedDate: {
+        type: Date,
+      },
+    },
+    lock: {
+      type: Boolean,
+      default: false,
+    },
+  },
   scheduleDate: {
     type: Date,
   },
