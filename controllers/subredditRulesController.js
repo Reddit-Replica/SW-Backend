@@ -35,7 +35,7 @@ const addSubredditRule = async (req, res) => {
     try {
       await req.subreddit.save();
 
-      res.status(200).json(req.subreddit.rules);
+      res.status(201).json("Created");
     } catch (err) {
       res.status(500).json({
         error: "Internal server error",
@@ -70,7 +70,7 @@ const editSubredditRule = async (req, res) => {
       req.neededRule.updatedAt = Date.now();
       console.log(req.neededRule);
       await req.subreddit.save();
-      res.status(200).json("Accepted");
+      res.status(200).json("Updated successfully");
     } catch (err) {
       res.status(500).json({
         error: "Internal server error",
