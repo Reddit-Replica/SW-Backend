@@ -177,7 +177,7 @@ postRouter.post("/clear-suggested-sort");
  * @swagger
  * /submit:
  *  post:
- *      summary: Submit or share a post to a subreddit
+ *      summary: Submit or share a post to a subreddit (The request body could be json in case of text or link submissions and their content is set in the 'content' parameter but if it's an image/multiple images or a video then the body will be FormData and the image/video contents will be placed in an array called 'files'). Note ONLY In case of multiple images, there can be a caption and link attached with each image so they are set in the 'imageCaptions' and 'imageLinks' arrays and if an image doesn't include a caption or link then it's place in the array should be null and not skipped. The kind can also be 'post' in case of sharing a post because it's content will be another post basically.
  *      tags: [Posts]
  *      requestBody:
  *       required: true
