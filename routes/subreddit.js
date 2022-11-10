@@ -61,10 +61,15 @@ const subRedditRouter = express.Router();
  *                 error:
  *                   type: string
  *                   description: Type of error
- *       401:
- *         description: Access Denied
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
  *     security:
  *       - bearerAuth: []
  */
@@ -78,6 +83,52 @@ subRedditRouter.post(
   subredditController.createSubreddit
 );
 
+/**
+ * @swagger
+ * /join-subreddit:
+ *   post:
+ *     summary: join a subreddit
+ *     tags: [Subreddit]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - subredditId
+ *             properties:
+ *               subredditId:
+ *                 type: string
+ *                 description: Id of the subreddit
+ *               message:
+ *                 type: string
+ *                 description: the sent message from the user in case the subreddit is private
+ *     responses:
+ *       201:
+ *         description: you joined the subreddit successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       409:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
 subRedditRouter.post(
   "/join-subreddit",
   verifyTokenMiddelware.verifyAuthToken,
@@ -143,10 +194,19 @@ subRedditRouter.get("/subreddit-name-available");
  *      responses:
  *          200:
  *              description: description is submitted successfully
- *          401:
- *              description: Unauthorized add description
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                  application/json:
+ *                    schema:
+ *                     properties:
+ *                       error:
+ *                         type: string
+ *                         description: Type of error
+ *          403:
+ *              description: you don't have the right to do this action
  *          500:
- *              description: Server Error
+ *              description: Internal Server Error
  *      security:
  *       - bearerAuth: []
  */
@@ -160,8 +220,50 @@ subRedditRouter.post(
   subredditController.addDescription
 );
 
+/**
+ * @swagger
+ * /r/{subreddit}/add-maintopic:
+ *  post:
+ *      summary: add the main topic to the community
+ *      tags: [Subreddit]
+ *      parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: the name of the subreddit
+ *         schema:
+ *           type: string
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *            required:
+ *             - title
+ *            properties:
+ *             title:
+ *               type: string
+ *               description: title of the main topic in the community
+ *      responses:
+ *          200:
+ *              description: Successfully updated primary topic!
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                  application/json:
+ *                    schema:
+ *                     properties:
+ *                       error:
+ *                         type: string
+ *                         description: Type of error
+ *          403:
+ *              description: you don't have the right to do this action
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
 subRedditRouter.post(
-  "/r/:subreddit/add-mainTopic",
+  "/r/:subreddit/add-maintopic",
   verifyTokenMiddelware.verifyAuthToken,
   subredditController.mainTopicValidator,
   validateRequestSchema,
@@ -169,8 +271,53 @@ subRedditRouter.post(
   subredditController.addMainTopic
 );
 
+/**
+ * @swagger
+ * /r/{subreddit}/add-subtopic:
+ *  post:
+ *      summary: add subtopics to the community
+ *      tags: [Subreddit]
+ *      parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: the name of the subreddit
+ *         schema:
+ *           type: string
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *             required:
+ *             - title
+ *             properties:
+ *              title:
+ *                type: array
+ *                description: titles of the sub topics in the community
+ *                items:
+ *                  type: object
+ *      responses:
+ *          200:
+ *              description: Community topics saved
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                  application/json:
+ *                    schema:
+ *                      properties:
+ *                        error:
+ *                          type: string
+ *                          description: Type of error
+ *          403:
+ *              description: you don't have the right to do this action
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
 subRedditRouter.post(
-  "/r/:subreddit/add-subTopic",
+  "/r/:subreddit/add-subtopic",
   verifyTokenMiddelware.verifyAuthToken,
   subredditController.subTopicValidator,
   validateRequestSchema,
