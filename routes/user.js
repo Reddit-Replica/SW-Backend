@@ -1,7 +1,10 @@
 import express from "express";
+import userController from "../controllers/BuserController.js";
+import verifyToken from "../middleware/verifyToken.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
 
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const userRouter = express.Router();
 
 /**
  * @swagger
@@ -50,7 +53,13 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.post("/block-user");
+userRouter.post(
+  "/block-user",
+  verifyToken.verifyAuthToken,
+  userController.blockUserValidator,
+  validateRequestSchema,
+  userController.blockUser
+);
 
 /**
  * @swagger
@@ -92,7 +101,13 @@ router.post("/block-user");
  *     security:
  *       - bearerAuth: []
  */
-router.post("/follow-user");
+userRouter.post(
+  "/follow-user",
+  verifyToken.verifyAuthToken,
+  userController.followUserValidator,
+  validateRequestSchema,
+  userController.followUser
+);
 
 /**
  * @swagger
@@ -174,7 +189,7 @@ router.post("/follow-user");
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/about");
+userRouter.get("/user/:username/about");
 
 /**
  * @swagger
@@ -239,7 +254,7 @@ router.get("/user/:username/about");
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/overview");
+userRouter.get("/user/:username/overview");
 
 /**
  * @swagger
@@ -304,7 +319,7 @@ router.get("/user/:username/overview");
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/posts");
+userRouter.get("/user/:username/posts");
 
 /**
  * @swagger
@@ -346,7 +361,7 @@ router.get("/user/:username/posts");
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/history");
+userRouter.get("/user/:username/history");
 
 /**
  * @swagger
@@ -541,7 +556,7 @@ router.get("/user/:username/history");
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/comments");
+userRouter.get("/user/:username/comments");
 
 /**
  * @swagger
@@ -608,7 +623,7 @@ router.get("/user/:username/comments");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/upvoted");
+userRouter.get("/user/:username/upvoted");
 
 /**
  * @swagger
@@ -675,7 +690,7 @@ router.get("/user/:username/upvoted");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/downvoted");
+userRouter.get("/user/:username/downvoted");
 
 /**
  * @swagger
@@ -719,7 +734,7 @@ router.get("/user/:username/downvoted");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/saved");
+userRouter.get("/user/:username/saved");
 
 /**
  * @swagger
@@ -763,6 +778,6 @@ router.get("/user/:username/saved");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/hidden");
+userRouter.get("/user/:username/hidden");
 
-export default router;
+export default userRouter;
