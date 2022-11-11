@@ -22,7 +22,7 @@ pipeline {
 
   stage("intgration testing"){
     steps {
-              echo "till get its commanddsser"
+              echo "till get its commanddssddder"
       }
   }
 
