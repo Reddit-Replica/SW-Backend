@@ -287,4 +287,38 @@ signupRouter.get(
   GenerateUsernameController.generateRandomUsername
 );
 
+/**
+ * @swagger
+ * /edit-username:
+ *   patch:
+ *     summary: Edit the username of the user [can be used only once after signing up with google or facebook]
+ *     tags: [Sign Up]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - username
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: New available username
+ *     responses:
+ *       200:
+ *         description: Username updated successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       500:
+ *         description: Internal server error
+ */
+signupRouter.patch("/edit-username");
+
 export default signupRouter;
