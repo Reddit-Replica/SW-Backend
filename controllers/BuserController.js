@@ -34,6 +34,10 @@ const blockUser = async (req, res) => {
     const { userId } = req.payload;
     const user = await User.findById(userId);
 
+    if (userId === userToBlock._id.toString()) {
+      return res.status(400).json({ error: "User can not block himself" });
+    }
+
     // get the index of the id of the user to be blocked if he was blocked before
     const index = user.blockedUsers.findIndex(
       (elem) => elem.toString() === userToBlock._id.toString()
@@ -70,6 +74,10 @@ const followUser = async (req, res) => {
 
     const { userId } = req.payload;
     const user = await User.findById(userId);
+
+    if (userId === userToFollow._id.toString()) {
+      return res.status(400).json({ error: "User can not follow himself" });
+    }
 
     // get the index of the id of the current user in followers list for the user to follow
     const index = userToFollow.followers.findIndex(
