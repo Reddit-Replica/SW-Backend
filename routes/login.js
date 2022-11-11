@@ -145,11 +145,6 @@ loginRouter.post(
  *     responses:
  *       200:
  *         description: Password updated successfully
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
