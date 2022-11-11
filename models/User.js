@@ -189,6 +189,18 @@ const userSchema = mongoose.Schema({
       ref: "Comment",
     },
   ],
+  blockedUsers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  followers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 const User = mongoose.model("User", userSchema);
