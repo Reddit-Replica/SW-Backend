@@ -57,8 +57,38 @@ const blockUser = async (req, res) => {
     res.status(500).json("Internal Server Error");
   }
 };
+
+// eslint-disable-next-line max-statements
 const followUser = async (req, res) => {
   try {
+    const { username, follow } = req.body;
+
+    const userToFollow = await User.findOne({ username: username });
+    if (!userToFollow) {
+      return res.status(404).json("Didn't find a user with that username");
+    }
+
+    const { userId } = req.payload;
+    const user = await User.findById(userId);
+
+    // get the index of the id of the current user in followers list for the user to follow
+    const index = userToFollow.followers.findIndex(
+      (elem) => elem.toString() === user._id.toString()
+    );
+
+    if (follow) {
+      if (index === -1) {
+        userToFollow.followers.push(user._id);
+        await userToFollow.save();
+      }
+      res.status(200).json("User followed successfully");
+    } else {
+      if (index !== -1) {
+        userToFollow.followers.splice(index, 1);
+        await userToFollow.save();
+      }
+      res.status(200).json("User unfollowed successfully");
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json("Internal Server Error");
