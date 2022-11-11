@@ -7,6 +7,7 @@ import commentsRouter from "./comments.js";
 import itemsActionsRouter from "./itemsActions.js";
 import postActionsRouter from "./postActions.js";
 import postRouter from "./posts.js";
+import userRouter from "./user.js";
 // eslint-disable-next-line new-cap
 const mainRouter = express.Router();
 
@@ -18,5 +19,6 @@ mainRouter.use(itemsActionsRouter);
 mainRouter.use(postActionsRouter);
 mainRouter.use(moderationRouter);
 mainRouter.use(postRouter);
+mainRouter.use(userRouter);
 
 export default mainRouter;
