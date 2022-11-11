@@ -122,7 +122,14 @@
           },
           "content": {
             "type": "string",
-            "description": "Post content (text/url/image/video)"
+            "description": "Post content (text/url)"
+          },
+          "files": {
+            "type": "array",
+            "description": "Post content (images/video)",
+            "items": {
+              "type": "object"
+            }
           },
           "nsfw": {
             "type": "boolean",
@@ -138,14 +145,14 @@
           },
           "imageCaptions": {
             "type": "array",
-            "description": "Captions written for the images submitted",
+            "description": "Captions written for the images submitted (only when kind = images)",
             "items": {
               "type": "string"
             }
           },
           "imageLinks": {
             "type": "array",
-            "description": "Links written for the images submitted",
+            "description": "Links written for the images submitted (only when kind = images)",
             "items": {
               "type": "string"
             }
@@ -180,7 +187,7 @@
         "properties": {
           "kind": {
             "type": "string",
-            "enum": ["link", "text", "image", "video"]
+            "enum": ["link", "text", "image", "video", "post"]
           },
           "subreddit": {
             "type": "string",
@@ -188,7 +195,28 @@
           },
           "content": {
             "type": "string",
-            "description": "Post content (text/url/image/video)"
+            "description": "Post content (text/url/video) - will contain path of a video in case (kind = video)"
+          },
+          "images": {
+            "type": "array",
+            "description": "Post content (kind = images)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Image path"
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "Image caption"
+                },
+                "link": {
+                  "type": "string",
+                  "description": "Image link"
+                }
+              }
+            }
           },
           "nsfw": {
             "type": "boolean",
@@ -204,7 +232,7 @@
           },
           "sharePostId": {
             "type": "string",
-            "description": "Post id in case of containing info of a shared post"
+            "description": "Post id in case of containing info of a shared post (kind = post)"
           },
           "flair": {
             "$ref": "#/components/schemas/Flair"
@@ -233,15 +261,10 @@
             "type": "string",
             "description": "Name of the user associated with the post"
           },
-          "upvoted": {
-            "type": "boolean",
-            "default": false,
-            "description": "If true, then the post was upvoted by the logged in user"
-          },
-          "downvoted": {
-            "type": "boolean",
-            "default": false,
-            "description": "If true, then the post was downvoted by the logged in user"
+          "votingType": {
+            "type": "integer",
+            "enum": [1, 0, -1],
+            "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
           },
           "saved": {
             "type": "boolean",
@@ -262,19 +285,79 @@
             "type": "boolean",
             "default": false,
             "description": "If true, then the post was marked spam by the logged in user"
+          },
+          "inYourSubreddit": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, then you can approve, remove, or spam that post"
+          },
+          "moderation": {
+            "type": "object",
+            "description": "Moderate the post if you are a moderator in that subreddit",
+            "properties": {
+              "approve": {
+                "type": "object",
+                "description": "Approve the post",
+                "properties": {
+                  "approvedBy": {
+                    "type": "string",
+                    "description": "Username for the moderator who approved that post"
+                  },
+                  "approvedDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Date when that post approved"
+                  }
+                }
+              },
+              "remove": {
+                "type": "object",
+                "description": "Remove the post",
+                "properties": {
+                  "removedBy": {
+                    "type": "string",
+                    "description": "Username for the moderator who removed that post"
+                  },
+                  "removedDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Date when that post removed"
+                  }
+                }
+              },
+              "spam": {
+                "type": "object",
+                "description": "Spam the post",
+                "properties": {
+                  "spammedBy": {
+                    "type": "string",
+                    "description": "Username for the moderator who spamed that post"
+                  },
+                  "spammedDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Date when that post spamed"
+                  }
+                }
+              },
+              "lock": {
+                "type": "boolean",
+                "description": "If true, then comments are locked in this post"
+              }
+            }
           }
         }
       },
       "Post": {
         "type": "object",
         "properties": {
-          "kind": {
-            "type": "string",
-            "enum": ["link", "text", "image", "video"]
-          },
           "id": {
             "type": "string",
             "description": "id of a post"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["link", "text", "image", "video", "post"]
           },
           "subreddit": {
             "type": "string",
@@ -282,7 +365,28 @@
           },
           "content": {
             "type": "string",
-            "description": "Post content (text/url/image/video)"
+            "description": "Post content (text/url/video) - will contain path of a video in case (kind = video)"
+          },
+          "images": {
+            "type": "array",
+            "description": "Post content (images)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Image path"
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "Image caption"
+                },
+                "link": {
+                  "type": "string",
+                  "description": "Image link"
+                }
+              }
+            }
           },
           "nsfw": {
             "type": "boolean",
@@ -295,6 +399,10 @@
           "title": {
             "type": "string",
             "description": "Title of the submission"
+          },
+          "sharePostId": {
+            "type": "string",
+            "description": "Post id in case of containing info of a shared post (kind = post)"
           },
           "flair": {
             "$ref": "#/components/schemas/Flair"
@@ -779,153 +887,7 @@
             "type": "array",
             "description": "List of posts to return",
             "items": {
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Id of the post"
-                },
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "subreddit": {
-                      "type": "string",
-                      "description": "Name of subreddit which contain the post"
-                    },
-                    "postedBy": {
-                      "type": "string",
-                      "description": "The username for the publisher of the post"
-                    },
-                    "title": {
-                      "type": "string",
-                      "description": "Title of the post"
-                    },
-                    "type": {
-                      "type": "string",
-                      "description": "Type of content of the post",
-                      "enum": ["text", "video", "image", "link"]
-                    },
-                    "content": {
-                      "type": "string",
-                      "description": "Content of the post [text, path of the video, path of the image, link]"
-                    },
-                    "votes": {
-                      "type": "integer",
-                      "description": "Total number of votes to that post"
-                    },
-                    "numberOfComments": {
-                      "type": "integer",
-                      "description": "Total number of comments"
-                    },
-                    "flair": {
-                      "type": "object",
-                      "properties": {
-                        "flairId": {
-                          "type": "string",
-                          "description": "The id of the flair"
-                        },
-                        "flairText": {
-                          "type": "string",
-                          "description": "Flair text"
-                        },
-                        "backgroundColor": {
-                          "type": "string",
-                          "description": "Background color of the flair"
-                        },
-                        "textColor": {
-                          "type": "string",
-                          "description": "Color of the flair text"
-                        }
-                      }
-                    },
-                    "editTime": {
-                      "type": "string",
-                      "format": "date-time",
-                      "description": "Edit time of the post (if exists)"
-                    },
-                    "publishTime": {
-                      "type": "string",
-                      "format": "date-time",
-                      "description": "Publish time of the post"
-                    },
-                    "inYourSubreddit": {
-                      "type": "boolean",
-                      "description": "If true, then you can approve, remove, or spam that post"
-                    },
-                    "moderation": {
-                      "type": "object",
-                      "description": "Moderate the post if you are a moderator in that subreddit",
-                      "properties": {
-                        "approve": {
-                          "type": "object",
-                          "description": "Approve the post",
-                          "properties": {
-                            "approvedBy": {
-                              "type": "string",
-                              "description": "Username for the moderator who approved that post"
-                            },
-                            "approvedDate": {
-                              "type": "string",
-                              "format": "date-time",
-                              "description": "Date when that post approved"
-                            }
-                          }
-                        },
-                        "remove": {
-                          "type": "object",
-                          "description": "Remove the post",
-                          "properties": {
-                            "removedBy": {
-                              "type": "string",
-                              "description": "Username for the moderator who removed that post"
-                            },
-                            "removedDate": {
-                              "type": "string",
-                              "format": "date-time",
-                              "description": "Date when that post removed"
-                            }
-                          }
-                        },
-                        "spam": {
-                          "type": "object",
-                          "description": "Spam the post",
-                          "properties": {
-                            "spammedBy": {
-                              "type": "string",
-                              "description": "Username for the moderator who spamed that post"
-                            },
-                            "spammedDate": {
-                              "type": "string",
-                              "format": "date-time",
-                              "description": "Date when that post spamed"
-                            }
-                          }
-                        },
-                        "lock": {
-                          "type": "boolean",
-                          "description": "If true, then comments are locked in this post"
-                        }
-                      }
-                    },
-                    "nsfw": {
-                      "type": "boolean",
-                      "description": "If true, then this post is NSFW"
-                    },
-                    "spoiler": {
-                      "type": "boolean",
-                      "description": "If true, then this post is marked as spoiler"
-                    },
-                    "saved": {
-                      "type": "boolean",
-                      "description": "If true, then this post was saved before by the logged-in user"
-                    },
-                    "vote": {
-                      "type": "integer",
-                      "enum": [1, 0, -1],
-                      "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
-                    }
-                  }
-                }
-              }
+              "$ref": "#/components/schemas/PostDetails"
             }
           }
         }
@@ -2086,153 +2048,6 @@
           },
           "404": {
             "description": "Page not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/add-main-topic": {
-      "post": {
-        "summary": "add the main topic to the community",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["mainTopic"],
-                "properties": {
-                  "mainTopic": {
-                    "type": "string",
-                    "description": "title of the main topic in the community"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "main topic is submitted successfully"
-          },
-          "401": {
-            "description": "Unauthorized add main topic"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/add-subtopic": {
-      "post": {
-        "summary": "add subtopics of the community",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["subTopics"],
-                "properties": {
-                  "subTopics": {
-                    "type": "array",
-                    "description": "array of subtopics to be added to community",
-                    "items": {
-                      "type": "object"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Community topics saved"
-          },
-          "401": {
-            "description": "Token may be invalid or not found"
-          },
-          "500": {
-            "description": "Server Error like(\"this subreddit isn't found\")"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/add-description": {
-      "post": {
-        "summary": "add description of the community",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["title"],
-                "properties": {
-                  "description": {
-                    "type": "string",
-                    "description": "description of the community (maximum 300)"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "description is submitted successfully"
-          },
-          "401": {
-            "description": "Unauthorized add description"
           },
           "500": {
             "description": "Server Error"
@@ -4500,17 +4315,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "before": {
-                      "type": "string",
-                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
-                    },
-                    "after": {
-                      "type": "string",
-                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
-                    },
                     "children": {
                       "type": "array",
-                      "description": "List of [Things] to return",
+                      "description": "List of subreddits name",
                       "items": {
                         "properties": {
                           "titles": {
@@ -5808,344 +5615,6 @@
                           }
                         }
                       }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized access"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/about/rules": {
-      "post": {
-        "summary": "Add a rule to subreddit.",
-        "tags": ["Subreddit moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "name of the subreddit.",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["ruleName", "appliesTo"],
-                "properties": {
-                  "ruleName": {
-                    "type": "string",
-                    "description": "The name of the rule."
-                  },
-                  "appliesTo": {
-                    "type": "string",
-                    "description": "Where to apply the rule",
-                    "enum": [
-                      "posts and comments",
-                      "posts only",
-                      "comments only"
-                    ]
-                  },
-                  "reportReason": {
-                    "type": "string",
-                    "description": "The reason of the report. (maximum 100 charachter)"
-                  },
-                  "description": {
-                    "type": "string",
-                    "description": "The full description of the report. (maximum 500 charachter)"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Accepted"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized access"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "get": {
-        "summary": "Get the rules for a subreddit.",
-        "tags": ["Subreddit moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "name of the subreddit.",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The rules for the subreddit.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "rules": {
-                      "type": "array",
-                      "description": "The rules of the subreddit. (maximum 15 rule)",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "ruleID": {
-                            "type": "string",
-                            "description": "ID of the rule"
-                          },
-                          "ruleName": {
-                            "type": "string",
-                            "description": "Name of the rule"
-                          },
-                          "ruleOrder": {
-                            "type": "integer",
-                            "description": "Order of the rule"
-                          },
-                          "createdAt": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "Creation date of the rule"
-                          },
-                          "appliesTo": {
-                            "type": "string",
-                            "description": "Where to apply the rule",
-                            "enum": [
-                              "posts and comments",
-                              "posts only",
-                              "comments only"
-                            ]
-                          },
-                          "reportReason": {
-                            "type": "string",
-                            "description": "The reason of the report. (maximum 100 charachter)"
-                          },
-                          "description": {
-                            "type": "string",
-                            "description": "The full description of the report. (maximum 500 charachter)"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized access"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/about/rules/{ruleId}": {
-      "put": {
-        "summary": "Edit a rule at subreddit.",
-        "tags": ["Subreddit moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "name of the subreddit.",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["ruleName", "appliesTo", "ruleOrder"],
-                "properties": {
-                  "ruleName": {
-                    "type": "string",
-                    "description": "The name of the rule."
-                  },
-                  "ruleOrder": {
-                    "type": "integer",
-                    "description": "Order of the rule"
-                  },
-                  "appliesTo": {
-                    "type": "string",
-                    "description": "Where to apply the rule",
-                    "enum": [
-                      "posts and comments",
-                      "posts only",
-                      "comments only"
-                    ]
-                  },
-                  "reportReason": {
-                    "type": "string",
-                    "description": "The reason of the report. (maximum 100 charachter)"
-                  },
-                  "description": {
-                    "type": "string",
-                    "description": "The full description of the report. (maximum 500 charachter)"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Accepted"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized access"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/about/rules-order": {
-      "post": {
-        "summary": "Edit rules order of the subreddit.",
-        "tags": ["Subreddit moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "name of the subreddit.",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["rulesOrder"],
-                "properties": {
-                  "rulesOrder": {
-                    "type": "array",
-                    "description": "The order of the rules.",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "ruleId": {
-                          "type": "string",
-                          "description": "id of the rule"
-                        },
-                        "ruleOrder": {
-                          "type": "string",
-                          "description": "The new order of the rule"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Accepted"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
                     }
                   }
                 }
@@ -8084,7 +7553,7 @@
     },
     "/submit": {
       "post": {
-        "summary": "Submit or share a post to a subreddit",
+        "summary": "Submit or share a post to a subreddit (The request body could be json in case of text or link submissions and their content is set in the 'content' parameter but if it's an image/multiple images or a video then the body will be FormData and the image/video contents will be placed in an array called 'files'). Note ONLY In case of multiple images, there can be a caption and link attached with each image so they are set in the 'imageCaptions' and 'imageLinks' arrays and if an image doesn't include a caption or link then it's place in the array should be null and not skipped. The kind can also be 'post' in case of sharing a post because it's content will be another post basically.",
         "tags": ["Posts"],
         "requestBody": {
           "required": true,
@@ -9766,6 +9235,51 @@
         }
       }
     },
+    "/edit-username": {
+      "patch": {
+        "summary": "Edit the username of the user [can be used only once after signing up with google or facebook]",
+        "tags": ["Sign Up"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["username"],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "New available username"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Username updated successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/create-subreddit": {
       "post": {
         "summary": "Create a new subreddit",
@@ -9775,11 +9289,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["title", "type", "nsfw", "category"],
+                "required": ["subredditName", "type", "nsfw", "category"],
                 "properties": {
-                  "title": {
+                  "subredditName": {
                     "type": "string",
-                    "description": "Subreddit name(maximum 23)"
+                    "description": "Subreddit name"
                   },
                   "type": {
                     "type": "string",
@@ -9818,8 +9332,86 @@
               }
             }
           },
-          "401": {
-            "description": "Access Denied"
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/join-subreddit": {
+      "post": {
+        "summary": "join a subreddit",
+        "tags": ["Subreddit"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["subredditId"],
+                "properties": {
+                  "subredditId": {
+                    "type": "string",
+                    "description": "Id of the subreddit"
+                  },
+                  "message": {
+                    "type": "string",
+                    "description": "the sent message from the user in case the subreddit is private"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "you joined the subreddit successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal server error"
@@ -9873,6 +9465,603 @@
             "description": "Internal server error"
           }
         }
+      }
+    },
+    "/r/{subreddit}/add-description": {
+      "post": {
+        "summary": "add description of the community",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["title"],
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "description of the community (maximum 300)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "description is submitted successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "you don't have the right to do this action"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/add-maintopic": {
+      "post": {
+        "summary": "add the main topic to the community",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "title of the main topic in the community"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated primary topic!"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "you don't have the right to do this action"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/add-subtopic": {
+      "post": {
+        "summary": "add subtopics to the community",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "array",
+                    "description": "titles of the sub topics in the community",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Community topics saved"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "you don't have the right to do this action"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/about/rules": {
+      "post": {
+        "summary": "Add a rule to subreddit.",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["ruleName", "appliesTo"],
+                "properties": {
+                  "ruleName": {
+                    "type": "string",
+                    "description": "The name of the rule."
+                  },
+                  "appliesTo": {
+                    "type": "string",
+                    "description": "Where to apply the rule",
+                    "enum": [
+                      "posts and comments",
+                      "posts only",
+                      "comments only"
+                    ]
+                  },
+                  "reportReason": {
+                    "type": "string",
+                    "description": "The reason of the report. (maximum 100 charachter)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "The full description of the report. (maximum 500 charachter)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Get the rules for a subreddit.",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The rules for the subreddit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "rules": {
+                      "type": "array",
+                      "description": "The rules of the subreddit. (maximum 15 rule)",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "ruleID": {
+                            "type": "string",
+                            "description": "ID of the rule"
+                          },
+                          "ruleName": {
+                            "type": "string",
+                            "description": "Name of the rule"
+                          },
+                          "ruleOrder": {
+                            "type": "integer",
+                            "description": "Order of the rule"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Creation date of the rule"
+                          },
+                          "appliesTo": {
+                            "type": "string",
+                            "description": "Where to apply the rule",
+                            "enum": [
+                              "posts and comments",
+                              "posts only",
+                              "comments only"
+                            ]
+                          },
+                          "reportReason": {
+                            "type": "string",
+                            "description": "The reason of the report. (maximum 100 charachter)"
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "The full description of the report. (maximum 500 charachter)"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/about/rules/{ruleId}": {
+      "put": {
+        "summary": "Edit a rule at subreddit.",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "ruleId",
+            "description": "id of the rule.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["ruleName", "appliesTo", "ruleOrder"],
+                "properties": {
+                  "ruleName": {
+                    "type": "string",
+                    "description": "The name of the rule."
+                  },
+                  "ruleOrder": {
+                    "type": "integer",
+                    "description": "Order of the rule (add it as it is.. don't edit it.. if you want to edit it use the /r/{subreddit}/about/rules-order endpoint to edit the rules order)"
+                  },
+                  "appliesTo": {
+                    "type": "string",
+                    "description": "Where to apply the rule",
+                    "enum": [
+                      "posts and comments",
+                      "posts only",
+                      "comments only"
+                    ]
+                  },
+                  "reportReason": {
+                    "type": "string",
+                    "description": "The reason of the report. (maximum 100 charachter)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "The full description of the report. (maximum 500 charachter)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated successfully"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete a rule at subreddit.",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "ruleId",
+            "description": "id of the rule.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted successfully"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/about/rules-order": {
+      "post": {
+        "summary": "Edit rules order of the subreddit.",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["rulesOrder"],
+                "properties": {
+                  "rulesOrder": {
+                    "type": "array",
+                    "description": "The order of the rules.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ruleId": {
+                          "type": "string",
+                          "description": "id of the rule"
+                        },
+                        "ruleOrder": {
+                          "type": "string",
+                          "description": "The new order of the rule"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
 
