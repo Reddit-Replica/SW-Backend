@@ -276,7 +276,16 @@ subredditRulesRouter.put(
  *    - bearerAuth: []
  */
 
-subredditRulesRouter.delete("/r/:subreddit/about/rules/:ruleId");
+subredditRulesRouter.delete(
+  "/r/:subreddit/about/rules/:ruleId",
+  verifyToken.verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyToken.verifyAuthTokenModerator,
+  subredditRulesMiddleware.validateRuleId,
+  subredditRulesMiddleware.checkRule,
+  subredditRulesController.deleteSubredditRule
+);
 
 /**
  * @swagger

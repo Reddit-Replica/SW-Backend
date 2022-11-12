@@ -46,7 +46,7 @@ if (process.env.NODE_ENV.trim() === "testing") {
 mongoose
   .connect(DB_URL, { useNewUrlParser: true })
   .then(() => {
-    console.log("connected to mongo");
+    console.log("connected to mongo nnew version");
   })
   .catch((error) => {
     console.log("unable to connect to mongoDB : ", error);

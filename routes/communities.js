@@ -529,6 +529,116 @@ communitiesRouter.get("/r/:subreddit/wiki/bans");
 
 /**
  * @swagger
+ * /r/{subreddit}/add-main-topic:
+ *  post:
+ *      summary: add the main topic to the community
+ *      tags: [Subreddit]
+ *      parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: the name of the subreddit
+ *         schema:
+ *           type: string
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *            required:
+ *             - mainTopic
+ *            properties:
+ *             mainTopic:
+ *               type: string
+ *               description: title of the main topic in the community
+ *      responses:
+ *          200:
+ *              description: main topic is submitted successfully
+ *          401:
+ *              description: Unauthorized add main topic
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+communitiesRouter.post("/r/:subreddit/add-main-topic");
+
+/**
+ * @swagger
+ * /r/{subreddit}/add-subtopic:
+ *  post:
+ *      summary: add subtopics of the community
+ *      tags: [Subreddit]
+ *      parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: the name of the subreddit
+ *         schema:
+ *           type: string
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *            required:
+ *             - subTopics
+ *            properties:
+ *             subTopics:
+ *               type: array
+ *               description: array of subtopics to be added to community
+ *               items:
+ *                 type: object
+ *      responses:
+ *          201:
+ *              description: Community topics saved
+ *          401:
+ *              description: Token may be invalid or not found
+ *          500:
+ *              description: Server Error like("this subreddit isn't found")
+ *      security:
+ *       - bearerAuth: []
+ */
+
+communitiesRouter.post("/r/:subreddit/add-subtopics");
+
+/**
+ * @swagger
+ * /r/{subreddit}/add-description:
+ *  post:
+ *      summary: add description of the community
+ *      tags: [Subreddit]
+ *      parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: the name of the subreddit
+ *         schema:
+ *           type: string
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *            required:
+ *             - description
+ *            properties:
+ *             description:
+ *               type: string
+ *               description: description of the community (maximum 300)
+ *      responses:
+ *          201:
+ *              description: Subreddit settings updated successfully
+ *          401:
+ *              description: Token may be invalid or not found
+ *          500:
+ *              description: Server Error like("this subreddit isn't found")
+ *      security:
+ *       - bearerAuth: []
+ */
+
+communitiesRouter.post("/r/:subreddit/add-description");
+
+/**
+ * @swagger
  * /r/{subreddit}/toggle-favorite:
  *  patch:
  *      summary: toggle favorite property of the community

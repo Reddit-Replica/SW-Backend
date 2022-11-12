@@ -1,0 +1,57 @@
+pipeline {
+  agent any
+
+  	environment {
+		DOCKERHUB_CREDENTIALS=credentials('Dockerhub')
+	}
+
+  stages{
+    stage("unit test"){
+      agent {
+        docker {
+            image 'node:lts'
+            reuseNode true
+        }
+    }
+    steps {
+              sh "npm i "
+              sh "npm run test"
+              // timeout(time: 20, unit: 'SECONDS') {sh "npm run serve"}
+      }
+  }
+
+  stage("intgration testing"){
+    steps {
+              echo "till get its commanddsnnnsddder"
+      }
+  }
+
+		stage('Login') {
+
+			steps {
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
+		}
+
+    stage('Build') {
+
+			steps {
+				sh 'docker build -t waer/frontend:latest .'
+			}
+		}
+
+    stage('Push') {
+			steps {
+				sh 'docker push waer/frontend:latest'
+			}
+		}
+
+}
+
+	post {
+		always {
+			sh 'docker logout'
+		}
+	}
+
+}
