@@ -5,7 +5,7 @@ import { body, check } from "express-validator";
 
 const modValidator = [
   body("id").not().isEmpty().withMessage("Id can't be empty"),
-  body("type").not().isEmpty().withMessage("Type kind can't be empty"),
+  body("type").not().isEmpty().withMessage("Type can't be empty"),
   check("type").isIn(["post", "comment"]),
 ];
 
