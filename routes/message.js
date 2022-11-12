@@ -593,9 +593,9 @@ router.patch("/unread-message");
 router.patch("/read-all-msgs");
 /**
  * @swagger
- * /suggested-sender:
+ * /moderated-subreddits:
  *  get:
- *      summary: Return all subreddits that you can send message from
+ *      summary: Return all subreddits that you can send message from ( the ones you are moderator in )
  *      tags: [Messages]
  *      responses:
  *          200:
@@ -607,12 +607,15 @@ router.patch("/read-all-msgs");
  *                        properties:
  *                          children:
  *                            type: array
- *                            description: List of subreddits name
+ *                            description: List of the subreddits that your are moderator in and their pictures
  *                            items:
  *                              properties:
  *                               titles:
  *                                 type: string
  *                                 description: the titles of the subreddits that the user can send messages from and his own username
+ *                               picture:
+ *                                 type: string
+ *                                 description: Path of the picture of the community
  *          404:
  *              description: Page not found
  *          401:
@@ -622,7 +625,6 @@ router.patch("/read-all-msgs");
  *      security:
  *       - bearerAuth: []
  */
-
-router.get("/suggested-sender");
+router.get("/moderated-subreddits");
 
 export default router;
