@@ -9,7 +9,7 @@ import { generateJWT } from "../../utils/generateTokens.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-fdescribe("Testing comment endpoints", () => {
+describe("Testing comment endpoints", () => {
   let post = {},
     user = {},
     subreddit = {},
