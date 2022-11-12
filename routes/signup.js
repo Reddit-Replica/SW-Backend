@@ -1,8 +1,10 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkDuplicateUsernameOrEmail } from "../middleware/verifySignUp.js";
+import verifyToken from "../middleware/verifyToken.js";
 import { checkId } from "../middleware/checkId.js";
 import signupController from "../controllers/signupController.js";
+import GenerateUsernameController from "../controllers/NgenerateUsername.js";
 
 // eslint-disable-next-line new-cap
 const signupRouter = express.Router();
@@ -268,8 +270,8 @@ signupRouter.post(
  *     summary: Get an available random username used to create a new account
  *     tags: [Sign Up]
  *     responses:
- *       200:
- *         description: The email is available
+ *       201:
+ *         description: random username is generated successfully
  *         content:
  *           application/json:
  *             schema:
@@ -280,6 +282,49 @@ signupRouter.post(
  *       500:
  *         description: Internal server error
  */
-signupRouter.get("/random-username");
+signupRouter.get(
+  "/random-username",
+  GenerateUsernameController.generateRandomUsername
+);
+
+/**
+ * @swagger
+ * /edit-username:
+ *   patch:
+ *     summary: Edit the username of the user [can be used only once after signing up with google or facebook]
+ *     tags: [Sign Up]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - username
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: New available username
+ *     responses:
+ *       200:
+ *         description: Username updated successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       500:
+ *         description: Internal server error
+ */
+signupRouter.patch(
+  "/edit-username",
+  verifyToken.verifyAuthToken,
+  signupController.editUsernameValidator,
+  validateRequestSchema,
+  signupController.editUsername
+);
 
 export default signupRouter;

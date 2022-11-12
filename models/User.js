@@ -111,7 +111,7 @@ const userSchema = mongoose.Schema({
   },
   joinedSubreddits: [
     {
-      id: {
+      subredditId: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: "Subreddit",
@@ -124,7 +124,20 @@ const userSchema = mongoose.Schema({
   ],
   ownedSubreddits: [
     {
-      id: {
+      subredditId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  moderatedSubreddits: [
+    {
+      subredditId: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: "Subreddit",

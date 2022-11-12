@@ -44,8 +44,8 @@ const router = express.Router();
  *               type: string
  *               description: Subject of the message
  *      responses:
- *          200:
- *              description: Your message is delivered successfully
+ *          201:
+ *              description: Your message is sent successfully
  *          401:
  *              description: Unauthorized to send a message
  *          500:
@@ -98,6 +98,9 @@ router.post("/message/compose");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
+ *                               msgID:
+ *                                 type: string
+ *                                 description: Message id
  *                               text:
  *                                 type: string
  *                                 description: Message Content as text
@@ -165,6 +168,9 @@ router.get("/message/sent");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
+ *                               msgID:
+ *                                 type: string
+ *                                 description: Message ID
  *                               text:
  *                                 type: string
  *                                 description: Message Content as text
@@ -255,6 +261,9 @@ router.get("/message/inbox");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
+ *                               msgID:
+ *                                 type: string
+ *                                 description: Message id
  *                               text:
  *                                 type: string
  *                                 description: Message Content as text
@@ -325,6 +334,9 @@ router.get("/message/unread");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
+ *                               msgID:
+ *                                 type: string
+ *                                 description: Message id
  *                               text:
  *                                 type: string
  *                                 description: Message Content as text
@@ -407,6 +419,9 @@ router.get("/message/post-reply");
  *                            description: List of [Things] to return
  *                            items:
  *                             properties:
+ *                               msgID:
+ *                                 type: string
+ *                                 description: Message id
  *                               text:
  *                                 type: string
  *                                 description: Message Content as text
@@ -485,6 +500,9 @@ router.get("/message/mentions");
  *                           type: string
  *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
+ *                            msgID:
+ *                                 type: string
+ *                                 description: Message id
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
@@ -573,5 +591,38 @@ router.patch("/unread-message");
  */
 
 router.patch("/read-all-msgs");
+/**
+ * @swagger
+ * /suggested-sender:
+ *  get:
+ *      summary: Return all subreddits that you can send message from
+ *      tags: [Messages]
+ *      responses:
+ *          200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: object
+ *                        properties:
+ *                          children:
+ *                            type: array
+ *                            description: List of subreddits name
+ *                            items:
+ *                              properties:
+ *                               titles:
+ *                                 type: string
+ *                                 description: the titles of the subreddits that the user can send messages from and his own username
+ *          404:
+ *              description: Page not found
+ *          401:
+ *              description: User unauthorized to view this info
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.get("/suggested-sender");
 
 export default router;
