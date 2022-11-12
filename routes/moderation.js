@@ -1,4 +1,10 @@
 import express from "express";
+// eslint-disable-next-line max-len
+import postsModerationController from "../controllers/HpostModerationController.js";
+import verifyToken from "../middleware/verifyToken.js";
+import { checkthingMod } from "../middleware/postModeration.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import { checkId } from "../middleware/checkId.js";
 
 // eslint-disable-next-line new-cap
 const moderationRouter = express.Router();
@@ -451,7 +457,15 @@ moderationRouter.post("/leave-moderator");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/approve");
+moderationRouter.post(
+  "/approve",
+  verifyToken.verifyAuthToken,
+  postsModerationController.approveValidator,
+  validateRequestSchema,
+  checkId,
+  checkthingMod,
+  postsModerationController.approve
+);
 
 /**
  * @swagger
