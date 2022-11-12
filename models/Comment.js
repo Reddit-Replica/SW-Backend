@@ -12,7 +12,6 @@ const commentSchema = mongoose.Schema({
   },
   subredditName: {
     type: String,
-    required: true,
   },
   level: {
     type: Number,
