@@ -44,7 +44,12 @@ const createPost = async (req, res) => {
   try {
     const user = await User.findById(userId);
     // Check if the subreddit is available
-    if (inSubreddit && subreddit) {
+    if (inSubreddit) {
+      if (!subreddit) {
+        return res.status(400).json({
+          error: "Subreddit can't be empty",
+        });
+      }
       const postSubreddit = await Subreddit.findOne({
         title: subreddit,
       });
