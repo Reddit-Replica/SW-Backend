@@ -605,15 +605,9 @@ router.patch("/read-all-msgs");
  *                      schema:
  *                        type: object
  *                        properties:
- *                          before:
- *                           type: string
- *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
- *                          after:
- *                           type: string
- *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
- *                            description: List of [Things] to return
+ *                            description: List of subreddits name
  *                            items:
  *                              properties:
  *                               titles:

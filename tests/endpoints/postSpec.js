@@ -32,6 +32,11 @@ describe("Testing Post endpoints", () => {
       type: "private",
       owner: owner,
     }).save();
+    user.joinedSubreddits.push({
+      subredditId: subreddit.id,
+      name: subreddit.title,
+    });
+    await user.save();
   });
 
   it("Create post with invalid subreddit name", async () => {

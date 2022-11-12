@@ -28,14 +28,14 @@ const subRedditRouter = express.Router();
  *         application/json:
  *           schema:
  *             required:
- *               - title
+ *               - subredditName
  *               - type
  *               - nsfw
  *               - category
  *             properties:
- *               title:
+ *               subredditName:
  *                 type: string
- *                 description: Subreddit name(maximum 23)
+ *                 description: Subreddit name
  *               type:
  *                 type: string
  *                 description: Subreddit type

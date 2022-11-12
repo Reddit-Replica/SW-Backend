@@ -84,9 +84,7 @@ const login = async (req, res) => {
       error: "Invalid password",
     });
   } catch (err) {
-    res.status(500).json({
-      error: "Internal server error",
-    });
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -128,9 +126,7 @@ const forgetPassword = async (req, res) => {
       });
     }
   } catch (err) {
-    res.status(500).json({
-      error: "Internal server error",
-    });
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -141,9 +137,7 @@ const resetPassword = async (req, res) => {
   try {
     const user = await User.findOne({ _id: id });
     if (!user) {
-      return res.status(403).json({
-        error: "User not found",
-      });
+      return res.status(403).json("User not found");
     }
     const returnedToken = await Token.findOne({
       userId: user._id,
@@ -151,16 +145,12 @@ const resetPassword = async (req, res) => {
       token: token,
     });
     if (!returnedToken) {
-      return res.status(403).json({
-        error: "Invalid Token",
-      });
+      return res.status(403).json("Invalid Token");
     }
 
     if (returnedToken.expireAt < Date.now()) {
       await returnedToken.remove();
-      return res.status(403).json({
-        error: "Token is expired",
-      });
+      return res.status(403).json("Token is expired");
     }
     if (newPassword !== verifyPassword) {
       return res.status(400).json({
@@ -172,9 +162,7 @@ const resetPassword = async (req, res) => {
     await returnedToken.remove();
     return res.status(200).json("Password updated successfully");
   } catch (err) {
-    res.status(500).json({
-      error: "Internal server error",
-    });
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -196,9 +184,7 @@ const forgetUsername = async (req, res) => {
 
     res.status(200).json("Email has been sent");
   } catch (error) {
-    res.status(500).json({
-      error: "Internal server error",
-    });
+    res.status(500).json("Internal server error");
   }
 };
 

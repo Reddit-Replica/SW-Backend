@@ -49,15 +49,18 @@ const createPost = async (req, res) => {
       title: subreddit,
     });
     if (!postSubreddit) {
-      return res.status(404).json({
-        error: "Subreddit not found",
-      });
+      return res.status(404).json("Subreddit not found");
+    }
+    const user = await User.findById(userId);
+    if (
+      !user.joinedSubreddits.find((sr) => sr.name === subreddit) &&
+      !user.moderatedSubreddits.find((sr) => sr.name === subreddit)
+    ) {
+      return res.status(401).json("User is not a member/mod of this subreddit");
     }
     if (kind === "image" || kind === "video") {
       if (!req.files) {
-        return res.status(404).json({
-          error: "File(s) not found",
-        });
+        return res.status(404).json("File(s) not found");
       }
     }
     let images = [];
@@ -95,16 +98,11 @@ const createPost = async (req, res) => {
       sharedPost.insights.totalShares += 1;
       await sharedPost.save();
     }
-    const user = await User.findOne({
-      _id: userId,
-    });
     user.posts.push(post.id);
     await user.save();
     res.status(201).json("Post submitted successfully!");
   } catch (err) {
-    res.status(500).json({
-      error: "Internal server error",
-    });
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -122,9 +120,7 @@ const pinPost = async (req, res) => {
         await user.save();
         res.status(200).json("Post pinned successfully!");
       } else {
-        return res.status(409).json({
-          error: "Post is already pinned",
-        });
+        return res.status(409).json("Post is already pinned");
       }
     } else {
       if (
@@ -136,15 +132,11 @@ const pinPost = async (req, res) => {
         await user.save();
         res.status(200).json("Post unpinned successfully!");
       } else {
-        return res.status(409).json({
-          error: "Post is already unpinned",
-        });
+        return res.status(409).json("Post is already unpinned");
       }
     }
   } catch (err) {
-    res.status(500).json({
-      error: "Internal server error",
-    });
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -157,9 +149,7 @@ const getPinnedPosts = async (req, res) => {
     user.pinnedPosts = user.pinnedPosts.filter((post) => !post.deletedAt);
     return res.status(200).json(user.pinnedPosts);
   } catch (err) {
-    res.status(500).json({
-      error: "Internal server error",
-    });
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -171,16 +161,14 @@ const postDetails = async (req, res) => {
       _id: postId,
     }).populate("flair");
     if (!post) {
-      return res.status(404).json({
-        error: "Post not found",
-      });
+      return res.status(404).json("Post not found");
     }
     let saved = false,
       followed = false,
       hidden = false;
-    let upvoted = false,
-      downvoted = false,
-      spammed = false;
+    let votingType = 0,
+      spammed = false,
+      inYourSubreddit = false;
     if (req.loggedIn) {
       const userId = req.userId;
       const user = await User.findOne({
@@ -196,13 +184,18 @@ const postDetails = async (req, res) => {
         hidden = true;
       }
       if (user.upvotedPosts.find((id) => id.toString() === postId)) {
-        upvoted = true;
+        votingType = 1;
       }
       if (user.downvotedPosts.find((id) => id.toString() === postId)) {
-        downvoted = true;
+        votingType = -1;
       }
       if (user.spammedPosts.find((id) => id.toString() === postId)) {
         spammed = true;
+      }
+      if (
+        user.moderatedSubreddits.find((sr) => sr.name === post.subredditName)
+      ) {
+        inYourSubreddit = true;
       }
     }
     return res.status(200).json({
@@ -225,17 +218,16 @@ const postDetails = async (req, res) => {
       votes: post.numberOfUpvotes - post.numberOfDownvotes,
       postedAt: post.createdAt,
       postedBy: post.ownerUsername,
-      upvoted: upvoted,
-      downvoted: downvoted,
+      votingType: votingType,
       saved: saved,
       followed: followed,
       hidden: hidden,
       spammed: spammed,
+      inYourSubreddit: inYourSubreddit,
+      moderation: post.moderation,
     });
   } catch (err) {
-    return res.status(500).json({
-      error: "Internal server error",
-    });
+    return res.status(500).json("Internal server error");
   }
 };
 
@@ -248,9 +240,7 @@ const postInsights = async (req, res) => {
       totalShares: req.post.insights.totalShares,
     });
   } catch (err) {
-    res.status(500).json({
-      error: "Internal server error",
-    });
+    res.status(500).json("Internal server error");
   }
 };
 
