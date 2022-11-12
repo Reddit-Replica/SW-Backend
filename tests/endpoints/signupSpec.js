@@ -106,7 +106,7 @@ describe("Testing sign up endpoints", () => {
 
   it("check the availability of an available username", async () => {
     const response = await request.get("/username-available").query({
-      username: "Philip",
+      username: "ZeyadTarekk",
     });
 
     expect(response.status).toEqual(200);
