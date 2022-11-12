@@ -3,10 +3,10 @@ import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
 
 /**
- * Middleware used to check if a thing (post/comment) and a subreddit
+ * Middleware used to check if a thing (post/comment) and their subreddit
  * are not found (404). If they are, we check for the user requesting to
- * approve this thing if he is a moderator in the subreddit containing
- * this thing or not (401)
+ * change mod settings of this thing if he is a moderator in the
+ * subreddit containing this thing or not (401)
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -15,7 +15,7 @@ import Subreddit from "../models/Community.js";
  */
 
 // eslint-disable-next-line max-statements
-export async function checkthingMod(req, res, next) {
+export async function checkThingMod(req, res, next) {
   const id = req.body.id;
   const type = req.body.type;
   const username = req.payload.username;
@@ -39,7 +39,6 @@ export async function checkthingMod(req, res, next) {
       }
       req.post = post;
       req.type = type;
-      req.subreddit = subreddit;
       next();
     } catch (err) {
       res.status(500).json("Internal server error");
@@ -63,7 +62,6 @@ export async function checkthingMod(req, res, next) {
       }
       req.comment = comment;
       req.type = type;
-      req.subreddit = subreddit;
       next();
     } catch (err) {
       return res.status(500).json("Internal server error");
