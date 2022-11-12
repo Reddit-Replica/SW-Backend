@@ -9,7 +9,7 @@ import Comment from "../../models/Comment.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-fdescribe("Testing Post Moderation endpoints", () => {
+describe("Testing Post Moderation endpoints", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
