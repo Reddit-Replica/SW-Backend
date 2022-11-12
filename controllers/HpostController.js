@@ -44,7 +44,7 @@ const createPost = async (req, res) => {
   try {
     const user = await User.findById(userId);
     // Check if the subreddit is available
-    if (inSubreddit) {
+    if (inSubreddit || inSubreddit === "true") {
       if (!subreddit) {
         return res.status(400).json({
           error: "Subreddit can't be empty",
@@ -86,7 +86,7 @@ const createPost = async (req, res) => {
       kind: sharePostId ? "post" : kind,
       ownerUsername: username,
       ownerId: userId,
-      subredditName: inSubreddit ? subreddit : undefined,
+      subredditName: subreddit,
       title: title,
       sharePostId: sharePostId,
       content: kind === "video" ? req.files[0]?.path : content,
