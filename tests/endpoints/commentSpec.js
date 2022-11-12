@@ -3,6 +3,7 @@ import app from "../../app.js";
 import Post from "./../../models/Post.js";
 import User from "../../models/User.js";
 import Comment from "../../models/Comment.js";
+import Community from "../../models/Community.js";
 import { generateJWT } from "../../utils/generateTokens.js";
 
 const request = supertest(app);
@@ -11,6 +12,7 @@ const request = supertest(app);
 describe("Testing comment endpoints", () => {
   let post = {},
     user = {},
+    subreddit = {},
     token = "";
 
   beforeAll(async () => {
@@ -30,6 +32,13 @@ describe("Testing comment endpoints", () => {
       kind: "text",
     });
     await post.save();
+
+    subreddit = new Community({
+      type: "public",
+      title: "funny",
+      category: "fun",
+    });
+    await subreddit.save();
   });
 
   afterAll(async () => {
@@ -50,6 +59,8 @@ describe("Testing comment endpoints", () => {
         parentId: post._id,
         parentType: "post",
         level: 1,
+        subredditName: "funny",
+        haveSubreddit: true,
       })
       .set("Authorization", "Bearer " + token);
 
@@ -63,6 +74,8 @@ describe("Testing comment endpoints", () => {
         text: "Comment title",
         parentType: "post",
         level: 1,
+        subredditName: "funny",
+        haveSubreddit: true,
       })
       .set("Authorization", "Bearer " + token);
 
@@ -76,6 +89,8 @@ describe("Testing comment endpoints", () => {
         text: "Comment title",
         parentId: post._id,
         level: 1,
+        subredditName: "funny",
+        haveSubreddit: true,
       })
       .set("Authorization", "Bearer " + token);
 
@@ -89,6 +104,55 @@ describe("Testing comment endpoints", () => {
         text: "Comment title",
         parentType: "post",
         parentId: post._id,
+        subredditName: "funny",
+        haveSubreddit: true,
+      })
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it("try to create comment without haveSubreddit bool in body", async () => {
+    const response = await request
+      .post("/comment")
+      .send({
+        text: "Comment title",
+        parentType: "post",
+        parentId: post._id,
+        level: 1,
+        subredditName: "funny",
+      })
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it("try to create comment with invalid parent type", async () => {
+    const response = await request
+      .post("/comment")
+      .send({
+        text: "Comment title",
+        parentType: "invalid",
+        parentId: post._id,
+        level: 1,
+        subredditName: "funny",
+        haveSubreddit: true,
+      })
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it("try to create comment with subreddit dose not exist", async () => {
+    const response = await request
+      .post("/comment")
+      .send({
+        text: "Comment title",
+        parentType: "post",
+        parentId: post._id,
+        level: 1,
+        subredditName: "invalid",
+        haveSubreddit: true,
       })
       .set("Authorization", "Bearer " + token);
 
@@ -103,6 +167,23 @@ describe("Testing comment endpoints", () => {
         parentType: "post",
         parentId: post._id,
         level: 1,
+        subredditName: "funny",
+        haveSubreddit: true,
+      })
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.statusCode).toEqual(201);
+  });
+
+  it("try to create comment to post without subreddit", async () => {
+    const response = await request
+      .post("/comment")
+      .send({
+        text: "Comment title",
+        parentType: "post",
+        parentId: post._id,
+        level: 1,
+        haveSubreddit: false,
       })
       .set("Authorization", "Bearer " + token);
 
