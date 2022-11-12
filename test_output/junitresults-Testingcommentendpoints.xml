@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites disabled="0" errors="0" failures="0" tests="6" time="0.158">
- <testsuite name="Testing comment endpoints" timestamp="2022-11-12T18:54:04" hostname="localhost" time="0.158" errors="0" tests="6" skipped="0" disabled="0" failures="0">
-  <testcase classname="Testing comment endpoints" name="try to create comment without jwt in the header" time="0.031" />
-  <testcase classname="Testing comment endpoints" name="try to create comment without text of the comment" time="0.03" />
-  <testcase classname="Testing comment endpoints" name="try to create comment without parent id of the comment" time="0.008" />
-  <testcase classname="Testing comment endpoints" name="try to create comment without parent type" time="0.009" />
-  <testcase classname="Testing comment endpoints" name="try to create comment without the level of the comment" time="0.007" />
-  <testcase classname="Testing comment endpoints" name="try to create comment with valid parameters" time="0.03" />
+<testsuites disabled="0" errors="0" failures="0" tests="6" time="0.207">
+ <testsuite name="Testing comment endpoints" timestamp="2022-11-12T21:44:05" hostname="localhost" time="0.207" errors="0" tests="6" skipped="0" disabled="0" failures="0">
+  <testcase classname="Testing comment endpoints" name="try to create comment without jwt in the header" time="0.037" />
+  <testcase classname="Testing comment endpoints" name="try to create comment without text of the comment" time="0.041" />
+  <testcase classname="Testing comment endpoints" name="try to create comment without parent id of the comment" time="0.011" />
+  <testcase classname="Testing comment endpoints" name="try to create comment without parent type" time="0.011" />
+  <testcase classname="Testing comment endpoints" name="try to create comment without the level of the comment" time="0.011" />
+  <testcase classname="Testing comment endpoints" name="try to create comment with valid parameters" time="0.035" />
  </testsuite>
 </testsuites>

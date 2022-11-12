@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites disabled="0" errors="0" failures="0" tests="24" time="0.492">
- <testsuite name="Testing Subreddit Creation endpoints" timestamp="2022-11-12T18:54:07" hostname="localhost" time="0.492" errors="0" tests="24" skipped="0" disabled="0" failures="0">
-  <testcase classname="Testing Subreddit Creation endpoints" name="Create subreddit without entering title" time="0.005" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Create subreddit with a title more than 23 char" time="0.005" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Create subreddit without entering type" time="0.009" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Create subreddit without entering category" time="0.005" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Create subreddit with an invalid category" time="0.007" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Create subreddit successfully" time="0.022" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Creating subreddit with the same title" time="0.006" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Creating subreddit with invalid token" time="0.006" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="joining subreddit that you are already in" time="0.01" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="joining subreddit with an invalid token" time="0.01" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="joining subreddit that you are not in" time="0.02" />
+<testsuites disabled="0" errors="0" failures="0" tests="24" time="0.59">
+ <testsuite name="Testing Subreddit Creation endpoints" timestamp="2022-11-12T21:44:09" hostname="localhost" time="0.59" errors="0" tests="24" skipped="0" disabled="0" failures="0">
+  <testcase classname="Testing Subreddit Creation endpoints" name="Create subreddit without entering title" time="0.006" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Create subreddit with a title more than 23 char" time="0.007" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Create subreddit without entering type" time="0.006" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Create subreddit without entering category" time="0.008" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Create subreddit with an invalid category" time="0.005" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Create subreddit successfully" time="0.028" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Creating subreddit with the same title" time="0.005" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Creating subreddit with invalid token" time="0.008" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="joining subreddit that you are already in" time="0.012" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="joining subreddit with an invalid token" time="0.011" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="joining subreddit that you are not in" time="0.024" />
   <testcase classname="Testing Subreddit Creation endpoints" name="Adding description while you don&apos;t have the right to do it" time="0.009" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Adding description while you are moderator" time="0.013" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Adding description wih invalid token" time="0.005" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Adding description while you are moderator with more than 300 char" time="0.005" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Adding an empty description while you are moderator" time="0.008" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Adding Main Topic while you don&apos;t have the right to do it" time="0.008" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Adding Main Topic while you are moderator" time="0.014" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Adding Main Topic wih invalid token" time="0.005" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Adding an invalid Main Topic while you are moderator" time="0.006" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Adding SubTopics while you don&apos;t have the right to do it" time="0.01" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Adding SubTopics while you are moderator" time="0.018" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Adding an invalid subTopics while you are moderator" time="0.011" />
-  <testcase classname="Testing Subreddit Creation endpoints" name="Adding SubTopics wih invalid token" time="0.006" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Adding description while you are moderator" time="0.018" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Adding description wih invalid token" time="0.007" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Adding description while you are moderator with more than 300 char" time="0.006" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Adding an empty description while you are moderator" time="0.009" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Adding Main Topic while you don&apos;t have the right to do it" time="0.009" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Adding Main Topic while you are moderator" time="0.028" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Adding Main Topic wih invalid token" time="0.007" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Adding an invalid Main Topic while you are moderator" time="0.011" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Adding SubTopics while you don&apos;t have the right to do it" time="0.016" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Adding SubTopics while you are moderator" time="0.022" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Adding an invalid subTopics while you are moderator" time="0.017" />
+  <testcase classname="Testing Subreddit Creation endpoints" name="Adding SubTopics wih invalid token" time="0.007" />
  </testsuite>
 </testsuites>

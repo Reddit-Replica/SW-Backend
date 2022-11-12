@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites disabled="0" errors="0" failures="0" tests="1" time="0.019">
- <testsuite name="Testing Generating random usernames" timestamp="2022-11-12T18:54:04" hostname="localhost" time="0.019" errors="0" tests="1" skipped="0" disabled="0" failures="0">
-  <testcase classname="Testing Generating random usernames" name="Generate random username" time="0.017" />
+<testsuites disabled="0" errors="0" failures="0" tests="1" time="0.02">
+ <testsuite name="Testing Generating random usernames" timestamp="2022-11-12T21:44:06" hostname="localhost" time="0.02" errors="0" tests="1" skipped="0" disabled="0" failures="0">
+  <testcase classname="Testing Generating random usernames" name="Generate random username" time="0.019" />
  </testsuite>
 </testsuites>

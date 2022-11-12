@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites disabled="0" errors="0" failures="0" tests="6" time="0.018">
- <testsuite name="Testing send emails functions" timestamp="2022-11-12T18:54:08" hostname="localhost" time="0.018" errors="0" tests="6" skipped="0" disabled="0" failures="0">
-  <testcase classname="Testing send emails functions" name="should have sendResetPasswordEmail method" time="0.001" />
-  <testcase classname="Testing send emails functions" name="try to send reset password email" time="0.002" />
+<testsuites disabled="0" errors="0" failures="0" tests="6" time="0.02">
+ <testsuite name="Testing send emails functions" timestamp="2022-11-12T21:44:10" hostname="localhost" time="0.02" errors="0" tests="6" skipped="0" disabled="0" failures="0">
+  <testcase classname="Testing send emails functions" name="should have sendResetPasswordEmail method" time="0" />
+  <testcase classname="Testing send emails functions" name="try to send reset password email" time="0.001" />
   <testcase classname="Testing send emails functions" name="should have sendVerifyEmail method" time="0" />
   <testcase classname="Testing send emails functions" name="try to send verify email" time="0.001" />
-  <testcase classname="Testing send emails functions" name="should have sendUsernameEmail method" time="0" />
+  <testcase classname="Testing send emails functions" name="should have sendUsernameEmail method" time="0.001" />
   <testcase classname="Testing send emails functions" name="try to send forget username email" time="0.001" />
  </testsuite>
 </testsuites>
