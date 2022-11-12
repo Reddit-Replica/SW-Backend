@@ -16,10 +16,6 @@ const submitValidator = [
   body("kind").not().isEmpty().withMessage("Post kind can't be empty"),
   check("kind").isIn(["text", "link", "image", "video", "post"]),
   body("title").not().isEmpty().withMessage("Post title can't be empty"),
-  body("subreddit")
-    .not()
-    .isEmpty()
-    .withMessage("Subreddit name should be given"),
 ];
 
 // eslint-disable-next-line max-statements
@@ -44,19 +40,23 @@ const createPost = async (req, res) => {
   const username = req.payload.username;
 
   try {
-    // Check if the subreddit is available
-    const postSubreddit = await Subreddit.findOne({
-      title: subreddit,
-    });
-    if (!postSubreddit) {
-      return res.status(404).json("Subreddit not found");
-    }
     const user = await User.findById(userId);
-    if (
-      !user.joinedSubreddits.find((sr) => sr.name === subreddit) &&
-      !user.moderatedSubreddits.find((sr) => sr.name === subreddit)
-    ) {
-      return res.status(401).json("User is not a member/mod of this subreddit");
+    // Check if the subreddit is available
+    if (subreddit) {
+      const postSubreddit = await Subreddit.findOne({
+        title: subreddit,
+      });
+      if (!postSubreddit) {
+        return res.status(404).json("Subreddit not found");
+      }
+      if (
+        !user.joinedSubreddits.find((sr) => sr.name === subreddit) &&
+        !user.moderatedSubreddits.find((sr) => sr.name === subreddit)
+      ) {
+        return res
+          .status(401)
+          .json("User is not a member/mod of this subreddit");
+      }
     }
     if (kind === "image" || kind === "video") {
       if (!req.files) {
