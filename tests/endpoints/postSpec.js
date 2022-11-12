@@ -102,6 +102,24 @@ describe("Testing Post endpoints", () => {
     expect(user.posts.length).toEqual(1);
   });
 
+  it("Normally create a post in the user account", async () => {
+    const postSubmission = {
+      kind: "text",
+      content: "Text content of this post",
+      title: "User post (Test)",
+    };
+    const response = await request
+      .post("/submit")
+      .send(postSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(201);
+
+    user = await User.findById(user.id);
+    console.log(user.posts);
+    expect(user.posts.length).toEqual(2);
+  });
+
   // it("Normally create a post with images content", async () => {
   //   const files = [
   //     {
