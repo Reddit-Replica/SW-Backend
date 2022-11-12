@@ -8,7 +8,7 @@ import { hashPassword } from "../../utils/passwordUtils.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-describe("Testing Post endpoints", () => {
+fdescribe("Testing Post endpoints", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
@@ -103,7 +103,6 @@ describe("Testing Post endpoints", () => {
     expect(response.status).toEqual(201);
 
     user = await User.findById(user.id);
-    console.log(user.posts);
     expect(user.posts.length).toEqual(1);
   });
 
@@ -122,7 +121,6 @@ describe("Testing Post endpoints", () => {
     expect(response.status).toEqual(201);
 
     user = await User.findById(user.id);
-    console.log(user.posts);
     expect(user.posts.length).toEqual(2);
   });
 
