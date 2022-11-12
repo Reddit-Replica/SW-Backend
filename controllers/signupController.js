@@ -12,6 +12,7 @@ import { body, query, param } from "express-validator";
 import { generateJWT } from "../utils/generateTokens.js";
 import { finalizeCreateUser } from "../utils/createUser.js";
 import { hashPassword } from "./../utils/passwordUtils.js";
+import { generateRandomUsernameUtil } from "../utils/generateRandomUsername.js";
 
 const signupValidator = [
   body("email")
@@ -63,6 +64,15 @@ const gfsigninValidator = [
     .withMessage("Access Token can not be empty"),
 ];
 
+const editUsernameValidator = [
+  body("username")
+    .not()
+    .isEmpty()
+    .trim()
+    .escape()
+    .withMessage("Username can not be empty"),
+];
+
 const signup = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -110,7 +120,7 @@ const emailAvailable = async (req, res) => {
     }
     res.status(200).json("The email is available");
   } catch (err) {
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -151,10 +161,11 @@ const verifyEmail = async (req, res) => {
     res.status(200).json("Email verified successfully");
   } catch (err) {
     console.log(err);
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 };
 
+// eslint-disable-next-line max-statements
 const signinWithGoogleFacebook = async (req, res) => {
   try {
     if (req.params.type.trim() === "google") {
@@ -169,9 +180,16 @@ const signinWithGoogleFacebook = async (req, res) => {
         const token = generateJWT(user);
         return res.status(200).json({ username: user.username, token: token });
       }
+
+      // generate random username
+      const randomUsername = await generateRandomUsernameUtil();
+      if (randomUsername === "Couldn't generate") {
+        throw new Error("Couldn't generate");
+      }
+      console.log(randomUsername);
       // if not then create a new account
       const newUser = new User({
-        username: decodedToken.name, // TODO: Change to random username
+        username: randomUsername,
         email: email,
         googleEmail: email,
       });
@@ -184,7 +202,41 @@ const signinWithGoogleFacebook = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
+  }
+};
+
+// eslint-disable-next-line max-statements
+const editUsername = async (req, res) => {
+  try {
+    const { username } = req.body;
+    const { userId } = req.payload;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(400)
+        .json({ error: "Can not find a user with that id" });
+    }
+    if (user.editedAt) {
+      return res
+        .status(400)
+        .json({ error: "Can not change the username for this user again" });
+    }
+
+    const userWithUsername = await User.findOne({ username: username });
+    if (userWithUsername) {
+      return res.status(400).json({ error: "Username already exists" });
+    }
+
+    user.editedAt = Date.now();
+    user.username = username;
+    await user.save();
+
+    res.status(200).json("Username updated successfully");
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -199,4 +251,6 @@ export default {
   verifyEmail,
   gfsigninValidator,
   signinWithGoogleFacebook,
+  editUsernameValidator,
+  editUsername,
 };

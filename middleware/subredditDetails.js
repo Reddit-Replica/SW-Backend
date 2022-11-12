@@ -57,7 +57,7 @@ const checkSubreddit = async (req, res, next) => {
   const subbredditObject = await Subreddit.findOne({
     title: subredditName,
   });
-  if (!subbredditObject) {
+  if (!subbredditObject || subbredditObject.deletedAt) {
     res.status(404).json({
       error: "Subreddit not found!",
     });

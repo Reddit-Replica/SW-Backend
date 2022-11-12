@@ -41,6 +41,9 @@ const communitySchema = mongoose.Schema({
     required: true,
     default: Date.now(),
   },
+  deletedAt: {
+    type: Date,
+  },
   views: {
     type: Number,
   },
@@ -145,6 +148,21 @@ const communitySchema = mongoose.Schema({
       userID: {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+    },
+  ],
+  waitedUsers: [
+    {
+      username: {
+        type: String,
+        required: true,
+      },
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      message: {
+        type: String,
       },
     },
   ],
