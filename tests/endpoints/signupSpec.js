@@ -2,10 +2,23 @@ import supertest from "supertest";
 import app from "../../app.js";
 import User from "../../models/User.js";
 import Token from "./../../models/VerifyToken.js";
+import { generateJWT } from "./../../utils/generateTokens.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
 describe("Testing sign up endpoints", () => {
+  let user = {},
+    token = "";
+  beforeAll(async () => {
+    user = new User({
+      username: "Philip",
+      email: "philip@gmail.com",
+    });
+    await user.save();
+
+    token = generateJWT(user);
+  });
+
   afterAll(async () => {
     await User.deleteMany({});
     await Token.deleteMany({});
@@ -195,5 +208,36 @@ describe("Testing sign up endpoints", () => {
     );
 
     expect(response.status).toEqual(200);
+  });
+
+  it("try to change the username of user without token", async () => {
+    const response = await request
+      .patch("/edit-username")
+      .send({ username: "newName" });
+
+    expect(response.status).toEqual(401);
+  });
+  it("try to change the username without username in body", async () => {
+    const response = await request
+      .patch("/edit-username")
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(400);
+  });
+  it("try to change the username with all valid parameters", async () => {
+    const response = await request
+      .patch("/edit-username")
+      .set("Authorization", "Bearer " + token)
+      .send({ username: "newName" });
+
+    expect(response.status).toEqual(200);
+  });
+  it("try to change the username of a user again", async () => {
+    const response = await request
+      .patch("/edit-username")
+      .set("Authorization", "Bearer " + token)
+      .send({ username: "newName" });
+
+    expect(response.status).toEqual(400);
   });
 });
