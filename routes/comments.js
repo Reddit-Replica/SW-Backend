@@ -36,7 +36,10 @@ const commentsRouter = express.Router();
  *                 description: Level of the comment (How deep is it in the comment tree)
  *               subredditName:
  *                 type: string
- *                 description: Subreddit that contain the post [must equal "user" if the post have no subreddit]
+ *                 description: Subreddit that contain the post
+ *               haveSubreddit:
+ *                 type: boolean
+ *                 description: If true, then the post is in a subreddit
  *      responses:
  *          201:
  *              description: Comment created successfully
