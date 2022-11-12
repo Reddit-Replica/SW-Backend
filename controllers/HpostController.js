@@ -16,10 +16,6 @@ const submitValidator = [
   body("kind").not().isEmpty().withMessage("Post kind can't be empty"),
   check("kind").isIn(["text", "link", "image", "video", "post"]),
   body("title").not().isEmpty().withMessage("Post title can't be empty"),
-  body("subreddit")
-    .not()
-    .isEmpty()
-    .withMessage("Subreddit name should be given"),
 ];
 
 // eslint-disable-next-line max-statements
