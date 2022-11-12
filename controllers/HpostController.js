@@ -1,7 +1,6 @@
 import Post from "../models/Post.js";
 import Subreddit from "../models/Community.js";
 import User from "../models/User.js";
-import mongoose from "mongoose";
 import { body, check } from "express-validator";
 
 const postIdValidator = [
@@ -94,7 +93,7 @@ const createPost = async (req, res) => {
       images: images,
       nsfw: nsfw,
       spoiler: spoiler,
-      flair: mongoose.Types.ObjectId(flairId),
+      flair: flairId,
       sendReplies: sendReplies,
       sharePostId: sharePostId,
       scheduleDate: scheduleDate,
