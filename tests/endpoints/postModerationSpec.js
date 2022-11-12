@@ -119,6 +119,9 @@ fdescribe("Testing Post Moderation endpoints", () => {
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
+    const testPost = await Post.findById(post.id);
+    expect(testPost.moderation.approve.approvedBy).toEqual(user.username);
+    expect(testPost.moderation.remove.removedBy).toBeUndefined();
   });
 
   it("Approve an already approved post", async () => {
@@ -134,5 +137,99 @@ fdescribe("Testing Post Moderation endpoints", () => {
 
     expect(response.status).toEqual(400);
     expect(response.body.error).toEqual("Post is already approved");
+  });
+
+  it("Remove a post correctly", async () => {
+    const removeSubmission = {
+      id: post.id.toString(),
+      type: "post",
+    };
+
+    const response = await request
+      .post("/remove")
+      .send(removeSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(200);
+    const testPost = await Post.findById(post.id);
+    expect(testPost.moderation.remove.removedBy).toEqual(user.username);
+    expect(testPost.moderation.approve.approvedBy).toBeUndefined();
+  });
+
+  it("Remove an already removed post", async () => {
+    const removeSubmission = {
+      id: post.id.toString(),
+      type: "post",
+    };
+
+    const response = await request
+      .post("/remove")
+      .send(removeSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(400);
+    expect(response.body.error).toEqual("Post is already removed");
+  });
+
+  it("Lock a post correctly", async () => {
+    const lockSubmission = {
+      id: post.id.toString(),
+      type: "post",
+    };
+
+    const response = await request
+      .post("/lock")
+      .send(lockSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(200);
+    const testPost = await Post.findById(post.id);
+    expect(testPost.moderation.lock).toEqual(true);
+  });
+
+  it("Lock an already locked post", async () => {
+    const lockSubmission = {
+      id: post.id.toString(),
+      type: "post",
+    };
+
+    const response = await request
+      .post("/lock")
+      .send(lockSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(400);
+    expect(response.body.error).toEqual("Post is already locked");
+  });
+
+  it("Unlock a post correctly", async () => {
+    const unlockSubmission = {
+      id: post.id.toString(),
+      type: "post",
+    };
+
+    const response = await request
+      .post("/unlock")
+      .send(unlockSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(200);
+    const testPost = await Post.findById(post.id);
+    expect(testPost.moderation.lock).toEqual(false);
+  });
+
+  it("Unlock an already unlocked post", async () => {
+    const unlockSubmission = {
+      id: post.id.toString(),
+      type: "post",
+    };
+
+    const response = await request
+      .post("/unlock")
+      .send(unlockSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(400);
+    expect(response.body.error).toEqual("Post is already unlocked");
   });
 });
