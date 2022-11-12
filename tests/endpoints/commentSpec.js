@@ -60,6 +60,7 @@ describe("Testing comment endpoints", () => {
         parentType: "post",
         level: 1,
         subredditName: "funny",
+        haveSubreddit: true,
       })
       .set("Authorization", "Bearer " + token);
 
@@ -74,6 +75,7 @@ describe("Testing comment endpoints", () => {
         parentType: "post",
         level: 1,
         subredditName: "funny",
+        haveSubreddit: true,
       })
       .set("Authorization", "Bearer " + token);
 
@@ -88,6 +90,7 @@ describe("Testing comment endpoints", () => {
         parentId: post._id,
         level: 1,
         subredditName: "funny",
+        haveSubreddit: true,
       })
       .set("Authorization", "Bearer " + token);
 
@@ -102,13 +105,14 @@ describe("Testing comment endpoints", () => {
         parentType: "post",
         parentId: post._id,
         subredditName: "funny",
+        haveSubreddit: true,
       })
       .set("Authorization", "Bearer " + token);
 
     expect(response.statusCode).toEqual(400);
   });
 
-  it("try to create comment without subreddit name in body", async () => {
+  it("try to create comment without haveSubreddit bool in body", async () => {
     const response = await request
       .post("/comment")
       .send({
@@ -116,6 +120,7 @@ describe("Testing comment endpoints", () => {
         parentType: "post",
         parentId: post._id,
         level: 1,
+        subredditName: "funny",
       })
       .set("Authorization", "Bearer " + token);
 
@@ -131,6 +136,7 @@ describe("Testing comment endpoints", () => {
         parentId: post._id,
         level: 1,
         subredditName: "funny",
+        haveSubreddit: true,
       })
       .set("Authorization", "Bearer " + token);
 
@@ -146,6 +152,7 @@ describe("Testing comment endpoints", () => {
         parentId: post._id,
         level: 1,
         subredditName: "invalid",
+        haveSubreddit: true,
       })
       .set("Authorization", "Bearer " + token);
 
@@ -161,6 +168,22 @@ describe("Testing comment endpoints", () => {
         parentId: post._id,
         level: 1,
         subredditName: "funny",
+        haveSubreddit: true,
+      })
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.statusCode).toEqual(201);
+  });
+
+  it("try to create comment to post without subreddit", async () => {
+    const response = await request
+      .post("/comment")
+      .send({
+        text: "Comment title",
+        parentType: "post",
+        parentId: post._id,
+        level: 1,
+        haveSubreddit: false,
       })
       .set("Authorization", "Bearer " + token);
 

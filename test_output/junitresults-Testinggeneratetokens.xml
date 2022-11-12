@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites disabled="0" errors="0" failures="0" tests="5" time="0.016">
- <testsuite name="Testing generate tokens" timestamp="2022-11-12T18:54:07" hostname="localhost" time="0.016" errors="0" tests="5" skipped="0" disabled="0" failures="0">
-  <testcase classname="Testing generate tokens" name="should have generateJWT method" time="0.001" />
+<testsuites disabled="0" errors="0" failures="0" tests="5" time="0.001">
+ <testsuite name="Testing generate tokens" timestamp="2022-11-12T20:07:46" hostname="localhost" time="0.001" errors="0" tests="5" skipped="0" disabled="0" failures="0">
+  <testcase classname="Testing generate tokens" name="should have generateJWT method" time="0" />
   <testcase classname="Testing generate tokens" name="check if generateJWT returns a valid jwt" time="0" />
   <testcase classname="Testing generate tokens" name="try to send empty user object to generateJWT" time="0" />
-  <testcase classname="Testing generate tokens" name="should have generateVerifyToken method" time="0.001" />
-  <testcase classname="Testing generate tokens" name="check if generateVerifyToken returns a valid token with length 64" time="0.009" />
+  <testcase classname="Testing generate tokens" name="should have generateVerifyToken method" time="0" />
+  <testcase classname="Testing generate tokens" name="check if generateVerifyToken returns a valid token with length 64" time="0" />
  </testsuite>
 </testsuites>
