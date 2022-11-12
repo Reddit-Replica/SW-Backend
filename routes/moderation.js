@@ -1,8 +1,8 @@
 import express from "express";
 // eslint-disable-next-line max-len
-import postsModerationController from "../controllers/HpostModerationController.js";
+import postModerationController from "../controllers/HpostModerationController.js";
 import verifyToken from "../middleware/verifyToken.js";
-import { checkthingMod } from "../middleware/postModeration.js";
+import { checkThingMod } from "../middleware/postModeration.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkId } from "../middleware/checkId.js";
 
@@ -460,11 +460,11 @@ moderationRouter.post("/leave-moderator");
 moderationRouter.post(
   "/approve",
   verifyToken.verifyAuthToken,
-  postsModerationController.approveValidator,
+  postModerationController.modValidator,
   validateRequestSchema,
   checkId,
-  checkthingMod,
-  postsModerationController.approve
+  checkThingMod,
+  postModerationController.approve
 );
 
 /**
@@ -511,7 +511,15 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/remove");
+moderationRouter.post(
+  "/remove",
+  verifyToken.verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.remove
+);
 
 /**
  * @swagger
@@ -557,7 +565,15 @@ moderationRouter.post("/remove");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/lock");
+moderationRouter.post(
+  "/lock",
+  verifyToken.verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.lock
+);
 
 /**
  * @swagger
@@ -603,7 +619,15 @@ moderationRouter.post("/lock");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/unlock");
+moderationRouter.post(
+  "/unlock",
+  verifyToken.verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.unlock
+);
 
 /**
  * @swagger
