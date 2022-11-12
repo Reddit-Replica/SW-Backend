@@ -1,54 +1,40 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<test-results name="Jasmine Results" total="177" failures="0" not-run="0" date="2022-11-12" time="20:07:46">
- <test-suite name="Testing Post endpoints" executed="true" success="true" time="0.524">
+<test-results name="Jasmine Results" total="192" failures="0" not-run="0" date="2022-11-12" time="20:10:25">
+ <test-suite name="Testing Post Moderation endpoints" executed="true" success="true" time="0.481">
   <results>
-   <test-case name="Create post with invalid subreddit name" executed="true" success="true" time="0.061">
+   <test-case name="Approve a post with an invalid id" executed="true" success="true" time="0.058">
    </test-case>
-   <test-case name="Create post with a missing kind (required parameter)" executed="true" success="true" time="0.015">
+   <test-case name="Approve a post with an invalid token" executed="true" success="true" time="0.012">
    </test-case>
-   <test-case name="Create post with an invalid token" executed="true" success="true" time="0.006">
+   <test-case name="Approve a post from a user who isn&apos;t a mod" executed="true" success="true" time="0.024">
    </test-case>
-   <test-case name="Create post in an invalid subreddit" executed="true" success="true" time="0.014">
+   <test-case name="Approve a post with missing type" executed="true" success="true" time="0.008">
    </test-case>
-   <test-case name="Normally create a post with text content" executed="true" success="true" time="0.027">
+   <test-case name="Approve a post correctly" executed="true" success="true" time="0.021">
    </test-case>
-   <test-case name="Normally create a post in the user account" executed="true" success="true" time="0.02">
+   <test-case name="Approve a user comment correctly" executed="true" success="true" time="0.016">
    </test-case>
-   <test-case name="Share a post" executed="true" success="true" time="0.031">
+   <test-case name="Approve a comment in a subreddit correctly" executed="true" success="true" time="0.022">
    </test-case>
-   <test-case name="Pin a post with invalid ID" executed="true" success="true" time="0.009">
+   <test-case name="Approve a post in a user account (not subreddit)" executed="true" success="true" time="0.016">
    </test-case>
-   <test-case name="Pin a post with invalid token" executed="true" success="true" time="0.009">
+   <test-case name="Approve an already approved post" executed="true" success="true" time="0.016">
    </test-case>
-   <test-case name="Pin a post that a user doesn&apos;t own" executed="true" success="true" time="0.012">
+   <test-case name="Remove a post correctly" executed="true" success="true" time="0.017">
    </test-case>
-   <test-case name="Pin a post normally" executed="true" success="true" time="0.017">
+   <test-case name="Remove an already removed post" executed="true" success="true" time="0.01">
    </test-case>
-   <test-case name="Get pinned posts" executed="true" success="true" time="0.02">
+   <test-case name="Lock a post correctly" executed="true" success="true" time="0.018">
    </test-case>
-   <test-case name="Pin a post that has already been pinned" executed="true" success="true" time="0.012">
+   <test-case name="Lock an already locked post" executed="true" success="true" time="0.015">
    </test-case>
-   <test-case name="Unpin a post" executed="true" success="true" time="0.019">
+   <test-case name="Unlock a post correctly" executed="true" success="true" time="0.021">
    </test-case>
-   <test-case name="Unpin a post that has already been unpinned" executed="true" success="true" time="0.012">
-   </test-case>
-   <test-case name="Get post insights by an unauthorized user" executed="true" success="true" time="0.005">
-   </test-case>
-   <test-case name="Get post insights of a not-found post" executed="true" success="true" time="0.009">
-   </test-case>
-   <test-case name="Get post insights normally" executed="true" success="true" time="0.007">
-   </test-case>
-   <test-case name="Get post details with an optional token" executed="true" success="true" time="0.013">
-   </test-case>
-   <test-case name="Get post details without an optional token" executed="true" success="true" time="0.01">
-   </test-case>
-   <test-case name="Get post details of an invalid post id" executed="true" success="true" time="0.007">
-   </test-case>
-   <test-case name="Get post details without a post id" executed="true" success="true" time="0.006">
+   <test-case name="Unlock an already unlocked post" executed="true" success="true" time="0.012">
    </test-case>
   </results>
  </test-suite>
- <test-suite name="Testing comment endpoints" executed="true" success="true" time="0.002">
+ <test-suite name="Testing comment endpoints" executed="true" success="true" time="0.001">
   <results>
    <test-case name="try to create comment without jwt in the header" executed="true" success="true" time="0">
    </test-case>
@@ -78,7 +64,7 @@
    </test-case>
   </results>
  </test-suite>
- <test-suite name="Testing post, comment, and message actions endpoints" executed="true" success="true" time="0.002">
+ <test-suite name="Testing post, comment, and message actions endpoints" executed="true" success="true" time="0.003">
   <results>
    <test-case name="try to edit a post without jwt in the header" executed="true" success="true" time="0">
    </test-case>
@@ -92,7 +78,7 @@
    </test-case>
    <test-case name="try to edit a post with invalid id" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="try to edit a comment with invalid id" executed="true" success="true" time="0">
+   <test-case name="try to edit a comment with invalid id" executed="true" success="true" time="0.001">
    </test-case>
    <test-case name="try to edit a post without id in body" executed="true" success="true" time="0">
    </test-case>
@@ -100,7 +86,7 @@
    </test-case>
    <test-case name="try to edit a post without type in body" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="try to edit a comment without type in body" executed="true" success="true" time="0.001">
+   <test-case name="try to edit a comment without type in body" executed="true" success="true" time="0">
    </test-case>
    <test-case name="try to edit a post with invalid type" executed="true" success="true" time="0">
    </test-case>
@@ -108,7 +94,7 @@
    </test-case>
    <test-case name="try to edit a post without text in body" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="try to edit a comment without text in body" executed="true" success="true" time="0">
+   <test-case name="try to edit a comment without text in body" executed="true" success="true" time="0.001">
    </test-case>
    <test-case name="try to edit a post with all valid parameters" executed="true" success="true" time="0">
    </test-case>
@@ -138,7 +124,7 @@
    </test-case>
    <test-case name="try to delete a comment with wrong id" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="try to delete a post with all valid parameters" executed="true" success="true" time="0">
+   <test-case name="try to delete a post with all valid parameters" executed="true" success="true" time="0.001">
    </test-case>
    <test-case name="try to delete a comment with all valid parameters" executed="true" success="true" time="0">
    </test-case>
@@ -158,7 +144,7 @@
    </test-case>
    <test-case name="Try to login with invalid password" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="Try to login with a short password" executed="true" success="true" time="0.001">
+   <test-case name="Try to login with a short password" executed="true" success="true" time="0">
    </test-case>
    <test-case name="Try to login with a not-found username" executed="true" success="true" time="0">
    </test-case>
@@ -190,7 +176,7 @@
    </test-case>
    <test-case name="try to unmark a post as nsfw without jwt in the header" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="try to mark a post as spoiler without id in the body" executed="true" success="true" time="0.001">
+   <test-case name="try to mark a post as spoiler without id in the body" executed="true" success="true" time="0">
    </test-case>
    <test-case name="try to mark a post as nsfw without id in the body" executed="true" success="true" time="0">
    </test-case>
@@ -200,7 +186,7 @@
    </test-case>
    <test-case name="try to mark a post of other user as spoiler" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="try to mark a post of other user as nsfw" executed="true" success="true" time="0">
+   <test-case name="try to mark a post of other user as nsfw" executed="true" success="true" time="0.001">
    </test-case>
    <test-case name="try to unmark a post of other user as spoiler" executed="true" success="true" time="0">
    </test-case>
@@ -224,7 +210,7 @@
    </test-case>
    <test-case name="try to unmark a post as spoiler with all valid parameters" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="try to unmark a post as nsfw with all valid parameters" executed="true" success="true" time="0.001">
+   <test-case name="try to unmark a post as nsfw with all valid parameters" executed="true" success="true" time="0">
    </test-case>
    <test-case name="try to unmark the same post as spoiler again" executed="true" success="true" time="0">
    </test-case>
@@ -232,7 +218,55 @@
    </test-case>
   </results>
  </test-suite>
- <test-suite name="Testing sign up endpoints" executed="true" success="true" time="0.003">
+ <test-suite name="Testing Post endpoints" executed="true" success="true" time="0.002">
+  <results>
+   <test-case name="Create post with invalid subreddit name" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Create post with a missing kind (required parameter)" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Create post with an invalid token" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Create post in an invalid subreddit" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Normally create a post with text content" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Normally create a post in the user account" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Share a post" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Pin a post with invalid ID" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Pin a post with invalid token" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Pin a post that a user doesn&apos;t own" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Pin a post normally" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Get pinned posts" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Pin a post that has already been pinned" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Unpin a post" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Unpin a post that has already been unpinned" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Get post insights by an unauthorized user" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Get post insights of a not-found post" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Get post insights normally" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Get post details with an optional token" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Get post details without an optional token" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Get post details of an invalid post id" executed="true" success="true" time="0">
+   </test-case>
+   <test-case name="Get post details without a post id" executed="true" success="true" time="0">
+   </test-case>
+  </results>
+ </test-suite>
+ <test-suite name="Testing sign up endpoints" executed="true" success="true" time="0.002">
   <results>
    <test-case name="try to sign up without username" executed="true" success="true" time="0">
    </test-case>
@@ -264,7 +298,7 @@
    </test-case>
    <test-case name="try to sign up with google with same access token again" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="try to verify the email with invalid token" executed="true" success="true" time="0.001">
+   <test-case name="try to verify the email with invalid token" executed="true" success="true" time="0">
    </test-case>
    <test-case name="try to verify the email with invalid user id" executed="true" success="true" time="0">
    </test-case>
@@ -272,7 +306,7 @@
    </test-case>
    <test-case name="try to change the username of user without token" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="try to change the username without username in body" executed="true" success="true" time="0">
+   <test-case name="try to change the username without username in body" executed="true" success="true" time="0.001">
    </test-case>
    <test-case name="try to change the username with all valid parameters" executed="true" success="true" time="0">
    </test-case>
@@ -288,7 +322,7 @@
    </test-case>
    <test-case name="Create subreddit without entering type" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="Create subreddit without entering category" executed="true" success="true" time="0">
+   <test-case name="Create subreddit without entering category" executed="true" success="true" time="0.001">
    </test-case>
    <test-case name="Create subreddit with an invalid category" executed="true" success="true" time="0">
    </test-case>
@@ -308,7 +342,7 @@
    </test-case>
    <test-case name="Adding description while you are moderator" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="Adding description wih invalid token" executed="true" success="true" time="0.001">
+   <test-case name="Adding description wih invalid token" executed="true" success="true" time="0">
    </test-case>
    <test-case name="Adding description while you are moderator with more than 300 char" executed="true" success="true" time="0">
    </test-case>
@@ -320,7 +354,7 @@
    </test-case>
    <test-case name="Adding Main Topic wih invalid token" executed="true" success="true" time="0">
    </test-case>
-   <test-case name="Adding an invalid Main Topic while you are moderator" executed="true" success="true" time="0.001">
+   <test-case name="Adding an invalid Main Topic while you are moderator" executed="true" success="true" time="0">
    </test-case>
    <test-case name="Adding SubTopics while you don&apos;t have the right to do it" executed="true" success="true" time="0">
    </test-case>
@@ -360,7 +394,7 @@
    </test-case>
   </results>
  </test-suite>
- <test-suite name="Testing send emails functions" executed="true" success="true" time="0">
+ <test-suite name="Testing send emails functions" executed="true" success="true" time="0.001">
   <results>
    <test-case name="should have sendResetPasswordEmail method" executed="true" success="true" time="0">
    </test-case>
@@ -376,7 +410,7 @@
    </test-case>
   </results>
  </test-suite>
- <test-suite name="Testing subreddit rules utils" executed="true" success="true" time="0.002">
+ <test-suite name="Testing subreddit rules utils" executed="true" success="true" time="0.001">
   <results>
    <test-case name="validateCreatingRuleBody method should exist" executed="true" success="true" time="0">
    </test-case>

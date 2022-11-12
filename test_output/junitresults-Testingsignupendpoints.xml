@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites disabled="0" errors="0" failures="0" tests="22" time="0.003">
- <testsuite name="Testing sign up endpoints" timestamp="2022-11-12T20:07:46" hostname="localhost" time="0.003" errors="0" tests="22" skipped="0" disabled="0" failures="0">
+<testsuites disabled="0" errors="0" failures="0" tests="22" time="0.002">
+ <testsuite name="Testing sign up endpoints" timestamp="2022-11-12T20:10:25" hostname="localhost" time="0.002" errors="0" tests="22" skipped="0" disabled="0" failures="0">
   <testcase classname="Testing sign up endpoints" name="try to sign up without username" time="0" />
   <testcase classname="Testing sign up endpoints" name="try to sign up without email" time="0" />
   <testcase classname="Testing sign up endpoints" name="try to sign up with invalid email" time="0" />
   <testcase classname="Testing sign up endpoints" name="try to sign up without password" time="0" />
-  <testcase classname="Testing sign up endpoints" name="try to sign up with short password" time="0" />
+  <testcase classname="Testing sign up endpoints" name="try to sign up with short password" time="0.001" />
   <testcase classname="Testing sign up endpoints" name="try to sign up with all valid parameters" time="0" />
   <testcase classname="Testing sign up endpoints" name="try to sign up with unavailable username" time="0" />
   <testcase classname="Testing sign up endpoints" name="try to sign up with unavailable email" time="0" />
@@ -16,7 +16,7 @@
   <testcase classname="Testing sign up endpoints" name="try to sign up with google without access token" time="0" />
   <testcase classname="Testing sign up endpoints" name="try to sign up with google with valid access token" time="0" />
   <testcase classname="Testing sign up endpoints" name="try to sign up with google with same access token again" time="0" />
-  <testcase classname="Testing sign up endpoints" name="try to verify the email with invalid token" time="0.001" />
+  <testcase classname="Testing sign up endpoints" name="try to verify the email with invalid token" time="0" />
   <testcase classname="Testing sign up endpoints" name="try to verify the email with invalid user id" time="0" />
   <testcase classname="Testing sign up endpoints" name="try to verify the email with all valid parameters" time="0" />
   <testcase classname="Testing sign up endpoints" name="try to change the username of user without token" time="0" />
