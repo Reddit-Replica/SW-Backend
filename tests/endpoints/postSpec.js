@@ -46,7 +46,7 @@ fdescribe("Testing Post endpoints", () => {
       content: "reddit.com",
       title: "Second post (Test)",
       subreddit: "InvalidSubredditName",
-      postedIn: "subreddit",
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
@@ -61,7 +61,7 @@ fdescribe("Testing Post endpoints", () => {
       content: "reddit.com",
       title: "Third post (Test)",
       subreddit: subreddit.title,
-      postedIn: "subreddit",
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
@@ -77,7 +77,7 @@ fdescribe("Testing Post endpoints", () => {
       content: "reddit.com",
       title: "Fourth post (Test)",
       subreddit: subreddit.title,
-      postedIn: "subreddit",
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
@@ -93,7 +93,7 @@ fdescribe("Testing Post endpoints", () => {
       content: "Text content of this post",
       title: "First post (Test)",
       subreddit: subreddit.title,
-      postedIn: "subreddit",
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
@@ -111,7 +111,7 @@ fdescribe("Testing Post endpoints", () => {
       kind: "text",
       content: "Text content of this post",
       title: "User post (Test)",
-      postedIn: "user",
+      inSubreddit: false,
     };
     const response = await request
       .post("/submit")
@@ -170,7 +170,7 @@ fdescribe("Testing Post endpoints", () => {
       sharePostId: post.id.toString(),
       title: "Second post (Test)",
       subreddit: subreddit.title,
-      postedIn: "subreddit",
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")

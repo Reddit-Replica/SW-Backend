@@ -16,8 +16,7 @@ const submitValidator = [
   body("kind").not().isEmpty().withMessage("Post kind can't be empty"),
   check("kind").isIn(["text", "link", "image", "video", "post"]),
   body("title").not().isEmpty().withMessage("Post title can't be empty"),
-  body("postedIn").not().isEmpty().withMessage("Post place can't be empty"),
-  check("postedIn").isIn(["subreddit", "user"]),
+  body("inSubreddit").not().isEmpty().withMessage("Post place can't be empty"),
 ];
 
 // eslint-disable-next-line max-statements
@@ -25,7 +24,7 @@ const createPost = async (req, res) => {
   const {
     kind,
     subreddit,
-    postedIn,
+    inSubreddit,
     title,
     content,
     nsfw,
@@ -45,7 +44,7 @@ const createPost = async (req, res) => {
   try {
     const user = await User.findById(userId);
     // Check if the subreddit is available
-    if (postedIn === "subreddit" && subreddit) {
+    if (inSubreddit && subreddit) {
       const postSubreddit = await Subreddit.findOne({
         title: subreddit,
       });
@@ -82,7 +81,7 @@ const createPost = async (req, res) => {
       kind: sharePostId ? "post" : kind,
       ownerUsername: username,
       ownerId: userId,
-      subredditName: postedIn === "subreddit" ? subreddit : undefined,
+      subredditName: inSubreddit ? subreddit : undefined,
       title: title,
       sharePostId: sharePostId,
       content: kind === "video" ? req.files[0]?.path : content,
