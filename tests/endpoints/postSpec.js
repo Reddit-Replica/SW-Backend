@@ -46,6 +46,7 @@ describe("Testing Post endpoints", () => {
       content: "reddit.com",
       title: "Second post (Test)",
       subreddit: "InvalidSubredditName",
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
@@ -60,6 +61,7 @@ describe("Testing Post endpoints", () => {
       content: "reddit.com",
       title: "Third post (Test)",
       subreddit: subreddit.title,
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
@@ -75,6 +77,7 @@ describe("Testing Post endpoints", () => {
       content: "reddit.com",
       title: "Fourth post (Test)",
       subreddit: subreddit.title,
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
@@ -90,6 +93,7 @@ describe("Testing Post endpoints", () => {
       content: "Text content of this post",
       title: "First post (Test)",
       subreddit: subreddit.title,
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
@@ -107,6 +111,7 @@ describe("Testing Post endpoints", () => {
       kind: "text",
       content: "Text content of this post",
       title: "User post (Test)",
+      inSubreddit: false,
     };
     const response = await request
       .post("/submit")
@@ -116,7 +121,6 @@ describe("Testing Post endpoints", () => {
     expect(response.status).toEqual(201);
 
     user = await User.findById(user.id);
-    console.log(user.posts);
     expect(user.posts.length).toEqual(2);
   });
 
@@ -166,6 +170,7 @@ describe("Testing Post endpoints", () => {
       sharePostId: post.id.toString(),
       title: "Second post (Test)",
       subreddit: subreddit.title,
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
