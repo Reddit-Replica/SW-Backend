@@ -135,6 +135,19 @@ const userSchema = mongoose.Schema({
       },
     },
   ],
+  moderatedSubreddits: [
+    {
+      subredditId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
   posts: [
     {
       type: Schema.Types.ObjectId,

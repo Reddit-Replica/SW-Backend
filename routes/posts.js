@@ -208,9 +208,9 @@ postRouter.post("/clear-suggested-sort");
  */
 postRouter.post(
   "/submit",
+  verifyToken.verifyAuthToken,
   postController.submitValidator,
   validateRequestSchema,
-  verifyToken.verifyAuthToken,
   postController.createPost
 );
 
@@ -308,10 +308,10 @@ postRouter.post("/unhide");
  */
 postRouter.get(
   "/post-insights",
+  verifyToken.verifyAuthToken,
   checkId,
   postController.postIdValidator,
   validateRequestSchema,
-  verifyToken.verifyAuthToken,
   verifyPostActions,
   postController.postInsights
 );
@@ -356,10 +356,10 @@ postRouter.get(
  */
 postRouter.get(
   "/post-details",
+  optionalToken,
   checkId,
   postController.postIdValidator,
   validateRequestSchema,
-  optionalToken,
   postController.postDetails
 );
 
@@ -407,10 +407,10 @@ postRouter.get(
  */
 postRouter.post(
   "/pin-post",
+  verifyToken.verifyAuthToken,
   checkId,
   postController.pinPostValidator,
   validateRequestSchema,
-  verifyToken.verifyAuthToken,
   verifyPostActions,
   postController.pinPost
 );
