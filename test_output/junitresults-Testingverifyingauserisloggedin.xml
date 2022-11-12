@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites disabled="0" errors="0" failures="0" tests="3" time="0.005">
- <testsuite name="Testing verifying a user is logged in" timestamp="2022-11-12T18:54:08" hostname="localhost" time="0.005" errors="0" tests="3" skipped="0" disabled="0" failures="0">
-  <testcase classname="Testing verifying a user is logged in" name="should have verifyUser method" time="0.001" />
-  <testcase classname="Testing verifying a user is logged in" name="check if verifyUser verifies a valid jwt" time="0.001" />
+<testsuites disabled="0" errors="0" failures="0" tests="3" time="0">
+ <testsuite name="Testing verifying a user is logged in" timestamp="2022-11-12T20:07:46" hostname="localhost" time="0" errors="0" tests="3" skipped="0" disabled="0" failures="0">
+  <testcase classname="Testing verifying a user is logged in" name="should have verifyUser method" time="0" />
+  <testcase classname="Testing verifying a user is logged in" name="check if verifyUser verifies a valid jwt" time="0" />
   <testcase classname="Testing verifying a user is logged in" name="Send an invalid token to verifyUser" time="0" />
  </testsuite>
 </testsuites>

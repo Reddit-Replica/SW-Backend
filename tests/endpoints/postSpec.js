@@ -8,7 +8,7 @@ import { hashPassword } from "../../utils/passwordUtils.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-describe("Testing Post endpoints", () => {
+fdescribe("Testing Post endpoints", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
@@ -85,6 +85,22 @@ describe("Testing Post endpoints", () => {
       .set("Authorization", "Bearer " + "invalidToken");
 
     expect(response.status).toEqual(401);
+  });
+
+  it("Create post in an invalid subreddit", async () => {
+    const postSubmission = {
+      kind: "link",
+      content: "reddit.com",
+      title: "Fourth post (Test)",
+      subreddit: "SR Not Found",
+      inSubreddit: true,
+    };
+    const response = await request
+      .post("/submit")
+      .send(postSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(404);
   });
 
   it("Normally create a post with text content", async () => {
