@@ -610,12 +610,12 @@ router.patch("/read-all-msgs");
  *                            description: List of the subreddits that your are moderator in and their pictures
  *                            items:
  *                              properties:
- *                               titles:
+ *                               title:
  *                                 type: string
- *                                 description: the titles of the subreddits that the user can send messages from and his own username
+ *                                 description: the title of the subreddits that the user can send messages from and his own username
  *                               picture:
  *                                 type: string
- *                                 description: Path of the picture of the community
+ *                                 description: Path of the picture of the subreddit
  *          404:
  *              description: Page not found
  *          401:
