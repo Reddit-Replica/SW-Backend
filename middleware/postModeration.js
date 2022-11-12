@@ -1,3 +1,4 @@
+/* eslint-disable max-depth */
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
@@ -26,16 +27,22 @@ export async function checkThingMod(req, res, next) {
       if (!post) {
         return res.status(404).json("Post not found");
       }
-      const subreddit = await Subreddit.findOne({
-        title: post.subredditName,
-      });
+      if (post.subredditName) {
+        const subreddit = await Subreddit.findOne({
+          title: post.subredditName,
+        });
 
-      if (!subreddit) {
-        return res.status(404).json("Subreddit not found");
-      }
+        if (!subreddit) {
+          return res.status(404).json("Subreddit not found");
+        }
 
-      if (!subreddit.moderators.find((mod) => mod.username === username)) {
-        return res.status(401).json("User is not a mod in this subreddit");
+        if (!subreddit.moderators.find((mod) => mod.username === username)) {
+          return res.status(401).json("User is not a mod in this subreddit");
+        }
+      } else {
+        if (post.ownerUsername !== username) {
+          return res.status(401).json("Post doesn't belong to this user");
+        }
       }
       req.post = post;
       req.type = type;
@@ -50,15 +57,21 @@ export async function checkThingMod(req, res, next) {
       if (!comment) {
         return res.status(404).json("Comment not found");
       }
-      const subreddit = Subreddit.findOne({
-        title: comment.subredditName,
-      });
+      if (comment.subredditName) {
+        const subreddit = await Subreddit.findOne({
+          title: comment.subredditName,
+        });
 
-      if (!subreddit) {
-        return res.status(404).json("Subreddit not found");
-      }
-      if (!subreddit.moderators.find((mod) => mod.username === username)) {
-        return res.status(401).json("User is not a mod in this subreddit");
+        if (!subreddit) {
+          return res.status(404).json("Subreddit not found");
+        }
+        if (!subreddit.moderators.find((mod) => mod.username === username)) {
+          return res.status(401).json("User is not a mod in this subreddit");
+        }
+      } else {
+        if (comment.ownerUsername !== username) {
+          return res.status(401).json("Comment doesn't belong to this user");
+        }
       }
       req.comment = comment;
       req.type = type;
