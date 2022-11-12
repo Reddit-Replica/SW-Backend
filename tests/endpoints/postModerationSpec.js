@@ -5,6 +5,7 @@ import Post from "../../models/Post.js";
 import Subreddit from "../../models/Community.js";
 import { generateJWT } from "../../utils/generateTokens.js";
 import { hashPassword } from "../../utils/passwordUtils.js";
+import Comment from "../../models/Comment.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
@@ -13,9 +14,10 @@ describe("Testing Post Moderation endpoints", () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
     await Post.deleteMany({});
+    await Comment.deleteMany({});
   });
 
-  let user, subreddit, token, post;
+  let user, subreddit, token, post, comment;
   beforeAll(async () => {
     user = await new User({
       username: "Hamdy",
@@ -45,6 +47,14 @@ describe("Testing Post Moderation endpoints", () => {
       subredditName: subreddit.title,
       ownerId: user.id,
       ownerUsername: user.username,
+    }).save();
+    comment = await new Comment({
+      parentId: post.id,
+      parentType: "post",
+      content: "Post Comment",
+      ownerId: user.id,
+      ownerUsername: user.username,
+      level: 1,
     }).save();
     token = generateJWT(user);
   });
@@ -120,6 +130,72 @@ describe("Testing Post Moderation endpoints", () => {
 
     expect(response.status).toEqual(200);
     const testPost = await Post.findById(post.id);
+    expect(testPost.moderation.approve.approvedBy).toEqual(user.username);
+    expect(testPost.moderation.remove.removedBy).toBeUndefined();
+  });
+
+  it("Approve a user comment correctly", async () => {
+    const approveSubmission = {
+      id: comment.id.toString(),
+      type: "comment",
+    };
+
+    const response = await request
+      .post("/approve")
+      .send(approveSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(200);
+    const testComment = await Comment.findById(comment.id);
+    expect(testComment.moderation.approve.approvedBy).toEqual(user.username);
+    expect(testComment.moderation.remove.removedBy).toBeUndefined();
+  });
+
+  it("Approve a comment in a subreddit correctly", async () => {
+    const subredditComment = await new Comment({
+      parentId: post.id,
+      parentType: "post",
+      subredditName: "TestSW",
+      content: "Post Comment",
+      ownerId: user.id,
+      ownerUsername: user.username,
+      level: 2,
+    }).save();
+    const approveSubmission = {
+      id: subredditComment.id.toString(),
+      type: "comment",
+    };
+
+    const response = await request
+      .post("/approve")
+      .send(approveSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(200);
+    const testComment = await Comment.findById(subredditComment.id);
+    expect(testComment.moderation.approve.approvedBy).toEqual(user.username);
+    expect(testComment.moderation.remove.removedBy).toBeUndefined();
+  });
+
+  it("Approve a post in a user account (not subreddit)", async () => {
+    const userPost = await new Post({
+      kind: "text",
+      title: "User Post Title",
+      ownerId: user.id,
+      ownerUsername: user.username,
+    }).save();
+    const approveSubmission = {
+      id: userPost.id.toString(),
+      type: "post",
+    };
+
+    const response = await request
+      .post("/approve")
+      .send(approveSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(200);
+    const testPost = await Post.findById(userPost.id);
     expect(testPost.moderation.approve.approvedBy).toEqual(user.username);
     expect(testPost.moderation.remove.removedBy).toBeUndefined();
   });
