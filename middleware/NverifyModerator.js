@@ -22,7 +22,7 @@ export async function checkModerator(req, res, next) {
     if (!subreddit) {
       throw new Error("this subreddit isn't found", { cause: 400 });
     }
-    if (!subreddit.deletedAt) {
+    if (subreddit.deletedAt) {
       throw new Error("this subreddit is deleted", { cause: 400 });
     }
     // eslint-disable-next-line max-len
@@ -44,13 +44,9 @@ export async function checkModerator(req, res, next) {
     }
   } catch (err) {
     if (err.cause) {
-      return res.status(err.cause).json({
-        error: err.message,
-      });
+      return res.status(err.cause).json(err.message);
     } else {
-      return res.status(500).json({
-        error: "Internal Server Error",
-      });
+      return res.status(500).json("Internal Server Error");
     }
   }
 }
