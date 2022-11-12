@@ -10,6 +10,9 @@ const commentSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  subredditName: {
+    type: String,
+  },
   level: {
     type: Number,
     required: true,
