@@ -14,7 +14,8 @@
     "prettier": "prettier ./**/*.js --write",
     "jsdoc": "jsdoc -c jsdoc.json",
     "coverage": "nyc npm run test",
-    "coverageReport": "npx nyc report --reporter html --reporter text -t .nyc_output  --report-dir coverage/summary"
+    "test-cover": "istanbul cover --include-all-sources tests/utils/subredditRulesUtilSpec.js && istanbul check-coverage",
+    "coverage-report": "npx nyc report --reporter html --reporter text -t .nyc_output  --report-dir coverage/summary"
   },
   "repository": {
     "type": "git",

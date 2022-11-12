@@ -5,6 +5,7 @@
     "controllers/*.js",
     "middleware/*.js",
     "models/*.js",
+    "routes/*.js",
     "utils/*.js"
   ],
   "exclude": ["**/*[sS]pec.?(m)js"],
