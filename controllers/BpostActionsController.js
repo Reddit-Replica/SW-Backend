@@ -14,7 +14,7 @@ const markSpoiler = async (req, res) => {
     // else mark it as spoiler and save
     req.post.spoiler = true;
     await req.post.save();
-    res.json("Spoiler set successfully");
+    res.status(200).json("Spoiler set successfully");
   } catch (error) {
     res.status(500).json("Internal Server Error");
   }
@@ -30,7 +30,7 @@ const unmarkSpoiler = async (req, res) => {
     // else unmark it and save
     req.post.spoiler = false;
     await req.post.save();
-    res.json("Post spoiler turned off successfully");
+    res.status(200).json("Post spoiler turned off successfully");
   } catch (error) {
     res.status(500).json("Internal Server Error");
   }
@@ -46,7 +46,7 @@ const markNSFW = async (req, res) => {
     // else mark it as nsfw and save
     req.post.nsfw = true;
     await req.post.save();
-    res.json("Post marked NSFW successfully");
+    res.status(200).json("Post marked NSFW successfully");
   } catch (error) {
     res.status(500).json("Internal Server Error");
   }
@@ -62,7 +62,7 @@ const unmarkNSFW = async (req, res) => {
     // else mark it as nsfw and save
     req.post.nsfw = false;
     await req.post.save();
-    res.json("NSFW unmarked successfully");
+    res.status(200).json("NSFW unmarked successfully");
   } catch (error) {
     res.status(500).json("Internal Server Error");
   }
