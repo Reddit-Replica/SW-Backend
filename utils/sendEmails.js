@@ -5,7 +5,6 @@ dotenv.config();
 const FRONT_BASE = process.env.FRONT_BASE.trim();
 const API_KEY = process.env.SENDGRID_API_KEY.trim();
 const SENDER_EMAIL = process.env.SENDER_EMAIL.trim();
-console.log(API_KEY, SENDER_EMAIL);
 
 /**
  * This function is responsible for sending a reset password
