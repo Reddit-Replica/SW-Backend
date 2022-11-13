@@ -82,7 +82,7 @@
  *       type: object
  *       required:
  *         - kind
- *         - subreddit
+ *         - inSubreddit
  *         - title
  *       properties:
  *         kind:
@@ -96,6 +96,9 @@
  *         subreddit:
  *           type: string
  *           description: Subreddit name
+ *         inSubreddit:
+ *           type: boolean
+ *           description: True if the post is submitted in a subreddit, False if it's in the user account (not a subreddit)
  *         title:
  *           type: string
  *           description: Title of the submission
@@ -542,6 +545,49 @@
  *                          level:
  *                            type: integer
  *                            description: The level of the comment [level of nesting]
+ *                          inYourSubreddit:
+ *                            type: boolean
+ *                            description: If true, then you can approve, remove, or spam that post
+ *                          moderation:
+ *                            type: object
+ *                            description: Moderate the post if you are a moderator in that subreddit
+ *                            properties:
+ *                             approve:
+ *                              type: object
+ *                              description: Approve the post
+ *                              properties:
+ *                                approvedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who approved that post
+ *                                approvedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post approved
+ *                             remove:
+ *                              type: object
+ *                              description: Remove the post
+ *                              properties:
+ *                                removedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who removed that post
+ *                                removedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post removed
+ *                             spam:
+ *                              type: object
+ *                              description: Spam the post
+ *                              properties:
+ *                                spammedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who spamed that post
+ *                                spammedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post spamed
+ *                             lock:
+ *                              type: boolean
+ *                              description: If true, then comments are locked in this post
  *   Threads:
  *       type: object
  *       properties:
