@@ -13,10 +13,13 @@ pipeline {
             reuseNode true
         }
     }
+    
     steps {
               sh "npm i "
+              sh"""
+              cp /Read-it/deployment/envfiles/backend_testing.env ./.env
+              """
               sh "npm run test"
-              // timeout(time: 20, unit: 'SECONDS') {sh "npm run serve"}
       }
   }
 
