@@ -1,5 +1,11 @@
 import nodemailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
+import dotenv from "dotenv";
+dotenv.config();
+const FRONT_BASE = process.env.FRONT_BASE.trim();
+const API_KEY = process.env.SENDGRID_API_KEY.trim();
+const SENDER_EMAIL = process.env.SENDER_EMAIL.trim();
+console.log(API_KEY, SENDER_EMAIL);
 
 /**
  * This function is responsible for sending a reset password
@@ -20,13 +26,13 @@ export async function sendResetPasswordEmail(toEmail, username, userId, token) {
       sendgridTransport({
         auth: {
           // eslint-disable-next-line camelcase
-          api_key: process.env.SENDGRID_API_KEY,
+          api_key: API_KEY,
         },
       })
     );
 
     transporter.sendMail({
-      from: process.env.SENDER_EMAIL,
+      from: SENDER_EMAIL,
       to: toEmail,
       subject: "Read-it Password Reset",
       html: `
@@ -36,7 +42,7 @@ export async function sendResetPasswordEmail(toEmail, username, userId, token) {
 							<strong>${username}</strong> Read-it account. No problem! 
 							You can reset your password now using the link below.</p>
 							<h4>Click this <a 
-							href="http://localhost:8081/reset-password/${userId}/${token}">
+							href="${FRONT_BASE}/reset-password/${userId}/${token}">
 							link
 							</a> to set a new password.</h4>
 							<p>If you didnt want to reset your password, you can safely 
@@ -64,13 +70,13 @@ export function sendVerifyEmail(toEmail, userId, token) {
       sendgridTransport({
         auth: {
           // eslint-disable-next-line camelcase
-          api_key: process.env.SENDGRID_API_KEY,
+          api_key: API_KEY,
         },
       })
     );
 
     transporter.sendMail({
-      from: process.env.SENDER_EMAIL,
+      from: SENDER_EMAIL,
       to: toEmail,
       subject: "Read-it Verify Email",
       html: `
@@ -80,7 +86,7 @@ export function sendVerifyEmail(toEmail, userId, token) {
 						you are confirming your email address.</p>
             <p>Click this link 
 						<a 
-							href="http://localhost:8081/verify-email/${userId}/${token}">
+							href="${FRONT_BASE}/verify-email/${userId}/${token}">
 							link
 						</a>
 						to confirm your email</p>
@@ -106,13 +112,13 @@ export function sendUsernameEmail(toEmail, username) {
       sendgridTransport({
         auth: {
           // eslint-disable-next-line camelcase
-          api_key: process.env.SENDGRID_API_KEY,
+          api_key: API_KEY,
         },
       })
     );
 
     transporter.sendMail({
-      from: process.env.SENDER_EMAIL,
+      from: SENDER_EMAIL,
       to: toEmail,
       subject: "Read-it Forget Username",
       html: `
