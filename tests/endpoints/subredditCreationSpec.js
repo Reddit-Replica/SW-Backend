@@ -3,7 +3,7 @@ import app from "../../app.js";
 import User from "../../models/User.js";
 import { generateJWT } from "../../utils/generateTokens.js";
 import { hashPassword } from "../../utils/passwordUtils.js";
-import Community from "../../models/Community.js";
+import Subreddit from "../../models/Community.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
@@ -15,7 +15,7 @@ describe("Testing Subreddit Creation endpoints", () => {
   let moderatorUser, normalUser, token;
   beforeAll(async () => {
     await User.deleteMany({});
-    await Community.deleteMany({});
+    await Subreddit.deleteMany({});
     moderatorUser = await new User({
       username: "AbdelrahmanNoaman",
       email: "noaman@gmail.com",
@@ -32,8 +32,8 @@ describe("Testing Subreddit Creation endpoints", () => {
   it("Create subreddit without entering title", async () => {
     token = generateJWT(moderatorUser);
     const subreddit = {
-      type: "private",
-      category: "sports",
+      type: "Private",
+      category: "Sports",
       nsfw: false,
     };
     const response = await request
@@ -48,8 +48,8 @@ describe("Testing Subreddit Creation endpoints", () => {
     token = generateJWT(moderatorUser);
     const subreddit = {
       title: "The Unbreakable Hunter All Around The World",
-      type: "private",
-      category: "sports",
+      type: "Private",
+      category: "Sports",
       nsfw: false,
     };
     const response = await request
@@ -64,7 +64,7 @@ describe("Testing Subreddit Creation endpoints", () => {
     token = generateJWT(moderatorUser);
     const subreddit = {
       title: "Hunter",
-      category: "sports",
+      category: "Sports",
       nsfw: false,
     };
     const response = await request
@@ -79,7 +79,23 @@ describe("Testing Subreddit Creation endpoints", () => {
     token = generateJWT(moderatorUser);
     const subreddit = {
       title: "Hunter",
-      type: "private",
+      type: "Private",
+      nsfw: false,
+    };
+    const response = await request
+      .post("/create-subreddit")
+      .send(subreddit)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(400);
+  });
+
+  it("Create subreddit with an invalid category", async () => {
+    token = generateJWT(moderatorUser);
+    const subreddit = {
+      title: "Hunter",
+      type: "Private",
+      category: "Man City",
       nsfw: false,
     };
     const response = await request
@@ -94,8 +110,8 @@ describe("Testing Subreddit Creation endpoints", () => {
     token = generateJWT(moderatorUser);
     const subreddit = {
       title: "Hunter",
-      type: "private",
-      category: "Gaming",
+      type: "Private",
+      category: "Sports",
       nsfw: false,
     };
     const response = await request
@@ -119,7 +135,7 @@ describe("Testing Subreddit Creation endpoints", () => {
       .send(subreddit)
       .set("Authorization", "Bearer " + token);
 
-    expect(response.status).toEqual(409);
+    expect(response.status).toEqual(400);
   });
 
   it("Creating subreddit with invalid token", async () => {
@@ -150,12 +166,28 @@ describe("Testing Subreddit Creation endpoints", () => {
       .send(req)
       .set("Authorization", "Bearer " + token);
 
-    expect(response.status).toEqual(400);
+    expect(response.status).toEqual(409);
+  });
+
+  it("joining subreddit with an invalid token", async () => {
+    // eslint-disable-next-line max-len
+    const { joinedSubreddits } = await User.findOne({
+      username: moderatorUser.username,
+    });
+    const req = {
+      subredditId: joinedSubreddits[0].subredditId.toString(),
+    };
+    const response = await request
+      .post("/join-subreddit")
+      .send(req)
+      .set("Authorization", "Bearer " + "invalid token");
+
+    expect(response.status).toEqual(401);
   });
 
   it("joining subreddit that you are not in", async () => {
     token = generateJWT(normalUser);
-    const { _id } = await Community.findOne({ title: "Hunter" });
+    const { _id } = await Subreddit.findOne({ title: "Hunter" });
     const req = {
       subredditId: _id.toString(),
     };
@@ -176,7 +208,7 @@ describe("Testing Subreddit Creation endpoints", () => {
       .post("/r/Hunter/add-description")
       .send(req)
       .set("Authorization", "Bearer " + token);
-    expect(response.status).toEqual(400);
+    expect(response.status).toEqual(403);
   });
 
   it("Adding description while you are moderator", async () => {
@@ -189,6 +221,17 @@ describe("Testing Subreddit Creation endpoints", () => {
       .send(req)
       .set("Authorization", "Bearer " + token);
     expect(response.status).toEqual(201);
+  });
+
+  it("Adding description wih invalid token", async () => {
+    const req = {
+      description: "small description",
+    };
+    const response = await request
+      .post("/r/Hunter/add-description")
+      .send(req)
+      .set("Authorization", "Bearer " + "invalid token");
+    expect(response.status).toEqual(401);
   });
 
   // eslint-disable-next-line max-len
@@ -220,25 +263,48 @@ describe("Testing Subreddit Creation endpoints", () => {
   it("Adding Main Topic while you don't have the right to do it", async () => {
     token = generateJWT(normalUser);
     const req = {
-      title: "sports",
+      title: "Sports",
     };
     const response = await request
       .post("/r/Hunter/add-mainTopic")
       .send(req)
       .set("Authorization", "Bearer " + token);
-    expect(response.status).toEqual(400);
+    expect(response.status).toEqual(403);
   });
 
   it("Adding Main Topic while you are moderator", async () => {
     token = generateJWT(moderatorUser);
     const req = {
-      title: "small description",
+      title: "Sports",
     };
     const response = await request
       .post("/r/Hunter/add-mainTopic")
       .send(req)
       .set("Authorization", "Bearer " + token);
     expect(response.status).toEqual(201);
+  });
+
+  it("Adding Main Topic wih invalid token", async () => {
+    const req = {
+      title: "Sports",
+    };
+    const response = await request
+      .post("/r/Hunter/add-mainTopic")
+      .send(req)
+      .set("Authorization", "Bearer " + "invalid token");
+    expect(response.status).toEqual(401);
+  });
+
+  it("Adding an invalid Main Topic while you are moderator", async () => {
+    token = generateJWT(moderatorUser);
+    const req = {
+      title: "Liverpool",
+    };
+    const response = await request
+      .post("/r/Hunter/add-mainTopic")
+      .send(req)
+      .set("Authorization", "Bearer " + token);
+    expect(response.status).toEqual(400);
   });
 
   // eslint-disable-next-line max-len
@@ -251,13 +317,13 @@ describe("Testing Subreddit Creation endpoints", () => {
       .post("/r/Hunter/add-subTopic")
       .send(req)
       .set("Authorization", "Bearer " + token);
-    expect(response.status).toEqual(400);
+    expect(response.status).toEqual(403);
   });
 
   it("Adding SubTopics while you are moderator", async () => {
     token = generateJWT(moderatorUser);
     const req = {
-      title: ["small description"],
+      title: ["Sports", "Crypto"],
     };
     const response = await request
       .post("/r/Hunter/add-subTopic")
@@ -265,11 +331,22 @@ describe("Testing Subreddit Creation endpoints", () => {
       .set("Authorization", "Bearer " + token);
     expect(response.status).toEqual(201);
   });
+  it("Adding an invalid subTopics while you are moderator", async () => {
+    token = generateJWT(moderatorUser);
+    const req = {
+      title: ["Liverpool"],
+    };
+    const response = await request
+      .post("/r/Hunter/add-subTopic")
+      .send(req)
+      .set("Authorization", "Bearer " + token);
+    expect(response.status).toEqual(400);
+  });
 
   // eslint-disable-next-line max-len
   it("Adding SubTopics wih invalid token", async () => {
     const req = {
-      title: ["small description"],
+      title: ["Sports", "Crypto"],
     };
     const response = await request
       .post("/r/Hunter/add-subTopic")

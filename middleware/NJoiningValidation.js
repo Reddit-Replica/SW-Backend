@@ -1,6 +1,5 @@
 import User from "../models/User.js";
-import verifyUser from "../utils/verifyUser.js";
-
+import Subreddit from "../models/Community.js";
 /**
  * Middleware used to check if the user joined the desired subreddit before or not
  * It gets the subreddits that the user joined before and searches for the desired one
@@ -27,14 +26,26 @@ export async function checkJoinedBefore(req, res, next) {
       //CHECKING IF THE SUBREDDIT HE WANTS TO JOIN WAS JOINED BEFORE
       if (subreddit.subredditId.toString() === req.body.subredditId) {
         // eslint-disable-next-line max-len
-        throw new Error("you already joined this subreddit");
+        throw new Error("you already joined the subreddit", { cause: 409 });
+      }
+    });
+    // eslint-disable-next-line max-len
+    const { waitedUsers } = await Subreddit.findById(req.body.subredditId);
+    waitedUsers.forEach(function (users) {
+      //CHECKING IF THE SUBREDDIT HE WANTS TO JOIN WAS JOINED BEFORE
+      if (users.userID.toString() === authPayload.userId) {
+        throw new Error("your request is already pending", { cause: 409 });
       }
     });
     //CONTINUE TO JOIN CONTROLLER TO DO THE LOGIC OF JOINING
     next();
   } catch (err) {
-    return res.status(400).json({
-      error: err.message,
-    });
+    if (err.cause) {
+      return res.status(err.cause).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
   }
 }

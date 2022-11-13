@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="14" time="1.399">
+ <testsuite name="Testing login endpoints" timestamp="2022-11-12T18:54:05" hostname="localhost" time="1.399" errors="0" tests="14" skipped="0" disabled="0" failures="0">
+  <testcase classname="Testing login endpoints" name="try to send forget-username email to email dosn&apos;t exist" time="0.013" />
+  <testcase classname="Testing login endpoints" name="try to send forget email to a valid email" time="0.026" />
+  <testcase classname="Testing login endpoints" name="Try to login with correct credentials" time="0.304" />
+  <testcase classname="Testing login endpoints" name="Try to login with invalid password" time="0.133" />
+  <testcase classname="Testing login endpoints" name="Try to login with a short password" time="0.006" />
+  <testcase classname="Testing login endpoints" name="Try to login with a not-found username" time="0.008" />
+  <testcase classname="Testing login endpoints" name="Try to send a forget password email to a not-found email" time="0.008" />
+  <testcase classname="Testing login endpoints" name="Try to send a forget password email to an invalid username" time="0.007" />
+  <testcase classname="Testing login endpoints" name="Try to send a forget password email to the correct user" time="0.016" />
+  <testcase classname="Testing login endpoints" name="Try to reset password with correct id but invalid token" time="0.149" />
+  <testcase classname="Testing login endpoints" name="Try to reset password with invalid id but correct token" time="0.144" />
+  <testcase classname="Testing login endpoints" name="Try to reset password with non-matching passwords" time="0.146" />
+  <testcase classname="Testing login endpoints" name="Try to reset password with an expired token" time="0.148" />
+  <testcase classname="Testing login endpoints" name="Try to reset password with the correct id and token" time="0.282" />
+ </testsuite>
+</testsuites>
