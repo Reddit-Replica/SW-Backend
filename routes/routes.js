@@ -7,6 +7,8 @@ import commentsRouter from "./comments.js";
 import itemsActionsRouter from "./itemsActions.js";
 import postActionsRouter from "./postActions.js";
 import postRouter from "./posts.js";
+import subredditRouter from "./subreddit.js";
+import subredditRulesRouter from "./subredditRules.js";
 import userRouter from "./user.js";
 // eslint-disable-next-line new-cap
 const mainRouter = express.Router();
@@ -20,5 +22,7 @@ mainRouter.use(postActionsRouter);
 mainRouter.use(moderationRouter);
 mainRouter.use(postRouter);
 mainRouter.use(userRouter);
+mainRouter.use(subredditRouter);
+mainRouter.use(subredditRulesRouter);
 
 export default mainRouter;

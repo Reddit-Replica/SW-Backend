@@ -17,18 +17,32 @@ const postSchema = mongoose.Schema({
   },
   subredditName: {
     type: String,
-    required: true,
   },
   kind: {
     type: String,
+    enum: ["text", "image", "video", "post", "link"],
+    default: "text",
     required: true,
   },
   content: {
     type: String,
   },
+  images: [
+    {
+      path: {
+        type: String,
+        required: true,
+      },
+      caption: {
+        type: String,
+      },
+      link: {
+        type: String,
+      },
+    },
+  ],
   sharePostId: {
-    type: Schema.Types.ObjectId,
-    ref: "Post",
+    type: String,
   },
   suggestedSort: {
     type: String,
@@ -101,6 +115,36 @@ const postSchema = mongoose.Schema({
     totalShares: {
       type: Number,
       default: 0,
+    },
+  },
+  moderation: {
+    approve: {
+      approvedBy: {
+        type: String,
+      },
+      approvedDate: {
+        type: Date,
+      },
+    },
+    remove: {
+      removedBy: {
+        type: String,
+      },
+      removedDate: {
+        type: Date,
+      },
+    },
+    spam: {
+      spammedBy: {
+        type: String,
+      },
+      spammedDate: {
+        type: Date,
+      },
+    },
+    lock: {
+      type: Boolean,
+      default: false,
     },
   },
   scheduleDate: {

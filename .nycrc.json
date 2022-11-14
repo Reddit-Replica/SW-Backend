@@ -1,0 +1,14 @@
+{
+  "extension": [".js"],
+  "all": true,
+  "include": [
+    "controllers/*.js",
+    "middleware/*.js",
+    "models/*.js",
+    "routes/*.js",
+    "utils/*.js"
+  ],
+  "exclude": ["**/*[sS]pec.?(m)js"],
+  "reporter": ["html"],
+  "report-dir": "coverage"
+}
