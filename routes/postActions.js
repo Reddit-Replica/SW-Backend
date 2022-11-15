@@ -1,7 +1,7 @@
 import express from "express";
 import postActionsController from "../controllers/BpostActionsController.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
-import verifyToken from "../middleware/verifyToken.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { verifyPostActions } from "../middleware/verifyPostActions.js";
 import { checkId } from "./../middleware/checkId.js";
 
@@ -49,7 +49,7 @@ const postActionsRouter = express.Router();
  */
 postActionsRouter.patch(
   "/mark-spoiler",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   postActionsController.postActionsValidator,
   validateRequestSchema,
   checkId,
@@ -98,7 +98,7 @@ postActionsRouter.patch(
  */
 postActionsRouter.patch(
   "/unmark-spoiler",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   postActionsController.postActionsValidator,
   validateRequestSchema,
   checkId,
@@ -147,7 +147,7 @@ postActionsRouter.patch(
  */
 postActionsRouter.patch(
   "/mark-nsfw",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   postActionsController.postActionsValidator,
   validateRequestSchema,
   checkId,
@@ -196,7 +196,7 @@ postActionsRouter.patch(
  */
 postActionsRouter.patch(
   "/unmark-nsfw",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   postActionsController.postActionsValidator,
   validateRequestSchema,
   checkId,
