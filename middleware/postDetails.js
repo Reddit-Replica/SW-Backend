@@ -2,9 +2,10 @@ import User from "../models/User.js";
 import Post from "../models/Post.js";
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to check if a post exists given it's id. It also populates
+ * the flair object in case there's a post because the post flair parameters
+ * will be returned along with the other post details. The post is passed with the
+ * request to the next middleware.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -14,7 +15,7 @@ import Post from "../models/Post.js";
 export async function checkPostExistence(req, res, next) {
   const postId = req.body.id;
   try {
-    const post = await Post.findById(postId).populate("flair");
+    const post = await Post.findById(postId)?.populate("flair");
     if (!post) {
       return res.status(404).json("Post not found");
     }
@@ -26,9 +27,11 @@ export async function checkPostExistence(req, res, next) {
 }
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to set the post actions from the user's collections
+ * of posts which include whether it's saved, followed, hidden, spammed,
+ * upvoted, downvoted and if it's in the user's subreddit by checking the
+ * moderators of that subreddit. These checks are made only if the user is
+ * logged in, otherwise all area false and the voting is 0.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -43,7 +46,7 @@ export async function setPostActions(req, res, next) {
     if (req.loggedIn) {
       const userId = req.userId;
       const user = await User.findById(userId);
-      const postId = req.postId;
+      const postId = req.body.id;
       if (user.savedPosts.find((id) => id.toString() === postId)) {
         req.saved = true;
       }
@@ -63,7 +66,9 @@ export async function setPostActions(req, res, next) {
         req.spammed = true;
       }
       if (
-        user.moderatedSubreddits.find((sr) => sr.name === post.subredditName)
+        user.moderatedSubreddits.find(
+          (sr) => sr.name === req.post.subredditName
+        )
       ) {
         req.inYourSubreddit = true;
       }
@@ -75,9 +80,9 @@ export async function setPostActions(req, res, next) {
 }
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to generate a post object from the post parameters
+ * given from the previous middleware to be returned with a status code
+ * of 200 in the controller.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
