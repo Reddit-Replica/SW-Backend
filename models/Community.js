@@ -182,6 +182,10 @@ const communitySchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  //NEEDS TO BE AUTO INCREMENT
+  randomIndex: {
+    type: Number,
+  },
 });
 
 const Subreddit = mongoose.model("Subreddit", communitySchema);
