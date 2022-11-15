@@ -57,6 +57,11 @@ const communitySchema = mongoose.Schema({
     required: true,
     default: false,
   },
+  numberOfRules: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   rules: [
     {
       ruleTitle: {
