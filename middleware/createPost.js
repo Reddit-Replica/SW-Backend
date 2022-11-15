@@ -3,9 +3,9 @@ import User from "../models/User.js";
 import Post from "../models/Post.js";
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to check the post is being submitted in a subreddit
+ * and if yes, it verifies the subreddit exists and that the user
+ * is either a member of it or a moderator.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -48,9 +48,10 @@ export async function checkPostSubreddit(req, res, next) {
 }
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to check if the post kind is image/video, if yes then
+ * verify that files are given in both cases. An images array is also made with
+ * each element object containing the image path, its caption and a link only when
+ * the kind is image and then pass the array in the request.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -83,9 +84,9 @@ export function checkImagesAndVideos(req, res, next) {
 }
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to verify that if the id of the post being shared exists, if yes
+ * then it verifies that the kind is 'post'. The shared post is obtained from the DB
+ * to increment it's totalShares in the insights then save it.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -97,7 +98,7 @@ export async function sharePost(req, res, next) {
   const kind = req.body.kind;
   try {
     if (sharePostId) {
-      if (sharePostId && kind !== "post") {
+      if (kind !== "post") {
         return res.status(400).json({
           error: "Kind for sharing a post should be 'post'",
         });
@@ -113,9 +114,9 @@ export async function sharePost(req, res, next) {
 }
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to create a new post with the parameters obtained
+ * from the request body and passes the newly created post in the request
+ * to be saved in the user's posts in the controller.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object

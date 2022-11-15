@@ -1,9 +1,9 @@
 import User from "../models/User.js";
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to check if the post is already pinned in the
+ * user's collection of pinned posts and return an appropriate response.
+ * The postId and user object are passed with the request as well.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -30,9 +30,8 @@ export async function checkPinnedPosts(req, res, next) {
 }
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to check if the post is already unpinned and not found in the
+ * user's collection of pinned posts then return an appropriate response.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
