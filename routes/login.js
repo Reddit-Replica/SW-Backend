@@ -3,7 +3,7 @@ import { validateRequestSchema } from "../middleware/validationResult.js";
 import loginController from "../controllers/loginController.js";
 import {
   checkPasswords,
-  checkUserExistence,
+  verifyUserByUsername,
   ResetPasswordEmail,
   verifyResetToken,
   verifyUserById,
@@ -70,7 +70,7 @@ loginRouter.post(
   "/login",
   loginController.loginValidator,
   validateRequestSchema,
-  checkUserExistence,
+  verifyUserByUsername,
   checkPasswords,
   loginController.login
 );
