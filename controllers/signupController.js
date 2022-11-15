@@ -146,14 +146,6 @@ const verifyEmail = async (req, res) => {
       });
     }
 
-    // if the token expired, delete it and don't verify the email
-    if (token.expireAt < Date.now()) {
-      await token.remove();
-      return res.status(403).json({
-        error: "Token Expired",
-      });
-    }
-
     user.userSettings.verifiedEmail = true;
     await user.save();
     await token.remove();
