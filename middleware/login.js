@@ -6,16 +6,16 @@ import { sendResetPasswordEmail } from "../utils/sendEmails.js";
 import { generateVerifyToken } from "../utils/generateTokens.js";
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to check if a user exists using the username from
+ * the request body and then pass the user object in the request if it exists.
+ * Otherwise return a 400 response with an error message.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
  * @param {function} next Next function
  * @returns {void}
  */
-export async function checkUserExistence(req, res, next) {
+export async function verifyUserByUsername(req, res, next) {
   const username = req.body.username;
   try {
     const user = await User.findOne({ username: username });
@@ -32,9 +32,10 @@ export async function checkUserExistence(req, res, next) {
 }
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to check if the password entered by the user
+ * matches the correct password in the database. If it matches, then a
+ * jwt token is generated and passed in with the request and if not, an
+ * invalid password response is returned with a 400 code.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -66,9 +67,10 @@ export function checkPasswords(req, res, next) {
 }
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to check if a user exists with a given email
+ * and then if a user is returned, it verifies the username is
+ * matched as well. Then the user is passed with the request and
+ * invalid email/username responses are returned if the conditions fail.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -98,10 +100,12 @@ export async function verifyUsernameAndEmail(req, res, next) {
 }
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
- *
+ * Middleware used to generate a crypto token using the generateVerifyToken
+ * utility function passing in the userId and the token type to be "forgetPassword".
+ * The token returned is sent with the email, username and if of the user to the
+ * sendResetPasswordEmail function to send this user an email. It returns true if the
+ * email is sent successfully and false otherwise. This boolean is passed with the request
+ * to the controller to make a decision and return a response.
  * @param {Object} req Request object
  * @param {Object} res Response object
  * @param {function} next Next function
@@ -124,9 +128,9 @@ export async function ResetPasswordEmail(req, res, next) {
 }
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to verify if a user exists by it's id and pass this
+ * user with the request if it exists, otherwise, returns a 403 error response
+ * with a message
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -148,9 +152,11 @@ export async function verifyUserById(req, res, next) {
 }
 
 /**
- * Middleware used to check the id sent in the request if it was
- * a valid mongo ObjectId.
- * If it was invalid a status code of 400 will be sent.
+ * Middleware used to find a token in the database with type "forgetPassword", a user id
+ * and the crypto token string itself. If a token is returned then we check to see if
+ * it's expired or not by comparing with the current date. If the token is expired,
+ * it is removed from the database and a token expired response is returned. If it's not
+ * expired then it's passed in with the request (success)
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
