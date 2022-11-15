@@ -1,6 +1,14 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import loginController from "../controllers/loginController.js";
+import {
+  checkPasswords,
+  checkUserExistence,
+  ResetPasswordEmail,
+  verifyResetToken,
+  verifyUserById,
+  verifyUsernameAndEmail,
+} from "../middleware/login.js";
 
 // eslint-disable-next-line new-cap
 const loginRouter = express.Router();
@@ -62,6 +70,8 @@ loginRouter.post(
   "/login",
   loginController.loginValidator,
   validateRequestSchema,
+  checkUserExistence,
+  checkPasswords,
   loginController.login
 );
 
@@ -105,6 +115,8 @@ loginRouter.post(
   "/login/forget-password",
   loginController.forgetPasswordValidator,
   validateRequestSchema,
+  verifyUsernameAndEmail,
+  ResetPasswordEmail,
   loginController.forgetPassword
 );
 
@@ -163,6 +175,8 @@ loginRouter.post(
   "/reset-password/:id/:token",
   loginController.resetPasswordValidator,
   validateRequestSchema,
+  verifyUserById,
+  verifyResetToken,
   loginController.resetPassword
 );
 
