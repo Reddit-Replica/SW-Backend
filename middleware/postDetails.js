@@ -1,4 +1,3 @@
-import Subreddit from "../models/Community.js";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 
