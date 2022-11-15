@@ -32,17 +32,13 @@ const addSubredditRule = async (req, res) => {
     res.status(400).json({
       error: "Bad request",
     });
+  } else if (req.subreddit.numberOfRules === 15) {
+    res.status(400).json({
+      error: "Maximum number of rules!",
+    });
   } else {
-    req.ruleObject.ruleOrder = 0;
-    /*
-    loop through the rules array for it's end to find the last non deleted rule to know the order of the new rule
-    */
-    for (let i = req.subreddit.rules.length - 1; i >= 0; i--) {
-      if (!req.subreddit.rules[i].deletedAt) {
-        req.ruleObject.ruleOrder = req.subreddit.rules[i].ruleOrder + 1;
-        break;
-      }
-    }
+    req.ruleObject.ruleOrder = req.subreddit.numberOfRules;
+    req.subreddit.numberOfRules++;
 
     req.ruleObject.createdAt = new Date().toISOString();
 
@@ -98,6 +94,7 @@ const editSubredditRule = async (req, res) => {
 
 const deleteSubredditRule = async (req, res) => {
   req.neededRule.deletedAt = new Date().toISOString();
+  req.subreddit.numberOfRules--;
   const neededRuleOrder = req.neededRule.ruleOrder;
   req.subreddit.rules.forEach((element) => {
     if (Number(element.ruleOrder) > Number(neededRuleOrder)) {
