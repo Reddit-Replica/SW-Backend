@@ -32,6 +32,11 @@ describe("Testing Post endpoints", () => {
       type: "private",
       owner: owner,
     }).save();
+    user.joinedSubreddits.push({
+      subredditId: subreddit.id,
+      name: subreddit.title,
+    });
+    await user.save();
   });
 
   it("Create post with invalid subreddit name", async () => {
@@ -41,6 +46,7 @@ describe("Testing Post endpoints", () => {
       content: "reddit.com",
       title: "Second post (Test)",
       subreddit: "InvalidSubredditName",
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
@@ -55,6 +61,7 @@ describe("Testing Post endpoints", () => {
       content: "reddit.com",
       title: "Third post (Test)",
       subreddit: subreddit.title,
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
@@ -70,6 +77,7 @@ describe("Testing Post endpoints", () => {
       content: "reddit.com",
       title: "Fourth post (Test)",
       subreddit: subreddit.title,
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
@@ -79,12 +87,29 @@ describe("Testing Post endpoints", () => {
     expect(response.status).toEqual(401);
   });
 
+  it("Create post in an invalid subreddit", async () => {
+    const postSubmission = {
+      kind: "link",
+      content: "reddit.com",
+      title: "Fourth post (Test)",
+      subreddit: "SR Not Found",
+      inSubreddit: true,
+    };
+    const response = await request
+      .post("/submit")
+      .send(postSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(404);
+  });
+
   it("Normally create a post with text content", async () => {
     const postSubmission = {
       kind: "text",
       content: "Text content of this post",
       title: "First post (Test)",
       subreddit: subreddit.title,
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")
@@ -94,8 +119,25 @@ describe("Testing Post endpoints", () => {
     expect(response.status).toEqual(201);
 
     user = await User.findById(user.id);
-    console.log(user.posts);
     expect(user.posts.length).toEqual(1);
+  });
+
+  it("Normally create a post in the user account", async () => {
+    const postSubmission = {
+      kind: "text",
+      content: "Text content of this post",
+      title: "User post (Test)",
+      inSubreddit: false,
+    };
+    const response = await request
+      .post("/submit")
+      .send(postSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(201);
+
+    user = await User.findById(user.id);
+    expect(user.posts.length).toEqual(2);
   });
 
   // it("Normally create a post with images content", async () => {
@@ -144,6 +186,7 @@ describe("Testing Post endpoints", () => {
       sharePostId: post.id.toString(),
       title: "Second post (Test)",
       subreddit: subreddit.title,
+      inSubreddit: true,
     };
     const response = await request
       .post("/submit")

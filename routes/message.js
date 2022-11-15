@@ -593,9 +593,9 @@ router.patch("/unread-message");
 router.patch("/read-all-msgs");
 /**
  * @swagger
- * /suggested-sender:
+ * /moderated-subreddits:
  *  get:
- *      summary: Return all subreddits that you can send message from
+ *      summary: Return all subreddits that you can send message from ( the ones you are moderator in )
  *      tags: [Messages]
  *      responses:
  *          200:
@@ -605,20 +605,17 @@ router.patch("/read-all-msgs");
  *                      schema:
  *                        type: object
  *                        properties:
- *                          before:
- *                           type: string
- *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
- *                          after:
- *                           type: string
- *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
  *                            type: array
- *                            description: List of [Things] to return
+ *                            description: List of the subreddits that your are moderator in and their pictures
  *                            items:
  *                              properties:
- *                               titles:
+ *                               title:
  *                                 type: string
- *                                 description: the titles of the subreddits that the user can send messages from and his own username
+ *                                 description: the title of the subreddits that the user can send messages from and his own username
+ *                               picture:
+ *                                 type: string
+ *                                 description: Path of the picture of the subreddit
  *          404:
  *              description: Page not found
  *          401:
@@ -628,7 +625,6 @@ router.patch("/read-all-msgs");
  *      security:
  *       - bearerAuth: []
  */
-
-router.get("/suggested-sender");
+router.get("/moderated-subreddits");
 
 export default router;

@@ -2,7 +2,7 @@ import express from "express";
 import postController from "../controllers/HpostController.js";
 import { optionalToken } from "../middleware/optionalToken.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
-import verifyToken from "../middleware/verifyToken.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { verifyPostActions } from "../middleware/verifyPostActions.js";
 import { checkId } from "../middleware/checkId.js";
 
@@ -208,7 +208,7 @@ postRouter.post("/clear-suggested-sort");
  */
 postRouter.post(
   "/submit",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   postController.submitValidator,
   validateRequestSchema,
   postController.createPost
@@ -308,7 +308,7 @@ postRouter.post("/unhide");
  */
 postRouter.get(
   "/post-insights",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   checkId,
   postController.postIdValidator,
   validateRequestSchema,
@@ -407,7 +407,7 @@ postRouter.get(
  */
 postRouter.post(
   "/pin-post",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   checkId,
   postController.pinPostValidator,
   validateRequestSchema,
@@ -451,11 +451,7 @@ postRouter.post(
  *      security:
  *          - bearerAuth: []
  */
-postRouter.get(
-  "/pinned-posts",
-  verifyToken.verifyAuthToken,
-  postController.getPinnedPosts
-);
+postRouter.get("/pinned-posts", verifyAuthToken, postController.getPinnedPosts);
 
 /**
  * @swagger

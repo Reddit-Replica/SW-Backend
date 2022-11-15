@@ -1,7 +1,7 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import commentController from "../controllers/BcommentController.js";
-import verifyToken from "../middleware/verifyToken.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
 
 // eslint-disable-next-line new-cap
 const commentsRouter = express.Router();
@@ -34,6 +34,12 @@ const commentsRouter = express.Router();
  *               level:
  *                 type: number
  *                 description: Level of the comment (How deep is it in the comment tree)
+ *               subredditName:
+ *                 type: string
+ *                 description: Subreddit that contain the post
+ *               haveSubreddit:
+ *                 type: boolean
+ *                 description: If true, then the post is in a subreddit
  *      responses:
  *          201:
  *              description: Comment created successfully
@@ -55,7 +61,7 @@ const commentsRouter = express.Router();
  */
 commentsRouter.post(
   "/comment",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   commentController.createCommentValidator,
   validateRequestSchema,
   commentController.createComment

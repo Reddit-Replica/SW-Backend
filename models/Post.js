@@ -17,7 +17,6 @@ const postSchema = mongoose.Schema({
   },
   subredditName: {
     type: String,
-    required: true,
   },
   kind: {
     type: String,
@@ -116,6 +115,36 @@ const postSchema = mongoose.Schema({
     totalShares: {
       type: Number,
       default: 0,
+    },
+  },
+  moderation: {
+    approve: {
+      approvedBy: {
+        type: String,
+      },
+      approvedDate: {
+        type: Date,
+      },
+    },
+    remove: {
+      removedBy: {
+        type: String,
+      },
+      removedDate: {
+        type: Date,
+      },
+    },
+    spam: {
+      spammedBy: {
+        type: String,
+      },
+      spammedDate: {
+        type: Date,
+      },
+    },
+    lock: {
+      type: Boolean,
+      default: false,
     },
   },
   scheduleDate: {
