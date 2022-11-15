@@ -1,4 +1,4 @@
-import User from "./../models/User.js";
+import User from "../models/User.js";
 /**
  * This function is used to add a msg to the user's sent message list
  * @param {Object} message message that will be sent by the user
@@ -8,6 +8,12 @@ import User from "./../models/User.js";
 
 export async function addSentMessages(userId, message) {
   try {
+    const user = await User.findById(userId);
+    user.sentMessages.push({
+      messageID: message.id,
+    });
+    user.save();
+    return true;
   } catch (err) {
     return "Couldn't Add the message";
   }
@@ -18,10 +24,16 @@ export async function addSentMessages(userId, message) {
  * @param {String} userId the id of the user that the msg will be received
  * @returns {boolean} indicates if the message was received successfully or not
  */
-export async function addReceivedMessages(req) {
+export async function addReceivedMessages(userId, message) {
   try {
+    const user = await User.findById(userId);
+    user.receivedMessages.push({
+      messageID: message.id,
+    });
+    user.save();
+    return true;
   } catch (err) {
-    return "Couldn't Add the message";
+    return false;
   }
 }
 /**
@@ -30,8 +42,14 @@ export async function addReceivedMessages(req) {
  * @param {String} userId the id of the user that got the mention
  * @returns {boolean} indicates if the mention was made successfully or not
  */
-export async function addUserMention(req) {
+export async function addUserMention(userId, message) {
   try {
+    const user = await User.findById(userId);
+    user.userMentions.push({
+      messageID: message.id,
+    });
+    user.save();
+    return true;
   } catch (err) {
     return "Couldn't Add the message";
   }
@@ -42,8 +60,14 @@ export async function addUserMention(req) {
  * @param {String} userId the id of the user that got the post reply
  * @returns {boolean} indicates if the post reply was made successfully or not
  */
-export async function addPostReply(req) {
+export async function addPostReply(userId, message) {
   try {
+    const user = await User.findById(userId);
+    user.postReplies.push({
+      messageID: message.id,
+    });
+    user.save();
+    return true;
   } catch (err) {
     return "Couldn't Add the message";
   }

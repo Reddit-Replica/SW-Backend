@@ -1,4 +1,5 @@
 import Message from "../models/Message.js";
+import User from "../models/User.js";
 
 /**
  * Middleware used to add a message o he database
@@ -11,7 +12,7 @@ import Message from "../models/Message.js";
 
 export async function addMessage(req, res, next) {
   //Extracting data from request body
-  const { senderUsername, receiverUsername, text, subject } = req.body;
+  const { senderUsername, receiverUsername, text, subject, type } = req.body;
   try {
     //ADDING NEW MESSAGE
     const message = await new Message({
@@ -19,8 +20,14 @@ export async function addMessage(req, res, next) {
       receiverUsername: receiverUsername,
       text: text,
       subject: subject,
+      type:type,
     }).save();
-    //Getting Sender to add the message to his sentmessages
+    const senderID=await User.findOne({ username:senderUsername });
+    const receiverID=await User.findOne({ username:receiverUsername });
+    if (message.type==="Messages"){
+}else if (message.type==="PostReply"){
+
+}else if(message.type==="")
   } catch (err) {
     if (err.cause) {
       return res.status(err.cause).json({
