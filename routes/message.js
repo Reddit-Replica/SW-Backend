@@ -576,11 +576,28 @@ router.patch("/unread-message");
  * @swagger
  * /read-all-msgs:
  *  patch:
- *      summary: mark all messages as read
+ *      summary: Mark all messages as read
  *      tags: [Messages]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *              - type
+ *             properties:
+ *              type:
+ *                type: string
+ *                description: Type of messages to mark as read
+ *                enum:
+ *                    - Post Replies
+ *                    - Messages
+ *                    - Username Mentions
+ *                    - Unread Messages
  *      responses:
  *          200:
- *              description: All Message has been read successfully
+ *              description: All Message have been read successfully
  *          401:
  *              description: Unauthorized to read all the messages
  *          500:
