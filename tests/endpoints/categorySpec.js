@@ -14,5 +14,7 @@ describe("Testing category endpoints", () => {
     const categoriesCount = await Category.countDocuments();
     expect(response.statusCode).toEqual(200);
     expect(categoriesCount).toEqual(30);
+    expect(response.body).toBeDefined();
+    expect(response.body.length).toEqual(30);
   });
 });
