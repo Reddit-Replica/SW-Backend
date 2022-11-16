@@ -44,6 +44,7 @@ export const checkDublicateRuleOrderService = (req) => {
  */
 
 export const editRulesOrderService = async (req) => {
+  // loop through the subreddit rules and the request body rules
   for (let i = 0; i < req.subreddit.rules.length; i++) {
     for (let j = 0; j < req.body.rulesOrder.length; j++) {
       if (
