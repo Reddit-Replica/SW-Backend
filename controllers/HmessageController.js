@@ -8,17 +8,22 @@ import {
 
 const messageValidator = [
   body("type").not().isEmpty().withMessage("Message type can't be empty"),
-  check("type").isIn(["Post Replies", "Messages", "Username Mentions"]),
+  check("type").isIn([
+    "Post Replies",
+    "Messages",
+    "Username Mentions",
+    "Unread Messages",
+  ]),
 ];
 
 const readAllMessages = async (req, res) => {
   const userId = req.payload.userId;
   const type = req.body.type;
   try {
-    type === "Messages" && readReceivedMessages(userId);
-    type === "Post Replies" && readPostReplies(userId);
-    type === "Username Mentions" && readUsernameMentions(userId);
-    type === "Unread Messages" && readUnreadMessages(userId);
+    type === "Messages" && (await readReceivedMessages(userId));
+    type === "Post Replies" && (await readPostReplies(userId));
+    type === "Username Mentions" && (await readUsernameMentions(userId));
+    type === "Unread Messages" && (await readUnreadMessages(userId));
     return res.status(200).json("Messages marked as read successfully");
   } catch (err) {
     res.status(500).json("Internal server error");
