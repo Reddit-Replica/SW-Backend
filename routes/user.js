@@ -1,6 +1,6 @@
 import express from "express";
 import userController from "../controllers/BuserController.js";
-import verifyToken from "../middleware/verifyToken.js";
+import { verifyAuthToken } from "./../middleware/verifyToken.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 
 // eslint-disable-next-line new-cap
@@ -57,7 +57,7 @@ const userRouter = express.Router();
  */
 userRouter.post(
   "/block-user",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   userController.blockUserValidator,
   validateRequestSchema,
   userController.blockUser
@@ -107,7 +107,7 @@ userRouter.post(
  */
 userRouter.post(
   "/follow-user",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   userController.followUserValidator,
   validateRequestSchema,
   userController.followUser
