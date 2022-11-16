@@ -1,3 +1,9 @@
+/**
+ * A function used to validate the request body, if the number of rules doesn't match it throws an error
+ * @param {Object} req Request object
+ * @returns {void}
+ */
+
 export const checkEditRulesOrderService = (req) => {
   if (req.body.rulesOrder.length !== req.subreddit.numberOfRules) {
     const error = new Error("Number of rules doesn't match");
@@ -5,6 +11,12 @@ export const checkEditRulesOrderService = (req) => {
     throw error;
   }
 };
+
+/**
+ * A function used to validate the request body, if the rule order or the rule id is dublicated it throws an error
+ * @param {Object} req Request object
+ * @returns {void}
+ */
 
 export const checkDublicateRuleOrderService = (req) => {
   const ruleOrders = new Map();
@@ -24,6 +36,12 @@ export const checkDublicateRuleOrderService = (req) => {
     }
   });
 };
+
+/**
+ * A function used to update the rules orders of the subreddit
+ * @param {Object} req Request object
+ * @returns {void}
+ */
 
 export const editRulesOrderService = async (req) => {
   for (let i = 0; i < req.subreddit.rules.length; i++) {
