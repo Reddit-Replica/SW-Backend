@@ -26,6 +26,7 @@ const router = express.Router();
  *             - subject
  *             - senderUsername
  *             - receiverUsername
+ *             - type
  *            properties:
  *             text:
  *               type: string
@@ -43,6 +44,16 @@ const router = express.Router();
  *             subject:
  *               type: string
  *               description: Subject of the message
+ *             type:
+ *               type: string
+ *               description: describes the type of message
+ *               enum:
+ *                 - Post replies
+ *                 - Mentions
+ *                 - Messages
+ *             postId:
+ *               type: string
+ *               description: id of the post that the mention or the reply happens in
  *      responses:
  *          201:
  *              description: Your message is sent successfully
@@ -337,12 +348,12 @@ router.get("/message/unread");
  *                               msgID:
  *                                 type: string
  *                                 description: Message id
+ *                               postID:
+ *                                 type: string
+ *                                 description: post id
  *                               text:
  *                                 type: string
  *                                 description: Message Content as text
- *                               type:
- *                                 type: string
- *                                 description: describes the type of message
  *                               subredditName:
  *                                 type: string
  *                                 description: subreddit name that the reply was in
@@ -359,12 +370,6 @@ router.get("/message/unread");
  *                                type: string
  *                                format: date-time
  *                                description: Time of sending the message
- *                               subject:
- *                                 type: string
- *                                 description: Subject of the message
- *                               isReply:
- *                                 type: boolean
- *                                 description: True if the msg is a reply to another , False if the msg isn't a reply to another
  *          404:
  *              description: Page not found
  *          401:
@@ -418,19 +423,19 @@ router.get("/message/post-reply");
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
- *                             properties:
+ *                              properties:
  *                               msgID:
  *                                 type: string
  *                                 description: Message id
+ *                               postID:
+ *                                 type: string
+ *                                 description: post id
  *                               text:
  *                                 type: string
  *                                 description: Message Content as text
- *                               type:
- *                                 type: string
- *                                 description: describes the type of message
  *                               subredditName:
  *                                 type: string
- *                                 description: subreddit name that the mention was in
+ *                                 description: subreddit name that the reply was in
  *                               postTitle:
  *                                 type: string
  *                                 description: the title of the post that the reply happened in
@@ -444,12 +449,6 @@ router.get("/message/post-reply");
  *                                type: string
  *                                format: date-time
  *                                description: Time of sending the message
- *                               subject:
- *                                 type: string
- *                                 description: Subject of the message
- *                               isReply:
- *                                 type: boolean
- *                                 description: True if the msg is a reply to another , False if the msg isn't a reply to another
  *          404:
  *              description: Page not found
  *          401:
