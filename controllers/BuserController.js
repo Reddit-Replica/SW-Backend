@@ -1,5 +1,10 @@
 import { body } from "express-validator";
-import User from "./../models/User.js";
+import {
+  getUserFromJWTService,
+  searchForUserService,
+  blockUserService,
+  followUserService,
+} from "../services/userServices.js";
 
 const blockUserValidator = [
   body("username")
@@ -21,85 +26,52 @@ const followUserValidator = [
   body("follow").not().isEmpty().withMessage("Follow flag can not be empty"),
 ];
 
-// eslint-disable-next-line max-statements
 const blockUser = async (req, res) => {
   try {
-    const { username, block } = req.body;
+    // here we have user to block in req.foundUser
+    await searchForUserService(req);
 
-    const userToBlock = await User.findOne({ username: username });
-    if (!userToBlock) {
-      return res.status(404).json("Didn't find a user with that username");
-    }
+    // here we get the user in the jwt
+    await getUserFromJWTService(req);
 
-    const { userId } = req.payload;
-    const user = await User.findById(userId);
-
-    if (userId === userToBlock._id.toString()) {
-      return res.status(400).json({ error: "User can not block himself" });
-    }
-
-    // get the index of the id of the user to be blocked if he was blocked before
-    const index = user.blockedUsers.findIndex(
-      (elem) => elem.toString() === userToBlock._id.toString()
+    const result = await blockUserService(
+      req.user,
+      req.foundUser,
+      req.body.block
     );
-
-    if (block) {
-      if (index === -1) {
-        user.blockedUsers.push(userToBlock._id);
-        await user.save();
-      }
-      res.status(200).json("User blocked successfully");
-    } else {
-      if (index !== -1) {
-        user.blockedUsers.splice(index, 1);
-        await user.save();
-      }
-      res.status(200).json("User unblocked successfully");
-    }
+    res.status(result.statusCode).json(result.message);
   } catch (error) {
-    console.log(error);
-    res.status(500).json("Internal Server Error");
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
   }
 };
 
 // eslint-disable-next-line max-statements
 const followUser = async (req, res) => {
   try {
-    const { username, follow } = req.body;
+    // here we have user to follow in req.foundUser
+    await searchForUserService(req);
 
-    const userToFollow = await User.findOne({ username: username });
-    if (!userToFollow) {
-      return res.status(404).json("Didn't find a user with that username");
-    }
+    // here we get the user in the jwt
+    await getUserFromJWTService(req);
 
-    const { userId } = req.payload;
-    const user = await User.findById(userId);
-
-    if (userId === userToFollow._id.toString()) {
-      return res.status(400).json({ error: "User can not follow himself" });
-    }
-
-    // get the index of the id of the current user in followers list for the user to follow
-    const index = userToFollow.followers.findIndex(
-      (elem) => elem.toString() === user._id.toString()
+    const result = await followUserService(
+      req.user,
+      req.foundUser,
+      req.body.block
     );
-
-    if (follow) {
-      if (index === -1) {
-        userToFollow.followers.push(user._id);
-        await userToFollow.save();
-      }
-      res.status(200).json("User followed successfully");
-    } else {
-      if (index !== -1) {
-        userToFollow.followers.splice(index, 1);
-        await userToFollow.save();
-      }
-      res.status(200).json("User unfollowed successfully");
-    }
+    res.status(result.statusCode).json(result.message);
   } catch (error) {
-    console.log(error);
-    res.status(500).json("Internal Server Error");
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
   }
 };
 
