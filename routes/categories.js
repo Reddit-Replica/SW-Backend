@@ -1,7 +1,9 @@
 import express from "express";
+import categoryController from "../controllers/categoryController.js";
+import { insertCategoriesIfNotExists } from "../middleware/categories.js";
 
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const categoryRouter = express.Router();
 
 /**
  * @swagger
@@ -39,6 +41,10 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.get("/saved-categories");
+categoryRouter.get(
+  "/saved-categories",
+  insertCategoriesIfNotExists,
+  categoryController.getAllCategories
+);
 
-export default router;
+export default categoryRouter;
