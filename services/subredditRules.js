@@ -58,7 +58,6 @@ export const editRulesOrderService = async (req) => {
         req.subreddit.rules[i]._id.toString() === req.body.rulesOrder[j].ruleId
       ) {
         req.subreddit.rules[i].ruleOrder = req.body.rulesOrder[j].ruleOrder;
-        i++;
       }
     }
   }
