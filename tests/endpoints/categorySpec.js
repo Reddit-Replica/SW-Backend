@@ -4,7 +4,7 @@ import Category from "../../models/Category.js";
 
 const request = supertest(app);
 
-fdescribe("Testing category endpoints", () => {
+describe("Testing category endpoints", () => {
   afterAll(async () => {
     await Category.deleteMany({});
   });
