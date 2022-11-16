@@ -8,7 +8,7 @@ import supertest from "supertest";
 import app from "../../app.js";
 supertest(app);
 
-fdescribe("Testing Category services", () => {
+describe("Testing Category services", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Category.deleteMany({});
