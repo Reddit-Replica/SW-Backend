@@ -177,6 +177,8 @@ const createSubreddit = async (req, res) => {
     await moderator.save();
     moderator.joinedSubreddits.push(addedSubreddit);
     await moderator.save();
+    moderator.moderatedSubreddits.push(addedSubreddit);
+    await moderator.save();
     //RETURN RESPONSE
     return res.status(201).send({
       subreddit: subreddit,
