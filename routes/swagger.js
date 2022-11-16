@@ -733,7 +733,12 @@
  *           type: array
  *           description: List of posts to return
  *           items:
- *             $ref: "#/components/schemas/PostDetails"
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: Id of the post
+ *               data:
+ *                 $ref: "#/components/schemas/PostDetails"
  *   CommentTree:
  *       type: object
  *       properties:
