@@ -1,4 +1,7 @@
-import subredditRulesUtil from "../utils/subredditRules.js";
+import {
+  validateCreatingRuleBody,
+  validateEditingRuleBody,
+} from "../utils/subredditRules.js";
 
 const getSubredditRules = (req, res) => {
   const rules = [];
@@ -23,7 +26,7 @@ const getSubredditRules = (req, res) => {
 };
 
 const addSubredditRule = async (req, res) => {
-  const validationResult = subredditRulesUtil.validateCreatingRuleBody(req);
+  const validationResult = validateCreatingRuleBody(req);
 
   if (!validationResult) {
     res.status(400).json({
@@ -60,7 +63,7 @@ const addSubredditRule = async (req, res) => {
 
 // eslint-disable-next-line max-statements
 const editSubredditRule = async (req, res) => {
-  const validationResult = subredditRulesUtil.validateEditingRuleBody(req);
+  const validationResult = validateEditingRuleBody(req);
   if (!validationResult) {
     res.status(400).json({
       error: "Bad request",
