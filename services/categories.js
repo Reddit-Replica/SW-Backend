@@ -53,7 +53,7 @@ export async function insertCategoriesIfNotExists() {
 }
 
 /**
- * This function is gets all the categories stored in the database and
+ * This function gets all the categories stored in the database and
  * sorts them ascendingly with the random index. Each category object is
  * then transformed into just an id and the name displayed.
  *
