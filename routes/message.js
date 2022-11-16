@@ -1,4 +1,7 @@
 import express from "express";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import messageController from "../controllers/HmessageController.js";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -590,7 +593,13 @@ router.patch("/unread-message");
  *       - bearerAuth: []
  */
 
-router.patch("/read-all-msgs");
+router.patch(
+  "/read-all-msgs",
+  verifyAuthToken,
+  messageController.messageValidator,
+  validateRequestSchema,
+  messageController.readAllMessages
+);
 /**
  * @swagger
  * /moderated-subreddits:
