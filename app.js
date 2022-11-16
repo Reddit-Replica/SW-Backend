@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
 import swaggerUI from "swagger-ui-express";
@@ -15,12 +16,29 @@ const app = express();
 dotenv.config();
 
 app.use(bodyParser.json());
-app.use(morgan("dev"));
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).array("files", 100)
+);
+
+// That's morgan for tracking the api in the terminal
+// Will be removed later
+app.use(morgan("dev"));
+
+// Log stream for morgan to make the log file in the server
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  {
+    flags: "a",
+  }
+);
+
+app.use(
+  morgan("combined", {
+    stream: accessLogStream,
+  })
 );
 
 app.use("/images", express.static(path.join(__dirname, "images")));

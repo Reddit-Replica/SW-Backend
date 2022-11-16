@@ -1,7 +1,26 @@
-import subredditRulesUtil from "../utils/subredditRules.js";
+import {
+  validateCreatingRuleBody,
+  validateEditingRuleBody,
+} from "../utils/subredditRules.js";
+
+import {
+  checkEditRulesOrderService,
+  editRulesOrderService,
+  checkDublicateRuleOrderService,
+} from "../services/subredditRules.js";
 
 const getSubredditRules = (req, res) => {
   const rules = [];
+
+  const compare = (a, b) => {
+    if (a.ruleOrder < b.ruleOrder) {
+      return -1;
+    }
+    if (a.ruleOrder > b.ruleOrder) {
+      return 1;
+    }
+    return 0;
+  };
 
   req.subreddit.rules.forEach((el) => {
     if (!el.deletedAt) {
@@ -16,30 +35,26 @@ const getSubredditRules = (req, res) => {
       });
     }
   });
-  // console.log(rules);
+  rules.sort(compare);
   res.status(200).json({
     rules: rules,
   });
 };
 
 const addSubredditRule = async (req, res) => {
-  const validationResult = subredditRulesUtil.validateCreatingRuleBody(req);
+  const validationResult = validateCreatingRuleBody(req);
 
   if (!validationResult) {
     res.status(400).json({
       error: "Bad request",
     });
+  } else if (req.subreddit.numberOfRules === 15) {
+    res.status(400).json({
+      error: "Maximum number of rules!",
+    });
   } else {
-    req.ruleObject.ruleOrder = 0;
-    /*
-    loop through the rules array for it's end to find the last non deleted rule to know the order of the new rule
-    */
-    for (let i = req.subreddit.rules.length - 1; i >= 0; i--) {
-      if (!req.subreddit.rules[i].deletedAt) {
-        req.ruleObject.ruleOrder = req.subreddit.rules[i].ruleOrder + 1;
-        break;
-      }
-    }
+    req.ruleObject.ruleOrder = req.subreddit.numberOfRules;
+    req.subreddit.numberOfRules++;
 
     req.ruleObject.createdAt = new Date().toISOString();
 
@@ -60,7 +75,7 @@ const addSubredditRule = async (req, res) => {
 
 // eslint-disable-next-line max-statements
 const editSubredditRule = async (req, res) => {
-  const validationResult = subredditRulesUtil.validateEditingRuleBody(req);
+  const validationResult = validateEditingRuleBody(req);
   if (!validationResult) {
     res.status(400).json({
       error: "Bad request",
@@ -95,6 +110,7 @@ const editSubredditRule = async (req, res) => {
 
 const deleteSubredditRule = async (req, res) => {
   req.neededRule.deletedAt = new Date().toISOString();
+  req.subreddit.numberOfRules--;
   const neededRuleOrder = req.neededRule.ruleOrder;
   req.subreddit.rules.forEach((element) => {
     if (Number(element.ruleOrder) > Number(neededRuleOrder)) {
@@ -112,9 +128,26 @@ const deleteSubredditRule = async (req, res) => {
   }
 };
 
+const editRulesOrder = async (req, res) => {
+  try {
+    checkEditRulesOrderService(req);
+    checkDublicateRuleOrderService(req);
+    await editRulesOrderService(req);
+    res.status(200).json("Accepted");
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   getSubredditRules,
   addSubredditRule,
   editSubredditRule,
   deleteSubredditRule,
+  editRulesOrder,
 };

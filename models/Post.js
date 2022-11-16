@@ -17,7 +17,6 @@ const postSchema = mongoose.Schema({
   },
   subredditName: {
     type: String,
-    required: true,
   },
   kind: {
     type: String,
