@@ -12,6 +12,16 @@ import {
 const getSubredditRules = (req, res) => {
   const rules = [];
 
+  const compare = (a, b) => {
+    if (a.ruleOrder < b.ruleOrder) {
+      return -1;
+    }
+    if (a.ruleOrder > b.ruleOrder) {
+      return 1;
+    }
+    return 0;
+  };
+
   req.subreddit.rules.forEach((el) => {
     if (!el.deletedAt) {
       rules.push({
@@ -25,7 +35,7 @@ const getSubredditRules = (req, res) => {
       });
     }
   });
-  // console.log(rules);
+  rules.sort(compare);
   res.status(200).json({
     rules: rules,
   });
