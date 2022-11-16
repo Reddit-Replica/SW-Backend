@@ -29,7 +29,7 @@ const followUserValidator = [
 const blockUser = async (req, res) => {
   try {
     // here we have user to block in req.foundUser
-    await searchForUserService(req);
+    await searchForUserService(req, req.body.username);
 
     // here we get the user in the jwt
     await getUserFromJWTService(req);
@@ -54,7 +54,7 @@ const blockUser = async (req, res) => {
 const followUser = async (req, res) => {
   try {
     // here we have user to follow in req.foundUser
-    await searchForUserService(req);
+    await searchForUserService(req, req.body.username);
 
     // here we get the user in the jwt
     await getUserFromJWTService(req);

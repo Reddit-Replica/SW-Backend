@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 
-export async function searchForUserService(req) {
-  const user = await User.findOne({ username: req.body.username });
+export async function searchForUserService(req, username) {
+  const user = await User.findOne({ username: username });
   if (!user) {
     let error = new Error("Didn't find a user with that username");
     error.statusCode = 404;
