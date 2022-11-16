@@ -1,7 +1,7 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkDuplicateUsernameOrEmail } from "../middleware/verifySignUp.js";
-import verifyToken from "../middleware/verifyToken.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { checkId } from "../middleware/checkId.js";
 import signupController from "../controllers/signupController.js";
 import GenerateUsernameController from "../controllers/NgenerateUsername.js";
@@ -321,7 +321,7 @@ signupRouter.get(
  */
 signupRouter.patch(
   "/edit-username",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   signupController.editUsernameValidator,
   validateRequestSchema,
   signupController.editUsername

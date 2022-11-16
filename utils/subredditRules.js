@@ -4,7 +4,7 @@
  * @param {Object} req Request object
  * @returns {boolean} boolean indicates if the request body is valid
  */
-const validateCreatingRuleBody = (req) => {
+export const validateCreatingRuleBody = (req) => {
   if (!req.body.ruleName || !req.body.appliesTo) {
     return false;
   } else if (
@@ -36,16 +36,11 @@ const validateCreatingRuleBody = (req) => {
  * @param {Object} req Request object
  * @returns {boolean} boolean indicates if the request body is valid
  */
-const validateEditingRuleBody = (req) => {
+export const validateEditingRuleBody = (req) => {
   const firstValidate = validateCreatingRuleBody(req);
   if (!firstValidate || !req.body.ruleOrder) {
     return false;
   }
   req.ruleObject.ruleOrder = req.body.ruleOrder;
   return true;
-};
-
-export default {
-  validateCreatingRuleBody,
-  validateEditingRuleBody,
 };

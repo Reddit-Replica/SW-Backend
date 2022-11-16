@@ -1,12 +1,15 @@
-import subredditRulesUtil from "../../utils/subredditRules.js";
+import {
+  validateCreatingRuleBody,
+  validateEditingRuleBody,
+} from "../../utils/subredditRules.js";
 
 describe("Testing subreddit rules utils", () => {
   it("validateCreatingRuleBody method should exist", () => {
-    expect(subredditRulesUtil.validateCreatingRuleBody).toBeDefined();
+    expect(validateCreatingRuleBody).toBeDefined();
   });
 
   it("validateEditingRuleBody method should exist", () => {
-    expect(subredditRulesUtil.validateEditingRuleBody).toBeDefined();
+    expect(validateEditingRuleBody).toBeDefined();
   });
 
   it("Testing a body with missing required params", () => {
@@ -15,7 +18,7 @@ describe("Testing subreddit rules utils", () => {
         ruleName: "test rule",
       },
     };
-    expect(subredditRulesUtil.validateCreatingRuleBody(req)).toBe(false);
+    expect(validateCreatingRuleBody(req)).toBe(false);
   });
 
   it("Testing a body with appliesTo invalid value", () => {
@@ -25,7 +28,7 @@ describe("Testing subreddit rules utils", () => {
         appliesTo: "any invalid value",
       },
     };
-    expect(subredditRulesUtil.validateCreatingRuleBody(req)).toBe(false);
+    expect(validateCreatingRuleBody(req)).toBe(false);
   });
 
   it("Testing a body with appliesTo valid value", () => {
@@ -35,7 +38,7 @@ describe("Testing subreddit rules utils", () => {
         appliesTo: "comments only",
       },
     };
-    expect(subredditRulesUtil.validateCreatingRuleBody(req)).toBe(true);
+    expect(validateCreatingRuleBody(req)).toBe(true);
   });
 
   it("Testing a body with all params", () => {
@@ -47,7 +50,7 @@ describe("Testing subreddit rules utils", () => {
         reportReason: "test reason",
       },
     };
-    expect(subredditRulesUtil.validateCreatingRuleBody(req)).toBe(true);
+    expect(validateCreatingRuleBody(req)).toBe(true);
   });
 
   it("Testing a edit body without the rule order", () => {
@@ -59,7 +62,7 @@ describe("Testing subreddit rules utils", () => {
         reportReason: "test reason",
       },
     };
-    expect(subredditRulesUtil.validateEditingRuleBody(req)).toBe(false);
+    expect(validateEditingRuleBody(req)).toBe(false);
   });
 
   it("Testing a edit body with the rule order", () => {
@@ -72,6 +75,6 @@ describe("Testing subreddit rules utils", () => {
         ruleOrder: 2,
       },
     };
-    expect(subredditRulesUtil.validateEditingRuleBody(req)).toBe(true);
+    expect(validateEditingRuleBody(req)).toBe(true);
   });
 });

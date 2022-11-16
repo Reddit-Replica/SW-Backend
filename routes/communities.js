@@ -1,7 +1,7 @@
 import express from "express";
 import subredditDetailsController from "../controllers/subredditDetails.js";
 import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
-import verifyToken from "../middleware/verifyToken.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
 // eslint-disable-next-line new-cap
 const communitiesRouter = express.Router();
 
@@ -388,7 +388,7 @@ communitiesRouter.get("/random-category");
 
 communitiesRouter.get(
   "/r/:subreddit",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
   subredditDetailsController.subredditDetails
