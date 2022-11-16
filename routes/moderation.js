@@ -1035,7 +1035,7 @@ moderationRouter.get("/r/:subreddit/suggested-topics");
  *                                       flairName:
  *                                           type: string
  *                                           description: Name of the flair
- *                                       order:
+ *                                       flairOrder:
  *                                           type: number
  *                                           description: Order of the flair among the rest
  *                                       backgroundColor:
@@ -1099,7 +1099,7 @@ moderationRouter.get("/r/:subreddit/about/post-flairs");
  *                           backgroundColor:
  *                              type: string
  *                              description: Background color of the flair
- *                           order:
+ *                           flairOrder:
  *                              type: number
  *                              description: Order of the flair among the rest
  *                           textColor:
