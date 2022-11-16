@@ -3,6 +3,12 @@ import {
   validateEditingRuleBody,
 } from "../utils/subredditRules.js";
 
+import {
+  checkEditRulesOrderService,
+  editRulesOrderService,
+  checkDublicateRuleOrderService,
+} from "../services/subredditRules.js";
+
 const getSubredditRules = (req, res) => {
   const rules = [];
 
@@ -112,9 +118,26 @@ const deleteSubredditRule = async (req, res) => {
   }
 };
 
+const editRulesOrder = async (req, res) => {
+  try {
+    checkEditRulesOrderService(req);
+    checkDublicateRuleOrderService(req);
+    await editRulesOrderService(req);
+    res.status(200).json("Accepted");
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   getSubredditRules,
   addSubredditRule,
   editSubredditRule,
   deleteSubredditRule,
+  editRulesOrder,
 };
