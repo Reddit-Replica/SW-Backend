@@ -8,7 +8,7 @@ import { hashPassword } from "../../utils/passwordUtils.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-describe("Testing Post endpoints", () => {
+fdescribe("Testing Post endpoints", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
@@ -148,6 +148,43 @@ describe("Testing Post endpoints", () => {
 
     user = await User.findById(user.id);
     expect(user.posts.length).toEqual(2);
+  });
+
+  it("Share a post without sharePostId", async () => {
+    let post = await Post.findOne({
+      title: "First post (Test)",
+    });
+    const postSubmission = {
+      kind: "post",
+      title: "Second post (Test)",
+      subreddit: subreddit.title,
+      inSubreddit: true,
+    };
+    const response = await request
+      .post("/submit")
+      .send(postSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(400);
+  });
+
+  it("Share a post without setting kind = post", async () => {
+    let post = await Post.findOne({
+      title: "First post (Test)",
+    });
+    const postSubmission = {
+      kind: "hybrid",
+      sharePostId: post.id.toString(),
+      title: "Second post (Test)",
+      subreddit: subreddit.title,
+      inSubreddit: true,
+    };
+    const response = await request
+      .post("/submit")
+      .send(postSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(400);
   });
 
   it("Share a post", async () => {
