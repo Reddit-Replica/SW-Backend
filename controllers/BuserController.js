@@ -1,9 +1,10 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import {
   getUserFromJWTService,
   searchForUserService,
   blockUserService,
   followUserService,
+  getUserAboutDataService,
 } from "../services/userServices.js";
 
 const blockUserValidator = [
@@ -26,13 +27,22 @@ const followUserValidator = [
   body("follow").not().isEmpty().withMessage("Follow flag can not be empty"),
 ];
 
+const aboutUserValidator = [
+  param("username")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Username can not be empty"),
+];
+
 const blockUser = async (req, res) => {
   try {
     // here we have user to block in req.foundUser
     await searchForUserService(req, req.body.username);
 
     // here we get the user in the jwt
-    await getUserFromJWTService(req);
+    await getUserFromJWTService(req, req.payload.userId);
 
     const result = await blockUserService(
       req.user,
@@ -57,7 +67,7 @@ const followUser = async (req, res) => {
     await searchForUserService(req, req.body.username);
 
     // here we get the user in the jwt
-    await getUserFromJWTService(req);
+    await getUserFromJWTService(req, req.payload.userId);
 
     const result = await followUserService(
       req.user,
@@ -75,9 +85,27 @@ const followUser = async (req, res) => {
   }
 };
 
+const aboutUser = async (req, res) => {
+  try {
+    // get the user of the current profile
+    let result = await getUserAboutDataService(req.params.username, req.userId);
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   blockUserValidator,
   blockUser,
   followUserValidator,
   followUser,
+  aboutUserValidator,
+  aboutUser,
 };
