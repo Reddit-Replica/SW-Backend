@@ -1145,6 +1145,8 @@ moderationRouter.get("/r/:subreddit/about/post-flairs/:flairId");
  *          content:
  *              application/json:
  *                 schema:
+ *                    required:
+ *                     - flairName
  *                    type: object
  *                    properties:
  *                       flairName:
