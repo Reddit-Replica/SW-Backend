@@ -2,6 +2,7 @@ import express from "express";
 import userController from "../controllers/BuserController.js";
 import { verifyAuthToken } from "./../middleware/verifyToken.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
+import { optionalToken } from "../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
 const userRouter = express.Router();
@@ -196,7 +197,13 @@ userRouter.post(
  *       500:
  *         description: Internal server error
  */
-userRouter.get("/user/:username/about");
+userRouter.get(
+  "/user/:username/about",
+  optionalToken,
+  userController.aboutUserValidator,
+  validateRequestSchema,
+  userController.aboutUser
+);
 
 /**
  * @swagger
