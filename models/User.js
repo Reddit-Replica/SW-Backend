@@ -214,6 +214,114 @@ const userSchema = mongoose.Schema({
       ref: "User",
     },
   ],
+  sentMessages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  receivedMessages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  usernameMentions: [
+    {
+      username: {
+        type: String,
+        required: true,
+      },
+      sentAt: {
+        type: String,
+        required: true,
+      },
+      content: {
+        type: String,
+        required: true,
+      },
+      subredditName: {
+        type: String,
+      },
+      postId: {
+        type: Schema.Types.ObjectId,
+        ref: "Post",
+      },
+      commmentId: {
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+      postTitle: {
+        type: String,
+      },
+      numberOfComments: {
+        type: Number,
+      },
+      vote: {
+        type: Number,
+      },
+    },
+  ],
+  postReplies: [
+    {
+      username: {
+        type: String,
+        required: true,
+      },
+      sentAt: {
+        type: String,
+        required: true,
+      },
+      content: {
+        type: String,
+        required: true,
+      },
+      subredditName: {
+        type: String,
+      },
+      postId: {
+        type: Schema.Types.ObjectId,
+        ref: "Post",
+      },
+      commmentId: {
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+      postTitle: {
+        type: String,
+      },
+      numberOfComments: {
+        type: Number,
+      },
+      vote: {
+        type: Number,
+      },
+    },
+  ],
+  conversations: [
+    {
+      latestDate: {
+        type: Date,
+        required: true,
+      },
+      subject: {
+        type: String,
+        required: true,
+      },
+      username: {
+        type: String,
+        required: true,
+      },
+      messages: [
+        {
+          messageID: {
+            type: Schema.Types.ObjectId,
+            ref: "Message",
+          },
+        },
+      ],
+    },
+  ],
 });
 
 const User = mongoose.model("User", userSchema);
