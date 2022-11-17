@@ -8,7 +8,7 @@ import { hashPassword } from "../../utils/passwordUtils.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-describe("Testing Post endpoints", () => {
+fdescribe("Testing Post endpoints", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
@@ -105,8 +105,14 @@ describe("Testing Post endpoints", () => {
 
   it("Normally create a post with text content", async () => {
     const postSubmission = {
-      kind: "text",
-      content: "Text content of this post",
+      kind: "hybrid",
+      texts: [
+        { text: "Post text", index: 0 },
+        { text: "Another text", index: 1 },
+      ],
+      links: [
+        { link: { title: "facebook", url: "https://facebook.com" }, index: 2 },
+      ],
       title: "First post (Test)",
       subreddit: subreddit.title,
       inSubreddit: true,
@@ -124,8 +130,12 @@ describe("Testing Post endpoints", () => {
 
   it("Normally create a post in the user account", async () => {
     const postSubmission = {
-      kind: "text",
-      content: "Text content of this post",
+      kind: "hybrid",
+      texts: [
+        { text: "Post text", index: 0 },
+        { text: "Another text", index: 1 },
+        { text: "One more text", index: 2 },
+      ],
       title: "User post (Test)",
       inSubreddit: false,
     };
@@ -139,43 +149,6 @@ describe("Testing Post endpoints", () => {
     user = await User.findById(user.id);
     expect(user.posts.length).toEqual(2);
   });
-
-  // it("Normally create a post with images content", async () => {
-  //   const files = [
-  //     {
-  //       fieldname: "files",
-  //       originalname: "Coding.jpg",
-  //       encoding: "7bit",
-  //       mimetype: "image/jpeg",
-  //       destination: "images",
-  //       filename: "2022-11-08T12-11-20.703Z-Coding.jpg",
-  //       path: "images\\2022-11-08T12-11-20.703Z-Coding.jpg",
-  //       size: 553672,
-  //     },
-  //     {
-  //       fieldname: "files",
-  //       originalname: "Hacker.jpg",
-  //       encoding: "7bit",
-  //       mimetype: "image/jpeg",
-  //       destination: "images",
-  //       filename: "2022-11-08T12-11-20.709Z-Hacker.jpg",
-  //       path: "images\\2022-11-08T12-11-20.709Z-Hacker.jpg",
-  //       size: 343823,
-  //     },
-  //   ];
-  //   const formdata = new FormData();
-  //   formdata.append("title", "Post with images (Test)");
-  //   formdata.append("kind", "image");
-  //   formdata.append("subreddit", subreddit.title);
-  //   formdata.append("files[]", JSON.stringify(files[0]));
-  //   formdata.append("files[]", JSON.stringify(files[1]));
-  //   const response = await request
-  //     .post("/submit")
-  //     .attach(formdata)
-  //     .set("Authorization", "Bearer " + token);
-
-  //   expect(response.status).toEqual(201);
-  // });
 
   it("Share a post", async () => {
     let post = await Post.findOne({
