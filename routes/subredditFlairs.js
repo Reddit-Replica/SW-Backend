@@ -146,6 +146,9 @@ subredditFalirsRouter.get("/r/:subreddit/about/post-flairs/:flairId");
  *              application/json:
  *                 schema:
  *                    type: object
+ *                    required:
+ *                     - flairName
+ *                     - settings
  *                    properties:
  *                       flairName:
  *                          type: string
@@ -206,6 +209,9 @@ subredditFalirsRouter.post("/r/:subreddit/about/post-flairs");
  *              application/json:
  *                 schema:
  *                    type: object
+ *                    required:
+ *                     - flairName
+ *                     - settings
  *                    properties:
  *                       flairName:
  *                          type: string
