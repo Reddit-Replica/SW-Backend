@@ -38,17 +38,13 @@ const aboutUserValidator = [
 
 const blockUser = async (req, res) => {
   try {
-    // here we have user to block in req.foundUser
-    await searchForUserService(req, req.body.username);
+    // here we have user to block
+    const userToBlock = await searchForUserService(req.body.username);
 
     // here we get the user in the jwt
-    await getUserFromJWTService(req, req.payload.userId);
+    const user = await getUserFromJWTService(req.payload.userId);
 
-    const result = await blockUserService(
-      req.user,
-      req.foundUser,
-      req.body.block
-    );
+    const result = await blockUserService(user, userToBlock, req.body.block);
     res.status(result.statusCode).json(result.message);
   } catch (error) {
     console.log(error.message);
@@ -63,17 +59,13 @@ const blockUser = async (req, res) => {
 // eslint-disable-next-line max-statements
 const followUser = async (req, res) => {
   try {
-    // here we have user to follow in req.foundUser
-    await searchForUserService(req, req.body.username);
+    // here we have user to follow
+    const userToFollow = await searchForUserService(req.body.username);
 
     // here we get the user in the jwt
-    await getUserFromJWTService(req, req.payload.userId);
+    const user = await getUserFromJWTService(req, req.payload.userId);
 
-    const result = await followUserService(
-      req.user,
-      req.foundUser,
-      req.body.block
-    );
+    const result = await followUserService(user, userToFollow, req.body.block);
     res.status(result.statusCode).json(result.message);
   } catch (error) {
     console.log(error.message);

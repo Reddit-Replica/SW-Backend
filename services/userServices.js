@@ -6,16 +6,16 @@ import mongoose from "mongoose";
  *
  * @param {Object} req Request
  * @param {String} username Username that we want find
- * @returns {void}
+ * @returns {Object} User found
  */
-export async function searchForUserService(req, username) {
+export async function searchForUserService(username) {
   const user = await User.findOne({ username: username });
   if (!user) {
     let error = new Error("Didn't find a user with that username");
     error.statusCode = 404;
     throw error;
   }
-  req.foundUser = user;
+  return user;
 }
 
 /**
@@ -23,16 +23,16 @@ export async function searchForUserService(req, username) {
  *
  * @param {Object} req Request
  * @param {String} userId Id of the user
- * @returns {void}
+ * @returns {Object} User found
  */
-export async function getUserFromJWTService(req, userId) {
+export async function getUserFromJWTService(userId) {
   const user = await User.findById(userId);
   if (!user) {
     let error = new Error("Invalid id from the token");
     error.statusCode = 400;
     throw error;
   }
-  req.user = user;
+  return user;
 }
 
 /**
@@ -121,6 +121,15 @@ export async function followUserService(user, userToFollow, follow) {
   }
 }
 
+/**
+ * Service used to get the data of a certain user,
+ * check if the logged in user is following him or no, and
+ * check if the logged in user blocked him or no
+ *
+ * @param {String} username User name to get his data
+ * @param {String} loggedInUserId Id of the logged in user
+ * @returns {Object} Response to the request containing [statusCode, data]
+ */
 // eslint-disable-next-line max-statements
 export async function getUserAboutDataService(username, loggedInUserId) {
   const user = await User.findOne({ username: username }).populate(
