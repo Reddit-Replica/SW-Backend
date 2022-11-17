@@ -147,7 +147,7 @@ const createSubreddit = async (req, res) => {
   //GETTING USER DATA
   const creatorUsername = authPayload.username;
   const creatorId = authPayload.userId;
-  const { title, category, type, nsfw } = req.body;
+  const { subredditName, category, type, nsfw } = req.body;
   const owner = {
     username: creatorUsername,
     userID: creatorId,
@@ -160,7 +160,7 @@ const createSubreddit = async (req, res) => {
   try {
     //ADDING NEW SUBREDDIT
     const subreddit = await new Subreddit({
-      title: title,
+      title: subredditName,
       category: category,
       type: type,
       nsfw: nsfw,
@@ -174,9 +174,7 @@ const createSubreddit = async (req, res) => {
       name: title,
     };
     moderator.ownedSubreddits.push(addedSubreddit);
-    await moderator.save();
     moderator.joinedSubreddits.push(addedSubreddit);
-    await moderator.save();
     moderator.moderatedSubreddits.push(addedSubreddit);
     await moderator.save();
     //RETURN RESPONSE
