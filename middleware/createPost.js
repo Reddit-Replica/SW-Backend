@@ -48,6 +48,68 @@ export async function checkPostSubreddit(req, res, next) {
 }
 
 /**
+ * Middleware used to check if the post kind is hybrid and then extracts
+ * the text, images, videos, and links content from the body along with image
+ * and video captions. The hybridContent object is formed according to the
+ * structure in the Post model and passed with the request.
+ *
+ * @param {Object} req Request object
+ * @param {Object} res Response object
+ * @param {function} next Next function
+ * @returns {void}
+ */
+// eslint-disable-next-line max-statements
+export async function checkHybridPost(req, res, next) {
+  const kind = req.body.kind;
+  if (kind === "hybrid") {
+    let images = [];
+    let videos = [];
+    const imageFiles = req.files?.images;
+    const videoFiles = req.files?.videos;
+    const { texts, links, imageCaptions, videoCaptions } = req.body;
+    if (imageFiles && !imageCaptions) {
+      return res.status(400).json({
+        error: "Image captions are required",
+      });
+    }
+    if (videoFiles && !videoCaptions) {
+      return res.status(400).json({
+        error: "Video captions are required",
+      });
+    }
+    if (imageFiles) {
+      for (let i = 0; i < imageFiles.length; i++) {
+        images.push({
+          image: {
+            path: imageFiles[i].path,
+            caption: imageCaptions[i].caption,
+          },
+          index: imageCaptions[i].index,
+        });
+      }
+    }
+    if (videoFiles) {
+      for (let i = 0; i < videoFiles.length; i++) {
+        videos.push({
+          video: {
+            path: videoFiles[i].path,
+            caption: videoCaptions[i].caption,
+          },
+          index: videoCaptions[i].index,
+        });
+      }
+    }
+    req.hybridContent = {
+      texts,
+      links,
+      images,
+      videos,
+    };
+  }
+  next();
+}
+
+/**
  * Middleware used to check if the post kind is image/video, if yes then
  * verify that files are given in both cases. An images array is also made with
  * each element object containing the image path, its caption and a link only when
@@ -58,28 +120,39 @@ export async function checkPostSubreddit(req, res, next) {
  * @param {function} next Next function
  * @returns {void}
  */
+// eslint-disable-next-line max-statements
 export function checkImagesAndVideos(req, res, next) {
   const kind = req.body.kind;
   const imageCaptions = req.body.imageCaptions;
   const imageLinks = req.body.imageLinks;
-  if (kind === "image" || kind === "video") {
-    if (!req.files) {
-      return res.status(404).json("File(s) not found");
-    }
-  }
   let images = [];
   if (kind === "image") {
-    req.files.forEach((file) => {
+    const imageFiles = req.files.images;
+    if (!imageFiles) {
+      return res.status(404).json("Images not found");
+    }
+    imageFiles.forEach((image) => {
       images.push({
-        path: file.path,
+        path: image.path,
         caption: imageCaptions?.length > 0 ? imageCaptions[0] : null,
         link: imageLinks?.length > 0 ? imageLinks[0] : null,
       });
       imageCaptions?.shift();
       imageLinks?.shift();
     });
+    req.images = images;
+  } else if (kind === "video") {
+    const videoFiles = req.files.videos;
+    if (!videoFiles) {
+      return res.status(404).json("Videos not found");
+    }
+    if (videoFiles.length > 1) {
+      return res.status(400).json({
+        error: "Videos can only have one video",
+      });
+    }
+    req.video = videoFiles[0].path;
   }
-  req.images = images;
   next();
 }
 
@@ -128,7 +201,7 @@ export async function postSubmission(req, res, next) {
     kind,
     subreddit,
     title,
-    content,
+    link,
     nsfw,
     spoiler,
     flairId,
@@ -148,11 +221,13 @@ export async function postSubmission(req, res, next) {
       subredditName: subreddit,
       title: title,
       sharePostId: sharePostId,
-      content: kind === "video" ? req.files[0]?.path : content,
+      link: link,
+      video: req.video,
       images: req.images,
       nsfw: nsfw,
       spoiler: spoiler,
       flair: flairId,
+      hybridContent: req.hybridContent,
       sendReplies: sendReplies,
       sharePostId: sharePostId,
       scheduleDate: scheduleDate,
