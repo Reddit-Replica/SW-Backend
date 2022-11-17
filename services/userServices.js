@@ -168,14 +168,12 @@ export async function getUserAboutDataService(username, loggedInUserId) {
   }
 
   // check if the user was blocked by the logged in user
-  let blocked = false;
+  // then check if the user was followed by the logged in user
+  let blocked = false,
+    followed = false;
   if (loggedInUser) {
     blocked = loggedInUser.blockedUsers.includes(user._id);
-  }
 
-  // check if the user was followed by the logged in user
-  let followed = false;
-  if (loggedInUser) {
     // eslint-disable-next-line new-cap
     followed = user.followers.includes(mongoose.Types.ObjectId(loggedInUserId));
   }
