@@ -200,7 +200,7 @@ userRouter.post(
 userRouter.get(
   "/user/:username/about",
   optionalToken,
-  userController.aboutUserValidator,
+  userController.usernameValidator,
   validateRequestSchema,
   userController.aboutUser
 );
@@ -333,7 +333,13 @@ userRouter.get("/user/:username/overview");
  *       500:
  *         description: Internal server error
  */
-userRouter.get("/user/:username/posts");
+userRouter.get(
+  "/user/:username/posts",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userPosts
+);
 
 /**
  * @swagger
