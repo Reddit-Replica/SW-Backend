@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import mongoose from "mongoose";
 
 /**
  * Service to search for a user object with his username and return it in the req
@@ -21,10 +22,10 @@ export async function searchForUserService(req, username) {
  * Service to get the user object from the jwt that was sent in the header
  *
  * @param {Object} req Request
+ * @param {String} userId Id of the user
  * @returns {void}
  */
-export async function getUserFromJWTService(req) {
-  const { userId } = req.payload;
+export async function getUserFromJWTService(req, userId) {
   const user = await User.findById(userId);
   if (!user) {
     let error = new Error("Invalid id from the token");
@@ -118,4 +119,72 @@ export async function followUserService(user, userToFollow, follow) {
       message: "User unfollowed successfully",
     };
   }
+}
+
+// eslint-disable-next-line max-statements
+export async function getUserAboutDataService(username, loggedInUserId) {
+  const user = await User.findOne({ username: username }).populate(
+    "moderatedSubreddits.subredditId"
+  );
+  if (!user) {
+    return {
+      statusCode: 404,
+      data: "Didn't find a user with that username",
+    };
+  }
+
+  let loggedInUser = null;
+  if (loggedInUserId) {
+    loggedInUser = await User.findById(loggedInUserId).select(
+      "joinedSubreddits blockedUsers"
+    );
+  }
+
+  let moderatorOf = [];
+  for (let i = 0; i < user.moderatedSubreddits.length; i++) {
+    // check if the logged in user follows that subreddit
+    let followed = false;
+    if (loggedInUser) {
+      followed = loggedInUser.joinedSubreddits.includes(
+        user.moderatedSubreddits[i].subredditId._id.toString()
+      );
+    }
+
+    moderatorOf.push({
+      subredditName: user.moderatedSubreddits[i].subredditId.title,
+      numOfMembers: user.moderatedSubreddits[i].subredditId.members,
+      nsfw: user.moderatedSubreddits[i].subredditId.nsfw,
+      followed: followed,
+    });
+  }
+
+  // check if the user was blocked by the logged in user
+  let blocked = false;
+  if (loggedInUser) {
+    blocked = loggedInUser.blockedUsers.includes(user._id);
+  }
+
+  // check if the user was followed by the logged in user
+  let followed = false;
+  if (loggedInUser) {
+    // eslint-disable-next-line new-cap
+    followed = user.followers.includes(mongoose.Types.ObjectId(loggedInUserId));
+  }
+
+  return {
+    statusCode: 200,
+    data: {
+      displayName: user.displayName,
+      about: user.about,
+      banner: user.banner,
+      picture: user.avatar,
+      karma: user.karma,
+      cakeDate: user.createdAt,
+      socialLinks: user.userSettings.socialLinks,
+      nsfw: user.userSettings.nsfw,
+      followed: followed,
+      blocked: blocked,
+      moderatorOf: moderatorOf,
+    },
+  };
 }
