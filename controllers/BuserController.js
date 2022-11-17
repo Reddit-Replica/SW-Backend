@@ -1,4 +1,5 @@
 import { body, param } from "express-validator";
+import { listingUserProfileService } from "../services/userProfileListing.js";
 import {
   getUserFromJWTService,
   searchForUserService,
@@ -27,7 +28,7 @@ const followUserValidator = [
   body("follow").not().isEmpty().withMessage("Follow flag can not be empty"),
 ];
 
-const aboutUserValidator = [
+const usernameValidator = [
   param("username")
     .trim()
     .escape()
@@ -80,7 +81,32 @@ const followUser = async (req, res) => {
 const aboutUser = async (req, res) => {
   try {
     // get the user of the current profile
-    let result = await getUserAboutDataService(req.params.username, req.userId);
+    const result = await getUserAboutDataService(
+      req.params.username,
+      req.userId
+    );
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const userPosts = async (req, res) => {
+  try {
+    const { sort, time, before, after, limit } = req.query;
+
+    const result = await listingUserProfileService(
+      req.params.username,
+      req.userId,
+      "posts",
+      { sort, time, before, after, limit }
+    );
 
     res.status(result.statusCode).json(result.data);
   } catch (error) {
@@ -98,6 +124,7 @@ export default {
   blockUser,
   followUserValidator,
   followUser,
-  aboutUserValidator,
+  usernameValidator,
   aboutUser,
+  userPosts,
 };
