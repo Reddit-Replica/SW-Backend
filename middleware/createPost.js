@@ -170,6 +170,11 @@ export async function sharePost(req, res, next) {
   const sharePostId = req.body.sharePostId;
   const kind = req.body.kind;
   try {
+    if (kind === "post" && !sharePostId) {
+      return res.status(400).json({
+        error: "sharePostId is required",
+      });
+    }
     if (sharePostId) {
       if (kind !== "post") {
         return res.status(400).json({
