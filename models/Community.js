@@ -57,6 +57,11 @@ const communitySchema = mongoose.Schema({
     required: true,
     default: false,
   },
+  numberOfRules: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   rules: [
     {
       ruleTitle: {
@@ -182,6 +187,11 @@ const communitySchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  //NEEDS TO BE AUTO INCREMENT
+  //Is used to get random subreddit from categories
+  randomIndex: {
+    type: Number,
+  },
 });
 
 const Subreddit = mongoose.model("Subreddit", communitySchema);

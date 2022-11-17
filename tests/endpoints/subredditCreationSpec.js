@@ -3,19 +3,19 @@ import app from "../../app.js";
 import User from "../../models/User.js";
 import { generateJWT } from "../../utils/generateTokens.js";
 import { hashPassword } from "../../utils/passwordUtils.js";
-import Community from "../../models/Community.js";
+import Subreddit from "../../models/Community.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
 describe("Testing Subreddit Creation endpoints", () => {
   afterAll(async () => {
-    //await User.deleteMany({});
-    //await Community.deleteMany({});
+    await User.deleteMany({});
+    await Community.deleteMany({});
   });
   let moderatorUser, normalUser, token;
   beforeAll(async () => {
     await User.deleteMany({});
-    await Community.deleteMany({});
+    await Subreddit.deleteMany({});
     moderatorUser = await new User({
       username: "AbdelrahmanNoaman",
       email: "noaman@gmail.com",
@@ -187,7 +187,7 @@ describe("Testing Subreddit Creation endpoints", () => {
 
   it("joining subreddit that you are not in", async () => {
     token = generateJWT(normalUser);
-    const { _id } = await Community.findOne({ title: "Hunter" });
+    const { _id } = await Subreddit.findOne({ title: "Hunter" });
     const req = {
       subredditId: _id.toString(),
     };

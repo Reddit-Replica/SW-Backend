@@ -15,23 +15,27 @@ import Subreddit from "../models/Community.js";
 
 export async function checkDuplicateSubredditTitle(req, res, next) {
   try {
-    // eslint-disable-next-line max-len
-    const { title, deletedAt } = await Subreddit.findOne({
+    console.log(req.body.title);
+    const subreddit = await Subreddit.findOne({
       title: req.body.title,
     });
-    if (title && !deletedAt) {
-      return res.status(409).json({ error: "title is already in use" });
+    if (!subreddit) {
+      next();
+      return;
     }
-    next();
+    if (subreddit.title && !subreddit.deletedAt) {
+      // eslint-disable-next-line max-len
+      return res
+        .status(409)
+        .json({ error: "Subreddit's name is already taken" });
+    }
   } catch (err) {
     if (err.cause) {
       return res.status(err.cause).json({
         error: err.message,
       });
     } else {
-      return res.status(500).json({
-        error: "Internal Server Error",
-      });
+      return res.status(500).json("Internal Server Error");
     }
   }
 }

@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
  * @param {function} next Next function
  * @returns {void}
  */
-const verifyAuthToken = (req, res, next) => {
+export const verifyAuthToken = (req, res, next) => {
   try {
     const authorizationHeader = req.headers.authorization;
     // console.log(authorizationHeader);
@@ -35,7 +35,7 @@ const verifyAuthToken = (req, res, next) => {
  * @returns {void}
  */
 
-const verifyAuthTokenModerator = (req, res, next) => {
+export const verifyAuthTokenModerator = (req, res, next) => {
   const moderators = req.subreddit.moderators;
   const payload = req.payload;
   const moderator = moderators.find(
@@ -48,9 +48,4 @@ const verifyAuthTokenModerator = (req, res, next) => {
   } else {
     next();
   }
-};
-
-export default {
-  verifyAuthToken,
-  verifyAuthTokenModerator,
 };

@@ -2,9 +2,24 @@ import express from "express";
 import postController from "../controllers/HpostController.js";
 import { optionalToken } from "../middleware/optionalToken.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
-import verifyToken from "../middleware/verifyToken.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { verifyPostActions } from "../middleware/verifyPostActions.js";
 import { checkId } from "../middleware/checkId.js";
+import {
+  checkImagesAndVideos,
+  checkPostSubreddit,
+  postSubmission,
+  sharePost,
+} from "../middleware/createPost.js";
+import {
+  checkPinnedPosts,
+  checkUnpinnedPosts,
+} from "../middleware/pinnedPosts.js";
+import {
+  checkPostExistence,
+  getPostDetails,
+  setPostActions,
+} from "../middleware/postDetails.js";
 
 // eslint-disable-next-line new-cap
 const postRouter = express.Router();
@@ -208,10 +223,14 @@ postRouter.post("/clear-suggested-sort");
  */
 postRouter.post(
   "/submit",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   postController.submitValidator,
   validateRequestSchema,
-  postController.createPost
+  checkPostSubreddit,
+  checkImagesAndVideos,
+  sharePost,
+  postSubmission,
+  postController.submit
 );
 
 /**
@@ -308,7 +327,7 @@ postRouter.post("/unhide");
  */
 postRouter.get(
   "/post-insights",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   checkId,
   postController.postIdValidator,
   validateRequestSchema,
@@ -360,6 +379,9 @@ postRouter.get(
   checkId,
   postController.postIdValidator,
   validateRequestSchema,
+  checkPostExistence,
+  setPostActions,
+  getPostDetails,
   postController.postDetails
 );
 
@@ -407,11 +429,13 @@ postRouter.get(
  */
 postRouter.post(
   "/pin-post",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   checkId,
   postController.pinPostValidator,
   validateRequestSchema,
   verifyPostActions,
+  checkPinnedPosts,
+  checkUnpinnedPosts,
   postController.pinPost
 );
 
@@ -451,11 +475,7 @@ postRouter.post(
  *      security:
  *          - bearerAuth: []
  */
-postRouter.get(
-  "/pinned-posts",
-  verifyToken.verifyAuthToken,
-  postController.getPinnedPosts
-);
+postRouter.get("/pinned-posts", verifyAuthToken, postController.getPinnedPosts);
 
 /**
  * @swagger
