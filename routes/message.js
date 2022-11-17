@@ -4,7 +4,7 @@ import { validateRequestSchema } from "../middleware/validationResult.js";
 import messageController from "../controllers/HmessageController.js";
 
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const messageRouter = express.Router();
 
 /**
  * @swagger
@@ -68,7 +68,7 @@ const router = express.Router();
  *       - bearerAuth: []
  */
 
-router.post("/message/compose");
+messageRouter.post("/message/compose");
 
 /**
  * @swagger
@@ -138,7 +138,7 @@ router.post("/message/compose");
  *       - bearerAuth: []
  */
 
-router.get("/message/sent");
+messageRouter.get("/message/sent");
 
 /**
  * @swagger
@@ -231,7 +231,7 @@ router.get("/message/sent");
  *       - bearerAuth: []
  */
 
-router.get("/message/inbox");
+messageRouter.get("/message/inbox");
 
 /**
  * @swagger
@@ -304,7 +304,7 @@ router.get("/message/inbox");
  *       - bearerAuth: []
  */
 
-router.get("/message/unread");
+messageRouter.get("/message/unread");
 
 /**
  * @swagger
@@ -383,7 +383,7 @@ router.get("/message/unread");
  *       - bearerAuth: []
  */
 
-router.get("/message/post-reply");
+messageRouter.get("/message/post-reply");
 
 /**
  * @swagger
@@ -462,7 +462,7 @@ router.get("/message/post-reply");
  *       - bearerAuth: []
  */
 
-router.get("/message/mentions");
+messageRouter.get("/message/mentions");
 
 /**
  * @swagger
@@ -542,7 +542,7 @@ router.get("/message/mentions");
  *       - bearerAuth: []
  */
 
-router.get("/message/messages");
+messageRouter.get("/message/messages");
 
 /**
  * @swagger
@@ -573,7 +573,7 @@ router.get("/message/messages");
  *       - bearerAuth: []
  */
 
-router.patch("/unread-message");
+messageRouter.patch("/unread-message");
 
 /**
  * @swagger
@@ -609,7 +609,7 @@ router.patch("/unread-message");
  *       - bearerAuth: []
  */
 
-router.patch(
+messageRouter.patch(
   "/read-all-msgs",
   verifyAuthToken,
   messageController.messageValidator,
@@ -650,6 +650,6 @@ router.patch(
  *      security:
  *       - bearerAuth: []
  */
-router.get("/moderated-subreddits");
+messageRouter.get("/moderated-subreddits");
 
-export default router;
+export default messageRouter;
