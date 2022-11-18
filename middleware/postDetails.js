@@ -16,8 +16,8 @@ export async function checkPostExistence(req, res, next) {
   const postId = req.body.id;
   try {
     const post = await Post.findById(postId)?.populate("flair");
-    if (!post) {
-      return res.status(404).json("Post not found");
+    if (!post || post.deletedAt) {
+      return res.status(404).json("Post may be not found or deleted");
     }
     req.post = post;
     next();
@@ -151,8 +151,10 @@ export async function getPostDetails(req, res, next) {
     hybridContent: req.hybridContent,
     nsfw: post.nsfw,
     spoiler: post.spoiler,
+    markedSpam: post.markedSpam,
     sharePostId: post.sharePostId,
     title: post.title,
+    suggestedSort: post.suggestedSort,
     flair: {
       id: post.flair?._id,
       flairName: post.flair?.flairName,
@@ -163,7 +165,9 @@ export async function getPostDetails(req, res, next) {
     comments: post.numberOfComments,
     votes: post.numberOfUpvotes - post.numberOfDownvotes,
     postedAt: post.createdAt,
+    editedAt: post.editedAt,
     postedBy: post.ownerUsername,
+    sendReplies: post.sendReplies,
     votingType: req.votingType,
     saved: req.saved,
     followed: req.followed,
