@@ -724,7 +724,13 @@ userRouter.get(
  *     security:
  *       - bearerAuth: []
  */
-userRouter.get("/user/:username/downvoted");
+userRouter.get(
+  "/user/:username/downvoted",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userDownvotedPosts
+);
 
 /**
  * @swagger
