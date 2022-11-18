@@ -1,6 +1,7 @@
 import Subreddit from "../models/Community.js";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
+import Flair from "../models/Flair.js";
 
 /**
  * Middleware used to check the post is being submitted in a subreddit
@@ -39,8 +40,36 @@ export async function checkPostSubreddit(req, res, next) {
           .status(401)
           .json("User is not a member/mod of this subreddit");
       }
+      req.subreddit = subreddit;
     }
     req.user = user;
+    next();
+  } catch (err) {
+    return res.status(500).json("Internal server error");
+  }
+}
+
+/**
+ * Middleware used to check if the post flair subreddit is the same as
+ * the subreddit that the post is being submitted in (if the flair exists)
+ *
+ * @param {Object} req Request object
+ * @param {Object} res Response object
+ * @param {function} next Next function
+ * @returns {void}
+ */
+// eslint-disable-next-line max-statements
+export async function checkPostFlair(req, res, next) {
+  const flairId = req.body.flairId;
+  try {
+    if (req.subreddit && flairId) {
+      const flair = await Flair.findById(flairId).populate("subreddit");
+      if (flair.subreddit.title !== req.subreddit) {
+        return res.status(400).json({
+          error: "Flair doesn't belong to the post subreddit",
+        });
+      }
+    }
     next();
   } catch (err) {
     return res.status(500).json("Internal server error");

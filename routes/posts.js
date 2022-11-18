@@ -8,6 +8,7 @@ import { checkId } from "../middleware/checkId.js";
 import {
   checkHybridPost,
   checkImagesAndVideos,
+  checkPostFlair,
   checkPostSubreddit,
   postSubmission,
   sharePost,
@@ -229,6 +230,7 @@ postRouter.post(
   postController.submitValidator,
   validateRequestSchema,
   checkPostSubreddit,
+  checkPostFlair,
   checkHybridPost,
   checkImagesAndVideos,
   sharePost,
