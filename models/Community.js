@@ -33,7 +33,8 @@ const communitySchema = mongoose.Schema({
   ],
   flairs: [
     {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Flair",
     },
   ],
   dateOfCreation: {
@@ -56,6 +57,16 @@ const communitySchema = mongoose.Schema({
     type: Boolean,
     required: true,
     default: false,
+  },
+  numberOfRules: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  numberOfFlairs: {
+    type: Number,
+    required: true,
+    default: 0,
   },
   rules: [
     {
@@ -182,6 +193,11 @@ const communitySchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  //NEEDS TO BE AUTO INCREMENT
+  //Is used to get random subreddit from categories
+  randomIndex: {
+    type: Number,
+  },
 });
 
 const Subreddit = mongoose.model("Subreddit", communitySchema);
