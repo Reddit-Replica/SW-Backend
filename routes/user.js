@@ -649,7 +649,13 @@ userRouter.get("/user/:username/comments");
  *     security:
  *       - bearerAuth: []
  */
-userRouter.get("/user/:username/upvoted");
+userRouter.get(
+  "/user/:username/upvoted",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userUpvotedPosts
+);
 
 /**
  * @swagger

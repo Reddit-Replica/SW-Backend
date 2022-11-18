@@ -119,6 +119,31 @@ const userPosts = async (req, res) => {
   }
 };
 
+const userUpvotedPosts = async (req, res) => {
+  try {
+    if (req.params.username !== req.payload.username) {
+      return res.status(401).json("Access Denied");
+    }
+    const { sort, time, before, after, limit } = req.query;
+
+    const result = await listingUserProfileService(
+      req.params.username,
+      req.payload.userId,
+      "upvotedPosts",
+      { sort, time, before, after, limit }
+    );
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   blockUserValidator,
   blockUser,
@@ -127,4 +152,5 @@ export default {
   usernameValidator,
   aboutUser,
   userPosts,
+  userUpvotedPosts,
 };
