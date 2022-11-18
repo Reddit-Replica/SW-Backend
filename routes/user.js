@@ -385,7 +385,13 @@ userRouter.get(
  *     security:
  *       - bearerAuth: []
  */
-userRouter.get("/user/:username/history");
+userRouter.get(
+  "/user/:username/history",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userHistoryPosts
+);
 
 /**
  * @swagger

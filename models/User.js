@@ -154,6 +154,12 @@ const userSchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  historyPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
   pinnedPosts: [
     {
       type: Schema.Types.ObjectId,
