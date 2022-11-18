@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 /**
  * Function to prepare the listing parameters and set the appropriate condition that will be used with mongoose later.
  * Check the sort algorithm, time interval for the results, limit of the result, and the anchor point of the slice
@@ -81,11 +82,17 @@ export function prepareListingParameters(listingParams) {
   if (!listingParams.after && !listingParams.before) {
     result.listing = null;
   } else if (!listingParams.after && listingParams.before) {
-    // eslint-disable-next-line new-cap
-    result.listing = { $lt: listingParams.before };
+    if (mongoose.Types.ObjectId.isValid(listingParams.before)) {
+      result.listing = { $lt: listingParams.before };
+    } else {
+      result.listing = null;
+    }
   } else if (listingParams.after && !listingParams.before) {
-    // eslint-disable-next-line new-cap
-    result.listing = { $gt: listingParams.after };
+    if (mongoose.Types.ObjectId.isValid(listingParams.after)) {
+      result.listing = { $gt: listingParams.after };
+    } else {
+      result.listing = null;
+    }
   } else {
     result.listing = null;
   }
@@ -103,11 +110,15 @@ export function preparePostListing(listingParams) {
   let result = {};
 
   if (listingParams.time && listingParams.listing) {
-    result.find = { createdAt: listingParams.time, _id: listingParams.listing };
+    result.find = {
+      createdAt: listingParams.time,
+      _id: listingParams.listing,
+      deletedAt: null,
+    };
   } else if (listingParams.time) {
-    result.find = { createdAt: listingParams.time };
+    result.find = { createdAt: listingParams.time, deletedAt: null };
   } else if (listingParams.listing) {
-    result.find = { _id: listingParams.listing };
+    result.find = { _id: listingParams.listing, deletedAt: null };
   }
 
   result.sort = listingParams.sort;
