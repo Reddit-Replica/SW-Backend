@@ -135,6 +135,19 @@ const userSchema = mongoose.Schema({
       },
     },
   ],
+  moderatedSubreddits: [
+    {
+      subredditId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
   posts: [
     {
       type: Schema.Types.ObjectId,
@@ -187,6 +200,54 @@ const userSchema = mongoose.Schema({
     {
       type: Schema.Types.ObjectId,
       ref: "Comment",
+    },
+  ],
+  sentMessages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  receivedMessages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  usernameMentions: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  postReplies: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  conversations: [
+    {
+      latestDate: {
+        type: Date,
+        required: true,
+      },
+      subject: {
+        type: String,
+        required: true,
+      },
+      username: {
+        type: String,
+        required: true,
+      },
+      messages: [
+        {
+          messageID: {
+            type: Schema.Types.ObjectId,
+            ref: "Message",
+          },
+        },
+      ],
     },
   ],
 });

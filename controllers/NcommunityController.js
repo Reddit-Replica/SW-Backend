@@ -174,6 +174,7 @@ const createSubreddit = async (req, res) => {
       name: title,
     };
     moderator.ownedSubreddits.push(addedSubreddit);
+    await moderator.save();
     moderator.joinedSubreddits.push(addedSubreddit);
     await moderator.save();
     //RETURN RESPONSE
@@ -186,9 +187,7 @@ const createSubreddit = async (req, res) => {
         error: err.message,
       });
     } else {
-      return res.status(500).json({
-        error: "Internal Server Error",
-      });
+      return res.status(500).json("Internal Server Error");
     }
   }
 };
@@ -211,7 +210,8 @@ const joinSubreddit = async (req, res) => {
     if (!subreddit) {
       throw new Error("this subreddit isn't found", { cause: 400 });
     }
-    if (!subreddit.deletedAt) {
+    console.log(subreddit.deletedAt);
+    if (subreddit.deletedAt) {
       throw new Error("this subreddit is deleted", { cause: 400 });
     }
     if (subreddit.type === "Private") {
@@ -221,9 +221,7 @@ const joinSubreddit = async (req, res) => {
         message: req.body.message,
       });
       await subreddit.save();
-      return res
-        .status(200)
-        .json({ message: "Your request is sent successfully" });
+      return res.status(200).json("Your request is sent successfully");
     }
     //ADDING THIS SUB REDDIT TO JOINED SUBREDDITS LIST
     user.joinedSubreddits.push({
@@ -235,18 +233,14 @@ const joinSubreddit = async (req, res) => {
     subreddit.members += 1;
     await subreddit.save();
     //SENDING RESPONSES
-    return res
-      .status(200)
-      .json({ message: "you joined the subreddit successfully" });
+    return res.status(200).json("you joined the subreddit successfully");
   } catch (err) {
     if (err.cause) {
       return res.status(err.cause).json({
         error: err.message,
       });
     } else {
-      return res.status(500).json({
-        error: "Internal Server Error",
-      });
+      return res.status(500).json("Internal Server Error");
     }
   }
 };
@@ -259,7 +253,7 @@ const addDescription = async (req, res) => {
     if (!subreddit) {
       throw new Error("this subreddit isn't found", { cause: 400 });
     }
-    if (!subreddit.deletedAt) {
+    if (subreddit.deletedAt) {
       throw new Error("this subreddit is deleted", { cause: 400 });
     }
     //ADDING DESCRIPTION OF THE SUBREDDIT
@@ -273,9 +267,7 @@ const addDescription = async (req, res) => {
         error: err.message,
       });
     } else {
-      return res.status(500).json({
-        error: "Internal Server Error",
-      });
+      return res.status(500).json("Internal Server Error");
     }
   }
 };
@@ -287,7 +279,7 @@ const addMainTopic = async (req, res) => {
     if (!subreddit) {
       throw new Error("this subreddit isn't found", { cause: 400 });
     }
-    if (!subreddit.deletedAt) {
+    if (subreddit.deletedAt) {
       throw new Error("this subreddit is deleted", { cause: 400 });
     }
     //ADDING DESCRIPTION OF THE SUBREDDIT
@@ -301,9 +293,7 @@ const addMainTopic = async (req, res) => {
         error: err.message,
       });
     } else {
-      return res.status(500).json({
-        error: "Internal Server Error",
-      });
+      return res.status(500).json("Internal Server Error");
     }
   }
 };
@@ -316,7 +306,7 @@ const addSubTopics = async (req, res) => {
     if (!subreddit) {
       throw new Error("this subreddit isn't found", { cause: 400 });
     }
-    if (!subreddit.deletedAt) {
+    if (subreddit.deletedAt) {
       throw new Error("this subreddit is deleted", { cause: 400 });
     }
     //ADDING DESCRIPTION OF THE SUBREDDIT
@@ -338,9 +328,7 @@ const addSubTopics = async (req, res) => {
         error: err.message,
       });
     } else {
-      return res.status(500).json({
-        error: "Internal Server Error",
-      });
+      return res.status(500).json("Internal Server Error");
     }
   }
 };

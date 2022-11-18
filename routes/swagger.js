@@ -82,31 +82,95 @@
  *       type: object
  *       required:
  *         - kind
- *         - subreddit
+ *         - inSubreddit
  *         - title
  *       properties:
  *         kind:
  *           type: string
  *           enum:
  *              - link
- *              - text
+ *              - hybrid
  *              - image
  *              - video
  *              - post
  *         subreddit:
  *           type: string
  *           description: Subreddit name
- *         title:
- *           type: string
- *           description: Title of the submission
- *         content:
- *           type: string
- *           description: Post content (text/url)
- *         files:
+ *         inSubreddit:
+ *           type: boolean
+ *           description: True if the post is submitted in a subreddit, False if it's in the user account (not a subreddit)
+ *         texts:
  *           type: array
- *           description: Post content (images/video)
+ *           description: Texts input separated by an "enter" when writing text in the post with an index indicating the positin of this text
+ *           items:
+ *               type: object
+ *               properties:
+ *                   text:
+ *                       type: string
+ *                       description: The text written itself
+ *                   index:
+ *                       type: number
+ *                       description: Text position
+ *         links:
+ *           type: array
+ *           description: Links input in the post containing the link title and url as well as the index indicating it's position in the post field
+ *           items:
+ *               type: object
+ *               properties:
+ *                   link:
+ *                       type: object
+ *                       properties:
+ *                           title:
+ *                               type: string
+ *                               description: Link title submitted
+ *                           url:
+ *                               type: string
+ *                               description: Link Url
+ *                   index:
+ *                       type: number
+ *                       description: Link position
+ *         imageCaptions:
+ *           type: array
+ *           description: Image captions of each image submitted and an element in it should be null if the image doesn't have a caption (Do not skip the element). This array will contain an index only when the kind is 'hybrid' but will only be an array of captions without indices if the kind is 'image'
+ *           items:
+ *               type: object
+ *               properties:
+ *                   caption:
+ *                       type: string
+ *                       description: Image caption
+ *                   index:
+ *                       type: number
+ *                       description: Image caption position
+ *         videoCaptions:
+ *           type: array
+ *           description: Video captions of each video submitted and an element in it should be null if the video doesn't have a caption (Do not skip the element)
+ *           items:
+ *               type: object
+ *               properties:
+ *                   caption:
+ *                       type: string
+ *                       description: Video caption
+ *                   index:
+ *                       type: number
+ *                       description: Video caption position
+ *         images:
+ *           type: array
+ *           description: image files
  *           items:
  *              type: object
+ *         imageLinks:
+ *           type: array
+ *           description: Links written for the images submitted (only when kind = images)
+ *           items:
+ *              type: string
+ *         videos:
+ *           type: array
+ *           description: Video files
+ *           items:
+ *              type: object
+ *         link:
+ *           type: string
+ *           description: Link submission in case the kind is 'link'
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
@@ -116,16 +180,6 @@
  *         flairId:
  *           type: string
  *           description: Flair ID
- *         imageCaptions:
- *           type: array
- *           description: Captions written for the images submitted (only when kind = images)
- *           items:
- *              type: string
- *         imageLinks:
- *           type: array
- *           description: Links written for the images submitted (only when kind = images)
- *           items:
- *              type: string
  *         sendReplies:
  *           type: boolean
  *           description: Allow post reply notifications
@@ -151,16 +205,19 @@
  *           type: string
  *           enum:
  *              - link
- *              - text
+ *              - hybrid
  *              - image
  *              - video
  *              - post
+ *         title:
+ *           type: string
+ *           description: Title of the submission
  *         subreddit:
  *           type: string
  *           description: Subreddit name
- *         content:
+ *         link:
  *           type: string
- *           description: Post content (text/url/video) - will contain path of a video in case (kind = video)
+ *           description: Post link in case the kind is 'link'
  *         images:
  *           type: array
  *           description: Post content (kind = images)
@@ -176,15 +233,31 @@
  *                 link:
  *                   type: string
  *                   description: Image link
+ *         video:
+ *           type: string
+ *           description: Video path in case the kind is 'video'
+ *         hybridContent:
+ *           type: array
+ *           description: Hybrid content of the post returned with the correct order just like as they were inserted when initially submitting the post. The content part of the object could be string when type is text, or an object (title and url) if type is link, or an object (path and caption) if type is image or video
+ *           items:
+ *               type: object
+ *               properties:
+ *                  type:
+ *                     type: string
+ *                     description: Content type
+ *                     enum:
+ *                         - image
+ *                         - video
+ *                         - text
+ *                         - link
+ *                  content:
+ *                     type: object
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
  *         spoiler:
  *           type: boolean
  *           description: Blur the content of the post
- *         title:
- *           type: string
- *           description: Title of the submission
  *         sharePostId:
  *           type: string
  *           description: Post id in case of containing info of a shared post (kind = post)
@@ -199,9 +272,15 @@
  *         postedAt:
  *           type: string
  *           description: The time in which this post was published
- *         deletedAt:
+ *         sendReplies:
+ *           type: boolean
+ *           description: Indicates whether replies on a post are turned on/off
+ *         markedSpam:
+ *           type: boolean
+ *           description: Indicates whether post was spammed by the owner
+ *         suggestedSort:
  *           type: string
- *           description: The time in which this post was deleted
+ *           description: Post suggested sort
  *         editedAt:
  *           type: string
  *           description: The time in which this post was edited
@@ -542,6 +621,49 @@
  *                          level:
  *                            type: integer
  *                            description: The level of the comment [level of nesting]
+ *                          inYourSubreddit:
+ *                            type: boolean
+ *                            description: If true, then you can approve, remove, or spam that post
+ *                          moderation:
+ *                            type: object
+ *                            description: Moderate the post if you are a moderator in that subreddit
+ *                            properties:
+ *                             approve:
+ *                              type: object
+ *                              description: Approve the post
+ *                              properties:
+ *                                approvedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who approved that post
+ *                                approvedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post approved
+ *                             remove:
+ *                              type: object
+ *                              description: Remove the post
+ *                              properties:
+ *                                removedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who removed that post
+ *                                removedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post removed
+ *                             spam:
+ *                              type: object
+ *                              description: Spam the post
+ *                              properties:
+ *                                spammedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who spamed that post
+ *                                spammedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post spamed
+ *                             lock:
+ *                              type: boolean
+ *                              description: If true, then comments are locked in this post
  *   Threads:
  *       type: object
  *       properties:
@@ -687,7 +809,12 @@
  *           type: array
  *           description: List of posts to return
  *           items:
- *             $ref: "#/components/schemas/PostDetails"
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: Id of the post
+ *               data:
+ *                 $ref: "#/components/schemas/PostDetails"
  *   CommentTree:
  *       type: object
  *       properties:

@@ -1,6 +1,9 @@
 import express from "express";
 
-import verifyToken from "../middleware/verifyToken.js";
+import {
+  verifyAuthToken,
+  verifyAuthTokenModerator,
+} from "../middleware/verifyToken.js";
 import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
 import subredditRulesMiddleware from "../middleware/subredditRules.js";
 // eslint-disable-next-line max-len
@@ -72,10 +75,10 @@ const subredditRulesRouter = express.Router();
 
 subredditRulesRouter.post(
   "/r/:subreddit/about/rules",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyToken.verifyAuthTokenModerator,
+  verifyAuthTokenModerator,
   subredditRulesController.addSubredditRule
 );
 
@@ -145,10 +148,10 @@ subredditRulesRouter.post(
 
 subredditRulesRouter.get(
   "/r/:subreddit/about/rules",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyToken.verifyAuthTokenModerator,
+  verifyAuthTokenModerator,
   subredditRulesController.getSubredditRules
 );
 
@@ -225,10 +228,10 @@ subredditRulesRouter.get(
 
 subredditRulesRouter.put(
   "/r/:subreddit/about/rules/:ruleId",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyToken.verifyAuthTokenModerator,
+  verifyAuthTokenModerator,
   subredditRulesMiddleware.validateRuleId,
   subredditRulesMiddleware.checkRule,
   subredditRulesController.editSubredditRule
@@ -276,7 +279,16 @@ subredditRulesRouter.put(
  *    - bearerAuth: []
  */
 
-subredditRulesRouter.delete("/r/:subreddit/about/rules/:ruleId");
+subredditRulesRouter.delete(
+  "/r/:subreddit/about/rules/:ruleId",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditRulesMiddleware.validateRuleId,
+  subredditRulesMiddleware.checkRule,
+  subredditRulesController.deleteSubredditRule
+);
 
 /**
  * @swagger
@@ -334,6 +346,13 @@ subredditRulesRouter.delete("/r/:subreddit/about/rules/:ruleId");
  *    - bearerAuth: []
  */
 
-subredditRulesRouter.post("/r/:subreddit/about/rules-order");
+subredditRulesRouter.post(
+  "/r/:subreddit/about/rules-order",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditRulesController.editRulesOrder
+);
 
 export default subredditRulesRouter;

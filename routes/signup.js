@@ -1,6 +1,7 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkDuplicateUsernameOrEmail } from "../middleware/verifySignUp.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { checkId } from "../middleware/checkId.js";
 import signupController from "../controllers/signupController.js";
 import GenerateUsernameController from "../controllers/NgenerateUsername.js";
@@ -281,7 +282,6 @@ signupRouter.post(
  *       500:
  *         description: Internal server error
  */
-// eslint-disable-next-line max-len
 signupRouter.get(
   "/random-username",
   GenerateUsernameController.generateRandomUsername
@@ -319,6 +319,12 @@ signupRouter.get(
  *       500:
  *         description: Internal server error
  */
-signupRouter.patch("/edit-username");
+signupRouter.patch(
+  "/edit-username",
+  verifyAuthToken,
+  signupController.editUsernameValidator,
+  validateRequestSchema,
+  signupController.editUsername
+);
 
 export default signupRouter;

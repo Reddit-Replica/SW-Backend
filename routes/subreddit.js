@@ -5,7 +5,7 @@ import { checkDuplicateSubredditTitle } from "../middleware/NverifySubredditName
 import subredditController from "../controllers/NcommunityController.js";
 import { checkModerator } from "../middleware/NverifyModerator.js";
 import { checkJoinedBefore } from "../middleware/NJoiningValidation.js";
-import verifyTokenMiddelware from "../middleware/verifyToken.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
 // eslint-disable-next-line new-cap
 const subRedditRouter = express.Router();
 
@@ -76,7 +76,7 @@ const subRedditRouter = express.Router();
 // eslint-disable-next-line max-len
 subRedditRouter.post(
   "/create-subreddit",
-  verifyTokenMiddelware.verifyAuthToken,
+  verifyAuthToken,
   subredditController.subredditValidator,
   validateRequestSchema,
   checkDuplicateSubredditTitle,
@@ -131,7 +131,7 @@ subRedditRouter.post(
  */
 subRedditRouter.post(
   "/join-subreddit",
-  verifyTokenMiddelware.verifyAuthToken,
+  verifyAuthToken,
   checkJoinedBefore,
   subredditController.joinSubreddit
 );
@@ -213,7 +213,7 @@ subRedditRouter.get("/subreddit-name-available");
 
 subRedditRouter.post(
   "/r/:subreddit/add-description",
-  verifyTokenMiddelware.verifyAuthToken,
+  verifyAuthToken,
   subredditController.descriptionValidator,
   validateRequestSchema,
   checkModerator,
@@ -264,7 +264,7 @@ subRedditRouter.post(
  */
 subRedditRouter.post(
   "/r/:subreddit/add-maintopic",
-  verifyTokenMiddelware.verifyAuthToken,
+  verifyAuthToken,
   subredditController.mainTopicValidator,
   validateRequestSchema,
   checkModerator,
@@ -318,7 +318,7 @@ subRedditRouter.post(
 
 subRedditRouter.post(
   "/r/:subreddit/add-subtopic",
-  verifyTokenMiddelware.verifyAuthToken,
+  verifyAuthToken,
   subredditController.subTopicValidator,
   validateRequestSchema,
   checkModerator,
