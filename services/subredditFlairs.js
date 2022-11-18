@@ -1,5 +1,7 @@
 /* eslint-disable max-statements */
 
+import mongoose from "mongoose";
+
 import Flair from "../models/Flair.js";
 /**
  * A function used to validate the request body, if the body is invalid it throws an error
@@ -18,10 +20,7 @@ export function validateCreateFlair(req) {
     error.statusCode = 400;
     throw error;
   }
-  if (
-    req.body.settings.hasOwnProperty("allowUserEdits") &&
-    !req.body.settings.emojisLimit
-  ) {
+  if (req.body.settings.allowUserEdits && !req.body.settings.emojisLimit) {
     const error = new Error("Missing parameters");
     error.statusCode = 400;
     throw error;
@@ -81,7 +80,6 @@ export function prepareCreateFlairBody(req) {
   return flairObject;
 }
 
-
 /**
  * A function used to create a flair and add it to the subreddit
  * @param {Object} flair the prepared flair object
@@ -94,4 +92,41 @@ export async function createFlair(flair, subreddit) {
   subreddit.numberOfFlairs++;
   await newFlair.save();
   await subreddit.save();
+}
+
+export function validateId(id) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    const error = new Error("Invalid id");
+    error.statusCode = 400;
+    throw error;
+  }
+}
+
+export async function checkFlair(flairId, subreddit) {
+  await subreddit.populate("flairs");
+  const neededFlair = subreddit.flairs.find(
+    (el) => el._id.toString() === flairId
+  );
+  if (!neededFlair || neededFlair.deletedAt) {
+    const error = new Error("Flair not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  return neededFlair;
+}
+
+export async function deleteFlair(flair, subreddit) {
+  flair.deletedAt = new Date().toISOString();
+  subreddit.numberOfFlairs--;
+  const flairToDeleteOrder = flair.flairOrder;
+  subreddit.flairs.forEach((flairEl) => {
+    if (Number(flairEl.flairOrder) > Number(flairToDeleteOrder)) {
+      flairEl.flairOrder--;
+      flairEl.save();
+    }
+  });
+  console.log(subreddit.flairs);
+  await flair.save();
+  await subreddit.save();
+  // await subreddit.populate("flairs");
 }
