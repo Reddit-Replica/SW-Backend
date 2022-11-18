@@ -1,8 +1,5 @@
 import User from "../models/User.js";
-import {
-  preparePostListing,
-  prepareListingParameters,
-} from "../utils/prepareListing.js";
+import { postListing } from "../utils/prepareListing.js";
 
 // eslint-disable-next-line max-statements
 export async function listingUserProfileService(
@@ -12,9 +9,7 @@ export async function listingUserProfileService(
   listingParams
 ) {
   // prepare the listing parameters
-  const listingResult = preparePostListing(
-    prepareListingParameters(listingParams)
-  );
+  const listingResult = await postListing(listingParams);
 
   // get the owner of the profile
   const user = await User.findOne({ username: username });
@@ -31,14 +26,16 @@ export async function listingUserProfileService(
     loggedInUser = await User.findById(loggedInUserId);
   }
 
-  const result = await User.findOne({ username: username }).populate({
-    path: typeOfListing,
-    match: listingResult.find,
-    limit: listingResult.limit,
-    options: {
-      sort: listingResult.sort,
-    },
-  });
+  const result = await User.findOne({ username: username })
+    .select(typeOfListing)
+    .populate({
+      path: typeOfListing,
+      match: listingResult.find,
+      limit: listingResult.limit,
+      options: {
+        sort: listingResult.sort,
+      },
+    });
 
   let children = [];
   for (const i in result[typeOfListing]) {
@@ -100,7 +97,7 @@ export async function listingUserProfileService(
       const found = loggedInUser.moderatedSubreddits.find(
         (subreddit) => subreddit.name === post.subredditName
       );
-      console.log(found);
+
       if (found) {
         postData.data.inYourSubreddit = true;
         postData.data.moderation = post.moderation;

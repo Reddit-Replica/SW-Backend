@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Post from "./../models/Post.js";
 /**
  * Function to prepare the listing parameters and set the appropriate condition that will be used with mongoose later.
  * Check the sort algorithm, time interval for the results, limit of the result, and the anchor point of the slice
@@ -8,7 +9,7 @@ import mongoose from "mongoose";
  * @returns {Object} Result object containing the final results after listing [sort, time, listing, limit]
  */
 // eslint-disable-next-line max-statements
-export function prepareListingParameters(listingParams) {
+export async function prepareListingPosts(listingParams) {
   let result = {};
 
   //prepare the sorting
@@ -16,17 +17,20 @@ export function prepareListingParameters(listingParams) {
     // new
     listingParams.sort = "new";
     result.sort = { createdAt: -1 };
+    result.sortingType = { type: "createdAt" };
   } else {
     switch (listingParams.sort) {
       case "hot":
         // TODO
-        result.sort = { createdAt: -1 };
+        result.sort = { score: -1 };
+        result.sortingType = { type: "score" };
         break;
       case "top":
         result.sort = null;
         break;
       default:
         result.sort = { createdAt: -1 };
+        result.sortingType = { type: "createdAt" };
         break;
     }
   }
@@ -83,13 +87,45 @@ export function prepareListingParameters(listingParams) {
     result.listing = null;
   } else if (!listingParams.after && listingParams.before) {
     if (mongoose.Types.ObjectId.isValid(listingParams.before)) {
-      result.listing = { $lt: listingParams.before };
+      // get the wanted value that we will split from
+      const post = await Post.findById(listingParams.before);
+      if (!post) {
+        result.listing = null;
+      } else {
+        if (result.sort) {
+          result.listing = {
+            type: result.sortingType.type,
+            value: { $gt: post[result.sortingType.type] },
+          };
+        } else {
+          result.listing = {
+            type: "_id",
+            value: { $lt: listingParams.before },
+          };
+        }
+      }
     } else {
       result.listing = null;
     }
   } else if (listingParams.after && !listingParams.before) {
     if (mongoose.Types.ObjectId.isValid(listingParams.after)) {
-      result.listing = { $gt: listingParams.after };
+      // get the wanted value that we will split from
+      const post = await Post.findById(listingParams.after);
+      if (!post) {
+        result.listing = null;
+      } else {
+        if (result.sort) {
+          result.listing = {
+            type: result.sortingType.type,
+            value: { $lt: post[result.sortingType.type] },
+          };
+        } else {
+          result.listing = {
+            type: "_id",
+            value: { $gt: listingParams.after },
+          };
+        }
+      }
     } else {
       result.listing = null;
     }
@@ -106,19 +142,23 @@ export function prepareListingParameters(listingParams) {
  * @param {Object} listingParams Result of prepareListingParameters function
  * @returns {Object} The final results that will be used by mongoose to list posts
  */
-export function preparePostListing(listingParams) {
+export async function postListing(listingParams) {
   let result = {};
+  listingParams = await prepareListingPosts(listingParams);
 
   if (listingParams.time && listingParams.listing) {
     result.find = {
       createdAt: listingParams.time,
-      _id: listingParams.listing,
       deletedAt: null,
     };
+    result.find[listingParams.listing.type] = listingParams.listing.value;
   } else if (listingParams.time) {
     result.find = { createdAt: listingParams.time, deletedAt: null };
   } else if (listingParams.listing) {
-    result.find = { _id: listingParams.listing, deletedAt: null };
+    result.find = { deletedAt: null };
+    result.find[listingParams.listing.type] = listingParams.listing.value;
+  } else {
+    result.find = { deletedAt: null };
   }
 
   result.sort = listingParams.sort;
