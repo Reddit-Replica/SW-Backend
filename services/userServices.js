@@ -9,7 +9,7 @@ import mongoose from "mongoose";
  * @returns {Object} User found
  */
 export async function searchForUserService(username) {
-  const user = await User.findOne({ username: username });
+  const user = await User.findOne({ username: username, deletedAt: null });
   if (!user) {
     let error = new Error("Didn't find a user with that username");
     error.statusCode = 404;
@@ -27,7 +27,7 @@ export async function searchForUserService(username) {
  */
 export async function getUserFromJWTService(userId) {
   const user = await User.findById(userId);
-  if (!user) {
+  if (!user || user.deletedAt) {
     let error = new Error("Invalid id from the token");
     error.statusCode = 400;
     throw error;
