@@ -125,14 +125,6 @@ const postSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  hidden: {
-    type: Boolean,
-    default: false,
-  },
-  locked: {
-    type: Boolean,
-    default: false,
-  },
   markedSpam: {
     type: Boolean,
     default: false,
