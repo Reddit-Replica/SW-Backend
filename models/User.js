@@ -202,6 +202,54 @@ const userSchema = mongoose.Schema({
       ref: "Comment",
     },
   ],
+  sentMessages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  receivedMessages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  usernameMentions: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  postReplies: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  conversations: [
+    {
+      latestDate: {
+        type: Date,
+        required: true,
+      },
+      subject: {
+        type: String,
+        required: true,
+      },
+      username: {
+        type: String,
+        required: true,
+      },
+      messages: [
+        {
+          messageID: {
+            type: Schema.Types.ObjectId,
+            ref: "Message",
+          },
+        },
+      ],
+    },
+  ],
 });
 
 const User = mongoose.model("User", userSchema);

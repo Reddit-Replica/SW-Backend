@@ -20,12 +20,75 @@ const postSchema = mongoose.Schema({
   },
   kind: {
     type: String,
-    enum: ["text", "image", "video", "post", "link"],
-    default: "text",
+    enum: ["hybrid", "image", "video", "post", "link"],
+    default: "hybrid",
     required: true,
   },
-  content: {
-    type: String,
+  hybridContent: {
+    texts: [
+      {
+        text: {
+          type: String,
+          required: true,
+        },
+        index: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    images: [
+      {
+        image: {
+          path: {
+            type: String,
+            required: true,
+          },
+          caption: {
+            type: String,
+          },
+        },
+        index: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    videos: [
+      {
+        video: {
+          path: {
+            type: String,
+            required: true,
+          },
+          caption: {
+            type: String,
+          },
+        },
+        index: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    links: [
+      {
+        link: {
+          title: {
+            type: String,
+            required: true,
+          },
+          url: {
+            type: String,
+            required: true,
+          },
+        },
+        index: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
   },
   images: [
     {
@@ -41,6 +104,12 @@ const postSchema = mongoose.Schema({
       },
     },
   ],
+  video: {
+    type: String,
+  },
+  link: {
+    type: String,
+  },
   sharePostId: {
     type: String,
   },
@@ -53,14 +122,6 @@ const postSchema = mongoose.Schema({
     default: false,
   },
   spoiler: {
-    type: Boolean,
-    default: false,
-  },
-  hidden: {
-    type: Boolean,
-    default: false,
-  },
-  locked: {
     type: Boolean,
     default: false,
   },
@@ -146,6 +207,10 @@ const postSchema = mongoose.Schema({
       type: Boolean,
       default: false,
     },
+  },
+  usersCommented: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
   },
   scheduleDate: {
     type: Date,

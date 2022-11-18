@@ -5,6 +5,24 @@ import { validateRequestSchema } from "../middleware/validationResult.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { verifyPostActions } from "../middleware/verifyPostActions.js";
 import { checkId } from "../middleware/checkId.js";
+import {
+  checkHybridPost,
+  checkImagesAndVideos,
+  checkPostFlair,
+  checkPostSubreddit,
+  postSubmission,
+  sharePost,
+} from "../middleware/createPost.js";
+import {
+  checkPinnedPosts,
+  checkUnpinnedPosts,
+} from "../middleware/pinnedPosts.js";
+import {
+  checkPostExistence,
+  getPostDetails,
+  setHybridContent,
+  setPostActions,
+} from "../middleware/postDetails.js";
 
 // eslint-disable-next-line new-cap
 const postRouter = express.Router();
@@ -177,7 +195,7 @@ postRouter.post("/clear-suggested-sort");
  * @swagger
  * /submit:
  *  post:
- *      summary: Submit or share a post to a subreddit (The request body could be json in case of text or link submissions and their content is set in the 'content' parameter but if it's an image/multiple images or a video then the body will be FormData and the image/video contents will be placed in an array called 'files'). Note ONLY In case of multiple images, there can be a caption and link attached with each image so they are set in the 'imageCaptions' and 'imageLinks' arrays and if an image doesn't include a caption or link then it's place in the array should be null and not skipped. The kind can also be 'post' in case of sharing a post because it's content will be another post basically.
+ *      summary: Submit or share a post to a subreddit. The request body could be json in case there are no images and videos submitted with the post but if there is, then it has to be FormData and the image files will be placed in 'images' and video files will be given in 'videos' along with their captions in imageCaptions and videoCaptions. The kind can also be 'post' in case of sharing a post because it's content will be another post basically and the id of the post being shared is given in the 'sharePostId' field. A hybrid kind means that it can contain text, links, images and videos and an index will be associated with each entry to save the order of these fields and return them in the same order when viewing a post.
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -211,7 +229,13 @@ postRouter.post(
   verifyAuthToken,
   postController.submitValidator,
   validateRequestSchema,
-  postController.createPost
+  checkPostSubreddit,
+  checkPostFlair,
+  checkHybridPost,
+  checkImagesAndVideos,
+  sharePost,
+  postSubmission,
+  postController.submit
 );
 
 /**
@@ -360,6 +384,10 @@ postRouter.get(
   checkId,
   postController.postIdValidator,
   validateRequestSchema,
+  checkPostExistence,
+  setPostActions,
+  setHybridContent,
+  getPostDetails,
   postController.postDetails
 );
 
@@ -412,6 +440,8 @@ postRouter.post(
   postController.pinPostValidator,
   validateRequestSchema,
   verifyPostActions,
+  checkPinnedPosts,
+  checkUnpinnedPosts,
   postController.pinPost
 );
 

@@ -4,7 +4,7 @@
  * @param {Object} req Request object
  * @returns {boolean} boolean indicates if the request body is valid
  */
-export const validateCreatingRuleBody = (req) => {
+export function validateCreatingRuleBody(req) {
   if (!req.body.ruleName || !req.body.appliesTo) {
     return false;
   } else if (
@@ -28,7 +28,7 @@ export const validateCreatingRuleBody = (req) => {
     req.ruleObject = ruleObject;
     return true;
   }
-};
+}
 
 /**
  * A function used to validate the request body to edit a rule to a subreddit
@@ -36,11 +36,11 @@ export const validateCreatingRuleBody = (req) => {
  * @param {Object} req Request object
  * @returns {boolean} boolean indicates if the request body is valid
  */
-export const validateEditingRuleBody = (req) => {
+export function validateEditingRuleBody(req) {
   const firstValidate = validateCreatingRuleBody(req);
   if (!firstValidate || !req.body.ruleOrder) {
     return false;
   }
   req.ruleObject.ruleOrder = req.body.ruleOrder;
   return true;
-};
+}
