@@ -1,5 +1,6 @@
 import { body } from "express-validator";
 import Comment from "../models/Comment.js";
+import Message from "../models/Message.js";
 import Post from "../models/Post.js";
 
 const deleteValidator = [
@@ -23,8 +24,7 @@ const deletePoComMes = async (req, res) => {
     } else if (type === "comment") {
       item = await Comment.findById(id);
     } else if (type === "message") {
-      // TODO
-      // item = await Message.findById(id);
+      item = await Message.findById(id);
     } else {
       return res
         .status(400)
