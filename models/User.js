@@ -234,74 +234,14 @@ const userSchema = mongoose.Schema({
   ],
   usernameMentions: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
-      sentAt: {
-        type: String,
-        required: true,
-      },
-      content: {
-        type: String,
-        required: true,
-      },
-      subredditName: {
-        type: String,
-      },
-      postId: {
-        type: Schema.Types.ObjectId,
-        ref: "Post",
-      },
-      commmentId: {
-        type: Schema.Types.ObjectId,
-        ref: "Comment",
-      },
-      postTitle: {
-        type: String,
-      },
-      numberOfComments: {
-        type: Number,
-      },
-      vote: {
-        type: Number,
-      },
+      type: Schema.Types.ObjectId,
+      ref: "Message",
     },
   ],
   postReplies: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
-      sentAt: {
-        type: String,
-        required: true,
-      },
-      content: {
-        type: String,
-        required: true,
-      },
-      subredditName: {
-        type: String,
-      },
-      postId: {
-        type: Schema.Types.ObjectId,
-        ref: "Post",
-      },
-      commmentId: {
-        type: Schema.Types.ObjectId,
-        ref: "Comment",
-      },
-      postTitle: {
-        type: String,
-      },
-      numberOfComments: {
-        type: Number,
-      },
-      vote: {
-        type: Number,
-      },
+      type: Schema.Types.ObjectId,
+      ref: "Message",
     },
   ],
   conversations: [
