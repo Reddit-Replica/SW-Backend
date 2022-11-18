@@ -346,6 +346,13 @@ subredditRulesRouter.delete(
  *    - bearerAuth: []
  */
 
-subredditRulesRouter.post("/r/:subreddit/about/rules-order");
+subredditRulesRouter.post(
+  "/r/:subreddit/about/rules-order",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditRulesController.editRulesOrder
+);
 
 export default subredditRulesRouter;

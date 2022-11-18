@@ -1,6 +1,6 @@
 {
   "source": {
-    "include": ["./middleware", "./models", "./utils"],
+    "include": ["./middleware", "./models", "./utils", "./services"],
     "includePattern": ".js$",
     "excludePattern": "(node_modules/|docs)"
   },
