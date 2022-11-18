@@ -272,9 +272,15 @@
  *         postedAt:
  *           type: string
  *           description: The time in which this post was published
- *         deletedAt:
+ *         sendReplies:
+ *           type: boolean
+ *           description: Indicates whether replies on a post are turned on/off
+ *         markedSpam:
+ *           type: boolean
+ *           description: Indicates whether post was spammed by the owner
+ *         suggestedSort:
  *           type: string
- *           description: The time in which this post was deleted
+ *           description: Post suggested sort
  *         editedAt:
  *           type: string
  *           description: The time in which this post was edited
