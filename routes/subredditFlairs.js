@@ -302,7 +302,13 @@ subredditFlairsRouter.put("/r/:subreddit/about/post-flairs/:flairId");
  *      security:
  *          - bearerAuth: []
  */
-subredditFlairsRouter.delete("/r/:subreddit/about/post-flairs/:flairId");
+subredditFlairsRouter.delete(
+  "/r/:subreddit/about/post-flairs/:flairId",
+  verifyAuthToken,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditFlairsController.deleteSubredditFlair
+);
 
 /**
  * @swagger
