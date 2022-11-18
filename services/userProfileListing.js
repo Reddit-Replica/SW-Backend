@@ -109,15 +109,18 @@ export async function listingUserProfileService(
     children.push(postData);
   }
 
-  let after = "";
+  let after = "",
+    before = "";
   if (result[typeOfListing].length) {
     after =
       result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
+    before = result[typeOfListing][0]._id.toString();
   }
   return {
     statusCode: 200,
     data: {
       after: after,
+      before: before,
       children: children,
     },
   };
