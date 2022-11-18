@@ -137,7 +137,8 @@ export async function prepareListingPosts(listingParams) {
 }
 
 /**
- * Function to create the exact condition that will be used by mongoose directly to list posts
+ * Function to create the exact condition that will be used by mongoose directly to list posts.
+ * Used to map every listing parameter to the exact query that mongoose will use later
  *
  * @param {Object} listingParams Result of prepareListingParameters function
  * @returns {Object} The final results that will be used by mongoose to list posts
