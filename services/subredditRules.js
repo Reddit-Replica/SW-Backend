@@ -4,13 +4,13 @@
  * @returns {void}
  */
 
-export const checkEditRulesOrderService = (req) => {
+export function checkEditRulesOrderService(req) {
   if (req.body.rulesOrder.length !== req.subreddit.numberOfRules) {
     const error = new Error("Number of rules doesn't match");
     error.statusCode = 400;
     throw error;
   }
-};
+}
 
 /**
  * A function used to validate the request body, if the rule order or the rule id is dublicated it throws an error
@@ -18,7 +18,7 @@ export const checkEditRulesOrderService = (req) => {
  * @returns {void}
  */
 
-export const checkDublicateRuleOrderService = (req) => {
+export function checkDublicateRuleOrderService(req) {
   const ruleOrders = new Map();
   const ruleIds = new Map();
   req.body.rulesOrder.forEach((element) => {
@@ -35,7 +35,7 @@ export const checkDublicateRuleOrderService = (req) => {
       ruleIds.set(element.ruleId, 1);
     }
   });
-};
+}
 
 /**
  * A function used to update the rules orders of the subreddit
@@ -43,7 +43,7 @@ export const checkDublicateRuleOrderService = (req) => {
  * @returns {void}
  */
 
-export const editRulesOrderService = async (req) => {
+export async function editRulesOrderService(req) {
   // loop through the subreddit rules and the request body rules
   for (let i = 0; i < req.subreddit.rules.length; i++) {
     for (let j = 0; j < req.body.rulesOrder.length; j++) {
@@ -63,4 +63,4 @@ export const editRulesOrderService = async (req) => {
     }
   }
   await req.subreddit.save();
-};
+}
