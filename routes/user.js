@@ -822,6 +822,12 @@ userRouter.get("/user/:username/saved");
  *     security:
  *       - bearerAuth: []
  */
-userRouter.get("/user/:username/hidden");
+userRouter.get(
+  "/user/:username/hidden",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userHiddenPosts
+);
 
 export default userRouter;
