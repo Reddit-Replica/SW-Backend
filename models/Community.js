@@ -33,46 +33,8 @@ const communitySchema = mongoose.Schema({
   ],
   flairs: [
     {
-      flairName: {
-        type: String,
-        required: true,
-      },
-      backgroundColor: {
-        type: String,
-      },
-      flairOrder: {
-        type: Number,
-        required: true,
-      },
-      createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now(),
-      },
-      updatedAt: {
-        type: Date,
-      },
-      deletedAt: {
-        type: Date,
-      },
-      textColor: {
-        type: String,
-      },
-      settings: {
-        required: true,
-        modOnly: {
-          type: Boolean,
-        },
-        allowUserEdits: {
-          type: Boolean,
-        },
-        flairType: {
-          type: String,
-        },
-        emojisLimit: {
-          type: Number,
-        },
-      },
+      type: Schema.Types.ObjectId,
+      ref: "Flair",
     },
   ],
   dateOfCreation: {
