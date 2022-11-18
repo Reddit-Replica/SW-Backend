@@ -28,7 +28,7 @@ const deleteSubredditFlair = async (req, res) => {
     validateId(req.params.flairId);
     const flair = await checkFlair(req.params.flairId, req.subreddit);
     deleteFlair(flair, req.subreddit);
-    res.json("test");
+    res.status(200).json("Post flair successfully deleted");
   } catch (err) {
     console.log(err.message);
     if (err.statusCode) {
