@@ -169,3 +169,23 @@ export async function deleteFlair(flair, subreddit) {
   await subreddit.save();
   // await subreddit.populate("flairs");
 }
+
+/**
+ * A function used to prepare a flair object for the controller to return as a response
+ * @param {Object} flair the needed flair object
+ * @returns {Object} flairObject the prepared flair object to return
+ */
+export function prepareFlairDetails(flair) {
+  const flairObject = {
+    flairName: flair.flairName,
+    flairSettings: flair.flairSettings,
+    flairOrder: flair.flairOrder,
+  };
+  if (flair.textColor) {
+    flairObject.textColor = flair.textColor;
+  }
+  if (flair.backgroundColor) {
+    flairObject.backgroundColor = flair.backgroundColor;
+  }
+  return flairObject;
+}
