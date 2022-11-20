@@ -62,8 +62,8 @@ const addSubredditRule = async (req, res) => {
 
     try {
       await req.subreddit.save();
-
-      res.status(201).json("Created");
+      const ruleId = req.subreddit.rules.at(-1)._id;
+      res.status(201).json({ ruleId: ruleId });
     } catch (err) {
       console.log(err);
       res.status(500).json({
