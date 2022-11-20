@@ -1,7 +1,7 @@
 /* eslint-disable max-statements */
 
 import mongoose from "mongoose";
-
+import { compareFlairs } from "../utils/subredditFlairs.js";
 import Flair from "../models/Flair.js";
 /**
  * A function used to validate the request body, if the body is invalid it throws an error
@@ -180,6 +180,7 @@ export function prepareFlairDetails(flair) {
     flairName: flair.flairName,
     flairSettings: flair.flairSettings,
     flairOrder: flair.flairOrder,
+    flairId: flair._id,
   };
   if (flair.textColor) {
     flairObject.textColor = flair.textColor;
@@ -188,4 +189,22 @@ export function prepareFlairDetails(flair) {
     flairObject.backgroundColor = flair.backgroundColor;
   }
   return flairObject;
+}
+
+/**
+ * A function used to prepare array of flairs objects for the controller to return as a response
+ * @param {Object} subreddit the subreddit to prepare the array of flairs
+ * @returns {Array} flairsArray the prepared flairs array
+ */
+export async function prepareFlairs(subreddit) {
+  await subreddit.populate("flairs");
+  const flairsArray = [];
+  subreddit.flairs.forEach((flair) => {
+    if (!flair.deletedAt) {
+      flairsArray.push(prepareFlairDetails(flair));
+    }
+  });
+
+  flairsArray.sort(compareFlairs);
+  return flairsArray;
 }

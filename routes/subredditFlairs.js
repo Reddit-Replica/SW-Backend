@@ -72,7 +72,15 @@ const subredditFlairsRouter = express.Router();
  *      security:
  *          - bearerAuth: []
  */
-subredditFlairsRouter.get("/r/:subreddit/about/post-flairs");
+subredditFlairsRouter.get(
+  "/r/:subreddit/about/post-flairs",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  // TODO Think whether i should verify moderator or not? (maybe a user will need that details while creating a post)
+  verifyAuthTokenModerator,
+  subredditFlairsController.getAllFlairs
+);
 
 /**
  * @swagger
