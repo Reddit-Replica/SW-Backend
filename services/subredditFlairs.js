@@ -142,7 +142,6 @@ export async function deleteFlair(flair, subreddit) {
       flairEl.save();
     }
   });
-  console.log(subreddit.flairs);
   await flair.save();
   await subreddit.save();
   // await subreddit.populate("flairs");
