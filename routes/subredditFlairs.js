@@ -29,7 +29,7 @@ const subredditFalirsRouter = express.Router();
  *                                items:
  *                                    type: object
  *                                    properties:
- *                                       id:
+ *                                       flairId:
  *                                           type: string
  *                                           description: id of the flair
  *                                       flairName:
@@ -93,6 +93,9 @@ subredditFalirsRouter.get("/r/:subreddit/about/post-flairs");
  *                      schema:
  *                         type: object
  *                         properties:
+ *                           flairId:
+ *                              type: string
+ *                              description: id of the flair
  *                           flairName:
  *                              type: string
  *                              description: Name of the flair
