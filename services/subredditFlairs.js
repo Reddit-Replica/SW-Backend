@@ -94,6 +94,11 @@ export async function createFlair(flair, subreddit) {
   await subreddit.save();
 }
 
+/**
+ * A function used to validate mongodb id
+ * @param {ObjectID} id The id to validate
+ * @returns {void}
+ */
 export function validateId(id) {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     const error = new Error("Invalid id");
@@ -102,6 +107,12 @@ export function validateId(id) {
   }
 }
 
+/**
+ * A function used to create a flair and add it to the subreddit
+ * @param {ObjectID} flairId the prepared flairId object
+ * @param {Object} subreddit the subreddit to which that flair at
+ * @returns {void}
+ */
 export async function checkFlair(flairId, subreddit) {
   await subreddit.populate("flairs");
   const neededFlair = subreddit.flairs.find(
@@ -115,6 +126,12 @@ export async function checkFlair(flairId, subreddit) {
   return neededFlair;
 }
 
+/**
+ * A function used to delete a flair
+ * @param {Object} flair the prepared flair object
+ * @param {Object} subreddit the subreddit to which that flair is created
+ * @returns {void}
+ */
 export async function deleteFlair(flair, subreddit) {
   flair.deletedAt = new Date().toISOString();
   subreddit.numberOfFlairs--;
