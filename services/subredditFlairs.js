@@ -84,14 +84,15 @@ export function prepareCreateFlairBody(req) {
  * A function used to create a flair and add it to the subreddit
  * @param {Object} flair the prepared flair object
  * @param {Object} subreddit the subreddit to which that flair is created
- * @returns {void}
+ * @returns {flairId} the id of the created flair
  */
 export async function createFlair(flair, subreddit) {
   const newFlair = new Flair(flair);
   subreddit.flairs.push(newFlair._id);
   subreddit.numberOfFlairs++;
-  await newFlair.save();
+  const newFlairObject = await newFlair.save();
   await subreddit.save();
+  return newFlairObject._id;
 }
 
 /**
