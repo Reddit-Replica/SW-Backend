@@ -191,6 +191,13 @@ subredditFlairsRouter.get(
  *      responses:
  *          200:
  *              description: Post flair successfully added
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              flairId:
+ *                                  type: string
+ *                                  description: id of the created flair
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
