@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
  * @param {function} next Next function
  * @returns {void}
  */
-export const verifyAuthToken = (req, res, next) => {
+export function verifyAuthToken(req, res, next) {
   try {
     const authorizationHeader = req.headers.authorization;
     // console.log(authorizationHeader);
@@ -22,7 +22,7 @@ export const verifyAuthToken = (req, res, next) => {
       error: "Invalid Token",
     });
   }
-};
+}
 
 /**
  * A middleware used to verify that the user requesting the subreddits rules is a moderator in that subreddit
@@ -35,7 +35,7 @@ export const verifyAuthToken = (req, res, next) => {
  * @returns {void}
  */
 
-export const verifyAuthTokenModerator = (req, res, next) => {
+export function verifyAuthTokenModerator(req, res, next) {
   const moderators = req.subreddit.moderators;
   const payload = req.payload;
   const moderator = moderators.find(
@@ -48,4 +48,4 @@ export const verifyAuthTokenModerator = (req, res, next) => {
   } else {
     next();
   }
-};
+}

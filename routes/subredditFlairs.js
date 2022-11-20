@@ -1,7 +1,15 @@
 import express from "express";
 
+import {
+  verifyAuthToken,
+  verifyAuthTokenModerator,
+} from "../middleware/verifyToken.js";
+import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
+import subredditRulesMiddleware from "../middleware/subredditRules.js";
+// eslint-disable-next-line max-len
+import subredditFlairsController from "../controllers/subredditFlairsController.js";
 // eslint-disable-next-line new-cap
-const subredditFalirsRouter = express.Router();
+const subredditFlairsRouter = express.Router();
 
 /**
  * @swagger
@@ -64,7 +72,7 @@ const subredditFalirsRouter = express.Router();
  *      security:
  *          - bearerAuth: []
  */
-subredditFalirsRouter.get("/r/:subreddit/about/post-flairs");
+subredditFlairsRouter.get("/r/:subreddit/about/post-flairs");
 
 /**
  * @swagger
@@ -128,7 +136,7 @@ subredditFalirsRouter.get("/r/:subreddit/about/post-flairs");
  *      security:
  *          - bearerAuth: []
  */
-subredditFalirsRouter.get("/r/:subreddit/about/post-flairs/:flairId");
+subredditFlairsRouter.get("/r/:subreddit/about/post-flairs/:flairId");
 
 /**
  * @swagger
@@ -185,7 +193,14 @@ subredditFalirsRouter.get("/r/:subreddit/about/post-flairs/:flairId");
  *      security:
  *          - bearerAuth: []
  */
-subredditFalirsRouter.post("/r/:subreddit/about/post-flairs");
+subredditFlairsRouter.post(
+  "/r/:subreddit/about/post-flairs",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditFlairsController.addSubredditFlair
+);
 
 /**
  * @swagger
@@ -248,7 +263,14 @@ subredditFalirsRouter.post("/r/:subreddit/about/post-flairs");
  *      security:
  *          - bearerAuth: []
  */
-subredditFalirsRouter.put("/r/:subreddit/about/post-flairs/:flairId");
+subredditFlairsRouter.put(
+  "/r/:subreddit/about/post-flairs/:flairId",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditFlairsController.editSubredditFlair
+);
 
 /**
  * @swagger
@@ -290,7 +312,13 @@ subredditFalirsRouter.put("/r/:subreddit/about/post-flairs/:flairId");
  *      security:
  *          - bearerAuth: []
  */
-subredditFalirsRouter.delete("/r/:subreddit/about/post-flairs/:flairId");
+subredditFlairsRouter.delete(
+  "/r/:subreddit/about/post-flairs/:flairId",
+  verifyAuthToken,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditFlairsController.deleteSubredditFlair
+);
 
 /**
  * @swagger
@@ -344,7 +372,7 @@ subredditFalirsRouter.delete("/r/:subreddit/about/post-flairs/:flairId");
  *      security:
  *          - bearerAuth: []
  */
-subredditFalirsRouter.post("/r/:subreddit/about/post-flairs-order");
+subredditFlairsRouter.post("/r/:subreddit/about/post-flairs-order");
 
 /**
  * @swagger
@@ -391,7 +419,7 @@ subredditFalirsRouter.post("/r/:subreddit/about/post-flairs-order");
  *      security:
  *          - bearerAuth: []
  */
-subredditFalirsRouter.get("/r/:subreddit/about/post-flairs-settings");
+subredditFlairsRouter.get("/r/:subreddit/about/post-flairs-settings");
 
 /**
  * @swagger
@@ -440,6 +468,6 @@ subredditFalirsRouter.get("/r/:subreddit/about/post-flairs-settings");
  *      security:
  *          - bearerAuth: []
  */
-subredditFalirsRouter.post("/r/:subreddit/about/post-flairs-settings");
+subredditFlairsRouter.post("/r/:subreddit/about/post-flairs-settings");
 
-export default subredditFalirsRouter;
+export default subredditFlairsRouter;
