@@ -6,7 +6,9 @@ import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { verifyPostActions } from "../middleware/verifyPostActions.js";
 import { checkId } from "../middleware/checkId.js";
 import {
+  checkHybridPost,
   checkImagesAndVideos,
+  checkPostFlair,
   checkPostSubreddit,
   postSubmission,
   sharePost,
@@ -18,6 +20,7 @@ import {
 import {
   checkPostExistence,
   getPostDetails,
+  setHybridContent,
   setPostActions,
 } from "../middleware/postDetails.js";
 
@@ -227,6 +230,8 @@ postRouter.post(
   postController.submitValidator,
   validateRequestSchema,
   checkPostSubreddit,
+  checkPostFlair,
+  checkHybridPost,
   checkImagesAndVideos,
   sharePost,
   postSubmission,
@@ -381,6 +386,7 @@ postRouter.get(
   validateRequestSchema,
   checkPostExistence,
   setPostActions,
+  setHybridContent,
   getPostDetails,
   postController.postDetails
 );

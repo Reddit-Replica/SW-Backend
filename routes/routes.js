@@ -25,4 +25,9 @@ mainRouter.use(subredditRouter);
 mainRouter.use(subredditRulesRouter);
 mainRouter.use(subredditFlairsRouter);
 
+// ! should add your router before this middleware
+mainRouter.use((req, res) => {
+  res.json(`Can't ${req.method} ${req.url}`);
+});
+
 export default mainRouter;

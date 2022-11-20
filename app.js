@@ -20,7 +20,10 @@ const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 app.use(
-  multer({ storage: fileStorage, fileFilter: fileFilter }).array("files", 100)
+  multer({ storage: fileStorage, fileFilter: fileFilter }).fields([
+    { name: "images", maxCount: 100 },
+    { name: "videos", maxCount: 100 },
+  ])
 );
 
 // That's morgan for tracking the api in the terminal
@@ -29,7 +32,7 @@ app.use(morgan("dev"));
 
 // Log stream for morgan to make the log file in the server
 const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "access.log"),
+  path.join(__dirname, "logs/access.log"),
   {
     flags: "a",
   }
