@@ -260,7 +260,14 @@ subredditFlairsRouter.post(
  *      security:
  *          - bearerAuth: []
  */
-subredditFlairsRouter.put("/r/:subreddit/about/post-flairs/:flairId");
+subredditFlairsRouter.put(
+  "/r/:subreddit/about/post-flairs/:flairId",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditFlairsController.editSubredditFlair
+);
 
 /**
  * @swagger

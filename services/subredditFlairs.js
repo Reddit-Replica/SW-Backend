@@ -8,7 +8,7 @@ import Flair from "../models/Flair.js";
  * @param {Object} req Request object
  * @returns {void}
  */
-export function validateCreateFlair(req) {
+export function validateCreateOrEditFlair(req) {
   // check if required paramaters are missed
   if (!req.body.flairName || !req.body.settings) {
     const error = new Error("Missing parameters");
@@ -92,6 +92,29 @@ export async function createFlair(flair, subreddit) {
   subreddit.numberOfFlairs++;
   await newFlair.save();
   await subreddit.save();
+}
+
+/**
+ * A function used to edit a flair
+ * @param {Object} preparedFlairObject the prepared flair object
+ * @param {Object} flair the flair object to edit
+ * @returns {void}
+ */
+export async function editFlair(preparedFlairObject, flair) {
+  flair.flairSettings = preparedFlairObject.flairSettings;
+  flair.flairName = preparedFlairObject.flairName;
+  if (preparedFlairObject.backgroundColor) {
+    flair.backgroundColor = preparedFlairObject.backgroundColor;
+  } else {
+    flair.backgroundColor = null;
+  }
+  if (preparedFlairObject.textColor) {
+    flair.textColor = preparedFlairObject.textColor;
+  } else {
+    flair.textColor = null;
+  }
+  flair.editedAt = new Date().toISOString();
+  await flair.save();
 }
 
 /**
