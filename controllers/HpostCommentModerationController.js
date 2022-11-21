@@ -1,4 +1,5 @@
 import { body, check } from "express-validator";
+import { markPostAsModerated } from "../services/postsModeration.js";
 
 const modValidator = [
   body("id").not().isEmpty().withMessage("Id can't be empty"),
@@ -21,6 +22,9 @@ const approve = async (req, res) => {
       approvedDate: Date.now(),
     };
     post.moderation.remove = undefined;
+    if (post.subredditName) {
+      markPostAsModerated(post.id, post.subredditName);
+    }
     await post.save();
     return res.status(200).json("Post approved successfully!");
   } else if (req.type === "comment") {
@@ -55,6 +59,9 @@ const remove = async (req, res) => {
       removedDate: Date.now(),
     };
     post.moderation.approve = undefined;
+    if (post.subredditName) {
+      markPostAsModerated(post.id, post.subredditName);
+    }
     await post.save();
     return res.status(200).json("Post removed successfully!");
   } else if (req.type === "comment") {
