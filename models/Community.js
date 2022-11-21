@@ -37,6 +37,18 @@ const communitySchema = mongoose.Schema({
       ref: "Flair",
     },
   ],
+  flairSettings: {
+    enablePostFlairInThisCommunity: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    allowUsersToAssignTheirOwn: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+  },
   dateOfCreation: {
     type: Date,
     required: true,
