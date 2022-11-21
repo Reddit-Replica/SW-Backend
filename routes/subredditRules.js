@@ -54,6 +54,13 @@ const subredditRulesRouter = express.Router();
  *   responses:
  *    201:
  *     description: Created
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         ruleId:
+ *          type: string
+ *          description: The id of the created rule
  *    400:
  *     description: Bad Request
  *     content:
@@ -346,6 +353,13 @@ subredditRulesRouter.delete(
  *    - bearerAuth: []
  */
 
-subredditRulesRouter.post("/r/:subreddit/about/rules-order");
+subredditRulesRouter.post(
+  "/r/:subreddit/about/rules-order",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditRulesController.editRulesOrder
+);
 
 export default subredditRulesRouter;

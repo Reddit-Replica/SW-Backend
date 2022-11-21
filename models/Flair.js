@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 // eslint-disable-next-line new-cap
 const flairSchema = mongoose.Schema({
@@ -6,17 +6,19 @@ const flairSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  order: {
+  subreddit: {
+    type: Schema.Types.ObjectId,
+    ref: "Subreddit",
+  },
+  flairOrder: {
     type: Number,
     required: true,
   },
   backgroundColor: {
     type: String,
-    default: "white",
   },
   textColor: {
     type: String,
-    default: "black",
   },
   createdAt: {
     type: Date,
@@ -40,11 +42,9 @@ const flairSchema = mongoose.Schema({
     },
     flairType: {
       type: String,
-      default: "text and emojis",
     },
     emojisLimit: {
       type: Number,
-      default: 10,
     },
   },
 });

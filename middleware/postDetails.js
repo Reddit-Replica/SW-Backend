@@ -16,8 +16,8 @@ export async function checkPostExistence(req, res, next) {
   const postId = req.body.id;
   try {
     const post = await Post.findById(postId)?.populate("flair");
-    if (!post) {
-      return res.status(404).json("Post not found");
+    if (!post || post.deletedAt) {
+      return res.status(404).json("Post may be not found or deleted");
     }
     req.post = post;
     next();
@@ -80,6 +80,56 @@ export async function setPostActions(req, res, next) {
 }
 
 /**
+ * Middleware used to set the hybrid content of a post in case it is present
+ * by ordering it according to the index and restructuring each element to
+ * contain only the type of the content and the data itself. The newly created object
+ * is sent to the next middleware to return it in the hybridContent field
+ *
+ * @param {Object} req Request object
+ * @param {Object} res Response object
+ * @param {function} next Next function
+ * @returns {void}
+ */
+// eslint-disable-next-line max-statements
+export async function setHybridContent(req, res, next) {
+  const post = req.post;
+  const content = post.hybridContent;
+  if (content) {
+    const orderedContent = new Map();
+    content.texts?.forEach((element) => {
+      orderedContent.set(element.index, {
+        type: "text",
+        content: element.text,
+      });
+    });
+    content.images?.forEach((element) => {
+      orderedContent.set(element.index, {
+        type: "image",
+        content: element.image,
+      });
+    });
+    content.videos?.forEach((element) => {
+      orderedContent.set(element.index, {
+        type: "video",
+        content: element.video,
+      });
+    });
+    content.links?.forEach((element) => {
+      orderedContent.set(element.index, {
+        type: "link",
+        content: element.link,
+      });
+    });
+    let orderedArr = [...orderedContent].sort();
+    orderedArr = orderedArr.map((el) => {
+      return el[1];
+    });
+    req.hybridContent = orderedArr;
+  }
+  next();
+}
+
+/**
  * Middleware used to generate a post object from the post parameters
  * given from the previous middleware to be returned with a status code
  * of 200 in the controller.
@@ -95,12 +145,16 @@ export async function getPostDetails(req, res, next) {
   const postObj = {
     kind: post.kind,
     subreddit: post.subredditName,
-    content: post.content,
+    link: post.link,
     images: post.images,
+    video: post.video,
+    hybridContent: req.hybridContent,
     nsfw: post.nsfw,
     spoiler: post.spoiler,
+    markedSpam: post.markedSpam,
     sharePostId: post.sharePostId,
     title: post.title,
+    suggestedSort: post.suggestedSort,
     flair: {
       id: post.flair?._id,
       flairName: post.flair?.flairName,
@@ -111,7 +165,9 @@ export async function getPostDetails(req, res, next) {
     comments: post.numberOfComments,
     votes: post.numberOfUpvotes - post.numberOfDownvotes,
     postedAt: post.createdAt,
+    editedAt: post.editedAt,
     postedBy: post.ownerUsername,
+    sendReplies: post.sendReplies,
     votingType: req.votingType,
     saved: req.saved,
     followed: req.followed,

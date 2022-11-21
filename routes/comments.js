@@ -10,7 +10,7 @@ const commentsRouter = express.Router();
  * @swagger
  * /comment:
  *  post:
- *      summary: Submit a new comment or reply to a message
+ *      summary: Create a new comment to a post or another comment
  *      tags: [Comments]
  *      requestBody:
  *       required: true
