@@ -1,31 +1,27 @@
 import User from "../models/User.js";
 import { body, check } from "express-validator";
+import { listingSubredditPosts } from "../services/subredditItems.js";
 
-const postIdValidator = [
-  body("id").not().isEmpty().withMessage("Id can't be empty"),
-];
-
-const pinPostValidator = [
-  body("id").not().isEmpty().withMessage("Id can't be empty"),
-  body("pin").not().isEmpty().withMessage("Pin/unpin flag is required"),
-];
-
-const submitValidator = [
-  body("kind").not().isEmpty().withMessage("Post kind can't be empty"),
-  check("kind").isIn(["hybrid", "link", "image", "video", "post"]),
-  body("title").not().isEmpty().withMessage("Post title can't be empty"),
-  body("inSubreddit").not().isEmpty().withMessage("Post place can't be empty"),
-];
-
-const submit = async (req, res) => {
-  const user = req.user;
-  const post = req.post;
+const getSpammedItems = async (req, res) => {
   try {
-    user.posts.push(post.id);
-    await user.save();
-    res.status(201).json("Post submitted successfully!");
-  } catch (err) {
-    res.status(500).json("Internal server error");
+    const { sort, only, before, after, limit } = req.query;
+    let result;
+    if (only === "posts") {
+      result = await listingSubredditPosts(
+        req.params.subreddit,
+        "spammedPosts",
+        { sort, before, after, limit }
+      );
+    }
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
   }
 };
 
