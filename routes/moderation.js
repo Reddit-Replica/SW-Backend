@@ -1,6 +1,6 @@
 import express from "express";
 // eslint-disable-next-line max-len
-import postModerationController from "../controllers/HpostModerationController.js";
+import postModerationController from "../controllers/HpostCommentModerationController.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { checkThingMod } from "../middleware/postModeration.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
