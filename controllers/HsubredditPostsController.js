@@ -18,7 +18,7 @@ const getSpammedItems = async (req, res) => {
         "spammedPosts",
         { sort, before, after, limit }
       );
-    } else {
+    } else if (only === "comments") {
       result = await listingSubredditPosts(
         req.params.subreddit,
         "spammedComments",

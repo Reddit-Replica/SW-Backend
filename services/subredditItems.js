@@ -18,16 +18,19 @@ export async function listingSubredditPosts(
     };
   }
 
-  const result = await subreddit.select(typeOfListing).populate({
-    path: typeOfListing,
-    match: listingResult.find,
-    limit: listingResult.limit,
-    options: {
-      sort: listingResult.sort,
-    },
-  });
+  const result = await Subreddit.findOne({ title: subredditName })
+    .select(typeOfListing)
+    .populate({
+      path: typeOfListing,
+      match: listingResult.find,
+      limit: listingResult.limit,
+      options: {
+        sort: listingResult.sort,
+      },
+    });
 
   let children = [];
+
   for (const i in result[typeOfListing]) {
     const post = result[typeOfListing][i];
 
@@ -35,12 +38,9 @@ export async function listingSubredditPosts(
     postData.data = {
       kind: post.kind,
       subreddit: post.subredditName,
-      content: post.content,
-      images: post.images,
       nsfw: post.nsfw,
       spoiler: post.spoiler,
       title: post.title,
-      sharePostId: post.sharePostId,
       flair: post.flair,
       comments: post.numberOfComments,
       votes: post.numberOfUpvotes - post.numberOfDownvotes,

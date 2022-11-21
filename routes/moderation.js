@@ -8,7 +8,7 @@ import { checkId } from "../middleware/checkId.js";
 import {
   verifyAuthToken,
   verifyAuthTokenModerator,
-} from "../middleware/verifyToken";
+} from "../middleware/verifyToken.js";
 import subredditDetails from "../middleware/subredditDetails.js";
 
 // eslint-disable-next-line new-cap
