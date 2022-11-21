@@ -1,7 +1,7 @@
 import express from "express";
 // eslint-disable-next-line max-len
 import postModerationController from "../controllers/HpostModerationController.js";
-import verifyToken from "../middleware/verifyToken.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { checkThingMod } from "../middleware/postModeration.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkId } from "../middleware/checkId.js";
@@ -459,7 +459,7 @@ moderationRouter.post("/leave-moderator");
 
 moderationRouter.post(
   "/approve",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   postModerationController.modValidator,
   validateRequestSchema,
   checkId,
@@ -513,7 +513,7 @@ moderationRouter.post(
 
 moderationRouter.post(
   "/remove",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   postModerationController.modValidator,
   validateRequestSchema,
   checkId,
@@ -567,7 +567,7 @@ moderationRouter.post(
 
 moderationRouter.post(
   "/lock",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   postModerationController.modValidator,
   validateRequestSchema,
   checkId,
@@ -621,7 +621,7 @@ moderationRouter.post(
 
 moderationRouter.post(
   "/unlock",
-  verifyToken.verifyAuthToken,
+  verifyAuthToken,
   postModerationController.modValidator,
   validateRequestSchema,
   checkId,
