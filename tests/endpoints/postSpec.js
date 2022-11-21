@@ -8,7 +8,7 @@ import { hashPassword } from "../../utils/passwordUtils.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-fdescribe("Testing Post endpoints", () => {
+describe("Testing Post endpoints", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
@@ -264,6 +264,10 @@ fdescribe("Testing Post endpoints", () => {
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
+    const testUser = await User.findById(user.id);
+    expect(
+      testUser.pinnedPosts.find((postId) => postId.toString() === post.id)
+    ).toBeTruthy();
   });
 
   it("Get pinned posts", async () => {
@@ -297,6 +301,10 @@ fdescribe("Testing Post endpoints", () => {
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
+    const testUser = await User.findById(user.id);
+    expect(
+      testUser.pinnedPosts.find((postId) => postId.toString() === post.id)
+    ).toBeFalsy();
   });
 
   it("Unpin a post that has already been unpinned", async () => {
