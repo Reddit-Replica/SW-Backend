@@ -1,6 +1,7 @@
 import express from "express";
 // eslint-disable-next-line max-len
 import postModerationController from "../controllers/HpostCommentModerationController.js";
+import postModController from "../controllers/HsubredditPostsController.js";
 import { checkThingMod } from "../middleware/postModeration.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkId } from "../middleware/checkId.js";
@@ -122,8 +123,11 @@ const moderationRouter = express.Router();
 moderationRouter.get(
   "/r/:subreddit/about/spam",
   verifyAuthToken,
+  postModController.modValidator,
+  validateRequestSchema,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator
+  verifyAuthTokenModerator,
+  postModController.getSpammedItems
 );
 
 /**
@@ -211,7 +215,15 @@ moderationRouter.get(
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/edited");
+moderationRouter.get(
+  "/r/:subreddit/about/edited",
+  verifyAuthToken,
+  postModController.modValidator,
+  validateRequestSchema,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.getEditedItems
+);
 
 /**
  * @swagger
@@ -289,7 +301,13 @@ moderationRouter.get("/r/:subreddit/about/edited");
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/unmoderated");
+moderationRouter.get(
+  "/r/:subreddit/about/unmoderated",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.getUnmoderatedPosts
+);
 
 /**
  * @swagger
