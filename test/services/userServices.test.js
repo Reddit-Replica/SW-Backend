@@ -3,15 +3,18 @@ import {
   searchForUserService,
   blockUserService,
   followUserService,
+  getUserAboutDataService,
 } from "../../services/userServices.js";
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
+import Subreddit from "./../../models/Community.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing user services functions", () => {
   let user = {},
     mainUser = {},
-    userToAction = {};
+    userToAction = {},
+    subreddit = {};
   beforeAll(async () => {
     await connectDatabase();
 
@@ -24,8 +27,26 @@ describe("Testing user services functions", () => {
     mainUser = new User({
       username: "MainUser",
       email: "veryfunny@gmail.com",
+      displayName: "Beshoy Morad",
+      about: "I am studying without [stu]",
     });
     await mainUser.save();
+
+    subreddit = new Subreddit({
+      title: "Subreddit",
+      category: "Sports",
+      type: "Public",
+      owner: {
+        username: mainUser.username,
+        userID: mainUser._id,
+      },
+    });
+    subreddit.moderators.push({
+      username: mainUser.username,
+      userID: mainUser._id,
+      dateOfModeration: mainUser.createdAt,
+    });
+    await subreddit.save();
 
     userToAction = new User({
       username: "UserToAction",
@@ -159,13 +180,58 @@ describe("Testing user services functions", () => {
     expect(result.message).toEqual("User unfollowed successfully");
   });
 
-  // it("", () => {});
-  // it("", () => {});
-  // it("", () => {});
-  // it("", () => {});
-  // it("", () => {});
-  // it("", () => {});
-  // it("", () => {});
-  // it("", () => {});
-  // it("", () => {});
+  it("should have getUserAboutDataService function", () => {
+    expect(getUserAboutDataService).toBeDefined();
+  });
+
+  it("try to get the information of invalid username", async () => {
+    try {
+      await getUserAboutDataService("invalid");
+    } catch (error) {
+      expect(error.statusCode).toEqual(404);
+      expect(error.message).toEqual("Didn't find a user with that username");
+    }
+  });
+
+  it("get the information of a user with no logged in user", async () => {
+    const result = await getUserAboutDataService("MainUser");
+    expect(result.statusCode).toEqual(200);
+    expect(result.data.displayName).toEqual("Beshoy Morad");
+    expect(result.data.about).toEqual("I am studying without [stu]");
+  });
+
+  // eslint-disable-next-line max-len
+  it("get the information of a user with invalid logged in user id", async () => {
+    try {
+      await getUserAboutDataService("MainUser", "invalid id");
+    } catch (error) {
+      expect(error.statusCode).toEqual(400);
+      expect(error.message).toEqual("Invalid id from the token");
+    }
+  });
+
+  it("get the information of a user with logged in user", async () => {
+    const result = await getUserAboutDataService("MainUser", userToAction._id);
+    expect(result.statusCode).toEqual(200);
+    expect(result.data.displayName).toEqual("Beshoy Morad");
+    expect(result.data.about).toEqual("I am studying without [stu]");
+  });
+
+  // eslint-disable-next-line max-len
+  it("get the information of a user with logged in user who blocked that user", async () => {
+    await blockUserService(userToAction, mainUser, true);
+    const result = await getUserAboutDataService("MainUser", userToAction._id);
+    expect(result.statusCode).toEqual(200);
+    expect(result.data.displayName).toEqual("Beshoy Morad");
+    expect(result.data.blocked).toBeTruthy();
+  });
+
+  // eslint-disable-next-line max-len
+  it("get the information of a user with logged in user who followed that user", async () => {
+    await followUserService(userToAction, mainUser, true);
+    const result = await getUserAboutDataService("MainUser", userToAction._id);
+    expect(result.statusCode).toEqual(200);
+    expect(result.data.displayName).toEqual("Beshoy Morad");
+    expect(result.data.followed).toBeTruthy();
+  });
 });

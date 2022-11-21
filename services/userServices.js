@@ -149,6 +149,11 @@ export async function getUserAboutDataService(username, loggedInUserId) {
 
   let loggedInUser = null;
   if (loggedInUserId) {
+    if (!mongoose.Types.ObjectId.isValid(loggedInUserId)) {
+      let error = new Error("Invalid id from the token");
+      error.statusCode = 400;
+      throw error;
+    }
     loggedInUser = await User.findById(loggedInUserId).select(
       "joinedSubreddits blockedUsers"
     );
