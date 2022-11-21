@@ -1,4 +1,9 @@
 import express from "express";
+import {
+  verifyAuthToken,
+  verifyAuthTokenModerator,
+} from "../middleware/verifyToken";
+import subredditDetails from "../middleware/subredditDetails.js";
 
 // eslint-disable-next-line new-cap
 const moderationRouter = express.Router();
@@ -109,7 +114,12 @@ const moderationRouter = express.Router();
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/spam");
+moderationRouter.get(
+  "/r/:subreddit/about/spam",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator
+);
 
 /**
  * @swagger
