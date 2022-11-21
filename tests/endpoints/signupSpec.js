@@ -2,16 +2,29 @@ import supertest from "supertest";
 import app from "../../app.js";
 import User from "../../models/User.js";
 import Token from "./../../models/VerifyToken.js";
+import { generateJWT } from "./../../utils/generateTokens.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
 describe("Testing sign up endpoints", () => {
+  let user = {},
+    token = "";
+  beforeAll(async () => {
+    user = new User({
+      username: "Philip",
+      email: "philip@gmail.com",
+    });
+    await user.save();
+
+    token = generateJWT(user);
+  });
+
   afterAll(async () => {
     await User.deleteMany({});
     await Token.deleteMany({});
   });
 
-  xit("try to sign up without username", async () => {
+  it("try to sign up without username", async () => {
     const response = await request
       .post("/signup")
       .send({ email: "testing@gmail.com", password: "123456789" });
@@ -19,7 +32,7 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(400);
   });
 
-  xit("try to sign up without email", async () => {
+  it("try to sign up without email", async () => {
     const response = await request
       .post("/signup")
       .send({ username: "Beshoy", password: "123456789" });
@@ -27,15 +40,17 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(400);
   });
 
-  xit("try to sign up with invalid email", async () => {
-    const response = await request
-      .post("/signup")
-      .send({ email: "beshoy@gmail", password: "123456789" });
+  it("try to sign up with invalid email", async () => {
+    const response = await request.post("/signup").send({
+      username: "Beshoy",
+      email: "beshoy@gmail",
+      password: "123456789",
+    });
 
     expect(response.status).toEqual(400);
   });
 
-  xit("try to sign up without password", async () => {
+  it("try to sign up without password", async () => {
     const response = await request
       .post("/signup")
       .send({ email: "beshoy@gmail.com", username: "Beshoy" });
@@ -43,7 +58,7 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(400);
   });
 
-  xit("try to sign up with short password", async () => {
+  it("try to sign up with short password", async () => {
     const response = await request
       .post("/signup")
       .send({ email: "beshoy@gmail.com", username: "Beshoy", password: "123" });
@@ -51,7 +66,7 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(400);
   });
 
-  xit("try to sign up with all valid parameters", async () => {
+  it("try to sign up with all valid parameters", async () => {
     const response = await request.post("/signup").send({
       email: "beshoy@gmail.com",
       username: "Beshoy",
@@ -61,7 +76,7 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(201);
   });
 
-  xit("try to sign up with unavailable username", async () => {
+  it("try to sign up with unavailable username", async () => {
     const response = await request.post("/signup").send({
       email: "beshoy1@gmail.com",
       username: "Beshoy",
@@ -71,7 +86,7 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(400);
   });
 
-  xit("try to sign up with unavailable email", async () => {
+  it("try to sign up with unavailable email", async () => {
     const response = await request.post("/signup").send({
       email: "beshoy@gmail.com",
       username: "Beshoy1",
@@ -81,7 +96,7 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(400);
   });
 
-  xit("check the availability of a taken username", async () => {
+  it("check the availability of a taken username", async () => {
     const response = await request.get("/username-available").query({
       username: "Beshoy",
     });
@@ -89,15 +104,15 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(409);
   });
 
-  xit("check the availability of an available username", async () => {
+  it("check the availability of an available username", async () => {
     const response = await request.get("/username-available").query({
-      username: "Philip",
+      username: "ZeyadTarekk",
     });
 
     expect(response.status).toEqual(200);
   });
 
-  xit("check the availability of a taken email", async () => {
+  it("check the availability of a taken email", async () => {
     const response = await request.get("/email-available").query({
       email: "beshoy@gmail.com",
     });
@@ -105,7 +120,7 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(409);
   });
 
-  xit("check the availability of an available email", async () => {
+  it("check the availability of an available email", async () => {
     const response = await request.get("/email-available").query({
       email: "beshoy1@gmail.com",
     });
@@ -113,13 +128,13 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(200);
   });
 
-  xit("try to sign up with google without access token", async () => {
+  it("try to sign up with google without access token", async () => {
     const response = await request.post("/signin/google");
 
     expect(response.status).toEqual(400);
   });
 
-  xit("try to sign up with google with valid access token", async () => {
+  it("try to sign up with google with valid access token", async () => {
     const response = await request.post("/signin/google").send({
       accessToken:
         // eslint-disable-next-line max-len
@@ -129,7 +144,7 @@ describe("Testing sign up endpoints", () => {
     expect(response.status).toEqual(201);
   });
 
-  xit("try to sign up with google with same access token again", async () => {
+  it("try to sign up with google with same access token again", async () => {
     const response = await request.post("/signin/google").send({
       accessToken:
         // eslint-disable-next-line max-len
@@ -137,5 +152,92 @@ describe("Testing sign up endpoints", () => {
     });
 
     expect(response.status).toEqual(200);
+  });
+
+  it("try to verify the email with invalid token", async () => {
+    const user = new User({
+      username: "Besho",
+      email: "besho@gmail.com",
+    });
+    await user.save();
+
+    const response = await request.post(
+      `/verify-email/${user._id}/invalidtoken`
+    );
+
+    expect(response.status).toEqual(403);
+  });
+  it("try to verify the email with invalid user id", async () => {
+    const user = new User({
+      username: "Besho",
+      email: "besho@gmail.com",
+    });
+    await user.save();
+
+    const token = new Token({
+      userId: user._id,
+      type: "verifyEmail",
+      token: "token",
+    });
+
+    await token.save();
+
+    const response = await request.post(
+      `/verify-email/invalidId/${token.token}`
+    );
+
+    expect(response.status).toEqual(400);
+  });
+  it("try to verify the email with all valid parameters", async () => {
+    const user = new User({
+      username: "Besho",
+      email: "besho@gmail.com",
+    });
+    await user.save();
+
+    const token = new Token({
+      userId: user._id,
+      type: "verifyEmail",
+      token: "token",
+    });
+
+    await token.save();
+
+    const response = await request.post(
+      `/verify-email/${user._id.toString()}/${token.token}`
+    );
+
+    expect(response.status).toEqual(200);
+  });
+
+  it("try to change the username of user without token", async () => {
+    const response = await request
+      .patch("/edit-username")
+      .send({ username: "newName" });
+
+    expect(response.status).toEqual(401);
+  });
+  it("try to change the username without username in body", async () => {
+    const response = await request
+      .patch("/edit-username")
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(400);
+  });
+  it("try to change the username with all valid parameters", async () => {
+    const response = await request
+      .patch("/edit-username")
+      .set("Authorization", "Bearer " + token)
+      .send({ username: "newName" });
+
+    expect(response.status).toEqual(200);
+  });
+  it("try to change the username of a user again", async () => {
+    const response = await request
+      .patch("/edit-username")
+      .set("Authorization", "Bearer " + token)
+      .send({ username: "newName" });
+
+    expect(response.status).toEqual(400);
   });
 });

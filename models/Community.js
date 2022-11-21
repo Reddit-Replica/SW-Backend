@@ -33,13 +33,17 @@ const communitySchema = mongoose.Schema({
   ],
   flairs: [
     {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Flair",
     },
   ],
   dateOfCreation: {
     type: Date,
     required: true,
     default: Date.now(),
+  },
+  deletedAt: {
+    type: Date,
   },
   views: {
     type: Number,
@@ -54,6 +58,16 @@ const communitySchema = mongoose.Schema({
     required: true,
     default: false,
   },
+  numberOfRules: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  numberOfFlairs: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   rules: [
     {
       ruleTitle: {
@@ -62,7 +76,6 @@ const communitySchema = mongoose.Schema({
       },
       ruleDescription: {
         type: String,
-        required: true,
       },
       ruleOrder: {
         type: Number,
@@ -73,13 +86,18 @@ const communitySchema = mongoose.Schema({
         required: true,
         default: Date.now(),
       },
+      updatedAt: {
+        type: Date,
+      },
+      deletedAt: {
+        type: Date,
+      },
       appliesTo: {
         type: String,
         required: true,
       },
       reportReason: {
         type: String,
-        required: true,
       },
     },
   ],
@@ -95,7 +113,6 @@ const communitySchema = mongoose.Schema({
       },
       nickname: {
         type: String,
-        required: true,
       },
       dateOfModeration: {
         type: Date,
@@ -145,14 +162,74 @@ const communitySchema = mongoose.Schema({
       },
     },
   ],
+  waitedUsers: [
+    {
+      username: {
+        type: String,
+        required: true,
+      },
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      message: {
+        type: String,
+      },
+    },
+  ],
+  owner: {
+    username: {
+      type: String,
+      required: true,
+    },
+    userID: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
   subredditPosts: [
     {
       type: Schema.Types.ObjectId,
       ref: "Post",
     },
   ],
+  unmoderatedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  editedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  spammedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  editedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  spammedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  //NEEDS TO BE AUTO INCREMENT
+  //Is used to get random subreddit from categories
+  randomIndex: {
+    type: Number,
+  },
 });
 
-const Community = mongoose.model("Community", communitySchema);
+const Subreddit = mongoose.model("Subreddit", communitySchema);
 
-export default Community;
+export default Subreddit;

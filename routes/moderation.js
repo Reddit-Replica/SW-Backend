@@ -1,4 +1,10 @@
 import express from "express";
+// eslint-disable-next-line max-len
+import postModerationController from "../controllers/HpostCommentModerationController.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+import { checkThingMod } from "../middleware/postModeration.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import { checkId } from "../middleware/checkId.js";
 
 // eslint-disable-next-line new-cap
 const moderationRouter = express.Router();
@@ -451,7 +457,15 @@ moderationRouter.post("/leave-moderator");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/approve");
+moderationRouter.post(
+  "/approve",
+  verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.approve
+);
 
 /**
  * @swagger
@@ -497,7 +511,15 @@ moderationRouter.post("/approve");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/remove");
+moderationRouter.post(
+  "/remove",
+  verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.remove
+);
 
 /**
  * @swagger
@@ -543,7 +565,15 @@ moderationRouter.post("/remove");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/lock");
+moderationRouter.post(
+  "/lock",
+  verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.lock
+);
 
 /**
  * @swagger
@@ -589,7 +619,15 @@ moderationRouter.post("/lock");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/unlock");
+moderationRouter.post(
+  "/unlock",
+  verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.unlock
+);
 
 /**
  * @swagger
@@ -1002,689 +1040,5 @@ moderationRouter.put("/r/:subreddit/about/edit");
  */
 
 moderationRouter.get("/r/:subreddit/suggested-topics");
-
-/**
- * @swagger
- * /r/{subreddit}/about/rules:
- *  post:
- *   summary:
- *    Add a rule to subreddit.
- *   tags: [Subreddit moderation]
- *   parameters:
- *    - in: path
- *      name: subreddit
- *      description: name of the subreddit.
- *      schema:
- *       type: string
- *      required: true
- *   requestBody:
- *    required: true
- *    content:
- *     application/json:
- *      schema:
- *       required:
- *        - ruleName
- *        - appliesTo
- *       properties:
- *         ruleName:
- *          type: string
- *          description: The name of the rule.
- *         appliesTo:
- *          type: string
- *          description: Where to apply the rule
- *          enum:
- *           - posts and comments
- *           - posts only
- *           - comments only
- *         reportReason:
- *          type: string
- *          description: The reason of the report. (maximum 100 charachter)
- *         description:
- *          type: string
- *          description: The full description of the report. (maximum 500 charachter)
- *   responses:
- *    200:
- *     description: Accepted
- *    400:
- *     description: Bad Request
- *     content:
- *      application/json:
- *       schema:
- *        properties:
- *         error:
- *          type: string
- *          description: Type of error
- *    401:
- *     description: Unauthorized access
- *    404:
- *     description: Not Found
- *    500:
- *     description: Internal Server Error
- *   security:
- *    - bearerAuth: []
- */
-
-moderationRouter.post("/r/:subreddit/about/rules");
-
-/**
- * @swagger
- * /r/{subreddit}/about/rules:
- *  get:
- *   summary:
- *    Get the rules for a subreddit.
- *   tags: [Subreddit moderation]
- *   parameters:
- *    - in: path
- *      name: subreddit
- *      description: name of the subreddit.
- *      schema:
- *       type: string
- *      required: true
- *   responses:
- *    200:
- *     description: The rules for the subreddit.
- *     content:
- *      application/json:
- *       schema:
- *        type: object
- *        properties:
- *         rules:
- *          type: array
- *          description: The rules of the subreddit. (maximum 15 rule)
- *          items:
- *           type: object
- *           properties:
- *            ruleID:
- *             type: string
- *             description: ID of the rule
- *            ruleName:
- *             type: string
- *             description: Name of the rule
- *            ruleOrder:
- *             type: integer
- *             description: Order of the rule
- *            createdAt:
- *             type: string
- *             format: date-time
- *             description: Creation date of the rule
- *            appliesTo:
- *             type: string
- *             description: Where to apply the rule
- *             enum:
- *              - posts and comments
- *              - posts only
- *              - comments only
- *            reportReason:
- *             type: string
- *             description: The reason of the report. (maximum 100 charachter)
- *            description:
- *             type: string
- *             description: The full description of the report. (maximum 500 charachter)
- *    401:
- *     description: Unauthorized access
- *    404:
- *     description: Not Found
- *    500:
- *     description: Internal Server Error
- *   security:
- *    - bearerAuth: []
- */
-
-moderationRouter.get("/r/:subreddit/about/rules");
-
-/**
- * @swagger
- * /r/{subreddit}/about/rules/{ruleId}:
- *  put:
- *   summary:
- *    Edit a rule at subreddit.
- *   tags: [Subreddit moderation]
- *   parameters:
- *    - in: path
- *      name: subreddit
- *      description: name of the subreddit.
- *      schema:
- *       type: string
- *      required: true
- *   requestBody:
- *    required: true
- *    content:
- *     application/json:
- *      schema:
- *       required:
- *        - ruleName
- *        - appliesTo
- *        - ruleOrder
- *       properties:
- *         ruleName:
- *          type: string
- *          description: The name of the rule.
- *         ruleOrder:
- *          type: integer
- *          description: Order of the rule
- *         appliesTo:
- *          type: string
- *          description: Where to apply the rule
- *          enum:
- *           - posts and comments
- *           - posts only
- *           - comments only
- *         reportReason:
- *          type: string
- *          description: The reason of the report. (maximum 100 charachter)
- *         description:
- *          type: string
- *          description: The full description of the report. (maximum 500 charachter)
- *   responses:
- *    200:
- *     description: Accepted
- *    400:
- *     description: Bad Request
- *     content:
- *      application/json:
- *       schema:
- *        properties:
- *         error:
- *          type: string
- *          description: Type of error
- *    401:
- *     description: Unauthorized access
- *    404:
- *     description: Not Found
- *    500:
- *     description: Internal Server Error
- *   security:
- *    - bearerAuth: []
- */
-
-moderationRouter.put("/r/:subreddit/about/rules/:ruleId");
-
-/**
- * @swagger
- * /r/{subreddit}/about/rules-order:
- *  post:
- *   summary:
- *    Edit rules order of the subreddit.
- *   tags: [Subreddit moderation]
- *   parameters:
- *    - in: path
- *      name: subreddit
- *      description: name of the subreddit.
- *      schema:
- *       type: string
- *      required: true
- *   requestBody:
- *    required: true
- *    content:
- *     application/json:
- *      schema:
- *       required:
- *        - rulesOrder
- *       properties:
- *         rulesOrder:
- *          type: array
- *          description: The order of the rules.
- *          items:
- *           type: object
- *           properties:
- *            ruleId:
- *             type: string
- *             description: id of the rule
- *            ruleOrder:
- *             type: string
- *             description: The new order of the rule
- *   responses:
- *    200:
- *     description: Accepted
- *    400:
- *     description: Bad Request
- *     content:
- *      application/json:
- *       schema:
- *        properties:
- *         error:
- *          type: string
- *          description: Type of error
- *    401:
- *     description: Unauthorized access
- *    404:
- *     description: Not Found
- *    500:
- *     description: Internal Server Error
- *   security:
- *    - bearerAuth: []
- */
-
-moderationRouter.post("/r/:subreddit/about/rules-order");
-
-/**
- * @swagger
- * /r/{subreddit}/about/post-flairs:
- *  get:
- *      summary: Returns all post flairs of a subreddit
- *      tags: [Posts and comments moderation]
- *      parameters:
- *          - in: path
- *            required: true
- *            name: subreddit
- *            description: Subreddit name
- *            schema:
- *                  type: string
- *      responses:
- *          200:
- *              description: Post flairs returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          properties:
- *                              postFlairs:
- *                                type: array
- *                                items:
- *                                    type: object
- *                                    properties:
- *                                       id:
- *                                           type: string
- *                                           description: id of the flair
- *                                       flairName:
- *                                           type: string
- *                                           description: Name of the flair
- *                                       order:
- *                                           type: number
- *                                           description: Order of the flair among the rest
- *                                       backgroundColor:
- *                                           type: string
- *                                           description: Background color of the flair
- *                                       textColor:
- *                                           type: string
- *                                           description: Color of the flair name
- *                                       settings:
- *                                           $ref: '#/components/schemas/FlairSettings'
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          404:
- *              description: Subreddit not found
- *          401:
- *              description: Unauthorized Access
- *          500:
- *              description: Server Error
- *      security:
- *          - bearerAuth: []
- */
-moderationRouter.get("/r/:subreddit/about/post-flairs");
-
-/**
- * @swagger
- * /r/{subreddit}/about/post-flairs/{flairId}:
- *  get:
- *      summary: Returns details of a specific post flair
- *      tags: [Posts and comments moderation]
- *      parameters:
- *          - in: path
- *            required: true
- *            name: subreddit
- *            description: Subreddit name
- *            schema:
- *               type: string
- *          - in: path
- *            required: true
- *            name: flairId
- *            description: Post flair ID
- *            schema:
- *               type: string
- *      responses:
- *          200:
- *              description: Post flair returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                         type: object
- *                         properties:
- *                           flairName:
- *                              type: string
- *                              description: Name of the flair
- *                           backgroundColor:
- *                              type: string
- *                              description: Background color of the flair
- *                           order:
- *                              type: number
- *                              description: Order of the flair among the rest
- *                           textColor:
- *                              type: string
- *                              description: Color of the flair name
- *                           settings:
- *                              $ref: '#/components/schemas/FlairSettings'
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          404:
- *              description: Subreddit not found
- *          401:
- *              description: Unauthorized Access
- *          500:
- *              description: Server Error
- *      security:
- *          - bearerAuth: []
- */
-moderationRouter.get("/r/:subreddit/about/post-flairs/:flairId");
-
-/**
- * @swagger
- * /r/{subreddit}/about/post-flairs:
- *  post:
- *      summary: Add a new post flair to a given subreddit
- *      tags: [Posts and comments moderation]
- *      parameters:
- *          - in: path
- *            required: true
- *            name: subreddit
- *            description: Subreddit name
- *            schema:
- *               type: string
- *      requestBody:
- *          required: true
- *          content:
- *              application/json:
- *                 schema:
- *                    type: object
- *                    properties:
- *                       flairName:
- *                          type: string
- *                          description: Name of the flair
- *                       backgroundColor:
- *                          type: string
- *                          description: Background color of the flair
- *                       textColor:
- *                          type: string
- *                          description: Color of the flair name
- *                       settings:
- *                          $ref: '#/components/schemas/FlairSettings'
- *      responses:
- *          200:
- *              description: Post flair successfully added
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          404:
- *              description: Subreddit not found
- *          401:
- *              description: Unauthorized Access
- *          500:
- *              description: Server Error
- *      security:
- *          - bearerAuth: []
- */
-moderationRouter.post("/r/:subreddit/about/post-flairs");
-
-/**
- * @swagger
- * /r/{subreddit}/about/post-flairs/{flairId}:
- *  put:
- *      summary: Edit an existing post flair in a given subreddit
- *      tags: [Posts and comments moderation]
- *      parameters:
- *          - in: path
- *            required: true
- *            name: subreddit
- *            description: Subreddit name
- *            schema:
- *               type: string
- *          - in: path
- *            required: true
- *            name: flairId
- *            description: id of a post flair
- *            schema:
- *               type: string
- *      requestBody:
- *          required: true
- *          content:
- *              application/json:
- *                 schema:
- *                    type: object
- *                    properties:
- *                       flairName:
- *                          type: string
- *                          description: Name of the flair
- *                       backgroundColor:
- *                          type: string
- *                          description: Background color of the flair
- *                       textColor:
- *                          type: string
- *                          description: Color of the flair name
- *                       settings:
- *                          $ref: '#/components/schemas/FlairSettings'
- *      responses:
- *          200:
- *              description: Post flair successfully edited
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          404:
- *              description: Subreddit not found
- *          401:
- *              description: Unauthorized Access
- *          500:
- *              description: Server Error
- *      security:
- *          - bearerAuth: []
- */
-moderationRouter.put("/r/:subreddit/about/post-flairs/:flairId");
-
-/**
- * @swagger
- * /r/{subreddit}/about/post-flairs/{flairId}:
- *  delete:
- *      summary: Delete an existing post flair in a given subreddit
- *      tags: [Posts and comments moderation]
- *      parameters:
- *          - in: path
- *            required: true
- *            name: subreddit
- *            description: Subreddit name
- *            schema:
- *               type: string
- *          - in: path
- *            required: true
- *            name: flairId
- *            description: id of a post flair
- *            schema:
- *               type: string
- *      responses:
- *          200:
- *              description: Post flair successfully deleted
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          404:
- *              description: Subreddit not found
- *          401:
- *              description: Unauthorized Access
- *          500:
- *              description: Server Error
- *      security:
- *          - bearerAuth: []
- */
-moderationRouter.delete("/r/:subreddit/about/post-flairs/:flairId");
-
-/**
- * @swagger
- * /r/{subreddit}/about/post-flairs-order:
- *  post:
- *      summary: Edit the order of all post flairs in a given subreddit
- *      tags: [Posts and comments moderation]
- *      parameters:
- *          - in: path
- *            required: true
- *            name: subreddit
- *            description: Subreddit name
- *            schema:
- *               type: string
- *      requestBody:
- *          required: true
- *          content:
- *            application/json:
- *              schema:
- *                  type: object
- *                  properties:
- *                    flairsOrder:
- *                      type: array
- *                      items:
- *                          type: object
- *                          properties:
- *                            flairId:
- *                                  type: string
- *                                  description: id of the post flair
- *                            flairOrder:
- *                                  type: string
- *                                  description: The new order of the flair
- *      responses:
- *          200:
- *              description: Order edited successfully
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          404:
- *              description: Subreddit not found
- *          401:
- *              description: Unauthorized Access
- *          500:
- *              description: Server Error
- *      security:
- *          - bearerAuth: []
- */
-moderationRouter.post("/r/:subreddit/about/post-flairs-order");
-
-/**
- * @swagger
- * /r/{subreddit}/about/post-flairs-settings:
- *  get:
- *      summary: Get settings for post flairs in a given subreddit
- *      tags: [Posts and comments moderation]
- *      parameters:
- *          - in: path
- *            required: true
- *            name: subreddit
- *            description: Subreddit name
- *            schema:
- *               type: string
- *      responses:
- *          200:
- *              description: Post flairs settings returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                         type: object
- *                         properties:
- *                           enablePostFlairs:
- *                              type: boolean
- *                              description: Indicates whether this community enabled flairs on posts or not
- *                           allowUsers:
- *                              type: boolean
- *                              description: This will let users select, edit, and clear post flair for their posts in this community.
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          404:
- *              description: Subreddit not found
- *          401:
- *              description: Unauthorized Access
- *          500:
- *              description: Server Error
- *      security:
- *          - bearerAuth: []
- */
-moderationRouter.get("/r/:subreddit/about/post-flairs-settings");
-
-/**
- * @swagger
- * /r/{subreddit}/about/post-flairs-settings:
- *  post:
- *      summary: Change the settings for post flairs in a community
- *      tags: [Posts and comments moderation]
- *      parameters:
- *          - in: path
- *            required: true
- *            name: subreddit
- *            description: Subreddit name
- *            schema:
- *               type: string
- *      requestBody:
- *          required: true
- *          content:
- *            application/json:
- *              schema:
- *                  type: object
- *                  properties:
- *                     enablePostFlairs:
- *                        type: boolean
- *                        description: Indicates whether this community enabled flairs on posts or not
- *                     allowUsers:
- *                        type: boolean
- *                        description: This will let users select, edit, and clear post flair for their posts in this community.
- *      responses:
- *          200:
- *              description: Post flairs settings changed successfully
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          404:
- *              description: Subreddit not found
- *          401:
- *              description: Unauthorized Access
- *          500:
- *              description: Server Error
- *      security:
- *          - bearerAuth: []
- */
-moderationRouter.post("/r/:subreddit/about/post-flairs-settings");
 
 export default moderationRouter;

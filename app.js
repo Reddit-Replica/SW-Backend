@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
 import swaggerUI from "swagger-ui-express";
@@ -15,15 +16,36 @@ const app = express();
 dotenv.config();
 
 app.use(bodyParser.json());
-app.use(morgan("dev"));
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 app.use(
-  multer({ storage: fileStorage, fileFilter: fileFilter }).single("photo")
+  multer({ storage: fileStorage, fileFilter: fileFilter }).fields([
+    { name: "images", maxCount: 100 },
+    { name: "videos", maxCount: 100 },
+  ])
+);
+
+// That's morgan for tracking the api in the terminal
+// Will be removed later
+app.use(morgan("dev"));
+
+// Log stream for morgan to make the log file in the server
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "logs/access.log"),
+  {
+    flags: "a",
+  }
+);
+
+app.use(
+  morgan("combined", {
+    stream: accessLogStream,
+  })
 );
 
 app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/videos", express.static(path.join(__dirname, "videos")));
 
 const port = process.env.PORT || 3000;
 
@@ -45,7 +67,7 @@ if (process.env.NODE_ENV.trim() === "testing") {
 mongoose
   .connect(DB_URL, { useNewUrlParser: true })
   .then(() => {
-    console.log("connected to mongo");
+    console.log("connected to mongo nnew version");
   })
   .catch((error) => {
     console.log("unable to connect to mongoDB : ", error);

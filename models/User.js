@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 // eslint-disable-next-line new-cap
 const userSchema = mongoose.Schema({
@@ -39,6 +39,9 @@ const userSchema = mongoose.Schema({
     type: Date,
     required: true,
     default: Date.now(),
+  },
+  editedAt: {
+    type: Date,
   },
   deletedAt: {
     type: Date,
@@ -106,6 +109,165 @@ const userSchema = mongoose.Schema({
       },
     ],
   },
+  joinedSubreddits: [
+    {
+      subredditId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  ownedSubreddits: [
+    {
+      subredditId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  moderatedSubreddits: [
+    {
+      subredditId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  historyPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  pinnedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  hiddenPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  upvotedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  downvotedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  followedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  savedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  spammedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  comments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  blockedUsers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  followers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  sentMessages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  receivedMessages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  usernameMentions: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  postReplies: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  conversations: [
+    {
+      latestDate: {
+        type: Date,
+        required: true,
+      },
+      subject: {
+        type: String,
+        required: true,
+      },
+      username: {
+        type: String,
+        required: true,
+      },
+      messages: [
+        {
+          messageID: {
+            type: Schema.Types.ObjectId,
+            ref: "Message",
+          },
+        },
+      ],
+    },
+  ],
 });
 
 const User = mongoose.model("User", userSchema);

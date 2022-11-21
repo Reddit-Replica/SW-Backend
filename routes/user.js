@@ -1,7 +1,11 @@
 import express from "express";
+import userController from "../controllers/BuserController.js";
+import { verifyAuthToken } from "./../middleware/verifyToken.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import { optionalToken } from "../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const userRouter = express.Router();
 
 /**
  * @swagger
@@ -43,6 +47,8 @@ const router = express.Router();
  *                 error:
  *                   type: string
  *                   description: Type of error
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -50,7 +56,13 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.post("/block-user");
+userRouter.post(
+  "/block-user",
+  verifyAuthToken,
+  userController.blockUserValidator,
+  validateRequestSchema,
+  userController.blockUser
+);
 
 /**
  * @swagger
@@ -85,6 +97,8 @@ router.post("/block-user");
  *                 error:
  *                   type: string
  *                   description: Type of error
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -92,7 +106,13 @@ router.post("/block-user");
  *     security:
  *       - bearerAuth: []
  */
-router.post("/follow-user");
+userRouter.post(
+  "/follow-user",
+  verifyAuthToken,
+  userController.followUserValidator,
+  validateRequestSchema,
+  userController.followUser
+);
 
 /**
  * @swagger
@@ -169,12 +189,21 @@ router.post("/follow-user");
  *                       nsfw:
  *                         type: boolean
  *                         description: If true, this subreddit will be marked as NSFW
+ *                       followed:
+ *                         type: boolean
+ *                         description: If true, then this subreddit is followed by the logged in user
  *       404:
  *         description: Didn't find a user with that username
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/about");
+userRouter.get(
+  "/user/:username/about",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.aboutUser
+);
 
 /**
  * @swagger
@@ -239,7 +268,7 @@ router.get("/user/:username/about");
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/overview");
+userRouter.get("/user/:username/overview");
 
 /**
  * @swagger
@@ -304,7 +333,13 @@ router.get("/user/:username/overview");
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/posts");
+userRouter.get(
+  "/user/:username/posts",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userPosts
+);
 
 /**
  * @swagger
@@ -341,12 +376,22 @@ router.get("/user/:username/posts");
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/ListedPost"
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
  *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
  */
-router.get("/user/:username/history");
+userRouter.get(
+  "/user/:username/history",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userHistoryPosts
+);
 
 /**
  * @swagger
@@ -541,7 +586,7 @@ router.get("/user/:username/history");
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/comments");
+userRouter.get("/user/:username/comments");
 
 /**
  * @swagger
@@ -601,6 +646,8 @@ router.get("/user/:username/comments");
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/ListedPost"
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -608,7 +655,13 @@ router.get("/user/:username/comments");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/upvoted");
+userRouter.get(
+  "/user/:username/upvoted",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userUpvotedPosts
+);
 
 /**
  * @swagger
@@ -668,6 +721,8 @@ router.get("/user/:username/upvoted");
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/ListedPost"
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -675,7 +730,13 @@ router.get("/user/:username/upvoted");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/downvoted");
+userRouter.get(
+  "/user/:username/downvoted",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userDownvotedPosts
+);
 
 /**
  * @swagger
@@ -712,6 +773,8 @@ router.get("/user/:username/downvoted");
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/UserOverview"
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -719,7 +782,7 @@ router.get("/user/:username/downvoted");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/saved");
+userRouter.get("/user/:username/saved");
 
 /**
  * @swagger
@@ -756,6 +819,8 @@ router.get("/user/:username/saved");
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/ListedPost"
+ *       401:
+ *         description: Access Denied
  *       404:
  *         description: Didn't find a user with that username
  *       500:
@@ -763,6 +828,12 @@ router.get("/user/:username/saved");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/hidden");
+userRouter.get(
+  "/user/:username/hidden",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userHiddenPosts
+);
 
-export default router;
+export default userRouter;

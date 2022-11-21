@@ -1,6 +1,14 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import loginController from "../controllers/loginController.js";
+import {
+  checkPasswords,
+  verifyUserByUsername,
+  ResetPasswordEmail,
+  verifyResetToken,
+  verifyUserById,
+  verifyUsernameAndEmail,
+} from "../middleware/login.js";
 
 // eslint-disable-next-line new-cap
 const loginRouter = express.Router();
@@ -36,11 +44,6 @@ const loginRouter = express.Router();
  *     responses:
  *       200:
  *         description: User logged in successfully
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
  *         content:
  *           application/json:
  *             schema:
@@ -48,6 +51,9 @@ const loginRouter = express.Router();
  *                 username:
  *                   type: string
  *                   description: Username
+ *                 token:
+ *                   type: string
+ *                   description: JWT Access token to verify that the user is logged in
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -64,6 +70,8 @@ loginRouter.post(
   "/login",
   loginController.loginValidator,
   validateRequestSchema,
+  verifyUserByUsername,
+  checkPasswords,
   loginController.login
 );
 
@@ -107,6 +115,8 @@ loginRouter.post(
   "/login/forget-password",
   loginController.forgetPasswordValidator,
   validateRequestSchema,
+  verifyUsernameAndEmail,
+  ResetPasswordEmail,
   loginController.forgetPassword
 );
 
@@ -147,11 +157,6 @@ loginRouter.post(
  *     responses:
  *       200:
  *         description: Password updated successfully
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -170,6 +175,8 @@ loginRouter.post(
   "/reset-password/:id/:token",
   loginController.resetPasswordValidator,
   validateRequestSchema,
+  verifyUserById,
+  verifyResetToken,
   loginController.resetPassword
 );
 

@@ -1,7 +1,31 @@
 import express from "express";
+import postController from "../controllers/HpostController.js";
+import { optionalToken } from "../middleware/optionalToken.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+import { verifyPostActions } from "../middleware/verifyPostActions.js";
+import { checkId } from "../middleware/checkId.js";
+import {
+  checkHybridPost,
+  checkImagesAndVideos,
+  checkPostFlair,
+  checkPostSubreddit,
+  postSubmission,
+  sharePost,
+} from "../middleware/createPost.js";
+import {
+  checkPinnedPosts,
+  checkUnpinnedPosts,
+} from "../middleware/pinnedPosts.js";
+import {
+  checkPostExistence,
+  getPostDetails,
+  setHybridContent,
+  setPostActions,
+} from "../middleware/postDetails.js";
 
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const postRouter = express.Router();
 
 /**
  * @swagger
@@ -43,7 +67,7 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.post("/follow-post");
+postRouter.post("/follow-post");
 
 /**
  * @swagger
@@ -84,48 +108,7 @@ router.post("/follow-post");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/hide");
-
-/**
- * @swagger
- * /mark-nsfw:
- *  post:
- *      summary: Mark a post NSFW (Not Safe For Work)
- *      tags: [Posts]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *              type: object
- *              properties:
- *                  id:
- *                    type: string
- *                    description: id of a post
- *      responses:
- *          200:
- *              description: Post marked NSFW successfully
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          404:
- *              description: Post not found
- *          401:
- *              description: User unauthorized to mark post as NSFW
- *          409:
- *              description: Post already marked NSFW
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-router.post("/mark-nsfw");
+postRouter.post("/hide");
 
 /**
  * @swagger
@@ -167,7 +150,7 @@ router.post("/mark-nsfw");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/set-suggested-sort");
+postRouter.post("/set-suggested-sort");
 
 /**
  * @swagger
@@ -206,54 +189,13 @@ router.post("/set-suggested-sort");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/clear-suggested-sort");
-
-/**
- * @swagger
- * /mark-spoiler:
- *  post:
- *      summary: Blur the content of the post and unblur when opening it
- *      tags: [Posts]
- *      requestBody:
- *        required: true
- *        content:
- *          application/json:
- *             schema:
- *                type: object
- *                properties:
- *                  id:
- *                    type: string
- *                    description: id of a post
- *      responses:
- *          200:
- *              description: Spoiler set successfully
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          401:
- *              description: User unauthorized to set post spoiler
- *          409:
- *              description: Post content already blurred
- *          404:
- *              description: Post not found
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-router.post("/mark-spoiler");
+postRouter.post("/clear-suggested-sort");
 
 /**
  * @swagger
  * /submit:
  *  post:
- *      summary: Submit or share a post to a subreddit
+ *      summary: Submit or share a post to a subreddit. The request body could be json in case there are no images and videos submitted with the post but if there is, then it has to be FormData and the image files will be placed in 'images' and video files will be given in 'videos' along with their captions in imageCaptions and videoCaptions. The kind can also be 'post' in case of sharing a post because it's content will be another post basically and the id of the post being shared is given in the 'sharePostId' field. A hybrid kind means that it can contain text, links, images and videos and an index will be associated with each entry to save the order of these fields and return them in the same order when viewing a post.
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -282,7 +224,19 @@ router.post("/mark-spoiler");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/submit");
+postRouter.post(
+  "/submit",
+  verifyAuthToken,
+  postController.submitValidator,
+  validateRequestSchema,
+  checkPostSubreddit,
+  checkPostFlair,
+  checkHybridPost,
+  checkImagesAndVideos,
+  sharePost,
+  postSubmission,
+  postController.submit
+);
 
 /**
  * @swagger
@@ -323,95 +277,13 @@ router.post("/submit");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unhide");
-
-/**
- * @swagger
- * /unmark-nsfw:
- *  post:
- *      summary: Remove the NSFW marking from a post
- *      tags: [Posts]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *                 description: id of a post
- *      responses:
- *          200:
- *              description: NSFW unmarked successfully
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          404:
- *              description: Post not found
- *          401:
- *              description: User unauthorized to remove nsfw marking
- *          409:
- *              description: NSFW mark already removed
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-router.post("/unmark-nsfw");
-
-/**
- * @swagger
- * /unmark-spoiler:
- *  post:
- *      summary: Remove ability to blur the content of the post
- *      tags: [Posts]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *                 description: id of a post
- *      responses:
- *          200:
- *              description: Post spoiler turned off successfully
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          404:
- *              description: Post not found
- *          401:
- *              description: User unauthorized to turn off spoiler
- *          409:
- *              description: Post spoiler already turned off
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-router.post("/unmark-spoiler");
+postRouter.post("/unhide");
 
 /**
  * @swagger
  * /post-insights:
  *  get:
- *      summary: Get the number of views on a post
+ *      summary: Get the insights on a post
  *      tags: [Posts]
  *      parameters:
  *          - in: query
@@ -458,7 +330,15 @@ router.post("/unmark-spoiler");
  *      security:
  *         - bearerAuth: []
  */
-router.get("/post-insights");
+postRouter.get(
+  "/post-insights",
+  verifyAuthToken,
+  checkId,
+  postController.postIdValidator,
+  validateRequestSchema,
+  verifyPostActions,
+  postController.postInsights
+);
 
 /**
  * @swagger
@@ -498,13 +378,24 @@ router.get("/post-insights");
  *      security:
  *       - bearerAuth: []
  */
-router.get("/post-details");
+postRouter.get(
+  "/post-details",
+  optionalToken,
+  checkId,
+  postController.postIdValidator,
+  validateRequestSchema,
+  checkPostExistence,
+  setPostActions,
+  setHybridContent,
+  getPostDetails,
+  postController.postDetails
+);
 
 /**
  * @swagger
  * /pin-post:
  *  post:
- *      summary: Add a post to the user's collection of pinned posts
+ *      summary: Pin or unpin a post
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -516,9 +407,12 @@ router.get("/post-details");
  *               id:
  *                 type: string
  *                 description: id of a post
+ *               pin:
+ *                 type: boolean
+ *                 description: True for pin and False for unpin
  *      responses:
  *          200:
- *              description: Post pinned successfully
+ *              description: Post pinned/unpinned successfully
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -539,7 +433,17 @@ router.get("/post-details");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/pin-post");
+postRouter.post(
+  "/pin-post",
+  verifyAuthToken,
+  checkId,
+  postController.pinPostValidator,
+  validateRequestSchema,
+  verifyPostActions,
+  checkPinnedPosts,
+  checkUnpinnedPosts,
+  postController.pinPost
+);
 
 /**
  * @swagger
@@ -577,7 +481,7 @@ router.post("/pin-post");
  *      security:
  *          - bearerAuth: []
  */
-router.get("/pinned-posts");
+postRouter.get("/pinned-posts", verifyAuthToken, postController.getPinnedPosts);
 
 /**
  * @swagger
@@ -619,6 +523,6 @@ router.get("/pinned-posts");
  *      security:
  *       - bearerAuth: []
  */
-router.put("/edit-post-flair");
+postRouter.put("/edit-post-flair");
 
-export default router;
+export default postRouter;

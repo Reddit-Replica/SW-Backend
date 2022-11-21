@@ -82,26 +82,95 @@
  *       type: object
  *       required:
  *         - kind
- *         - subreddit
+ *         - inSubreddit
  *         - title
  *       properties:
  *         kind:
  *           type: string
  *           enum:
  *              - link
- *              - text
+ *              - hybrid
  *              - image
  *              - video
  *              - post
  *         subreddit:
  *           type: string
  *           description: Subreddit name
- *         title:
+ *         inSubreddit:
+ *           type: boolean
+ *           description: True if the post is submitted in a subreddit, False if it's in the user account (not a subreddit)
+ *         texts:
+ *           type: array
+ *           description: Texts input separated by an "enter" when writing text in the post with an index indicating the positin of this text
+ *           items:
+ *               type: object
+ *               properties:
+ *                   text:
+ *                       type: string
+ *                       description: The text written itself
+ *                   index:
+ *                       type: number
+ *                       description: Text position
+ *         links:
+ *           type: array
+ *           description: Links input in the post containing the link title and url as well as the index indicating it's position in the post field
+ *           items:
+ *               type: object
+ *               properties:
+ *                   link:
+ *                       type: object
+ *                       properties:
+ *                           title:
+ *                               type: string
+ *                               description: Link title submitted
+ *                           url:
+ *                               type: string
+ *                               description: Link Url
+ *                   index:
+ *                       type: number
+ *                       description: Link position
+ *         imageCaptions:
+ *           type: array
+ *           description: Image captions of each image submitted and an element in it should be null if the image doesn't have a caption (Do not skip the element). This array will contain an index only when the kind is 'hybrid' but will only be an array of captions without indices if the kind is 'image'
+ *           items:
+ *               type: object
+ *               properties:
+ *                   caption:
+ *                       type: string
+ *                       description: Image caption
+ *                   index:
+ *                       type: number
+ *                       description: Image caption position
+ *         videoCaptions:
+ *           type: array
+ *           description: Video captions of each video submitted and an element in it should be null if the video doesn't have a caption (Do not skip the element)
+ *           items:
+ *               type: object
+ *               properties:
+ *                   caption:
+ *                       type: string
+ *                       description: Video caption
+ *                   index:
+ *                       type: number
+ *                       description: Video caption position
+ *         images:
+ *           type: array
+ *           description: image files
+ *           items:
+ *              type: object
+ *         imageLinks:
+ *           type: array
+ *           description: Links written for the images submitted (only when kind = images)
+ *           items:
+ *              type: string
+ *         videos:
+ *           type: array
+ *           description: Video files
+ *           items:
+ *              type: object
+ *         link:
  *           type: string
- *           description: Title of the submission
- *         content:
- *           type: string
- *           description: Post content (text/url/image/video)
+ *           description: Link submission in case the kind is 'link'
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
@@ -136,24 +205,62 @@
  *           type: string
  *           enum:
  *              - link
- *              - text
+ *              - hybrid
  *              - image
  *              - video
+ *              - post
+ *         title:
+ *           type: string
+ *           description: Title of the submission
  *         subreddit:
  *           type: string
  *           description: Subreddit name
- *         content:
+ *         link:
  *           type: string
- *           description: Post content (text/url/image/video)
+ *           description: Post link in case the kind is 'link'
+ *         images:
+ *           type: array
+ *           description: Post content (kind = images)
+ *           items:
+ *              type: object
+ *              properties:
+ *                 path:
+ *                   type: string
+ *                   description: Image path
+ *                 caption:
+ *                   type: string
+ *                   description: Image caption
+ *                 link:
+ *                   type: string
+ *                   description: Image link
+ *         video:
+ *           type: string
+ *           description: Video path in case the kind is 'video'
+ *         hybridContent:
+ *           type: array
+ *           description: Hybrid content of the post returned with the correct order just like as they were inserted when initially submitting the post. The content part of the object could be string when type is text, or an object (title and url) if type is link, or an object (path and caption) if type is image or video
+ *           items:
+ *               type: object
+ *               properties:
+ *                  type:
+ *                     type: string
+ *                     description: Content type
+ *                     enum:
+ *                         - image
+ *                         - video
+ *                         - text
+ *                         - link
+ *                  content:
+ *                     type: object
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
  *         spoiler:
  *           type: boolean
  *           description: Blur the content of the post
- *         title:
+ *         sharePostId:
  *           type: string
- *           description: Title of the submission
+ *           description: Post id in case of containing info of a shared post (kind = post)
  *         flair:
  *           $ref: '#/components/schemas/Flair'
  *         comments:
@@ -165,12 +272,94 @@
  *         postedAt:
  *           type: string
  *           description: The time in which this post was published
+ *         sendReplies:
+ *           type: boolean
+ *           description: Indicates whether replies on a post are turned on/off
+ *         markedSpam:
+ *           type: boolean
+ *           description: Indicates whether post was spammed by the owner
+ *         suggestedSort:
+ *           type: string
+ *           description: Post suggested sort
+ *         editedAt:
+ *           type: string
+ *           description: The time in which this post was edited
  *         postedBy:
  *           type: string
  *           description: Name of the user associated with the post
+ *         votingType:
+ *           type: integer
+ *           enum:
+ *             - 1
+ *             - 0
+ *             - -1
+ *           description: Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post
+ *         saved:
+ *           type: boolean
+ *           default: false
+ *           description: If true, then the post was saved by the logged in user
+ *         followed:
+ *           type: boolean
+ *           default: false
+ *           description: If true, then the post was followed by the logged in user
+ *         hidden:
+ *           type: boolean
+ *           default: false
+ *           description: If true, then the post was marked hidden by the logged in user
+ *         spammed:
+ *           type: boolean
+ *           default: false
+ *           description: If true, then the post was marked spam by the logged in user
+ *         inYourSubreddit:
+ *           type: boolean
+ *           default: false
+ *           description: If true, then you can approve, remove, or spam that post
+ *         moderation:
+ *           type: object
+ *           description: Moderate the post if you are a moderator in that subreddit
+ *           properties:
+ *             approve:
+ *               type: object
+ *               description: Approve the post
+ *               properties:
+ *                 approvedBy:
+ *                   type: string
+ *                   description: Username for the moderator who approved that post
+ *                 approvedDate:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Date when that post approved
+ *             remove:
+ *               type: object
+ *               description: Remove the post
+ *               properties:
+ *                 removedBy:
+ *                   type: string
+ *                   description: Username for the moderator who removed that post
+ *                 removedDate:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Date when that post removed
+ *             spam:
+ *               type: object
+ *               description: Spam the post
+ *               properties:
+ *                 spammedBy:
+ *                   type: string
+ *                   description: Username for the moderator who spamed that post
+ *                 spammedDate:
+ *                    type: string
+ *                    format: date-time
+ *                    description: Date when that post spamed
+ *             lock:
+ *               type: boolean
+ *               description: If true, then comments are locked in this post
  *   Post:
  *       type: object
  *       properties:
+ *         id:
+ *           type: string
+ *           description: id of a post
  *         kind:
  *           type: string
  *           enum:
@@ -178,15 +367,28 @@
  *              - text
  *              - image
  *              - video
- *         id:
- *           type: string
- *           description: id of a post
+ *              - post
  *         subreddit:
  *           type: string
  *           description: Subreddit name
  *         content:
  *           type: string
- *           description: Post content (text/url/image/video)
+ *           description: Post content (text/url/video) - will contain path of a video in case (kind = video)
+ *         images:
+ *           type: array
+ *           description: Post content (images)
+ *           items:
+ *              type: object
+ *              properties:
+ *                 path:
+ *                   type: string
+ *                   description: Image path
+ *                 caption:
+ *                   type: string
+ *                   description: Image caption
+ *                 link:
+ *                   type: string
+ *                   description: Image link
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
@@ -196,6 +398,9 @@
  *         title:
  *           type: string
  *           description: Title of the submission
+ *         sharePostId:
+ *           type: string
+ *           description: Post id in case of containing info of a shared post (kind = post)
  *         flair:
  *           $ref: '#/components/schemas/Flair'
  *         comments:
@@ -416,6 +621,49 @@
  *                          level:
  *                            type: integer
  *                            description: The level of the comment [level of nesting]
+ *                          inYourSubreddit:
+ *                            type: boolean
+ *                            description: If true, then you can approve, remove, or spam that post
+ *                          moderation:
+ *                            type: object
+ *                            description: Moderate the post if you are a moderator in that subreddit
+ *                            properties:
+ *                             approve:
+ *                              type: object
+ *                              description: Approve the post
+ *                              properties:
+ *                                approvedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who approved that post
+ *                                approvedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post approved
+ *                             remove:
+ *                              type: object
+ *                              description: Remove the post
+ *                              properties:
+ *                                removedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who removed that post
+ *                                removedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post removed
+ *                             spam:
+ *                              type: object
+ *                              description: Spam the post
+ *                              properties:
+ *                                spammedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who spamed that post
+ *                                spammedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post spamed
+ *                             lock:
+ *                              type: boolean
+ *                              description: If true, then comments are locked in this post
  *   Threads:
  *       type: object
  *       properties:
@@ -566,116 +814,7 @@
  *                 type: string
  *                 description: Id of the post
  *               data:
- *                 type: object
- *                 properties:
- *                   subreddit:
- *                     type: string
- *                     description: Name of subreddit which contain the post
- *                   postedBy:
- *                     type: string
- *                     description: The username for the publisher of the post
- *                   title:
- *                     type: string
- *                     description: Title of the post
- *                   type:
- *                     type: string
- *                     description: Type of content of the post
- *                     enum:
- *                       - text
- *                       - video
- *                       - image
- *                       - link
- *                   content:
- *                     type: string
- *                     description: Content of the post [text, path of the video, path of the image, link]
- *                   votes:
- *                     type: integer
- *                     description: Total number of votes to that post
- *                   numberOfComments:
- *                     type: integer
- *                     description: Total number of comments
- *                   flair:
- *                     type: object
- *                     properties:
- *                       flairId:
- *                         type: string
- *                         description: The id of the flair
- *                       flairText:
- *                         type: string
- *                         description: Flair text
- *                       backgroundColor:
- *                         type: string
- *                         description: Background color of the flair
- *                       textColor:
- *                         type: string
- *                         description: Color of the flair text
- *                   editTime:
- *                     type: string
- *                     format: date-time
- *                     description: Edit time of the post (if exists)
- *                   publishTime:
- *                     type: string
- *                     format: date-time
- *                     description: Publish time of the post
- *                   inYourSubreddit:
- *                     type: boolean
- *                     description: If true, then you can approve, remove, or spam that post
- *                   moderation:
- *                     type: object
- *                     description: Moderate the post if you are a moderator in that subreddit
- *                     properties:
- *                       approve:
- *                         type: object
- *                         description: Approve the post
- *                         properties:
- *                           approvedBy:
- *                             type: string
- *                             description: Username for the moderator who approved that post
- *                           approvedDate:
- *                             type: string
- *                             format: date-time
- *                             description: Date when that post approved
- *                       remove:
- *                         type: object
- *                         description: Remove the post
- *                         properties:
- *                           removedBy:
- *                             type: string
- *                             description: Username for the moderator who removed that post
- *                           removedDate:
- *                             type: string
- *                             format: date-time
- *                             description: Date when that post removed
- *                       spam:
- *                         type: object
- *                         description: Spam the post
- *                         properties:
- *                            spammedBy:
- *                              type: string
- *                              description: Username for the moderator who spamed that post
- *                            spammedDate:
- *                              type: string
- *                              format: date-time
- *                              description: Date when that post spamed
- *                       lock:
- *                         type: boolean
- *                         description: If true, then comments are locked in this post
- *                   nsfw:
- *                     type: boolean
- *                     description: If true, then this post is NSFW
- *                   spoiler:
- *                     type: boolean
- *                     description: If true, then this post is marked as spoiler
- *                   saved:
- *                     type: boolean
- *                     description: If true, then this post was saved before by the logged-in user
- *                   vote:
- *                     type: integer
- *                     enum:
- *                       - 1
- *                       - 0
- *                       - -1
- *                     description: Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post
+ *                 $ref: "#/components/schemas/PostDetails"
  *   CommentTree:
  *       type: object
  *       properties:
@@ -861,7 +1000,6 @@
  *             - 0
  *             - -1
  *           description: Used to know if that moderator voted up [1] or down [-1] or didn't vote [0] to that post or comment
-
  *   ListingPost:
  *     type: object
  *     properties:

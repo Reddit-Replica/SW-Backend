@@ -1,7 +1,10 @@
 import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkDuplicateUsernameOrEmail } from "../middleware/verifySignUp.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+import { checkId } from "../middleware/checkId.js";
 import signupController from "../controllers/signupController.js";
+import GenerateUsernameController from "../controllers/NgenerateUsername.js";
 
 // eslint-disable-next-line new-cap
 const signupRouter = express.Router();
@@ -41,11 +44,6 @@ const signupRouter = express.Router();
  *     responses:
  *       201:
  *         description: The account has been successfully created
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
  *         content:
  *           application/json:
  *             schema:
@@ -53,6 +51,9 @@ const signupRouter = express.Router();
  *                 username:
  *                   type: string
  *                   description: Username of the user
+ *                 token:
+ *                   type: string
+ *                   description: Token that will be used for authorization
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -72,7 +73,6 @@ signupRouter.post(
   checkDuplicateUsernameOrEmail,
   signupController.signup
 );
-
 
 /**
  * @swagger
@@ -170,11 +170,6 @@ signupRouter.get(
  *     responses:
  *       200:
  *         description: Email verified successfully
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -193,6 +188,7 @@ signupRouter.post(
   "/verify-email/:id/:token",
   signupController.verifyEmailValidator,
   validateRequestSchema,
+  checkId,
   signupController.verifyEmail
 );
 
@@ -226,11 +222,6 @@ signupRouter.post(
  *     responses:
  *       200:
  *         description: User logged in successfully
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
  *         content:
  *           application/json:
  *             schema:
@@ -238,13 +229,11 @@ signupRouter.post(
  *                 username:
  *                   type: string
  *                   description: Username of the user
+ *                 token:
+ *                   type: string
+ *                   description: Token that will be used for authorization
  *       201:
  *         description: The account has been successfully created
- *         headers:
- *           Authorization:
- *             description: The jwt that will be used for authorization
- *             schema:
- *               type: string
  *         content:
  *           application/json:
  *             schema:
@@ -252,6 +241,9 @@ signupRouter.post(
  *                 username:
  *                   type: string
  *                   description: Username of the user
+ *                 token:
+ *                   type: string
+ *                   description: Token that will be used for authorization
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -277,19 +269,71 @@ signupRouter.post(
  *   get:
  *     summary: Get an available random username used to create a new account
  *     tags: [Sign Up]
+ *     parameters:
+ *       - in: path
+ *         name: count
+ *         description: number of random usernames you want to get
+ *         required: true
+ *         schema:
+ *           type: number
  *     responses:
- *       200:
- *         description: The email is available
+ *       201:
+ *         description: random usernames are generated successfully
  *         content:
  *           application/json:
  *             schema:
  *               properties:
- *                 username:
- *                   type: string
- *                   description: Random username
+ *                 usernames:
+ *                   type: array
+ *                   description: array of usernames generated
+ *                   items:
+ *                     type: string
  *       500:
  *         description: Internal server error
  */
-signupRouter.get("/random-username");
+signupRouter.get(
+  "/random-username",
+  GenerateUsernameController.generateRandomUsername
+);
+
+/**
+ * @swagger
+ * /edit-username:
+ *   patch:
+ *     summary: Edit the username of the user [can be used only once after signing up with google or facebook]
+ *     tags: [Sign Up]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - username
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: New available username
+ *     responses:
+ *       200:
+ *         description: Username updated successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       500:
+ *         description: Internal server error
+ */
+signupRouter.patch(
+  "/edit-username",
+  verifyAuthToken,
+  signupController.editUsernameValidator,
+  validateRequestSchema,
+  signupController.editUsername
+);
 
 export default signupRouter;
