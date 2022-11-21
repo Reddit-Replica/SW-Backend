@@ -29,7 +29,7 @@ describe("Testing comment endpoints", () => {
       ownerUsername: user.username,
       ownerId: user._id,
       subredditName: "subreddit",
-      kind: "text",
+      kind: "hybrid",
     });
     await post.save();
 
@@ -37,6 +37,10 @@ describe("Testing comment endpoints", () => {
       type: "public",
       title: "funny",
       category: "fun",
+      owner: {
+        username: user.username,
+        userID: user._id,
+      },
     });
     await subreddit.save();
   });
