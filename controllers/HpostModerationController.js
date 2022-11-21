@@ -6,6 +6,7 @@ const modValidator = [
   check("type").isIn(["post", "comment"]),
 ];
 
+// eslint-disable-next-line max-statements
 const approve = async (req, res) => {
   const username = req.payload.username;
   if (req.type === "post") {
@@ -19,7 +20,7 @@ const approve = async (req, res) => {
       approvedBy: username,
       approvedDate: Date.now(),
     };
-    post.moderation.remove = {};
+    post.moderation.remove = undefined;
     await post.save();
     return res.status(200).json("Post approved successfully!");
   } else if (req.type === "comment") {
@@ -33,11 +34,13 @@ const approve = async (req, res) => {
       approvedBy: username,
       approvedDate: Date.now(),
     };
+    comment.moderation.remove = undefined;
     await comment.save();
     return res.status(200).json("Comment approved successfully!");
   }
 };
 
+// eslint-disable-next-line max-statements
 const remove = async (req, res) => {
   const username = req.payload.username;
   if (req.type === "post") {
@@ -51,7 +54,7 @@ const remove = async (req, res) => {
       removedBy: username,
       removedDate: Date.now(),
     };
-    post.moderation.approve = {};
+    post.moderation.approve = undefined;
     await post.save();
     return res.status(200).json("Post removed successfully!");
   } else if (req.type === "comment") {
@@ -65,6 +68,7 @@ const remove = async (req, res) => {
       removedBy: username,
       removedDate: Date.now(),
     };
+    comment.moderation.approve = undefined;
     await comment.save();
     return res.status(200).json("Comment removed successfully!");
   }
