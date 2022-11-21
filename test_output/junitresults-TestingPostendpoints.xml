@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="22" time="0.002">
+ <testsuite name="Testing Post endpoints" timestamp="2022-11-12T20:10:25" hostname="localhost" time="0.002" errors="0" tests="22" skipped="0" disabled="0" failures="0">
+  <testcase classname="Testing Post endpoints" name="Create post with invalid subreddit name" time="0" />
+  <testcase classname="Testing Post endpoints" name="Create post with a missing kind (required parameter)" time="0" />
+  <testcase classname="Testing Post endpoints" name="Create post with an invalid token" time="0" />
+  <testcase classname="Testing Post endpoints" name="Create post in an invalid subreddit" time="0" />
+  <testcase classname="Testing Post endpoints" name="Normally create a post with text content" time="0" />
+  <testcase classname="Testing Post endpoints" name="Normally create a post in the user account" time="0" />
+  <testcase classname="Testing Post endpoints" name="Share a post" time="0" />
+  <testcase classname="Testing Post endpoints" name="Pin a post with invalid ID" time="0" />
+  <testcase classname="Testing Post endpoints" name="Pin a post with invalid token" time="0" />
+  <testcase classname="Testing Post endpoints" name="Pin a post that a user doesn&apos;t own" time="0" />
+  <testcase classname="Testing Post endpoints" name="Pin a post normally" time="0" />
+  <testcase classname="Testing Post endpoints" name="Get pinned posts" time="0" />
+  <testcase classname="Testing Post endpoints" name="Pin a post that has already been pinned" time="0" />
+  <testcase classname="Testing Post endpoints" name="Unpin a post" time="0" />
+  <testcase classname="Testing Post endpoints" name="Unpin a post that has already been unpinned" time="0" />
+  <testcase classname="Testing Post endpoints" name="Get post insights by an unauthorized user" time="0" />
+  <testcase classname="Testing Post endpoints" name="Get post insights of a not-found post" time="0" />
+  <testcase classname="Testing Post endpoints" name="Get post insights normally" time="0" />
+  <testcase classname="Testing Post endpoints" name="Get post details with an optional token" time="0" />
+  <testcase classname="Testing Post endpoints" name="Get post details without an optional token" time="0" />
+  <testcase classname="Testing Post endpoints" name="Get post details of an invalid post id" time="0" />
+  <testcase classname="Testing Post endpoints" name="Get post details without a post id" time="0" />
+ </testsuite>
+</testsuites>
