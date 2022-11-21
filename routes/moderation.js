@@ -2,6 +2,7 @@ import express from "express";
 // eslint-disable-next-line max-len
 import postModerationController from "../controllers/HpostCommentModerationController.js";
 import postModController from "../controllers/HsubredditPostsController.js";
+import userModController from "../controllers/HuserController.js";
 import { checkThingMod } from "../middleware/postModeration.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkId } from "../middleware/checkId.js";
@@ -832,7 +833,13 @@ moderationRouter.post("/unban");
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/banned");
+moderationRouter.get(
+  "/r/:subreddit/about/banned",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  userModController.getBannedUsers
+);
 
 /**
  * @swagger
