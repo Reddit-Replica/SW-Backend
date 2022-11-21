@@ -1,12 +1,16 @@
 import {
   getUserFromJWTService,
   searchForUserService,
+  blockUserService,
 } from "../../services/userServices.js";
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
 
+// eslint-disable-next-line max-statements
 describe("Testing user services functions", () => {
-  let user = {};
+  let user = {},
+    mainUser = {},
+    userToAction = {};
   beforeAll(async () => {
     await connectDatabase();
 
@@ -15,6 +19,18 @@ describe("Testing user services functions", () => {
       email: "beshoy@gmail.com",
     });
     await user.save();
+
+    mainUser = new User({
+      username: "MainUser",
+      email: "veryfunny@gmail.com",
+    });
+    await mainUser.save();
+
+    userToAction = new User({
+      username: "UserToAction",
+      email: "haha@gmail.com",
+    });
+    await userToAction.save();
   });
   afterAll(async () => {
     await User.deleteMany({});
@@ -67,6 +83,50 @@ describe("Testing user services functions", () => {
       expect(error.message).toEqual("Didn't find a user with that username");
     }
   });
+
+  it("should have blockUserService function", () => {
+    expect(blockUserService).toBeDefined();
+  });
+
+  it("try to let the user block himself", async () => {
+    try {
+      await blockUserService(mainUser, userToAction, true);
+    } catch (error) {
+      expect(error.statusCode).toEqual(400);
+      expect(error.message).toEqual("User can not block himself");
+    }
+  });
+
+  it("try to block another user", async () => {
+    const result = await blockUserService(mainUser, userToAction, true);
+    expect(result.statusCode).toEqual(200);
+    expect(result.message).toEqual("User blocked successfully");
+  });
+
+  it("try to block the same user again", async () => {
+    const result = await blockUserService(mainUser, userToAction, true);
+    expect(result.statusCode).toEqual(200);
+    expect(result.message).toEqual("User blocked successfully");
+  });
+
+  it("try to unblock user", async () => {
+    const result = await blockUserService(mainUser, userToAction, false);
+    expect(result.statusCode).toEqual(200);
+    expect(result.message).toEqual("User unblocked successfully");
+  });
+
+  it("try to unblock the same user again", async () => {
+    const result = await blockUserService(mainUser, userToAction, false);
+    expect(result.statusCode).toEqual(200);
+    expect(result.message).toEqual("User unblocked successfully");
+  });
+
+  // it("", () => {});
+  // it("", () => {});
+  // it("", () => {});
+  // it("", () => {});
+  // it("", () => {});
+  // it("", () => {});
   // it("", () => {});
   // it("", () => {});
   // it("", () => {});
