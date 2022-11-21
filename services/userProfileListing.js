@@ -3,30 +3,15 @@ import { postListing } from "../utils/prepareListing.js";
 
 // eslint-disable-next-line max-statements
 export async function listingUserProfileService(
-  username,
-  loggedInUserId,
+  user,
+  loggedInUser,
   typeOfListing,
   listingParams
 ) {
   // prepare the listing parameters
   const listingResult = await postListing(listingParams);
 
-  // get the owner of the profile
-  const user = await User.findOne({ username: username });
-  if (!user) {
-    return {
-      statusCode: 404,
-      data: "Didn't find a user with that username",
-    };
-  }
-
-  // get the logged in user
-  let loggedInUser = null;
-  if (loggedInUserId) {
-    loggedInUser = await User.findById(loggedInUserId);
-  }
-
-  const result = await User.findOne({ username: username })
+  const result = await User.findOne({ username: user.username })
     .select(typeOfListing)
     .populate({
       path: typeOfListing,

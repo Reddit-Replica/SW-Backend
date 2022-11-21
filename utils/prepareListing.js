@@ -10,27 +10,28 @@ import Post from "./../models/Post.js";
  */
 // eslint-disable-next-line max-statements
 export async function prepareListingPosts(listingParams) {
-  let result = {};
+  let result = {},
+    sortingType = {};
 
   //prepare the sorting
   if (!listingParams.sort) {
     // new
     listingParams.sort = "new";
     result.sort = { createdAt: -1 };
-    result.sortingType = { type: "createdAt" };
+    sortingType = { type: "createdAt" };
   } else {
     switch (listingParams.sort) {
       case "hot":
         // TODO
         result.sort = { score: -1 };
-        result.sortingType = { type: "score" };
+        sortingType = { type: "score" };
         break;
       case "top":
         result.sort = null;
         break;
       default:
         result.sort = { createdAt: -1 };
-        result.sortingType = { type: "createdAt" };
+        sortingType = { type: "createdAt" };
         break;
     }
   }
@@ -94,8 +95,8 @@ export async function prepareListingPosts(listingParams) {
       } else {
         if (result.sort) {
           result.listing = {
-            type: result.sortingType.type,
-            value: { $gt: post[result.sortingType.type] },
+            type: sortingType.type,
+            value: { $gt: post[sortingType.type] },
           };
         } else {
           result.listing = {
@@ -116,8 +117,8 @@ export async function prepareListingPosts(listingParams) {
       } else {
         if (result.sort) {
           result.listing = {
-            type: result.sortingType.type,
-            value: { $lt: post[result.sortingType.type] },
+            type: sortingType.type,
+            value: { $lt: post[sortingType.type] },
           };
         } else {
           result.listing = {

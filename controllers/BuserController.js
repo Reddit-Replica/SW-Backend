@@ -101,12 +101,16 @@ const userPosts = async (req, res) => {
   try {
     const { sort, time, before, after, limit } = req.query;
 
-    const result = await listingUserProfileService(
-      req.params.username,
-      req.userId,
-      "posts",
-      { sort, time, before, after, limit }
-    );
+    const userToShow = await searchForUserService(req.params.username);
+    const user = await getUserFromJWTService(req.userId);
+
+    const result = await listingUserProfileService(userToShow, user, "posts", {
+      sort,
+      time,
+      before,
+      after,
+      limit,
+    });
 
     res.status(result.statusCode).json(result.data);
   } catch (error) {
@@ -125,10 +129,12 @@ const userUpvotedPosts = async (req, res) => {
       return res.status(401).json("Access Denied");
     }
     const { sort, time, before, after, limit } = req.query;
+    const userToShow = await searchForUserService(req.params.username);
+    const user = await getUserFromJWTService(req.payload.userId);
 
     const result = await listingUserProfileService(
-      req.params.username,
-      req.payload.userId,
+      userToShow,
+      user,
       "upvotedPosts",
       { sort, time, before, after, limit }
     );
@@ -150,10 +156,12 @@ const userDownvotedPosts = async (req, res) => {
       return res.status(401).json("Access Denied");
     }
     const { sort, time, before, after, limit } = req.query;
+    const userToShow = await searchForUserService(req.params.username);
+    const user = await getUserFromJWTService(req.payload.userId);
 
     const result = await listingUserProfileService(
-      req.params.username,
-      req.payload.userId,
+      userToShow,
+      user,
       "downvotedPosts",
       { sort, time, before, after, limit }
     );
@@ -175,10 +183,12 @@ const userHiddenPosts = async (req, res) => {
       return res.status(401).json("Access Denied");
     }
     const { sort, time, before, after, limit } = req.query;
+    const userToShow = await searchForUserService(req.params.username);
+    const user = await getUserFromJWTService(req.payload.userId);
 
     const result = await listingUserProfileService(
-      req.params.username,
-      req.payload.userId,
+      userToShow,
+      user,
       "hiddenPosts",
       { sort, time, before, after, limit }
     );
@@ -200,10 +210,12 @@ const userHistoryPosts = async (req, res) => {
       return res.status(401).json("Access Denied");
     }
     const { sort, time, before, after, limit } = req.query;
+    const userToShow = await searchForUserService(req.params.username);
+    const user = await getUserFromJWTService(req.payload.userId);
 
     const result = await listingUserProfileService(
-      req.params.username,
-      req.payload.userId,
+      userToShow,
+      user,
       "historyPosts",
       { sort, time, before, after, limit }
     );
