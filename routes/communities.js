@@ -48,10 +48,10 @@ const communitiesRouter = express.Router();
  *                            items:
  *                              properties:
  *                               id:
- *                                type:string
+ *                                type: string
  *                                description: id of the subreddit
  *                               data:
- *                                type:object
+ *                                type: object
  *                                properties:
  *                                 title:
  *                                  type: string
@@ -125,10 +125,10 @@ communitiesRouter.get("/subreddits/leaderboard");
  *                            items:
  *                              properties:
  *                               id:
- *                                type:string
+ *                                type: string
  *                                description: id of the subreddit
  *                               data:
- *                                type:object
+ *                                type: object
  *                                properties:
  *                                 title:
  *                                  type: string
@@ -197,10 +197,10 @@ communitiesRouter.get("/subreddits/leaderboard/:categoryName");
  *                            items:
  *                              properties:
  *                               id:
- *                                type:string
+ *                                type: string
  *                                description: id of the subreddit
  *                               data:
- *                                type:object
+ *                                type: object
  *                                properties:
  *                                 title:
  *                                  type: string
@@ -269,10 +269,10 @@ communitiesRouter.get("/custom-random-category");
  *                            items:
  *                              properties:
  *                               id:
- *                                type:string
+ *                                type: string
  *                                description: id of the subreddit
  *                               data:
- *                                type:object
+ *                                type: object
  *                                properties:
  *                                 title:
  *                                  type: string
@@ -330,10 +330,10 @@ communitiesRouter.get("/trending-communities");
  *                            items:
  *                              properties:
  *                               id:
- *                                type:string
+ *                                type: string
  *                                description: id of the subreddit
  *                               data:
- *                                type:object
+ *                                type: object
  *                                properties:
  *                                 title:
  *                                  type: string
@@ -347,16 +347,16 @@ communitiesRouter.get("/trending-communities");
  *                                isMember:
  *                                  type: boolean
  *                                  description: True if you are a member of the community , False if you are not a member of the community
- *                          firstCategoryChildren:
+ *                          SecondCategoryChildren:
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
  *                               id:
- *                                type:string
+ *                                type: string
  *                                description: id of the subreddit
  *                               data:
- *                                type:object
+ *                                type: object
  *                                properties:
  *                                 title:
  *                                  type: string
