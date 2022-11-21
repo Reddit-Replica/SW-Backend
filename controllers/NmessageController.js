@@ -20,11 +20,15 @@ const messageValidator = [
     .not()
     .isEmpty()
     .withMessage("receiver username can not be empty"),
-  body("subject")
+  body("type")
     .trim()
     .not()
     .isEmpty()
-    .withMessage("subject can not be empty"),
+    .withMessage("type can not be empty")
+    .isIn(["Mentions", "Messages"])
+    .withMessage(
+      "message type must be Mentions or Messages"
+    ),
 ];
 
 //CREATE SUBREDDIT

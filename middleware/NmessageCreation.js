@@ -12,22 +12,15 @@ import User from "../models/User.js";
 
 export async function addMessage(req, res, next) {
   //Extracting data from request body
-  const { senderUsername, receiverUsername, text, subject, type } = req.body;
   try {
     //ADDING NEW MESSAGE
-    const message = await new Message({
-      senderUsername: senderUsername,
-      receiverUsername: receiverUsername,
-      text: text,
-      subject: subject,
-      type:type,
-    }).save();
-    const senderID=await User.findOne({ username:senderUsername });
-    const receiverID=await User.findOne({ username:receiverUsername });
-    if (message.type==="Messages"){
-}else if (message.type==="PostReply"){
-
-}else if(message.type==="")
+    const message = await new Message(req.msg).save();
+    const senderID = await User.findOne({ username: senderUsername });
+    const receiverID = await User.findOne({ username: receiverUsername });
+    if (message.type === "Messages") {
+    } else if (message.type === "Mentions") {
+    }
+    next();
   } catch (err) {
     if (err.cause) {
       return res.status(err.cause).json({

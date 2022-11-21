@@ -9,7 +9,15 @@ const messageSchema = mongoose.Schema({
   subreddit: {
     type: String,
   },
-  postTitle: {
+  postId: {
+    type: Schema.Types.ObjectId,
+    ref: "Post",
+  },
+  repliedMsgId: {
+    type: Schema.Types.ObjectId,
+    ref: "Message",
+  },
+  subredditName: {
     type: String,
   },
   text: {
