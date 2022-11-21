@@ -43,6 +43,7 @@ const router = express.Router();
  *               type: string
  *               description: describes the type of message
  *               enum:
+ *                 - Post replies
  *                 - Mentions
  *                 - Messages
  *             postId:
@@ -238,7 +239,6 @@ router.get("/message/sent");
  *                                    type: string
  *                                    description: describes the type of message
  *                                    enum:
- *                                     - Post replies
  *                                     - Mentions
  *                                     - Messages
  *                                   subredditName:
@@ -460,7 +460,6 @@ router.get("/message/unread");
  *                                    type: string
  *                                    description: describes the type of message
  *                                    enum:
- *                                     - Post replies
  *                                     - Mentions
  *                                     - Messages
  *                                   subredditName:
@@ -576,7 +575,6 @@ router.get("/message/post-reply");
  *                                    type: string
  *                                    description: describes the type of message
  *                                    enum:
- *                                     - Post replies
  *                                     - Mentions
  *                                     - Messages
  *                                   subredditName:
