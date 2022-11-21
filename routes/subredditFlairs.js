@@ -37,7 +37,7 @@ const subredditFlairsRouter = express.Router();
  *                                items:
  *                                    type: object
  *                                    properties:
- *                                       id:
+ *                                       flairId:
  *                                           type: string
  *                                           description: id of the flair
  *                                       flairName:
@@ -72,7 +72,15 @@ const subredditFlairsRouter = express.Router();
  *      security:
  *          - bearerAuth: []
  */
-subredditFlairsRouter.get("/r/:subreddit/about/post-flairs");
+subredditFlairsRouter.get(
+  "/r/:subreddit/about/post-flairs",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  // TODO Think whether i should verify moderator or not? (maybe a user will need that details while creating a post)
+  verifyAuthTokenModerator,
+  subredditFlairsController.getAllFlairs
+);
 
 /**
  * @swagger
@@ -101,6 +109,9 @@ subredditFlairsRouter.get("/r/:subreddit/about/post-flairs");
  *                      schema:
  *                         type: object
  *                         properties:
+ *                           flairId:
+ *                              type: string
+ *                              description: id of the flair
  *                           flairName:
  *                              type: string
  *                              description: Name of the flair
@@ -133,7 +144,15 @@ subredditFlairsRouter.get("/r/:subreddit/about/post-flairs");
  *      security:
  *          - bearerAuth: []
  */
-subredditFlairsRouter.get("/r/:subreddit/about/post-flairs/:flairId");
+subredditFlairsRouter.get(
+  "/r/:subreddit/about/post-flairs/:flairId",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  // TODO Think whether i should verify moderator or not? (maybe a user will need that details while creating a post)
+  verifyAuthTokenModerator,
+  subredditFlairsController.getFlairDetails
+);
 
 /**
  * @swagger
@@ -172,6 +191,13 @@ subredditFlairsRouter.get("/r/:subreddit/about/post-flairs/:flairId");
  *      responses:
  *          200:
  *              description: Post flair successfully added
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              flairId:
+ *                                  type: string
+ *                                  description: id of the created flair
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -260,7 +286,14 @@ subredditFlairsRouter.post(
  *      security:
  *          - bearerAuth: []
  */
-subredditFlairsRouter.put("/r/:subreddit/about/post-flairs/:flairId");
+subredditFlairsRouter.put(
+  "/r/:subreddit/about/post-flairs/:flairId",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditFlairsController.editSubredditFlair
+);
 
 /**
  * @swagger
