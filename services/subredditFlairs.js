@@ -209,3 +209,16 @@ export async function prepareFlairs(subreddit) {
   flairsArray.sort(compareFlairs);
   return flairsArray;
 }
+
+/**
+ * A function used to prepare flairs settings object for the controller
+ * @param {Object} subreddit the subreddit to prepare the flairs settings
+ * @returns {Object} the prepared flairs settings object
+ */
+export function prepareFlairsSettings(subreddit) {
+  const flairsSettings = {
+    enablePostFlairs: subreddit.flairSettings.enablePostFlairInThisCommunity,
+    allowUsers: subreddit.flairSettings.allowUsersToAssignTheirOwn,
+  };
+  return flairsSettings;
+}

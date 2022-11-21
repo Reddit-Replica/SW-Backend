@@ -442,7 +442,14 @@ subredditFlairsRouter.post("/r/:subreddit/about/post-flairs-order");
  *      security:
  *          - bearerAuth: []
  */
-subredditFlairsRouter.get("/r/:subreddit/about/post-flairs-settings");
+subredditFlairsRouter.get(
+  "/r/:subreddit/about/post-flairs-settings",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditFlairsController.getFlairsSettings
+);
 
 /**
  * @swagger

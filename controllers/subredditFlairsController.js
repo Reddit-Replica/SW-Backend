@@ -8,6 +8,7 @@ import {
   editFlair,
   prepareFlairDetails,
   prepareFlairs,
+  prepareFlairsSettings,
 } from "../services/subredditFlairs.js";
 
 const addSubredditFlair = async (req, res) => {
@@ -90,10 +91,16 @@ const getAllFlairs = async (req, res) => {
   }
 };
 
+const getFlairsSettings = (req, res) => {
+  const flairsSettings = prepareFlairsSettings(req.subreddit);
+  res.status(200).json(flairsSettings);
+};
+
 export default {
   addSubredditFlair,
   deleteSubredditFlair,
   editSubredditFlair,
   getFlairDetails,
   getAllFlairs,
+  getFlairsSettings,
 };
