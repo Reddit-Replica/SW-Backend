@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import mongoose from "mongoose";
 
 /**
- * Service to search for a user object with his username and return it in the req
+ * Service to search for a user object with his username and return it
  *
  * @param {Object} req Request
  * @param {String} username Username that we want find
@@ -26,10 +26,15 @@ export async function searchForUserService(username) {
  * @returns {Object} User found
  */
 export async function getUserFromJWTService(userId) {
-  const user = await User.findById(userId);
-  if (!user || user.deletedAt) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     let error = new Error("Invalid id from the token");
     error.statusCode = 400;
+    throw error;
+  }
+  const user = await User.findById(userId);
+  if (!user || user.deletedAt) {
+    let error = new Error("Didn't find a user with that username");
+    error.statusCode = 404;
     throw error;
   }
   return user;
@@ -90,7 +95,7 @@ export async function blockUserService(user, userToBlock, block) {
  */
 export async function followUserService(user, userToFollow, follow) {
   if (user._id.toString() === userToFollow._id.toString()) {
-    let error = new Error("User can not himself himself");
+    let error = new Error("User can not follow himself");
     error.statusCode = 400;
     throw error;
   }
@@ -144,6 +149,11 @@ export async function getUserAboutDataService(username, loggedInUserId) {
 
   let loggedInUser = null;
   if (loggedInUserId) {
+    if (!mongoose.Types.ObjectId.isValid(loggedInUserId)) {
+      let error = new Error("Invalid id from the token");
+      error.statusCode = 400;
+      throw error;
+    }
     loggedInUser = await User.findById(loggedInUserId).select(
       "joinedSubreddits blockedUsers"
     );
