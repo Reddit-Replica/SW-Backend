@@ -39,13 +39,13 @@ pipeline {
     stage('Build') {
 
 			steps {
-				sh 'docker build -t waer/frontend:latest .'
+				sh 'docker build -t waer/backend:latest .'
 			}
 		}
 
     stage('Push') {
 			steps {
-				sh 'docker push waer/frontend:latest'
+				sh 'docker push waer/backend:latest'
 			}
 		}
 
