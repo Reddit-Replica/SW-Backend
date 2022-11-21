@@ -28,6 +28,10 @@ export async function prepareListingPosts(listingParams) {
       case "top":
         result.sort = null;
         break;
+      case "old":
+        result.sort = { createdAt: 1 };
+        result.sortingType = { type: "createdAt" };
+        break;
       default:
         result.sort = { createdAt: -1 };
         result.sortingType = { type: "createdAt" };
@@ -146,7 +150,7 @@ export async function prepareListingPosts(listingParams) {
 export async function postListing(listingParams) {
   let result = {};
   listingParams = await prepareListingPosts(listingParams);
-
+  console.log(listingParams);
   if (listingParams.time && listingParams.listing) {
     result.find = {
       createdAt: listingParams.time,
