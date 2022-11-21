@@ -32,7 +32,7 @@ app.use(morgan("dev"));
 
 // Log stream for morgan to make the log file in the server
 const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "access.log"),
+  path.join(__dirname, "logs/access.log"),
   {
     flags: "a",
   }
