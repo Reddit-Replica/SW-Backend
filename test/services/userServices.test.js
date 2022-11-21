@@ -2,6 +2,7 @@ import {
   getUserFromJWTService,
   searchForUserService,
   blockUserService,
+  followUserService,
 } from "../../services/userServices.js";
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
@@ -119,6 +120,43 @@ describe("Testing user services functions", () => {
     const result = await blockUserService(mainUser, userToAction, false);
     expect(result.statusCode).toEqual(200);
     expect(result.message).toEqual("User unblocked successfully");
+  });
+
+  it("should have followUserService function", () => {
+    expect(followUserService).toBeDefined();
+  });
+
+  it("try to let the user follow himself", async () => {
+    try {
+      await followUserService(mainUser, userToAction, true);
+    } catch (error) {
+      expect(error.statusCode).toEqual(400);
+      expect(error.message).toEqual("User can not follow himself");
+    }
+  });
+
+  it("try to follow another user", async () => {
+    const result = await followUserService(mainUser, userToAction, true);
+    expect(result.statusCode).toEqual(200);
+    expect(result.message).toEqual("User followed successfully");
+  });
+
+  it("try to follow the same user again", async () => {
+    const result = await followUserService(mainUser, userToAction, true);
+    expect(result.statusCode).toEqual(200);
+    expect(result.message).toEqual("User followed successfully");
+  });
+
+  it("try to unfollow user", async () => {
+    const result = await followUserService(mainUser, userToAction, false);
+    expect(result.statusCode).toEqual(200);
+    expect(result.message).toEqual("User unfollowed successfully");
+  });
+
+  it("try to unfollow the same user again", async () => {
+    const result = await followUserService(mainUser, userToAction, false);
+    expect(result.statusCode).toEqual(200);
+    expect(result.message).toEqual("User unfollowed successfully");
   });
 
   // it("", () => {});

@@ -95,7 +95,7 @@ export async function blockUserService(user, userToBlock, block) {
  */
 export async function followUserService(user, userToFollow, follow) {
   if (user._id.toString() === userToFollow._id.toString()) {
-    let error = new Error("User can not himself himself");
+    let error = new Error("User can not follow himself");
     error.statusCode = 400;
     throw error;
   }
