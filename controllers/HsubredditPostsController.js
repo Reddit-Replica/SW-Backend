@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import { body, check } from "express-validator";
-import { listingSubredditPosts } from "../services/subredditItems.js";
+import { listingSubredditPosts } from "../services/subredditItemsListing.js";
 
 const modValidator = [
   check("only")
@@ -19,11 +19,11 @@ const getSpammedItems = async (req, res) => {
         { sort, before, after, limit }
       );
     } else if (only === "comments") {
-      result = await listingSubredditPosts(
-        req.params.subreddit,
-        "spammedComments",
-        { sort, before, after, limit }
-      );
+      // result = await listingSubredditComments(
+      //   req.params.subreddit,
+      //   "spammedComments",
+      //   { sort, before, after, limit }
+      // );
     }
 
     res.status(result.statusCode).json(result.data);
@@ -47,12 +47,12 @@ const getEditedItems = async (req, res) => {
         "editedPosts",
         { sort, before, after, limit }
       );
-    } else {
-      result = await listingSubredditPosts(
-        req.params.subreddit,
-        "editedComments",
-        { sort, before, after, limit }
-      );
+    } else if (only === "comments") {
+      // result = await listingSubredditComments(
+      //   req.params.subreddit,
+      //   "editedComments",
+      //   { sort, before, after, limit }
+      // );
     }
 
     res.status(result.statusCode).json(result.data);

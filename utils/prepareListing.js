@@ -150,7 +150,7 @@ export async function prepareListingPosts(listingParams) {
 export async function postListing(listingParams) {
   let result = {};
   listingParams = await prepareListingPosts(listingParams);
-  console.log(listingParams);
+
   if (listingParams.time && listingParams.listing) {
     result.find = {
       createdAt: listingParams.time,
