@@ -211,6 +211,18 @@ const communitySchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  editedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  spammedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
   //NEEDS TO BE AUTO INCREMENT
   //Is used to get random subreddit from categories
   randomIndex: {
