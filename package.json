@@ -16,7 +16,7 @@
     "coverage": "nyc npm run test",
     "test-cover": "istanbul cover --include-all-sources tests/utils/subredditRulesUtilSpec.js && istanbul check-coverage",
     "coverage-report": "npx nyc report --reporter html --reporter text -t .nyc_output  --report-dir coverage/summary",
-    "test-jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test-jest": "set NODE_ENV=testing && node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "coverage-jest": "npm run test-jest -- --coverage"
   },
   "repository": {
