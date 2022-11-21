@@ -498,6 +498,13 @@ subredditFlairsRouter.get(
  *      security:
  *          - bearerAuth: []
  */
-subredditFlairsRouter.post("/r/:subreddit/about/post-flairs-settings");
+subredditFlairsRouter.post(
+  "/r/:subreddit/about/post-flairs-settings",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditFlairsController.editFlairsSettings
+);
 
 export default subredditFlairsRouter;

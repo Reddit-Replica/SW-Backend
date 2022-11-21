@@ -9,6 +9,8 @@ import {
   prepareFlairDetails,
   prepareFlairs,
   prepareFlairsSettings,
+  validateFlairSettingsBody,
+  editFlairsSettingsService,
 } from "../services/subredditFlairs.js";
 
 const addSubredditFlair = async (req, res) => {
@@ -92,8 +94,32 @@ const getAllFlairs = async (req, res) => {
 };
 
 const getFlairsSettings = (req, res) => {
-  const flairsSettings = prepareFlairsSettings(req.subreddit);
-  res.status(200).json(flairsSettings);
+  try {
+    const flairsSettings = prepareFlairsSettings(req.subreddit);
+    res.status(200).json(flairsSettings);
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const editFlairsSettings = async (req, res) => {
+  try {
+    const flairsSettings = validateFlairSettingsBody(req);
+    await editFlairsSettingsService(req.subreddit, flairsSettings);
+    res.status(200).json("Post flairs settings changed successfully");
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
 };
 
 export default {
@@ -103,4 +129,5 @@ export default {
   getFlairDetails,
   getAllFlairs,
   getFlairsSettings,
+  editFlairsSettings,
 };

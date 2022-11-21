@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import { compareFlairs } from "../utils/subredditFlairs.js";
 import Flair from "../models/Flair.js";
 /**
- * A function used to validate the request body, if the body is invalid it throws an error
+ * A function used to validate the request body for creating or editing a flair, if the body is invalid it throws an error
  * @param {Object} req Request object
  * @returns {void}
  */
@@ -221,4 +221,46 @@ export function prepareFlairsSettings(subreddit) {
     allowUsers: subreddit.flairSettings.allowUsersToAssignTheirOwn,
   };
   return flairsSettings;
+}
+
+/**
+ * A function used to validate the request body for editing flairs settings, if the body is invalid it throws an error
+ * @param {Object} req Request object
+ * @returns {Object} the flairs settings Object
+ */
+export function validateFlairSettingsBody(req) {
+  if (
+    !Object.hasOwn(req.body, "enablePostFlairs") ||
+    !Object.hasOwn(req.body, "allowUsers")
+  ) {
+    const error = new Error("Bad request");
+    error.statusCode = 400;
+    throw error;
+  }
+  if (req.body.allowUsers && !req.body.enablePostFlairs) {
+    const error = new Error("Bad request");
+    error.statusCode = 400;
+    throw error;
+  }
+  const flairsSettings = {
+    enablePostFlairInThisCommunity: req.body.enablePostFlairs,
+    allowUsersToAssignTheirOwn: req.body.allowUsers,
+  };
+  return flairsSettings;
+}
+
+/**
+ * A function used to edit the flairs settings in a subreddit
+ * @param {Object} subreddit the subreddit to change the flairs settings
+ * @param {Object} flairsSettings the new flairs settings
+ * @returns {void}
+ */
+export async function editFlairsSettingsService(subreddit, flairsSettings) {
+  console.log(subreddit);
+  subreddit.flairSettings.enablePostFlairInThisCommunity =
+    flairsSettings.enablePostFlairInThisCommunity;
+  subreddit.flairSettings.allowUsersToAssignTheirOwn =
+    flairsSettings.allowUsersToAssignTheirOwn;
+  console.log(subreddit);
+  await subreddit.save();
 }
