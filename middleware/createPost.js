@@ -101,9 +101,19 @@ export async function checkHybridPost(req, res, next) {
         error: "Image captions are required",
       });
     }
+    if (imageFiles?.length !== imageCaptions?.length) {
+      return res.status(400).json({
+        error: "Each image should have a caption",
+      });
+    }
     if (videoFiles && !videoCaptions) {
       return res.status(400).json({
         error: "Video captions are required",
+      });
+    }
+    if (videoFiles?.length !== videoCaptions?.length) {
+      return res.status(400).json({
+        error: "Each video should have a caption",
       });
     }
     if (imageFiles) {
@@ -159,6 +169,14 @@ export function checkImagesAndVideos(req, res, next) {
     const imageFiles = req.files.images;
     if (!imageFiles) {
       return res.status(404).json("Images not found");
+    }
+    if (
+      imageFiles.length !== imageCaptions?.length ||
+      imageFiles.length !== imageLinks?.length
+    ) {
+      return res.status(400).json({
+        error: "Each image should have a caption and a link",
+      });
     }
     imageFiles.forEach((image) => {
       images.push({
