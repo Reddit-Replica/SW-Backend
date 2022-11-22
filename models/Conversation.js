@@ -10,6 +10,14 @@ const conversationSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  firstUsername: {
+    type: String,
+    required: true,
+  },
+  secondUsername: {
+    type: String,
+    required: true,
+  },
   messages: [
     {
       messageID: {

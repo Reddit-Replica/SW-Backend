@@ -228,14 +228,13 @@ const userSchema = mongoose.Schema({
   ],
   conversations: [
     {
-      conversationId:{
-        type:Schema.Types.ObjectId,
-        ref:"Conversation",
+      conversationId: {
+        type: Schema.Types.ObjectId,
+        ref: "Conversation",
       },
-      with:{
-        type:String,
-        required:true,
-      }
+      with: {
+        type: String,
+      },
     },
   ],
 });
