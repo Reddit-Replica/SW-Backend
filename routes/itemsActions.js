@@ -102,10 +102,10 @@ itemsActionsRouter.delete(
 itemsActionsRouter.put(
   "/edit-user-text",
   verifyAuthToken,
-  itemsActionController.editPoComValidator,
+  itemsActionController.editComValidator,
   validateRequestSchema,
   checkId,
-  itemsActionController.editPoCom
+  itemsActionController.editComment
 );
 
 export default itemsActionsRouter;

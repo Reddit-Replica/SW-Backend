@@ -24,6 +24,22 @@ const messageSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: Date.now(),
+  },
+  editedAt: {
+    type: Date,
+  },
+  deletedAt: {
+    type: Date,
+  },
+  ownerId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
   senderUsername: {
     type: String,
     required: true,
