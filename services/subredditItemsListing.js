@@ -1,5 +1,6 @@
 import Subreddit from "../models/Community.js";
-import { postListing } from "../utils/prepareListing.js";
+import Post from "../models/Post.js";
+import { postListing, commentListing } from "../utils/prepareListing.js";
 
 // eslint-disable-next-line max-statements
 export async function listingSubredditPosts(
@@ -76,7 +77,7 @@ export async function listingSubredditComments(
   listingParams
 ) {
   // Prepare Listing Parameters
-  const listingResult = await postListing(listingParams);
+  const listingResult = await commentListing(listingParams);
 
   const subreddit = await Subreddit.findOne({ title: subredditName });
   if (!subreddit) {
@@ -86,38 +87,42 @@ export async function listingSubredditComments(
     };
   }
 
-  const result = await subreddit.select(typeOfListing).populate({
-    path: typeOfListing,
-    match: listingResult.find,
-    limit: listingResult.limit,
-    options: {
-      sort: listingResult.sort,
-    },
-  });
+  const result = await Subreddit.findOne({ title: subredditName })
+    .select(typeOfListing)
+    .populate({
+      path: typeOfListing,
+      match: listingResult.find,
+      limit: listingResult.limit,
+      options: {
+        sort: listingResult.sort,
+      },
+    });
 
   let children = [];
   for (const i in result[typeOfListing]) {
-    const post = result[typeOfListing][i];
+    const comment = result[typeOfListing][i];
+    const post = await Post.findById(comment.postId);
 
-    let postData = { id: result[typeOfListing][i]._id.toString() };
-    postData.data = {
+    let commentData = { id: result[typeOfListing][i]._id.toString() };
+    commentData.data = {
       kind: post.kind,
       subreddit: post.subredditName,
-      content: post.content,
-      images: post.images,
       nsfw: post.nsfw,
       spoiler: post.spoiler,
       title: post.title,
-      sharePostId: post.sharePostId,
       flair: post.flair,
       comments: post.numberOfComments,
       votes: post.numberOfUpvotes - post.numberOfDownvotes,
       postedAt: post.createdAt,
       editedAt: post.editedAt,
       postedBy: post.ownerUsername,
+      ownerUsername: comment.ownerUsername,
+      votes: comment.numberOfVotes,
+      content: comment.content,
+      commentedAt: comment.createdAt,
     };
 
-    children.push(postData);
+    children.push(commentData);
   }
 
   let after = "",
