@@ -245,9 +245,9 @@ export async function postSubmission(req, res, next) {
     scheduleTime,
     scheduleTimeZone,
   } = req.body;
-  const userId = req.user.id;
-  const username = req.user.username;
   try {
+    const userId = req.user.id;
+    const username = req.user.username;
     const post = await new Post({
       kind: kind,
       ownerUsername: username,
