@@ -209,6 +209,23 @@ export async function validateMessage(req) {
       receiverUsername: req.body.receiverUsername,
       type: req.body.type,
     };
+    const senderCheck=checkUserSubreddit(msg.senderUsername);
+    if (senderCheck===null){
+      return false;
+    } else if (senderCheck===0){
+      msg.isSenderUser=true;
+    } else {
+      msg.isSenderUser=false;
+    }
+
+    const receiverCheck=checkUserSubreddit(msg.senderUsername);
+    if (receiverCheck===null){
+      return false;
+    } else if (receiverCheck===0){
+      msg.isReceiverUser=true;
+    } else {
+      msg.isReceiverUser=false;
+    }
     if (req.body.postId) {
       msg.postId = req.body.postId;
     }
@@ -235,3 +252,19 @@ export async function validateMessage(req) {
     return "error in add validating";
   }
 }
+
+function checkUserSubreddit(username){
+  if (!username.includes("/",0)){
+    return null;
+  }
+  const values=username.split("/");
+  if (values[values.length-2]==="u"){
+    return 0;
+  }
+  if (values[values.length-2]==="r"){
+    return 1;
+  }
+  return null;
+}
+
+
