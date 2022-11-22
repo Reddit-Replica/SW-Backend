@@ -28,9 +28,15 @@ const messageSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  isSenderUser: {
+    type: Boolean,
+  },
   receiverUsername: {
     type: String,
     required: true,
+  },
+  isReceiverUser: {
+    type: Boolean,
   },
   sentAt: {
     type: Date,
