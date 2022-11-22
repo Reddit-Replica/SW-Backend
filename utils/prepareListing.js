@@ -70,7 +70,7 @@ export async function prepareListingPosts(listingParams) {
   }
 
   // prepare the limit
-  if (!listingParams.limit) {
+  if (!listingParams.limit && listingParams.limit !== 0) {
     result.limit = 25;
   } else {
     listingParams.limit = parseInt(listingParams.limit);
