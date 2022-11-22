@@ -61,10 +61,24 @@ const router = express.Router();
  *      responses:
  *          201:
  *              description: Your message is sent successfully
- *          401:
- *              description: Unauthorized to send a message
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          500:
- *              description: Server Error
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *      security:
  *       - bearerAuth: []
  */
