@@ -157,7 +157,7 @@ router.post("/message/compose");
  *                        type: string
  *                        description: Type of error
  *          500:
- *              description:Internal Server Error
+ *              description: Internal Server Error
  *              content:
  *                application/json:
  *                  schema:
@@ -239,7 +239,6 @@ router.get("/message/sent");
  *                                    type: string
  *                                    description: describes the type of message
  *                                    enum:
- *                                     - Post replies
  *                                     - Mentions
  *                                     - Messages
  *                                   subredditName:
@@ -279,7 +278,7 @@ router.get("/message/sent");
  *                        type: string
  *                        description: Type of error
  *          500:
- *              description:Internal Server Error
+ *              description: Internal Server Error
  *              content:
  *                application/json:
  *                  schema:
@@ -382,7 +381,7 @@ router.get("/message/inbox");
  *                        type: string
  *                        description: Type of error
  *          500:
- *              description:Internal Server Error
+ *              description: Internal Server Error
  *              content:
  *                application/json:
  *                  schema:
@@ -461,7 +460,6 @@ router.get("/message/unread");
  *                                    type: string
  *                                    description: describes the type of message
  *                                    enum:
- *                                     - Post replies
  *                                     - Mentions
  *                                     - Messages
  *                                   subredditName:
@@ -498,7 +496,7 @@ router.get("/message/unread");
  *                        type: string
  *                        description: Type of error
  *          500:
- *              description:Internal Server Error
+ *              description: Internal Server Error
  *              content:
  *                application/json:
  *                  schema:
@@ -577,7 +575,6 @@ router.get("/message/post-reply");
  *                                    type: string
  *                                    description: describes the type of message
  *                                    enum:
- *                                     - Post replies
  *                                     - Mentions
  *                                     - Messages
  *                                   subredditName:
@@ -614,7 +611,7 @@ router.get("/message/post-reply");
  *                        type: string
  *                        description: Type of error
  *          500:
- *              description:Internal Server Error
+ *              description: Internal Server Error
  *              content:
  *                application/json:
  *                  schema:
@@ -682,7 +679,7 @@ router.get("/message/mentions");
  *                                messages:
  *                                  type: array
  *                                  description: List of the messages in that subject
- *                                    items:
+ *                                  items:
  *                                     properties:
  *                                      msgID:
  *                                        type: string
@@ -722,7 +719,7 @@ router.get("/message/mentions");
  *                        type: string
  *                        description: Type of error
  *          500:
- *              description:Internal Server Error
+ *              description: Internal Server Error
  *              content:
  *                application/json:
  *                  schema:
