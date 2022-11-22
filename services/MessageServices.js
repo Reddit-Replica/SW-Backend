@@ -10,25 +10,18 @@ import {
 
 // eslint-disable-next-line max-statements
 export async function addMessage(req) {
-  console.log("hamada");
   try {
-    console.log(req.msg);
     const message = await new Message(req.msg).save();
 
     const sender = await User.findOne({ username: message.senderUsername });
     const receiver = await User.findOne({ username: message.receiverUsername });
     if (message.type === "Messages") {
       //add this message to the sender user as sent message
-      console.log("1");
       addSentMessages(sender.id, message);
-      console.log("1");
       //add this message to the receiver user as received message
       addReceivedMessages(receiver.id, message);
-      console.log("1");
       const conversationId = await createNewConversation(message);
-      console.log("1");
       const conversation = await Conversation.findById(conversationId);
-      console.log(conversation);
       conversation.messages.push({ messageID: message.id });
       conversation.save();
 
@@ -70,7 +63,6 @@ export async function createNewConversation(msg) {
         firstUsername: msg.senderUsername,
         secondUsername: msg.receiverUsername,
       }).save();
-      console.log(conversation);
       return conversation.id;
     }
     //BUT IF THERE IS THEN WE NEED TO RETURN THE ID OF THAT CONVERSATION TO ADD THE MESSAGE INTO IT
@@ -96,15 +88,20 @@ export async function addToConversation(msg, conversationId) {
 }
 
 async function checkExistingConversation(user, conversationId) {
+  try {
   await user.populate("conversations.conversationId");
   const conversations = user.conversations;
-  console.log(conversations);
+  let valid=false;
   conversations.forEach((conversation) => {
-    if (toString(conversation.id) === conversationId) {
-      return true;
+    console.log(conversation.conversationId.id,conversationId);
+    if (conversation.conversationId.id === conversationId) {
+      valid=true;
     }
   });
-  return false;
+  return valid;
+} catch (err) {
+  return "error in add conversation";
+}
 }
 
 async function addConversationToUsers(
@@ -112,10 +109,12 @@ async function addConversationToUsers(
   receiverUsername,
   convId
 ) {
+  try {
   const userOne = await User.findOne({ username: senderUsername });
   const userTwo = await User.findOne({ username: receiverUsername });
-  const userOneConv = checkExistingConversation(userOne, convId);
-  const userTwoConv = checkExistingConversation(userTwo, convId);
+  const userOneConv = await checkExistingConversation(userOne, convId);
+  console.log(userOneConv);
+  const userTwoConv = await checkExistingConversation(userTwo, convId);
   if (!userOneConv) {
     userOne.conversations.push({
       conversationId: convId,
@@ -132,12 +131,16 @@ async function addConversationToUsers(
 
     userTwo.save();
   }
+} catch (err) {
+  return "error in add conversation";
+}
 }
 
 //check if sender and receiver ids are for persons not deleted
 
 // eslint-disable-next-line max-statements
 export async function validateMessage(req) {
+  try {
   if (req.body.type === "Mentions") {
     if (!req.body.postId) {
       return false;
@@ -170,7 +173,13 @@ export async function validateMessage(req) {
   if (!receiver) {
     return false;
   }
+  const sender=await User.findOne({ username:msg.senderUsername });
+  if (sender.username !== req.payload.username) {
+    return false;
+  }
   req.msg = msg;
-  console.log(req.msg);
   return true;
+} catch (err) {
+  return "error in add validating";
+}
 }

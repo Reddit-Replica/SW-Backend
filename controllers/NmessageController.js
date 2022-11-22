@@ -35,7 +35,6 @@ const createMessage = async (req, res) => {
     if (!valid) {
       throw new Error("this msg isn't valid to be sent", { cause: 400 });
     }
-    console.log(req.msg);
     const msg = await addMessage(req);
     if (!msg.id) {
       throw new Error(msg, { cause: 400 });
