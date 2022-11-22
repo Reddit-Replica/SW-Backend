@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "set NODE_ENV=development && nodemon app.js",
     "start": "node app.js",
-    "test": "set NODE_ENV=testing && jasmine",
+    "test": "set NODE_ENV=testing && node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "doc": "swagger-jsdoc-generator config.json > documentation.json",
     "doc2": "redoc-cli bundle -o apidoc/index.html documentation.json",
     "lint": "eslint ./**/*.js",
@@ -16,8 +16,8 @@
     "coverage": "nyc npm run test",
     "test-cover": "istanbul cover --include-all-sources tests/utils/subredditRulesUtilSpec.js && istanbul check-coverage",
     "coverage-report": "npx nyc report --reporter html --reporter text -t .nyc_output  --report-dir coverage/summary",
-    "test-jest": "jest",
-    "coverage-jest": "jest --coverage"
+    "test-jasmine": "set NODE_ENV=testing && jasmine",
+    "coverage-jest": "npm run test-jest -- --coverage"
   },
   "repository": {
     "type": "git",
