@@ -1,8 +1,8 @@
 import User from "../models/User.js";
-import { body, check } from "express-validator";
+import { body, check, query } from "express-validator";
 
 const postIdValidator = [
-  body("id").not().isEmpty().withMessage("Id can't be empty"),
+  query("id").not().isEmpty().withMessage("Id can't be empty"),
 ];
 
 const pinPostValidator = [
