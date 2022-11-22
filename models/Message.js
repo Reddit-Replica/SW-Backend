@@ -38,7 +38,6 @@ const messageSchema = mongoose.Schema({
   },
   subject: {
     type: String,
-    required: true,
   },
   isReply: {
     type: Boolean,

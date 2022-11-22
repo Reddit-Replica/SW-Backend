@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
-import Subreddit from "./../models/Community.js";
-import User from "./../models/User.js";
 import { body } from "express-validator";
+import { addMessage, validateMessage } from "../services/MessageServices.js";
 
 //CHECKING ON MESSAGE CONTENT
 const messageValidator = [
@@ -26,28 +25,23 @@ const messageValidator = [
     .isEmpty()
     .withMessage("type can not be empty")
     .isIn(["Mentions", "Messages"])
-    .withMessage(
-      "message type must be Mentions or Messages"
-    ),
+    .withMessage("message type must be either Mentions or Messages"),
 ];
 
-//CREATE SUBREDDIT
-// eslint-disable-next-line max-statements
 const createMessage = async (req, res) => {
   try {
-    //MAKE THE USER OWNER OF THE SUBREDDIT
-    const moderator = await User.findById(creatorId);
-    const addedSubreddit = {
-      subredditId: subreddit.id,
-      name: title,
-    };
-    moderator.ownedSubreddits.push(addedSubreddit);
-    await moderator.save();
-    moderator.joinedSubreddits.push(addedSubreddit);
-    await moderator.save();
-    //RETURN RESPONSE
+    //ADDING NEW MESSAGE
+    const valid = validateMessage(req);
+    if (!valid) {
+      throw new Error("this msg can't be sent", { cause: 400 });
+    }
+    const msg = await addMessage(req);
+    console.log(msg);
+    if (!msg.id) {
+      throw new Error(msg, { cause: 400 });
+    }
     return res.status(201).send({
-      subreddit: subreddit,
+      msg: msg,
     });
   } catch (err) {
     if (err.cause) {
@@ -62,4 +56,5 @@ const createMessage = async (req, res) => {
 
 export default {
   createMessage,
+  messageValidator,
 };

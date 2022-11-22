@@ -1,5 +1,8 @@
 import express from "express";
 
+import messageController from "../controllers/NmessageController.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
@@ -66,7 +69,12 @@ const router = express.Router();
  *       - bearerAuth: []
  */
 
-router.post("/message/compose");
+router.post(
+  "/message/compose",
+  verifyAuthToken,
+  messageController.messageValidator,
+  messageController.createMessage
+);
 
 /**
  * @swagger

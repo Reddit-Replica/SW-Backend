@@ -6,81 +6,10 @@ import User from "../models/User.js";
  * @returns {boolean} indicates if the message was sent successfully or not
  */
 
-export async function createMessage(req) {
-  try {
-      //ADDING NEW MESSAGE
-      const valid=validateMessage(req);
-      if (!valid){
-        throw new Error("this msg can't be sent", { cause: 400 });
-      }
-      const message = await new Message(req.msg).save();
-      const senderID = await User.findOne({ username: senderUsername });
-      const receiverID = await User.findOne({ username: receiverUsername });
-      if (message.type === "Messages") {
-        //add this message to the sender user as sent message
-        addSentMessages(senderID,message);
-        //add this message to the receiver user as received message
-        addReceivedMessages(receiverID,message);
-      } else if (message.type === "Mentions") {
-        //add this mention to receiver mentions
-        addUserMention(receiverID,req.message);
-      }
-    } catch (err) {
-      if (err.cause) {
-        return res.status(err.cause).json({
-          error: err.message,
-        });
-      } else {
-        return res.status(500).json("Internal Server Error");
-      }
-    }
-}
-
-export async function addConversation(msg) {
-  try {
-      
-    } catch (err) {
-      if (err.cause) {
-        return res.status(err.cause).json({
-          error: err.message,
-        });
-      } else {
-        return res.status(500).json("Internal Server Error");
-      }
-    }
-}
-
-export function validateMessage(req) {
-  if (req.body.type === "Mentions") {
-    if (!req.body.postId) {
-      return false;
-    }
-  }
-  const msg = {
-    text: req.body.text,
-    senderUsername: req.body.senderUsername,
-    receiverUsername: req.body.receiverUsername,
-    type: req.body.type,
-  };
-  if (req.body.postId) {
-    msg.postId = req.body.postId;
-  }
-  if (req.body.subredditName) {
-    msg.subredditName = req.body.subredditName;
-  }
-  if (req.body.repliedMsgId) {
-    msg.repliedMsgId = req.body.repliedMsgId;
-  }
-  req.msg = msg;
-  return true;
-}
-
 export async function addSentMessages(userId, message) {
   try {
     const user = await User.findById(userId);
-    user.sentMessages.push({
-      messageID: message.id,
-    });
+    user.sentMessages.push(message.id);
     user.save();
     return true;
   } catch (err) {
@@ -96,9 +25,7 @@ export async function addSentMessages(userId, message) {
 export async function addReceivedMessages(userId, message) {
   try {
     const user = await User.findById(userId);
-    user.receivedMessages.push({
-      messageID: message.id,
-    });
+    user.receivedMessages.push(message.id);
     user.save();
     return true;
   } catch (err) {

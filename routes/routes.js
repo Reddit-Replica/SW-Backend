@@ -10,6 +10,7 @@ import postRouter from "./posts.js";
 import subredditRouter from "./subreddit.js";
 import subredditRulesRouter from "./subredditRules.js";
 import subredditFlairsRouter from "./subredditFlairs.js";
+import messageRouter from "./message.js";
 // eslint-disable-next-line new-cap
 const mainRouter = express.Router();
 
@@ -24,6 +25,7 @@ mainRouter.use(postRouter);
 mainRouter.use(subredditRouter);
 mainRouter.use(subredditRulesRouter);
 mainRouter.use(subredditFlairsRouter);
+mainRouter.use(messageRouter);
 
 // ! should add your router before this middleware
 mainRouter.use((req, res) => {
