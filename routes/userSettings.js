@@ -1,4 +1,7 @@
 import express from "express";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import userSettingsController from "../controllers/userSettingsController.js";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -82,7 +85,11 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.get("/account-settings");
+router.get(
+  "/account-settings",
+  verifyAuthToken,
+  userSettingsController.getAccountSettings
+);
 
 /**
  * @swagger
@@ -139,7 +146,11 @@ router.get("/account-settings");
  *     security:
  *       - bearerAuth: []
  */
-router.patch("/account-settings");
+router.patch(
+  "/account-settings",
+  verifyAuthToken,
+  userSettingsController.editAccountSettings
+);
 
 /**
  * @swagger
@@ -308,7 +319,13 @@ router.put("/change-password");
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/delete-account");
+router.delete(
+  "/delete-account",
+  verifyAuthToken,
+  userSettingsController.deleteValidator,
+  validateRequestSchema,
+  userSettingsController.deleteAccount
+);
 
 /**
  * @swagger
@@ -354,7 +371,13 @@ router.delete("/delete-account");
  *     security:
  *       - bearerAuth: []
  */
-router.post("/social-link");
+router.post(
+  "/social-link",
+  verifyAuthToken,
+  userSettingsController.socialLinkValidator,
+  validateRequestSchema,
+  userSettingsController.addSocialLink
+);
 
 /**
  * @swagger
@@ -393,7 +416,13 @@ router.post("/social-link");
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/social-link");
+router.delete(
+  "/social-link",
+  verifyAuthToken,
+  userSettingsController.socialLinkValidator,
+  validateRequestSchema,
+  userSettingsController.deleteSocialLink
+);
 
 /**
  * @swagger
