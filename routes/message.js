@@ -35,10 +35,10 @@ const router = express.Router();
  *               description: Message Content as text
  *             senderUsername:
  *               type: string
- *               description: Username of the sender
+ *               description: Username of the sender if it was user sent it as /u/username ad if it a subreddit send it as /r/subredditName
  *             receiverUsername:
  *               type: string
- *               description: Username of the receiver
+ *               description: Username of the receiver if it was user sent it as /u/username ad if it a subreddit send it as /r/subredditName
  *             subject:
  *               type: string
  *               description: Subject of the message
