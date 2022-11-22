@@ -31,7 +31,7 @@ const messageValidator = [
 const createMessage = async (req, res) => {
   try {
     //ADDING NEW MESSAGE
-    const valid = validateMessage(req);
+    const valid = await validateMessage(req);
     if (!valid) {
       throw new Error("this msg isn't valid to be sent", { cause: 400 });
     }
