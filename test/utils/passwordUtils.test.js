@@ -1,4 +1,3 @@
-import User from "../../models/User.js";
 import { hashPassword, comparePasswords } from "../../utils/passwordUtils.js";
 import bcrypt from "bcryptjs";
 import { connectDatabase, closeDatabaseConnection } from "./../database.js";
@@ -8,7 +7,6 @@ describe("Testing Password utilities", () => {
     await connectDatabase();
   });
   afterAll(async () => {
-    await User.deleteMany({});
     await closeDatabaseConnection();
   });
 

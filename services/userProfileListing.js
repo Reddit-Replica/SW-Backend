@@ -1,32 +1,29 @@
 import User from "../models/User.js";
 import { postListing } from "../utils/prepareListing.js";
 
+/**
+ * Function that get the posts that we want to list from a certain user
+ * then sort, match, and limit them, then finally save the last id so that it can
+ * be used next time to get different results.
+ * Function also check each post if it was followed or saved or spammed by the logged in user.
+ *
+ * @param {Object} user User that we want to list his posts
+ * @param {Object} loggedInUser Logged in user that did the request
+ * @param {String} typeOfListing Name of the list in the user model that we want to list
+ * @param {Object} listingParams Listing parameters that was in the query of the request
+ * @returns {Object} The response to that request containing [statusCode, data]
+ */
 // eslint-disable-next-line max-statements
 export async function listingUserProfileService(
-  username,
-  loggedInUserId,
+  user,
+  loggedInUser,
   typeOfListing,
   listingParams
 ) {
   // prepare the listing parameters
   const listingResult = await postListing(listingParams);
 
-  // get the owner of the profile
-  const user = await User.findOne({ username: username });
-  if (!user) {
-    return {
-      statusCode: 404,
-      data: "Didn't find a user with that username",
-    };
-  }
-
-  // get the logged in user
-  let loggedInUser = null;
-  if (loggedInUserId) {
-    loggedInUser = await User.findById(loggedInUserId);
-  }
-
-  const result = await User.findOne({ username: username })
+  const result = await User.findOne({ username: user.username })
     .select(typeOfListing)
     .populate({
       path: typeOfListing,
@@ -109,15 +106,18 @@ export async function listingUserProfileService(
     children.push(postData);
   }
 
-  let after = "";
+  let after = "",
+    before = "";
   if (result[typeOfListing].length) {
     after =
       result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
+    before = result[typeOfListing][0]._id.toString();
   }
   return {
     statusCode: 200,
     data: {
       after: after,
+      before: before,
       children: children,
     },
   };

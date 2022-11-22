@@ -26,6 +26,11 @@ const createComment = async (req, res) => {
       req.body;
     const { username, userId } = req.payload;
 
+    const user = await User.findById(userId);
+    if (!user || user.deletedAt) {
+      return res.status(400).json({ error: "Can not find user with that id" });
+    }
+
     // if the parent is a post get it
     let post = {};
     if (parentType === "post") {
@@ -70,7 +75,6 @@ const createComment = async (req, res) => {
     const comment = new Comment(commentObject);
     await comment.save();
 
-    const user = await User.findById(userId);
     user.comments.push(comment._id);
     await user.save();
 
