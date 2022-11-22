@@ -34,12 +34,12 @@ const messageSchema = mongoose.Schema({
   },
   deletedAt: {
     type: Date,
-  },
+  },/*
   ownerId: {
     type: Schema.Types.ObjectId,
     required: true,
     ref: "User",
-  },
+  },*/
   senderUsername: {
     type: String,
     required: true,

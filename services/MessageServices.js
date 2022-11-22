@@ -1,6 +1,8 @@
+/* eslint-disable max-statements */
 import User from "../models/User.js";
 import Message from "../models/Message.js";
 import Conversation from "../models/Conversation.js";
+import Subreddit from "../models/Community.js";
 import {
   addSentMessages,
   addReceivedMessages,
@@ -17,28 +19,32 @@ import {
 
 export async function addMessage(req) {
   try {
+    console.log(req.msg);
     const message = await new Message(req.msg).save();
+    console.log("haaaaaa");
+    if (message.isSenderUser) {
+      const sender = await User.findOne({ username: message.senderUsername, });
+      //add this message to the sender user as sent message
+      addSentMessages(sender.id, message);
+    }
 
-    const sender = await User.findOne({ username: message.senderUsername });
-    const receiver = await User.findOne({ username: message.receiverUsername });
-    //add this message to the sender user as sent message
-    addSentMessages(sender.id, message);
-    //add this message to the receiver user as received message
-    addReceivedMessages(receiver.id, message);
-
+    if (message.isReceiverUser) {
+      const receiver = await User.findOne({
+        username: message.receiverUsername,
+      });
+      //add this message to the receiver user as received message
+      addReceivedMessages(receiver.id, message);
+    }
+    console.log("no3");
     const conversationId = await createNewConversation(message);
-
+    console.log("no3");
     const conversation = await Conversation.findById(conversationId);
-
+    console.log("no3");
     conversation.messages.push({ messageID: message.id });
-
+    console.log("no3");
     conversation.save();
-
-    await addConversationToUsers(
-      message.senderUsername,
-      message.receiverUsername,
-      conversationId
-    );
+    console.log("no3");
+    await addConversationToUsers(message, conversationId);
     return "created";
   } catch (err) {
     return "error in creating the message";
@@ -152,29 +158,32 @@ async function checkExistingConversation(user, conversationId) {
  * @param {Object} convId the id of the conversation we want to check if the user had it or not
  * @returns {string} defines if the conversation was added successfully or not
  */
-async function addConversationToUsers(
-  senderUsername,
-  receiverUsername,
-  convId
-) {
+async function addConversationToUsers(message, convId) {
   try {
-    const userOne = await User.findOne({ username: senderUsername });
-    const userTwo = await User.findOne({ username: receiverUsername });
-    const userOneConv = await checkExistingConversation(userOne, convId);
-    const userTwoConv = await checkExistingConversation(userTwo, convId);
-    if (!userOneConv) {
-      userOne.conversations.push({
-        conversationId: convId,
-        with: receiverUsername,
-      });
-      userOne.save();
+    if (message.isSenderUser) {
+      const userOne = await User.findOne({ username: message.senderUsername });
+      const userOneConv = await checkExistingConversation(userOne, convId);
+      if (!userOneConv) {
+        userOne.conversations.push({
+          conversationId: convId,
+          with: message.receiverUsername,
+        });
+        userOne.save();
+      }
     }
-    if (!userTwoConv) {
-      userTwo.conversations.push({
-        conversationId: convId,
-        with: senderUsername,
+
+    if (message.isSenderUser) {
+      const userTwo = await User.findOne({
+        username: message.receiverUsername,
       });
-      userTwo.save();
+      const userTwoConv = await checkExistingConversation(userTwo, convId);
+      if (!userTwoConv) {
+        userTwo.conversations.push({
+          conversationId: convId,
+          with: message.senderUsername,
+        });
+        userTwo.save();
+      }
     }
   } catch (err) {
     return "error in add conversation to users";
@@ -203,29 +212,42 @@ export async function validateMessage(req) {
         return false;
       }
     }
+    if (
+      !req.body.senderUsername.includes("/") ||
+      !req.body.receiverUsername.includes("/")
+    ) {
+      return false;
+    }
+    const senderArr = req.body.senderUsername.split("/");
+    const receiverArr = req.body.receiverUsername.split("/");
     const msg = {
       text: req.body.text,
-      senderUsername: req.body.senderUsername,
-      receiverUsername: req.body.receiverUsername,
+      senderUsername: senderArr[senderArr.length - 1],
+      receiverUsername: receiverArr[receiverArr.length - 1],
       type: req.body.type,
     };
-    const senderCheck=checkUserSubreddit(msg.senderUsername);
-    if (senderCheck===null){
-      return false;
-    } else if (senderCheck===0){
-      msg.isSenderUser=true;
+    if (senderArr[senderArr.length - 2] === "r" && msg.type !== "Mentions") {
+      msg.isSenderUser = false;
+    } else if (senderArr[senderArr.length - 2] === "u") {
+      msg.isSenderUser = true;
     } else {
-      msg.isSenderUser=false;
+      return false;
+    }
+    if (
+      receiverArr[receiverArr.length - 2] === "r" &&
+      msg.type !== "Mentions"
+    ) {
+      msg.isReceiverUser = false;
+    } else if (receiverArr[receiverArr.length - 2] === "u") {
+      msg.isReceiverUser = true;
+    } else {
+      return false;
     }
 
-    const receiverCheck=checkUserSubreddit(msg.senderUsername);
-    if (receiverCheck===null){
+    if (!msg.isReceiverUser && !msg.isSenderUser) {
       return false;
-    } else if (receiverCheck===0){
-      msg.isReceiverUser=true;
-    } else {
-      msg.isReceiverUser=false;
     }
+
     if (req.body.postId) {
       msg.postId = req.body.postId;
     }
@@ -238,33 +260,32 @@ export async function validateMessage(req) {
     if (req.body.subject) {
       msg.subject = req.body.subject;
     }
-    const receiver = await User.findOne({ username: msg.receiverUsername });
-    if (!receiver) {
-      return false;
+    if (msg.isReceiverUser) {
+      const receiver = await User.findOne({ username: msg.receiverUsername });
+      if (!receiver) {
+        return false;
+      }
+    } else {
+      const receiver = await Subreddit.findOne({ title: msg.receiverUsername });
+      if (!receiver) {
+        return false;
+      }
     }
-    const sender = await User.findOne({ username: msg.senderUsername });
-    if (!sender || sender.username !== req.payload.username) {
-      return false;
+    if (msg.isSenderUser) {
+      const sender = await User.findOne({ username: msg.senderUsername });
+      if (!sender || sender.username !== req.payload.username) {
+        return false;
+      }
+    } else {
+      const sender = await Subreddit.findOne({ title: msg.senderUsername });
+      if (!sender) {
+        return false;
+      }
     }
     req.msg = msg;
+    console.log(req.msg);
     return true;
   } catch (err) {
     return "error in add validating";
   }
 }
-
-function checkUserSubreddit(username){
-  if (!username.includes("/",0)){
-    return null;
-  }
-  const values=username.split("/");
-  if (values[values.length-2]==="u"){
-    return 0;
-  }
-  if (values[values.length-2]==="r"){
-    return 1;
-  }
-  return null;
-}
-
-

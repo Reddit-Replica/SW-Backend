@@ -146,6 +146,12 @@ router.post(
  *                                   subject:
  *                                    type: string
  *                                    description: Subject of the message
+ *                                   isSenderUser:
+ *                                    type: boolean
+ *                                    description: true if the senderUsername is for a user , false if it's for a subreddit
+ *                                   isReceiverUser:
+ *                                    type: boolean
+ *                                    description: true if the receiverUsername is for a user , false if it's for a subreddit
  *          401:
  *              description: you are unauthorized to do this action
  *              content:
@@ -267,6 +273,12 @@ router.get("/message/sent");
  *                                   numOfComments:
  *                                    type: number
  *                                    description: total number of comments in the post that the mention or reply happened in
+ *                                   isSenderUser:
+ *                                    type: boolean
+ *                                    description: true if the senderUsername is for a user , false if it's for a subreddit
+ *                                   isReceiverUser:
+ *                                    type: boolean
+ *                                    description: true if the receiverUsername is for a user , false if it's for a subreddit
  *          401:
  *              description: you are unauthorized to do this action
  *              content:
@@ -370,6 +382,12 @@ router.get("/message/inbox");
  *                                   isModerator:
  *                                    type: boolean
  *                                    description: true if the user is a moderator of the subreddit that the msg was sent via
+ *                                   isSenderUser:
+ *                                    type: boolean
+ *                                    description: true if the senderUsername is for a user , false if it's for a subreddit
+ *                                   isReceiverUser:
+ *                                    type: boolean
+ *                                    description: true if the receiverUsername is for a user , false if it's for a subreddit
  *          401:
  *              description: you are unauthorized to do this action
  *              content:
@@ -708,6 +726,12 @@ router.get("/message/mentions");
  *                                      isModerator:
  *                                        type: string
  *                                        description: true if the user is a moderator of the subreddit that the message was sent via
+ *                                      isSenderUser:
+ *                                        type: boolean
+ *                                        description: true if the senderUsername is for a user , false if it's for a subreddit
+ *                                      isReceiverUser:
+ *                                        type: boolean
+ *                                        description: true if the receiverUsername is for a user , false if it's for a subreddit
  *          401:
  *              description: you are unauthorized to do this action
  *              content:
