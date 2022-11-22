@@ -1,6 +1,10 @@
 /* eslint-disable max-len */
 import { body } from "express-validator";
-import { addMessage, validateMessage } from "../services/MessageServices.js";
+import {
+  addMention,
+  addMessage,
+  validateMessage,
+} from "../services/MessageServices.js";
 
 //CHECKING ON MESSAGE CONTENT
 const messageValidator = [
@@ -33,22 +37,26 @@ const createMessage = async (req, res) => {
     //ADDING NEW MESSAGE
     const valid = await validateMessage(req);
     if (!valid) {
-      throw new Error("this msg isn't valid to be sent", { cause: 400 });
+      throw new Error("this msg isn't valid to be sent", { cause: 401 });
     }
-    const msg = await addMessage(req);
+    let msg;
+    if ((req.msg.type = "Messages")) {
+      msg = await addMessage(req);
+    }
+    if ((req.msg.type = "Mentions")) {
+      msg = await addMention(req);
+    }
     if (msg !== "created") {
-      throw new Error(msg, { cause: 400 });
+      throw new Error(msg, { cause: 401 });
     }
-    return res.status(201).send({
-      msg: msg,
-    });
+    return res.status(201).json("Your message is sent successfully");
   } catch (err) {
     if (err.cause) {
       return res.status(err.cause).json({
         error: err.message,
       });
     } else {
-      return res.status(500).json("Internal Server Error");
+      return res.status(500).json("Server Error");
     }
   }
 };

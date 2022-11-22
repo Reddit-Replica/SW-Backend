@@ -135,13 +135,13 @@ async function checkExistingConversation(user, conversationId) {
     const conversations = user.conversations;
     let valid = false;
     conversations.forEach((conversation) => {
-      console.log(conversation.conversationId.id, conversationId);
       if (conversation.conversationId.id === conversationId) {
         valid = true;
       }
     });
     return valid;
   } catch (err) {
+    // eslint-disable-next-line max-len
     return "there is an error while checking if that conversation exists or not";
   }
 }
@@ -161,14 +161,12 @@ async function addConversationToUsers(
     const userOne = await User.findOne({ username: senderUsername });
     const userTwo = await User.findOne({ username: receiverUsername });
     const userOneConv = await checkExistingConversation(userOne, convId);
-    console.log(userOneConv);
     const userTwoConv = await checkExistingConversation(userTwo, convId);
     if (!userOneConv) {
       userOne.conversations.push({
         conversationId: convId,
         with: receiverUsername,
       });
-
       userOne.save();
     }
     if (!userTwoConv) {
@@ -176,7 +174,6 @@ async function addConversationToUsers(
         conversationId: convId,
         with: senderUsername,
       });
-
       userTwo.save();
     }
   } catch (err) {
@@ -193,6 +190,9 @@ async function addConversationToUsers(
 // eslint-disable-next-line max-statements
 export async function validateMessage(req) {
   try {
+    if (req.body.type !== "Mentions" && req.body.type !== "Messages") {
+      return false;
+    }
     if (req.body.type === "Mentions") {
       if (!req.body.postId) {
         return false;
@@ -226,7 +226,7 @@ export async function validateMessage(req) {
       return false;
     }
     const sender = await User.findOne({ username: msg.senderUsername });
-    if (sender.username !== req.payload.username) {
+    if (!sender || sender.username !== req.payload.username) {
       return false;
     }
     req.msg = msg;
