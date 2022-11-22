@@ -25,8 +25,8 @@ describe("Testing prepare listing functions", () => {
     await post1.save();
   });
   afterAll(async () => {
-    await User.deleteMany({});
-    await Post.deleteMany({});
+    await user.remove();
+    await post1.remove();
     await closeDatabaseConnection();
   });
 

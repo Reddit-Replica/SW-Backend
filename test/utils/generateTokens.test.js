@@ -11,8 +11,6 @@ describe("Testing generate tokens", () => {
     await connectDatabase();
   });
   afterAll(async () => {
-    await User.deleteMany({});
-    await Token.deleteMany({});
     await closeDatabaseConnection();
   });
 
@@ -58,5 +56,8 @@ describe("Testing generate tokens", () => {
     await user.save();
     const token = await generateVerifyToken(user._id, "random");
     expect(token.length).toEqual(64);
+
+    await user.remove();
+    await Token.deleteMany({});
   });
 });
