@@ -9,9 +9,7 @@ import User from "../models/User.js";
 export async function addSentMessages(userId, message) {
   try {
     const user = await User.findById(userId);
-    user.sentMessages.push({
-      messageID: message.id,
-    });
+    user.sentMessages.push(message.id);
     user.save();
     return true;
   } catch (err) {
@@ -27,9 +25,7 @@ export async function addSentMessages(userId, message) {
 export async function addReceivedMessages(userId, message) {
   try {
     const user = await User.findById(userId);
-    user.receivedMessages.push({
-      messageID: message.id,
-    });
+    user.receivedMessages.push(message.id);
     user.save();
     return true;
   } catch (err) {
