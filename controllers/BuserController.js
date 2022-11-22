@@ -66,7 +66,7 @@ const followUser = async (req, res) => {
     // here we get the user in the jwt
     const user = await getUserFromJWTService(req.payload.userId);
 
-    const result = await followUserService(user, userToFollow, req.body.block);
+    const result = await followUserService(user, userToFollow, req.body.follow);
     res.status(result.statusCode).json(result.message);
   } catch (error) {
     console.log(error.message);
