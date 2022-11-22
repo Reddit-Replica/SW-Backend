@@ -6,12 +6,14 @@
  */
 export function validateCreatingRuleBody(req) {
   if (!req.body.ruleName || !req.body.appliesTo) {
+    console.log("ruleName or appliesTo");
     return false;
   } else if (
     req.body.appliesTo !== "posts and comments" &&
     req.body.appliesTo !== "posts only" &&
     req.body.appliesTo !== "comments only"
   ) {
+    console.log("applies to wrong value");
     return false;
   } else {
     const ruleObject = {
@@ -38,7 +40,11 @@ export function validateCreatingRuleBody(req) {
  */
 export function validateEditingRuleBody(req) {
   const firstValidate = validateCreatingRuleBody(req);
+  if (!firstValidate) {
+    console.log("First validate");
+  }
   if (!firstValidate || !req.body.ruleOrder) {
+    console.log("rule order");
     return false;
   }
   req.ruleObject.ruleOrder = req.body.ruleOrder;
