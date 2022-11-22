@@ -10,27 +10,28 @@ import Post from "./../models/Post.js";
  */
 // eslint-disable-next-line max-statements
 export async function prepareListingPosts(listingParams) {
-  let result = {};
+  let result = {},
+    sortingType = {};
 
   //prepare the sorting
   if (!listingParams.sort) {
     // new
     listingParams.sort = "new";
     result.sort = { createdAt: -1 };
-    result.sortingType = { type: "createdAt" };
+    sortingType = { type: "createdAt" };
   } else {
     switch (listingParams.sort) {
       case "hot":
         // TODO
         result.sort = { score: -1 };
-        result.sortingType = { type: "score" };
+        sortingType = { type: "score" };
         break;
       case "top":
         result.sort = null;
         break;
       default:
         result.sort = { createdAt: -1 };
-        result.sortingType = { type: "createdAt" };
+        sortingType = { type: "createdAt" };
         break;
     }
   }
@@ -69,7 +70,7 @@ export async function prepareListingPosts(listingParams) {
   }
 
   // prepare the limit
-  if (!listingParams.limit) {
+  if (!listingParams.limit && listingParams.limit !== 0) {
     result.limit = 25;
   } else {
     listingParams.limit = parseInt(listingParams.limit);
@@ -94,8 +95,8 @@ export async function prepareListingPosts(listingParams) {
       } else {
         if (result.sort) {
           result.listing = {
-            type: result.sortingType.type,
-            value: { $gt: post[result.sortingType.type] },
+            type: sortingType.type,
+            value: { $gt: post[sortingType.type] },
           };
         } else {
           result.listing = {
@@ -116,8 +117,8 @@ export async function prepareListingPosts(listingParams) {
       } else {
         if (result.sort) {
           result.listing = {
-            type: result.sortingType.type,
-            value: { $lt: post[result.sortingType.type] },
+            type: sortingType.type,
+            value: { $lt: post[sortingType.type] },
           };
         } else {
           result.listing = {
@@ -137,7 +138,8 @@ export async function prepareListingPosts(listingParams) {
 }
 
 /**
- * Function to create the exact condition that will be used by mongoose directly to list posts
+ * Function to create the exact condition that will be used by mongoose directly to list posts.
+ * Used to map every listing parameter to the exact query that mongoose will use later
  *
  * @param {Object} listingParams Result of prepareListingParameters function
  * @returns {Object} The final results that will be used by mongoose to list posts

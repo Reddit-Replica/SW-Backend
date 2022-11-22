@@ -47,18 +47,24 @@ const communitiesRouter = express.Router();
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                               title:
- *                                 type: string
- *                                 description: Name of the community
- *                               members:
- *                                 type: number
- *                                 description: number of members of the community
- *                               description:
+ *                               id:
  *                                type: string
- *                                description: A brief description of the community
- *                               isMember:
- *                                 type: boolean
- *                                 description: True if you are a member of the community , False if you are not a member of the community
+ *                                description: id of the subreddit
+ *                               data:
+ *                                type: object
+ *                                properties:
+ *                                 title:
+ *                                  type: string
+ *                                  description: Name of the community
+ *                                 members:
+ *                                  type: number
+ *                                  description: number of members of the community
+ *                                description:
+ *                                 type: string
+ *                                 description: A brief description of the community
+ *                                isMember:
+ *                                  type: boolean
+ *                                  description: True if you are a member of the community , False if you are not a member of the community
  *          404:
  *              description: Page not found
  *          401:
@@ -118,23 +124,24 @@ communitiesRouter.get("/subreddits/leaderboard");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                               title:
- *                                 type: string
- *                                 description: Name of the community
- *                               members:
- *                                 type: number
- *                                 description: number of members of the community
- *                               description:
+ *                               id:
  *                                type: string
- *                                description: A brief description of the community
- *                               posts:
- *                                 type: array
- *                                 description: An array of posts of the community
- *                                 items:
- *                                   type: string
- *                               isMember:
- *                                 type: boolean
- *                                 description: True if you are a member of the community , False if you are not a member of the community
+ *                                description: id of the subreddit
+ *                               data:
+ *                                type: object
+ *                                properties:
+ *                                 title:
+ *                                  type: string
+ *                                  description: Name of the community
+ *                                 members:
+ *                                  type: number
+ *                                  description: number of members of the community
+ *                                description:
+ *                                 type: string
+ *                                 description: A brief description of the community
+ *                                isMember:
+ *                                  type: boolean
+ *                                  description: True if you are a member of the community , False if you are not a member of the community
  *          404:
  *              description: Page not found
  *          401:
@@ -189,18 +196,24 @@ communitiesRouter.get("/subreddits/leaderboard/:categoryName");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                               title:
- *                                 type: string
- *                                 description: Name of the community
- *                               members:
- *                                 type: number
- *                                 description: number of members of the community
- *                               description:
+ *                               id:
  *                                type: string
- *                                description: A brief description of the community
- *                               isMember:
- *                                 type: boolean
- *                                 description: True if you are a member of the community , False if you are not a member of the community
+ *                                description: id of the subreddit
+ *                               data:
+ *                                type: object
+ *                                properties:
+ *                                 title:
+ *                                  type: string
+ *                                  description: Name of the community
+ *                                 members:
+ *                                  type: number
+ *                                  description: number of members of the community
+ *                                description:
+ *                                 type: string
+ *                                 description: A brief description of the community
+ *                                isMember:
+ *                                  type: boolean
+ *                                  description: True if you are a member of the community , False if you are not a member of the community
  *          404:
  *              description: Page not found
  *          401:
@@ -255,21 +268,24 @@ communitiesRouter.get("/custom-random-category");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                               title:
- *                                 type: string
- *                                 description: Name of the community
- *                               members:
- *                                 type: number
- *                                 description: number of members of the community
- *                               description:
+ *                               id:
  *                                type: string
- *                                description: A brief description of the community
- *                               views:
- *                                 type: number
- *                                 description: Number of views of the community
- *                               isMember:
- *                                 type: boolean
- *                                 description: True if you are a member of the community , False if you are not a member of the community
+ *                                description: id of the subreddit
+ *                               data:
+ *                                type: object
+ *                                properties:
+ *                                 title:
+ *                                  type: string
+ *                                  description: Name of the community
+ *                                 members:
+ *                                  type: number
+ *                                  description: number of members of the community
+ *                                description:
+ *                                 type: string
+ *                                 description: A brief description of the community
+ *                                isMember:
+ *                                  type: boolean
+ *                                  description: True if you are a member of the community , False if you are not a member of the community
  *          404:
  *              description: Page not found
  *          401:
@@ -313,35 +329,47 @@ communitiesRouter.get("/trending-communities");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                               title:
- *                                 type: string
- *                                 description: Name of the community
- *                               members:
- *                                 type: number
- *                                 description: number of members of the community
- *                               description:
+ *                               id:
  *                                type: string
- *                                description: A brief description of the community
- *                               isMember:
- *                                 type: boolean
- *                                 description: True if you are a member of the community , False if you are not a member of the community
- *                          secondCategoryChildren:
+ *                                description: id of the subreddit
+ *                               data:
+ *                                type: object
+ *                                properties:
+ *                                 title:
+ *                                  type: string
+ *                                  description: Name of the community
+ *                                 members:
+ *                                  type: number
+ *                                  description: number of members of the community
+ *                                description:
+ *                                 type: string
+ *                                 description: A brief description of the community
+ *                                isMember:
+ *                                  type: boolean
+ *                                  description: True if you are a member of the community , False if you are not a member of the community
+ *                          SecondCategoryChildren:
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                               title:
- *                                 type: string
- *                                 description: Name of the community
- *                               members:
- *                                 type: number
- *                                 description: number of members of the community
- *                               description:
+ *                               id:
  *                                type: string
- *                                description: A brief description of the community
- *                               isMember:
- *                                 type: boolean
- *                                 description: True if you are a member of the community , False if you are not a member of the community
+ *                                description: id of the subreddit
+ *                               data:
+ *                                type: object
+ *                                properties:
+ *                                 title:
+ *                                  type: string
+ *                                  description: Name of the community
+ *                                 members:
+ *                                  type: number
+ *                                  description: number of members of the community
+ *                                description:
+ *                                 type: string
+ *                                 description: A brief description of the community
+ *                                isMember:
+ *                                  type: boolean
+ *                                  description: True if you are a member of the community , False if you are not a member of the community
  *          404:
  *              description: Page not found
  *          401:
