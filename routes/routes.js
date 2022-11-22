@@ -33,7 +33,7 @@ mainRouter.use(messageRouter);
 
 // ! should add your router before this middleware
 mainRouter.use((req, res) => {
-  res.json(`Can't ${req.method} ${req.url}`);
+  res.status(400).json(`Can't ${req.method} ${req.url}`);
 });
 
 export default mainRouter;
