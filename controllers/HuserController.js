@@ -1,12 +1,10 @@
-import User from "../models/User.js";
-import { listingSubredditPosts } from "../services/subredditItemsListing.js";
+import { listingBannedUsers } from "../services/userListing.js";
 
 const getBannedUsers = async (req, res) => {
   try {
     const { before, after, limit } = req.query;
     let result;
-    result = await listingSubredditPosts(req.params.subreddit, "spammedPosts", {
-      sort,
+    result = await listingBannedUsers(req.params.subreddit, "spammedPosts", {
       before,
       after,
       limit,
