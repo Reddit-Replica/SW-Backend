@@ -19,11 +19,9 @@ import {
 
 export async function addMessage(req) {
   try {
-    console.log(req.msg);
     const message = await new Message(req.msg).save();
-    console.log("haaaaaa");
     if (message.isSenderUser) {
-      const sender = await User.findOne({ username: message.senderUsername, });
+      const sender = await User.findOne({ username: message.senderUsername });
       //add this message to the sender user as sent message
       addSentMessages(sender.id, message);
     }
@@ -35,15 +33,10 @@ export async function addMessage(req) {
       //add this message to the receiver user as received message
       addReceivedMessages(receiver.id, message);
     }
-    console.log("no3");
     const conversationId = await createNewConversation(message);
-    console.log("no3");
     const conversation = await Conversation.findById(conversationId);
-    console.log("no3");
     conversation.messages.push({ messageID: message.id });
-    console.log("no3");
     conversation.save();
-    console.log("no3");
     await addConversationToUsers(message, conversationId);
     return "created";
   } catch (err) {
@@ -220,11 +213,15 @@ export async function validateMessage(req) {
     }
     const senderArr = req.body.senderUsername.split("/");
     const receiverArr = req.body.receiverUsername.split("/");
+    const receiver = await User.findOne({
+      username: receiverArr[receiverArr.length - 1],
+    });
     const msg = {
       text: req.body.text,
       senderUsername: senderArr[senderArr.length - 1],
       receiverUsername: receiverArr[receiverArr.length - 1],
       type: req.body.type,
+      receiverId: receiver.id,
     };
     if (senderArr[senderArr.length - 2] === "r" && msg.type !== "Mentions") {
       msg.isSenderUser = false;
@@ -283,7 +280,6 @@ export async function validateMessage(req) {
       }
     }
     req.msg = msg;
-    console.log(req.msg);
     return true;
   } catch (err) {
     return "error in add validating";
