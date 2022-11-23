@@ -21,7 +21,7 @@ export async function addMessage(req) {
   try {
     const message = await new Message(req.msg).save();
     if (message.isSenderUser) {
-      const sender = await User.findOne({ username: message.senderUsername, });
+      const sender = await User.findOne({ username: message.senderUsername });
       //add this message to the sender user as sent message
       addSentMessages(sender.id, message);
     }
@@ -213,11 +213,15 @@ export async function validateMessage(req) {
     }
     const senderArr = req.body.senderUsername.split("/");
     const receiverArr = req.body.receiverUsername.split("/");
+    const receiver = await User.findOne({
+      username: receiverArr[receiverArr.length - 1],
+    });
     const msg = {
       text: req.body.text,
       senderUsername: senderArr[senderArr.length - 1],
       receiverUsername: receiverArr[receiverArr.length - 1],
       type: req.body.type,
+      receiverId: receiver.id,
     };
     if (senderArr[senderArr.length - 2] === "r" && msg.type !== "Mentions") {
       msg.isSenderUser = false;
