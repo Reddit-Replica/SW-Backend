@@ -35,7 +35,7 @@ const messageSchema = mongoose.Schema({
   deletedAt: {
     type: Date,
   },
-  receiverId: {
+  ownerId: {
     type: Schema.Types.ObjectId,
     required: true,
     ref: "User",
