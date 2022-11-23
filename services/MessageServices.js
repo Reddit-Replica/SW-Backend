@@ -221,7 +221,7 @@ export async function validateMessage(req) {
       senderUsername: senderArr[senderArr.length - 1],
       receiverUsername: receiverArr[receiverArr.length - 1],
       type: req.body.type,
-      ownerId: receiver.id,
+      receiverId: receiver.id,
     };
     if (senderArr[senderArr.length - 2] === "r" && msg.type !== "Mentions") {
       msg.isSenderUser = false;
