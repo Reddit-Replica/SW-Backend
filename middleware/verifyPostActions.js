@@ -12,7 +12,10 @@ import Post from "../models/Post.js";
  */
 export async function verifyPostActions(req, res, next) {
   try {
-    const { id } = req.body;
+    let { id } = req.body;
+    if (!id) {
+      id = req.query.id;
+    }
     const { userId } = req.payload;
     const post = await Post.findById(id);
 

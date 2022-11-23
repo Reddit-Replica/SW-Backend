@@ -28,8 +28,8 @@ describe("Testing send emails functions", () => {
   });
 
   afterAll(async () => {
-    await User.deleteMany({});
-    await Token.deleteMany({});
+    await user.remove();
+    await token.remove();
     await closeDatabaseConnection();
   });
 

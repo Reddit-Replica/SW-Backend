@@ -2,14 +2,14 @@ import User from "../models/User.js";
 import mongoose from "mongoose";
 
 /**
- * Service to search for a user object with his username and return it in the req
+ * Service to search for a user object with his username and return it
  *
  * @param {Object} req Request
  * @param {String} username Username that we want find
  * @returns {Object} User found
  */
 export async function searchForUserService(username) {
-  const user = await User.findOne({ username: username });
+  const user = await User.findOne({ username: username, deletedAt: null });
   if (!user) {
     let error = new Error("Didn't find a user with that username");
     error.statusCode = 404;
@@ -26,10 +26,15 @@ export async function searchForUserService(username) {
  * @returns {Object} User found
  */
 export async function getUserFromJWTService(userId) {
-  const user = await User.findById(userId);
-  if (!user) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     let error = new Error("Invalid id from the token");
     error.statusCode = 400;
+    throw error;
+  }
+  const user = await User.findById(userId);
+  if (!user || user.deletedAt) {
+    let error = new Error("Didn't find a user with that username");
+    error.statusCode = 404;
     throw error;
   }
   return user;
@@ -54,12 +59,15 @@ export async function blockUserService(user, userToBlock, block) {
 
   // get the index of the id of the user to be blocked if he was blocked before
   const index = user.blockedUsers.findIndex(
-    (elem) => elem.toString() === userToBlock._id.toString()
+    (elem) => elem.blockedUserId.toString() === userToBlock._id.toString()
   );
 
   if (block) {
     if (index === -1) {
-      user.blockedUsers.push(userToBlock._id);
+      user.blockedUsers.push({
+        blockedUserId: userToBlock._id,
+        blockDate: Date.now(),
+      });
       await user.save();
     }
     return {
@@ -90,7 +98,7 @@ export async function blockUserService(user, userToBlock, block) {
  */
 export async function followUserService(user, userToFollow, follow) {
   if (user._id.toString() === userToFollow._id.toString()) {
-    let error = new Error("User can not himself himself");
+    let error = new Error("User can not follow himself");
     error.statusCode = 400;
     throw error;
   }
@@ -144,6 +152,11 @@ export async function getUserAboutDataService(username, loggedInUserId) {
 
   let loggedInUser = null;
   if (loggedInUserId) {
+    if (!mongoose.Types.ObjectId.isValid(loggedInUserId)) {
+      let error = new Error("Invalid id from the token");
+      error.statusCode = 400;
+      throw error;
+    }
     loggedInUser = await User.findById(loggedInUserId).select(
       "joinedSubreddits blockedUsers"
     );
@@ -172,7 +185,10 @@ export async function getUserAboutDataService(username, loggedInUserId) {
   let blocked = false,
     followed = false;
   if (loggedInUser) {
-    blocked = loggedInUser.blockedUsers.includes(user._id);
+    const index = loggedInUser.blockedUsers.findIndex(
+      (elem) => elem.blockedUserId.toString() === user._id.toString()
+    );
+    blocked = index !== -1;
 
     // eslint-disable-next-line new-cap
     followed = user.followers.includes(mongoose.Types.ObjectId(loggedInUserId));

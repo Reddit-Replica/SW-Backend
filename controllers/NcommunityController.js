@@ -91,7 +91,7 @@ let MainTopics = [
   "None Of These Topics",
 ];
 const subredditValidator = [
-  body("title")
+  body("subredditName")
     .trim()
     .not()
     .isEmpty()
@@ -171,7 +171,7 @@ const createSubreddit = async (req, res) => {
     const moderator = await User.findById(creatorId);
     const addedSubreddit = {
       subredditId: subreddit.id,
-      name: title,
+      name: subredditName,
     };
     moderator.ownedSubreddits.push(addedSubreddit);
     moderator.joinedSubreddits.push(addedSubreddit);
@@ -187,6 +187,7 @@ const createSubreddit = async (req, res) => {
         error: err.message,
       });
     } else {
+      console.log(err);
       return res.status(500).json("Internal Server Error");
     }
   }
