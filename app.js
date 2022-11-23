@@ -3,6 +3,7 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import cors from "cors";
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
 import swaggerUI from "swagger-ui-express";
@@ -51,10 +52,15 @@ const port = process.env.PORT || 3000;
 
 app.use((_req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,PUT,DELETE,PATCH,OPTIONS"
+  );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
   next();
 });
+
+// app.use(cors());
 
 let DB_URL;
 // eslint-disable-next-line max-len

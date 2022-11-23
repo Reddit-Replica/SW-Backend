@@ -246,26 +246,13 @@ const userSchema = mongoose.Schema({
   ],
   conversations: [
     {
-      latestDate: {
-        type: Date,
-        required: true,
+      conversationId: {
+        type: Schema.Types.ObjectId,
+        ref: "Conversation",
       },
-      subject: {
+      with: {
         type: String,
-        required: true,
       },
-      username: {
-        type: String,
-        required: true,
-      },
-      messages: [
-        {
-          messageID: {
-            type: Schema.Types.ObjectId,
-            ref: "Message",
-          },
-        },
-      ],
     },
   ],
 });

@@ -79,8 +79,8 @@ const moderationRouter = express.Router();
  *      schema:
  *       type: string
  *       enum:
- *        - newestfirst
- *        - oldestfirst
+ *        - new
+ *        - old
  *       default: newestfirst
  *      required: false
  *    - in: query
@@ -166,8 +166,8 @@ moderationRouter.get("/r/:subreddit/about/spam");
  *      schema:
  *       type: string
  *       enum:
- *        - newestfirst
- *        - oldestfirst
+ *        - new
+ *        - old
  *       default: newestfirst
  *      required: false
  *    - in: query
@@ -244,8 +244,8 @@ moderationRouter.get("/r/:subreddit/about/edited");
  *      schema:
  *       type: string
  *       enum:
- *        - newestfirst
- *        - oldestfirst
+ *        - new
+ *        - old
  *       default: newestfirst
  *      required: false
  *    - in: query
