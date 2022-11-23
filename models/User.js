@@ -210,8 +210,11 @@ const userSchema = mongoose.Schema({
   ],
   blockedUsers: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+      blockedUserId: { type: Schema.Types.ObjectId, ref: "User" },
+      blockDate: {
+        type: Date,
+        required: true,
+      },
     },
   ],
   followers: [
