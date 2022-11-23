@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import { body } from "express-validator";
 import {
   checkSocialLink,
+  deleteFile,
   getUser,
   verifyCredentials,
 } from "../services/userSettings.js";
@@ -177,12 +178,12 @@ const addProfilePicture = async (req, res) => {
   const userId = req.payload.userId;
   try {
     const user = await getUser(userId);
-    if (!req.files || !req.files.profilePicture) {
+    if (!req.files || !req.files.avatar) {
       return res.status(400).json({
         error: "Profile picture is required",
       });
     }
-    user.avatar = req.files.profilePicture[0].path;
+    user.avatar = req.files.avatar[0].path;
     await user.save();
     return res.status(200).json("Profile picture added successfully");
   } catch (error) {
@@ -204,6 +205,7 @@ const deleteProfilePicture = async (req, res) => {
         error: "Profile picture already deleted",
       });
     }
+    deleteFile(user.avatar);
     user.avatar = undefined;
     await user.save();
     return res.status(204).json("Profile picture deleted successfully");
@@ -248,6 +250,7 @@ const deleteBanner = async (req, res) => {
         error: "Banner already deleted",
       });
     }
+    deleteFile(user.banner);
     user.banner = undefined;
     await user.save();
     return res.status(204).json("Banner deleted successfully");

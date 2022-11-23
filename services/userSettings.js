@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import fs from "fs";
 import { comparePasswords } from "../utils/passwordUtils.js";
 
 /**
@@ -64,6 +65,22 @@ export function checkSocialLink(user, type, displayText, link) {
   ) {
     const error = new Error("Social link not found");
     error.statusCode = 404;
+    throw error;
+  }
+}
+
+/**
+ * A function that is used to delete a file from the server
+ * @param {string} pathToFile File path
+ * @returns {void}
+ */
+export function deleteFile(pathToFile) {
+  try {
+    fs.unlinkSync(pathToFile);
+    console.log("Successfully deleted the file.");
+  } catch (err) {
+    const error = new Error("Invalid path");
+    error.statusCode = 400;
     throw error;
   }
 }
