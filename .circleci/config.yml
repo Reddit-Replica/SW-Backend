@@ -28,7 +28,7 @@ commands:
       - setup_remote_docker
       - configure_docker
       - run:
-          name: install docker
+          name: install dockerr
           command: |
             apk add --no-cache \
             py-pip=9.0.0-r1
