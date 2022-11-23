@@ -5,6 +5,7 @@ import {
   getUser,
   verifyCredentials,
 } from "../services/userSettings.js";
+import { listingBlockedUsers } from "../services/userListing.js";
 
 const deleteValidator = [
   body("username")
@@ -172,6 +173,117 @@ const deleteSocialLink = async (req, res) => {
   }
 };
 
+const addProfilePicture = async (req, res) => {
+  const userId = req.payload.userId;
+  try {
+    const user = await getUser(userId);
+    if (!req.files || !req.files.profilePicture) {
+      return res.status(400).json({
+        error: "Profile picture is required",
+      });
+    }
+    user.avatar = req.files.profilePicture[0].path;
+    await user.save();
+    return res.status(200).json("Profile picture added successfully");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const deleteProfilePicture = async (req, res) => {
+  const userId = req.payload.userId;
+  try {
+    const user = await getUser(userId);
+    if (!user.avatar) {
+      return res.status(400).json({
+        error: "Profile picture already deleted",
+      });
+    }
+    user.avatar = undefined;
+    await user.save();
+    return res.status(204).json("Profile picture deleted successfully");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const addBanner = async (req, res) => {
+  const userId = req.payload.userId;
+  try {
+    const user = await getUser(userId);
+    if (!req.files || !req.files.banner) {
+      return res.status(400).json({
+        error: "Banner is required",
+      });
+    }
+    user.banner = req.files.banner[0].path;
+    await user.save();
+    return res.status(200).json("Banner added successfully");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const deleteBanner = async (req, res) => {
+  const userId = req.payload.userId;
+  try {
+    const user = await getUser(userId);
+    if (!user.banner) {
+      return res.status(400).json({
+        error: "Banner already deleted",
+      });
+    }
+    user.banner = undefined;
+    await user.save();
+    return res.status(204).json("Banner deleted successfully");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getBlockedUsers = async (req, res) => {
+  const userId = req.payload.userId;
+  try {
+    await getUser(userId);
+    const { before, after, limit } = req.query;
+
+    let result = await listingBlockedUsers(userId, {
+      before,
+      after,
+      limit,
+    });
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   deleteValidator,
   socialLinkValidator,
@@ -180,4 +292,9 @@ export default {
   deleteAccount,
   addSocialLink,
   deleteSocialLink,
+  addProfilePicture,
+  deleteProfilePicture,
+  addBanner,
+  deleteBanner,
+  getBlockedUsers,
 };

@@ -460,7 +460,11 @@ router.delete(
  *     security:
  *       - bearerAuth: []
  */
-router.post("/profile-picture");
+router.post(
+  "/profile-picture",
+  verifyAuthToken,
+  userSettingsController.addProfilePicture
+);
 
 /**
  * @swagger
@@ -478,7 +482,11 @@ router.post("/profile-picture");
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/profile-picture");
+router.delete(
+  "/profile-picture",
+  verifyAuthToken,
+  userSettingsController.deleteProfilePicture
+);
 
 /**
  * @swagger
@@ -516,7 +524,7 @@ router.delete("/profile-picture");
  *     security:
  *       - bearerAuth: []
  */
-router.post("/banner-image");
+router.post("/banner-image", verifyAuthToken, userSettingsController.addBanner);
 
 /**
  * @swagger
@@ -534,7 +542,11 @@ router.post("/banner-image");
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/banner-image");
+router.delete(
+  "/banner-image",
+  verifyAuthToken,
+  userSettingsController.deleteBanner
+);
 
 /**
  * @swagger
@@ -599,6 +611,10 @@ router.delete("/banner-image");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/blocked-users");
+router.get(
+  "/blocked-users",
+  verifyAuthToken,
+  userSettingsController.getBlockedUsers
+);
 
 export default router;
