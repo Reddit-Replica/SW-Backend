@@ -21,20 +21,18 @@ commands:
           name: Install Node.js 13.8.0
           command: |
             docker login -u $DOCKERNAME -p $DOCKERPASS
-
   install_docker:
     description: Install docker
     steps:
       - setup_remote_docker
       - configure_docker
       - run:
-          name: install dockerr
+          name: install docker
           command: |
             apk add --no-cache \
             py-pip=9.0.0-r1
             pip install \
             docker-compose==1.12.0 \
-
 
 jobs:
   unit-testing:
@@ -42,33 +40,49 @@ jobs:
       - image: circleci/node:lts
     steps:
     - checkout
+
+    - restore_cache:
+        name: Restore nodemodules Cache
+        keys:
+          - v1-node-modules-{{ checksum "package.json" }}
+          - v1-node-modules-
+
     - run:
         name: Install npm dependencies
         command: |
           npm install
+
+    - save_cache:
+        name: Save nodemodelues Cache
+        key: v1-node-modules-{{ checksum "package.json" }}
+        paths:
+          - node_modules
+
     - run:
         name: Run Unit Tests
         command: |
           npm run test
 
-  integration-testing:
+  build-backend:
     docker:
-      - image: circleci/node:12
+      - image: docker:17.05.0-ce-git
     steps:
-    - checkout
-    - run:
-        name: Install npm dependencies
-        command: |
-          npm i
-    - run:
-        name: Run integration Tests
-        command: |
-          ls
+      - checkout
+      - install_docker
+      - run:
+          name: Build , tag , push front-end
+          command: |
+            docker build -t backend:v1 .
+            docker tag backend:v1  waer/backend
+            docker push  waer/backend:latest
 
 workflows:
   main:
     jobs:
       - unit-testing
-      - integration-testing:
+      - build-backend:
           requires: 
             - unit-testing
+          filters:
+            branches:
+              only: master
