@@ -154,6 +154,12 @@ const userSchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  historyPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
   pinnedPosts: [
     {
       type: Schema.Types.ObjectId,
@@ -202,6 +208,21 @@ const userSchema = mongoose.Schema({
       ref: "Comment",
     },
   ],
+  blockedUsers: [
+    {
+      blockedUserId: { type: Schema.Types.ObjectId, ref: "User" },
+      blockDate: {
+        type: Date,
+        required: true,
+      },
+    },
+  ],
+  followers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   sentMessages: [
     {
       type: Schema.Types.ObjectId,
@@ -228,26 +249,13 @@ const userSchema = mongoose.Schema({
   ],
   conversations: [
     {
-      latestDate: {
-        type: Date,
-        required: true,
+      conversationId: {
+        type: Schema.Types.ObjectId,
+        ref: "Conversation",
       },
-      subject: {
+      with: {
         type: String,
-        required: true,
       },
-      username: {
-        type: String,
-        required: true,
-      },
-      messages: [
-        {
-          messageID: {
-            type: Schema.Types.ObjectId,
-            ref: "Message",
-          },
-        },
-      ],
     },
   ],
 });

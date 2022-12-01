@@ -106,30 +106,121 @@
       },
       "PostSubmission": {
         "type": "object",
-        "required": ["kind", "subreddit", "title"],
+        "required": ["kind", "inSubreddit", "title"],
         "properties": {
           "kind": {
             "type": "string",
-            "enum": ["link", "text", "image", "video", "post"]
+            "enum": ["link", "hybrid", "image", "video", "post"]
           },
           "subreddit": {
             "type": "string",
             "description": "Subreddit name"
           },
-          "title": {
-            "type": "string",
-            "description": "Title of the submission"
+          "inSubreddit": {
+            "type": "boolean",
+            "description": "True if the post is submitted in a subreddit, False if it's in the user account (not a subreddit)"
           },
-          "content": {
-            "type": "string",
-            "description": "Post content (text/url)"
-          },
-          "files": {
+          "texts": {
             "type": "array",
-            "description": "Post content (images/video)",
+            "description": "Texts input separated by an \"enter\" when writing text in the post with an index indicating the positin of this text",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "The text written itself"
+                },
+                "index": {
+                  "type": "number",
+                  "description": "Text position"
+                }
+              }
+            }
+          },
+          "links": {
+            "type": "array",
+            "description": "Links input in the post containing the link title and url as well as the index indicating it's position in the post field",
+            "items": {
+              "type": "object",
+              "properties": {
+                "link": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "description": "Link title submitted"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Link Url"
+                    }
+                  }
+                },
+                "index": {
+                  "type": "number",
+                  "description": "Link position"
+                }
+              }
+            }
+          },
+          "imageCaptions": {
+            "type": "array",
+            "description": "Image captions of each image submitted and an element in it should be null if the image doesn't have a caption (Do not skip the element). This array will contain an index only when the kind is 'hybrid' but will only be an array of captions without indices if the kind is 'image'",
+            "items": {
+              "type": "object",
+              "properties": {
+                "caption": {
+                  "type": "string",
+                  "description": "Image caption"
+                },
+                "index": {
+                  "type": "number",
+                  "description": "Image caption position"
+                }
+              }
+            }
+          },
+          "videoCaptions": {
+            "type": "array",
+            "description": "Video captions of each video submitted and an element in it should be null if the video doesn't have a caption (Do not skip the element)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "caption": {
+                  "type": "string",
+                  "description": "Video caption"
+                },
+                "index": {
+                  "type": "number",
+                  "description": "Video caption position"
+                }
+              }
+            }
+          },
+          "images": {
+            "type": "array",
+            "description": "image files",
             "items": {
               "type": "object"
             }
+          },
+          "imageLinks": {
+            "type": "array",
+            "description": "Links written for the images submitted (only when kind = images)",
+            "items": {
+              "type": "string"
+            }
+          },
+          "videos": {
+            "type": "array",
+            "description": "Video files",
+            "items": {
+              "type": "object"
+            }
+          },
+          "link": {
+            "type": "string",
+            "description": "Link submission in case the kind is 'link'"
           },
           "nsfw": {
             "type": "boolean",
@@ -142,20 +233,6 @@
           "flairId": {
             "type": "string",
             "description": "Flair ID"
-          },
-          "imageCaptions": {
-            "type": "array",
-            "description": "Captions written for the images submitted (only when kind = images)",
-            "items": {
-              "type": "string"
-            }
-          },
-          "imageLinks": {
-            "type": "array",
-            "description": "Links written for the images submitted (only when kind = images)",
-            "items": {
-              "type": "string"
-            }
           },
           "sendReplies": {
             "type": "boolean",
@@ -187,15 +264,19 @@
         "properties": {
           "kind": {
             "type": "string",
-            "enum": ["link", "text", "image", "video", "post"]
+            "enum": ["link", "hybrid", "image", "video", "post"]
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the submission"
           },
           "subreddit": {
             "type": "string",
             "description": "Subreddit name"
           },
-          "content": {
+          "link": {
             "type": "string",
-            "description": "Post content (text/url/video) - will contain path of a video in case (kind = video)"
+            "description": "Post link in case the kind is 'link'"
           },
           "images": {
             "type": "array",
@@ -218,6 +299,27 @@
               }
             }
           },
+          "video": {
+            "type": "string",
+            "description": "Video path in case the kind is 'video'"
+          },
+          "hybridContent": {
+            "type": "array",
+            "description": "Hybrid content of the post returned with the correct order just like as they were inserted when initially submitting the post. The content part of the object could be string when type is text, or an object (title and url) if type is link, or an object (path and caption) if type is image or video",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Content type",
+                  "enum": ["image", "video", "text", "link"]
+                },
+                "content": {
+                  "type": "object"
+                }
+              }
+            }
+          },
           "nsfw": {
             "type": "boolean",
             "description": "Not Safe for Work"
@@ -225,10 +327,6 @@
           "spoiler": {
             "type": "boolean",
             "description": "Blur the content of the post"
-          },
-          "title": {
-            "type": "string",
-            "description": "Title of the submission"
           },
           "sharePostId": {
             "type": "string",
@@ -249,9 +347,17 @@
             "type": "string",
             "description": "The time in which this post was published"
           },
-          "deletedAt": {
+          "sendReplies": {
+            "type": "boolean",
+            "description": "Indicates whether replies on a post are turned on/off"
+          },
+          "markedSpam": {
+            "type": "boolean",
+            "description": "Indicates whether post was spammed by the owner"
+          },
+          "suggestedSort": {
             "type": "string",
-            "description": "The time in which this post was deleted"
+            "description": "Post suggested sort"
           },
           "editedAt": {
             "type": "string",
@@ -684,6 +790,65 @@
                           "level": {
                             "type": "integer",
                             "description": "The level of the comment [level of nesting]"
+                          },
+                          "inYourSubreddit": {
+                            "type": "boolean",
+                            "description": "If true, then you can approve, remove, or spam that post"
+                          },
+                          "moderation": {
+                            "type": "object",
+                            "description": "Moderate the post if you are a moderator in that subreddit",
+                            "properties": {
+                              "approve": {
+                                "type": "object",
+                                "description": "Approve the post",
+                                "properties": {
+                                  "approvedBy": {
+                                    "type": "string",
+                                    "description": "Username for the moderator who approved that post"
+                                  },
+                                  "approvedDate": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "Date when that post approved"
+                                  }
+                                }
+                              },
+                              "remove": {
+                                "type": "object",
+                                "description": "Remove the post",
+                                "properties": {
+                                  "removedBy": {
+                                    "type": "string",
+                                    "description": "Username for the moderator who removed that post"
+                                  },
+                                  "removedDate": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "Date when that post removed"
+                                  }
+                                }
+                              },
+                              "spam": {
+                                "type": "object",
+                                "description": "Spam the post",
+                                "properties": {
+                                  "spammedBy": {
+                                    "type": "string",
+                                    "description": "Username for the moderator who spamed that post"
+                                  },
+                                  "spammedDate": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "Date when that post spamed"
+                                  }
+                                }
+                              },
+                              "lock": {
+                                "type": "boolean",
+                                "description": "If true, then comments are locked in this post"
+                              }
+                            }
                           }
                         }
                       }
@@ -887,7 +1052,15 @@
             "type": "array",
             "description": "List of posts to return",
             "items": {
-              "$ref": "#/components/schemas/PostDetails"
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Id of the post"
+                },
+                "data": {
+                  "$ref": "#/components/schemas/PostDetails"
+                }
+              }
             }
           }
         }
@@ -1299,6 +1472,14 @@
                   "level": {
                     "type": "number",
                     "description": "Level of the comment (How deep is it in the comment tree)"
+                  },
+                  "subredditName": {
+                    "type": "string",
+                    "description": "Subreddit that contain the post"
+                  },
+                  "haveSubreddit": {
+                    "type": "boolean",
+                    "description": "If true, then the post is in a subreddit"
                   }
                 }
               }
@@ -2060,6 +2241,183 @@
         ]
       }
     },
+    "/r/{subreddit}/add-main-topic": {
+      "post": {
+        "summary": "add the main topic to the community",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["mainTopic"],
+                "properties": {
+                  "mainTopic": {
+                    "type": "string",
+                    "description": "title of the main topic in the community"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "main topic is submitted successfully"
+          },
+          "401": {
+            "description": "Unauthorized add main topic"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/add-subtopic": {
+      "post": {
+        "summary": "add subtopics to the community",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "array",
+                    "description": "titles of the sub topics in the community",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Community topics saved"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "you don't have the right to do this action"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/add-description": {
+      "post": {
+        "summary": "add description of the community",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["title"],
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "description of the community (maximum 300)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "description is submitted successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "you don't have the right to do this action"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/r/{subreddit}/toggle-favorite": {
       "patch": {
         "summary": "toggle favorite property of the community",
@@ -2186,7 +2544,7 @@
     },
     "/edit-user-text": {
       "put": {
-        "summary": "Edit the body text of a comment or post",
+        "summary": "Edit the body text of a comment",
         "tags": ["Post-comment actions"],
         "requestBody": {
           "required": true,
@@ -2201,11 +2559,7 @@
                   },
                   "id": {
                     "type": "string",
-                    "description": "id of the thing being edited"
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": ["post", "comment"]
+                    "description": "id of the comment being edited"
                   }
                 }
               }
@@ -2214,7 +2568,7 @@
         },
         "responses": {
           "200": {
-            "description": "Post/Comment edited successfully"
+            "description": "Comment edited successfully"
           },
           "400": {
             "description": "The request was invalid. You may refer to response for details around why this happened.",
@@ -2232,7 +2586,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized to edit this post/comment"
+            "description": "Unauthorized to edit this comment"
           },
           "404": {
             "description": "Content requested for editing is unavailable"
@@ -3516,7 +3870,8 @@
                   "text",
                   "subject",
                   "senderUsername",
-                  "receiverUsername"
+                  "receiverUsername",
+                  "type"
                 ],
                 "properties": {
                   "text": {
@@ -3539,6 +3894,15 @@
                   "subject": {
                     "type": "string",
                     "description": "Subject of the message"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "describes the type of message",
+                    "enum": ["Post replies", "Mentions", "Messages"]
+                  },
+                  "postId": {
+                    "type": "string",
+                    "description": "id of the post that the mention or the reply happens in"
                   }
                 }
               }
@@ -3943,13 +4307,13 @@
                             "type": "string",
                             "description": "Message id"
                           },
+                          "postID": {
+                            "type": "string",
+                            "description": "post id"
+                          },
                           "text": {
                             "type": "string",
                             "description": "Message Content as text"
-                          },
-                          "type": {
-                            "type": "string",
-                            "description": "describes the type of message"
                           },
                           "subredditName": {
                             "type": "string",
@@ -3971,14 +4335,6 @@
                             "type": "string",
                             "format": "date-time",
                             "description": "Time of sending the message"
-                          },
-                          "subject": {
-                            "type": "string",
-                            "description": "Subject of the message"
-                          },
-                          "isReply": {
-                            "type": "boolean",
-                            "description": "True if the msg is a reply to another , False if the msg isn't a reply to another"
                           }
                         }
                       }
@@ -4061,17 +4417,17 @@
                             "type": "string",
                             "description": "Message id"
                           },
+                          "postID": {
+                            "type": "string",
+                            "description": "post id"
+                          },
                           "text": {
                             "type": "string",
                             "description": "Message Content as text"
                           },
-                          "type": {
-                            "type": "string",
-                            "description": "describes the type of message"
-                          },
                           "subredditName": {
                             "type": "string",
-                            "description": "subreddit name that the mention was in"
+                            "description": "subreddit name that the reply was in"
                           },
                           "postTitle": {
                             "type": "string",
@@ -4089,14 +4445,6 @@
                             "type": "string",
                             "format": "date-time",
                             "description": "Time of sending the message"
-                          },
-                          "subject": {
-                            "type": "string",
-                            "description": "Subject of the message"
-                          },
-                          "isReply": {
-                            "type": "boolean",
-                            "description": "True if the msg is a reply to another , False if the msg isn't a reply to another"
                           }
                         }
                       }
@@ -4275,11 +4623,34 @@
     },
     "/read-all-msgs": {
       "patch": {
-        "summary": "mark all messages as read",
+        "summary": "Mark all messages as read",
         "tags": ["Messages"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["type"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Type of messages to mark as read",
+                    "enum": [
+                      "Post Replies",
+                      "Messages",
+                      "Username Mentions",
+                      "Unread Messages"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "All Message has been read successfully"
+            "description": "All Message have been read successfully"
           },
           "401": {
             "description": "Unauthorized to read all the messages"
@@ -4295,9 +4666,9 @@
         ]
       }
     },
-    "/suggested-sender": {
+    "/moderated-subreddits": {
       "get": {
-        "summary": "Return all subreddits that you can send message from",
+        "summary": "Return all subreddits that you can send message from ( the ones you are moderator in )",
         "tags": ["Messages"],
         "responses": {
           "200": {
@@ -4309,12 +4680,16 @@
                   "properties": {
                     "children": {
                       "type": "array",
-                      "description": "List of subreddits name",
+                      "description": "List of the subreddits that your are moderator in and their pictures",
                       "items": {
                         "properties": {
-                          "titles": {
+                          "title": {
                             "type": "string",
-                            "description": "the titles of the subreddits that the user can send messages from and his own username"
+                            "description": "the title of the subreddits that the user can send messages from and his own username"
+                          },
+                          "picture": {
+                            "type": "string",
+                            "description": "Path of the picture of the subreddit"
                           }
                         }
                       }
@@ -5630,620 +6005,6 @@
         ]
       }
     },
-    "/r/{subreddit}/about/post-flairs": {
-      "get": {
-        "summary": "Returns all post flairs of a subreddit",
-        "tags": ["Posts and comments moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "required": true,
-            "name": "subreddit",
-            "description": "Subreddit name",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post flairs returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "postFlairs": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "description": "id of the flair"
-                          },
-                          "flairName": {
-                            "type": "string",
-                            "description": "Name of the flair"
-                          },
-                          "order": {
-                            "type": "number",
-                            "description": "Order of the flair among the rest"
-                          },
-                          "backgroundColor": {
-                            "type": "string",
-                            "description": "Background color of the flair"
-                          },
-                          "textColor": {
-                            "type": "string",
-                            "description": "Color of the flair name"
-                          },
-                          "settings": {
-                            "$ref": "#/components/schemas/FlairSettings"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized Access"
-          },
-          "404": {
-            "description": "Subreddit not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "post": {
-        "summary": "Add a new post flair to a given subreddit",
-        "tags": ["Posts and comments moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "required": true,
-            "name": "subreddit",
-            "description": "Subreddit name",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "flairName": {
-                    "type": "string",
-                    "description": "Name of the flair"
-                  },
-                  "backgroundColor": {
-                    "type": "string",
-                    "description": "Background color of the flair"
-                  },
-                  "textColor": {
-                    "type": "string",
-                    "description": "Color of the flair name"
-                  },
-                  "settings": {
-                    "$ref": "#/components/schemas/FlairSettings"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Post flair successfully added"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized Access"
-          },
-          "404": {
-            "description": "Subreddit not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/about/post-flairs/{flairId}": {
-      "get": {
-        "summary": "Returns details of a specific post flair",
-        "tags": ["Posts and comments moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "required": true,
-            "name": "subreddit",
-            "description": "Subreddit name",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "required": true,
-            "name": "flairId",
-            "description": "Post flair ID",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post flair returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "flairName": {
-                      "type": "string",
-                      "description": "Name of the flair"
-                    },
-                    "backgroundColor": {
-                      "type": "string",
-                      "description": "Background color of the flair"
-                    },
-                    "order": {
-                      "type": "number",
-                      "description": "Order of the flair among the rest"
-                    },
-                    "textColor": {
-                      "type": "string",
-                      "description": "Color of the flair name"
-                    },
-                    "settings": {
-                      "$ref": "#/components/schemas/FlairSettings"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized Access"
-          },
-          "404": {
-            "description": "Subreddit not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "put": {
-        "summary": "Edit an existing post flair in a given subreddit",
-        "tags": ["Posts and comments moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "required": true,
-            "name": "subreddit",
-            "description": "Subreddit name",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "required": true,
-            "name": "flairId",
-            "description": "id of a post flair",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "flairName": {
-                    "type": "string",
-                    "description": "Name of the flair"
-                  },
-                  "backgroundColor": {
-                    "type": "string",
-                    "description": "Background color of the flair"
-                  },
-                  "textColor": {
-                    "type": "string",
-                    "description": "Color of the flair name"
-                  },
-                  "settings": {
-                    "$ref": "#/components/schemas/FlairSettings"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Post flair successfully edited"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized Access"
-          },
-          "404": {
-            "description": "Subreddit not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "summary": "Delete an existing post flair in a given subreddit",
-        "tags": ["Posts and comments moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "required": true,
-            "name": "subreddit",
-            "description": "Subreddit name",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "required": true,
-            "name": "flairId",
-            "description": "id of a post flair",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post flair successfully deleted"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized Access"
-          },
-          "404": {
-            "description": "Subreddit not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/about/post-flairs-order": {
-      "post": {
-        "summary": "Edit the order of all post flairs in a given subreddit",
-        "tags": ["Posts and comments moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "required": true,
-            "name": "subreddit",
-            "description": "Subreddit name",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "flairsOrder": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "flairId": {
-                          "type": "string",
-                          "description": "id of the post flair"
-                        },
-                        "flairOrder": {
-                          "type": "string",
-                          "description": "The new order of the flair"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Order edited successfully"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized Access"
-          },
-          "404": {
-            "description": "Subreddit not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/about/post-flairs-settings": {
-      "get": {
-        "summary": "Get settings for post flairs in a given subreddit",
-        "tags": ["Posts and comments moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "required": true,
-            "name": "subreddit",
-            "description": "Subreddit name",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Post flairs settings returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "enablePostFlairs": {
-                      "type": "boolean",
-                      "description": "Indicates whether this community enabled flairs on posts or not"
-                    },
-                    "allowUsers": {
-                      "type": "boolean",
-                      "description": "This will let users select, edit, and clear post flair for their posts in this community."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized Access"
-          },
-          "404": {
-            "description": "Subreddit not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "post": {
-        "summary": "Change the settings for post flairs in a community",
-        "tags": ["Posts and comments moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "required": true,
-            "name": "subreddit",
-            "description": "Subreddit name",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "enablePostFlairs": {
-                    "type": "boolean",
-                    "description": "Indicates whether this community enabled flairs on posts or not"
-                  },
-                  "allowUsers": {
-                    "type": "boolean",
-                    "description": "This will let users select, edit, and clear post flair for their posts in this community."
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Post flairs settings changed successfully"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized Access"
-          },
-          "404": {
-            "description": "Subreddit not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/notifications": {
       "get": {
         "summary": "get all the notifications sent to the user",
@@ -7545,7 +7306,7 @@
     },
     "/submit": {
       "post": {
-        "summary": "Submit or share a post to a subreddit (The request body could be json in case of text or link submissions and their content is set in the 'content' parameter but if it's an image/multiple images or a video then the body will be FormData and the image/video contents will be placed in an array called 'files'). Note ONLY In case of multiple images, there can be a caption and link attached with each image so they are set in the 'imageCaptions' and 'imageLinks' arrays and if an image doesn't include a caption or link then it's place in the array should be null and not skipped. The kind can also be 'post' in case of sharing a post because it's content will be another post basically.",
+        "summary": "Submit or share a post to a subreddit. The request body could be json in case there are no images and videos submitted with the post but if there is, then it has to be FormData and the image files will be placed in 'images' and video files will be given in 'videos' along with their captions in imageCaptions and videoCaptions. The kind can also be 'post' in case of sharing a post because it's content will be another post basically and the id of the post being shared is given in the 'sharePostId' field. A hybrid kind means that it can contain text, links, images and videos and an index will be associated with each entry to save the order of these fields and return them in the same order when viewing a post.",
         "tags": ["Posts"],
         "requestBody": {
           "required": true,
@@ -9459,69 +9220,6 @@
         }
       }
     },
-    "/r/{subreddit}/add-description": {
-      "post": {
-        "summary": "add description of the community",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["title"],
-                "properties": {
-                  "description": {
-                    "type": "string",
-                    "description": "description of the community (maximum 300)"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "description is submitted successfully"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "you don't have the right to do this action"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/r/{subreddit}/add-maintopic": {
       "post": {
         "summary": "add the main topic to the community",
@@ -9585,45 +9283,67 @@
         ]
       }
     },
-    "/r/{subreddit}/add-subtopic": {
-      "post": {
-        "summary": "add subtopics to the community",
-        "tags": ["Subreddit"],
+    "/r/{subreddit}/about/post-flairs": {
+      "get": {
+        "summary": "Returns all post flairs of a subreddit",
+        "tags": ["Posts and comments moderation"],
         "parameters": [
           {
             "in": "path",
+            "required": true,
             "name": "subreddit",
-            "description": "the name of the subreddit",
+            "description": "Subreddit name",
             "schema": {
               "type": "string"
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["title"],
-                "properties": {
-                  "title": {
-                    "type": "array",
-                    "description": "titles of the sub topics in the community",
-                    "items": {
-                      "type": "object"
+        "responses": {
+          "200": {
+            "description": "Post flairs returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "postFlairs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "flairId": {
+                            "type": "string",
+                            "description": "id of the flair"
+                          },
+                          "flairName": {
+                            "type": "string",
+                            "description": "Name of the flair"
+                          },
+                          "flairOrder": {
+                            "type": "number",
+                            "description": "Order of the flair among the rest"
+                          },
+                          "backgroundColor": {
+                            "type": "string",
+                            "description": "Background color of the flair"
+                          },
+                          "textColor": {
+                            "type": "string",
+                            "description": "Color of the flair name"
+                          },
+                          "settings": {
+                            "$ref": "#/components/schemas/FlairSettings"
+                          }
+                        }
+                      }
                     }
                   }
                 }
               }
             }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Community topics saved"
           },
           "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9637,8 +9357,552 @@
               }
             }
           },
-          "403": {
-            "description": "you don't have the right to do this action"
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Subreddit not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Add a new post flair to a given subreddit",
+        "tags": ["Posts and comments moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "subreddit",
+            "description": "Subreddit name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["flairName", "settings"],
+                "properties": {
+                  "flairName": {
+                    "type": "string",
+                    "description": "Name of the flair"
+                  },
+                  "backgroundColor": {
+                    "type": "string",
+                    "description": "Background color of the flair"
+                  },
+                  "textColor": {
+                    "type": "string",
+                    "description": "Color of the flair name"
+                  },
+                  "settings": {
+                    "$ref": "#/components/schemas/FlairSettings"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post flair successfully added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "flairId": {
+                      "type": "string",
+                      "description": "id of the created flair"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Subreddit not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/about/post-flairs/{flairId}": {
+      "get": {
+        "summary": "Returns details of a specific post flair",
+        "tags": ["Posts and comments moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "subreddit",
+            "description": "Subreddit name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "required": true,
+            "name": "flairId",
+            "description": "Post flair ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post flair returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "flairId": {
+                      "type": "string",
+                      "description": "id of the flair"
+                    },
+                    "flairName": {
+                      "type": "string",
+                      "description": "Name of the flair"
+                    },
+                    "backgroundColor": {
+                      "type": "string",
+                      "description": "Background color of the flair"
+                    },
+                    "flairOrder": {
+                      "type": "number",
+                      "description": "Order of the flair among the rest"
+                    },
+                    "textColor": {
+                      "type": "string",
+                      "description": "Color of the flair name"
+                    },
+                    "settings": {
+                      "$ref": "#/components/schemas/FlairSettings"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Subreddit not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Edit an existing post flair in a given subreddit",
+        "tags": ["Posts and comments moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "subreddit",
+            "description": "Subreddit name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "required": true,
+            "name": "flairId",
+            "description": "id of a post flair",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["flairName", "settings"],
+                "properties": {
+                  "flairName": {
+                    "type": "string",
+                    "description": "Name of the flair"
+                  },
+                  "backgroundColor": {
+                    "type": "string",
+                    "description": "Background color of the flair"
+                  },
+                  "textColor": {
+                    "type": "string",
+                    "description": "Color of the flair name"
+                  },
+                  "settings": {
+                    "$ref": "#/components/schemas/FlairSettings"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post flair successfully edited"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Subreddit not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete an existing post flair in a given subreddit",
+        "tags": ["Posts and comments moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "subreddit",
+            "description": "Subreddit name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "required": true,
+            "name": "flairId",
+            "description": "id of a post flair",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post flair successfully deleted"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Subreddit not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/about/post-flairs-order": {
+      "post": {
+        "summary": "Edit the order of all post flairs in a given subreddit",
+        "tags": ["Posts and comments moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "subreddit",
+            "description": "Subreddit name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "flairsOrder": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "flairId": {
+                          "type": "string",
+                          "description": "id of the post flair"
+                        },
+                        "flairOrder": {
+                          "type": "string",
+                          "description": "The new order of the flair"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order edited successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Subreddit not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/about/post-flairs-settings": {
+      "get": {
+        "summary": "Get settings for post flairs in a given subreddit",
+        "tags": ["Posts and comments moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "subreddit",
+            "description": "Subreddit name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post flairs settings returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "enablePostFlairs": {
+                      "type": "boolean",
+                      "description": "Indicates whether this community enabled flairs on posts or not"
+                    },
+                    "allowUsers": {
+                      "type": "boolean",
+                      "description": "This will let users select, edit, and clear post flair for their posts in this community."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Subreddit not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Change the settings for post flairs in a community",
+        "tags": ["Posts and comments moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "subreddit",
+            "description": "Subreddit name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "enablePostFlairs": {
+                    "type": "boolean",
+                    "description": "Indicates whether this community enabled flairs on posts or not"
+                  },
+                  "allowUsers": {
+                    "type": "boolean",
+                    "description": "This will let users select, edit, and clear post flair for their posts in this community."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post flairs settings changed successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Subreddit not found"
           },
           "500": {
             "description": "Server Error"
@@ -9701,7 +9965,19 @@
         },
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "ruleId": {
+                      "type": "string",
+                      "description": "The id of the created rule"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",

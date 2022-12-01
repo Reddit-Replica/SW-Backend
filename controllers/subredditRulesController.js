@@ -62,8 +62,8 @@ const addSubredditRule = async (req, res) => {
 
     try {
       await req.subreddit.save();
-
-      res.status(201).json("Created");
+      const ruleId = req.subreddit.rules.at(-1)._id;
+      res.status(201).json({ ruleId: ruleId });
     } catch (err) {
       console.log(err);
       res.status(500).json({
@@ -80,7 +80,9 @@ const editSubredditRule = async (req, res) => {
     res.status(400).json({
       error: "Bad request",
     });
-  } else if (req.neededRule.ruleOrder.toString() !== req.ruleObject.ruleOrder) {
+  } else if (
+    req.neededRule.ruleOrder.toString() !== req.ruleObject.ruleOrder.toString()
+  ) {
     {
       res.status(400).json({
         error: "Rule id and rule order don't match",

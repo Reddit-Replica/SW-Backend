@@ -208,10 +208,12 @@ const postSchema = mongoose.Schema({
       default: false,
     },
   },
-  usersCommented: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  },
+  usersCommented: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   scheduleDate: {
     type: Date,
   },

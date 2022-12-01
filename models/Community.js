@@ -37,6 +37,18 @@ const communitySchema = mongoose.Schema({
       ref: "Flair",
     },
   ],
+  flairSettings: {
+    enablePostFlairInThisCommunity: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    allowUsersToAssignTheirOwn: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+  },
   dateOfCreation: {
     type: Date,
     required: true,
@@ -191,6 +203,36 @@ const communitySchema = mongoose.Schema({
     {
       type: Schema.Types.ObjectId,
       ref: "Post",
+    },
+  ],
+  unmoderatedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  editedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  spammedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  editedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  spammedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
     },
   ],
   //NEEDS TO BE AUTO INCREMENT

@@ -1,5 +1,8 @@
 import express from "express";
 
+import messageController from "../controllers/NmessageController.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
@@ -23,7 +26,6 @@ const router = express.Router();
  *           schema:
  *            required:
  *             - text
- *             - subject
  *             - senderUsername
  *             - receiverUsername
  *             - type
@@ -37,10 +39,6 @@ const router = express.Router();
  *             receiverUsername:
  *               type: string
  *               description: Username of the receiver
- *             sendAt:
- *               type: string
- *               format: date-time
- *               description: Time of sending the message
  *             subject:
  *               type: string
  *               description: Subject of the message
@@ -54,6 +52,12 @@ const router = express.Router();
  *             postId:
  *               type: string
  *               description: id of the post that the mention or the reply happens in
+ *             subredditName:
+ *               type: string
+ *               description: name of the subreddit that you send or received the msg via
+ *             repliedMsgId:
+ *               type: string
+ *               description: id of the msg that it's a reply from
  *      responses:
  *          201:
  *              description: Your message is sent successfully
@@ -65,7 +69,12 @@ const router = express.Router();
  *       - bearerAuth: []
  */
 
-router.post("/message/compose");
+router.post(
+  "/message/compose",
+  verifyAuthToken,
+  messageController.messageValidator,
+  messageController.createMessage
+);
 
 /**
  * @swagger
@@ -109,28 +118,67 @@ router.post("/message/compose");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                               msgID:
+ *                               id:
  *                                 type: string
  *                                 description: Message id
- *                               text:
- *                                 type: string
- *                                 description: Message Content as text
- *                               receiverUsername:
- *                                 type: string
- *                                 description: Username of the receiver
- *                               sendAt:
- *                                type: string
- *                                format: date-time
- *                                description: Time of sending the message
- *                               subject:
- *                                 type: string
- *                                 description: Subject of the message
- *          404:
- *              description: Page not found
+ *                               data:
+ *                                 type: object
+ *                                 properties:
+ *                                   text:
+ *                                    type: string
+ *                                    description: Message Content as text
+ *                                   subredditName:
+ *                                    type: string
+ *                                    description: name of the subreddit that you send or received the msg via
+ *                                   isModerator:
+ *                                    type: boolean
+ *                                    description: true if the user is a moderator of the subreddit that the msg was sent via
+ *                                   senderUsername:
+ *                                    type: string
+ *                                    description: Username of the receiver
+ *                                   receiverUsername:
+ *                                    type: string
+ *                                    description: Username of the receiver
+ *                                   sendAt:
+ *                                    type: string
+ *                                    format: date-time
+ *                                    description: Time of sending the message
+ *                                   subject:
+ *                                    type: string
+ *                                    description: Subject of the message
+ *                                   isSenderUser:
+ *                                    type: boolean
+ *                                    description: true if the senderUsername is for a user , false if it's for a subreddit
+ *                                   isReceiverUser:
+ *                                    type: boolean
+ *                                    description: true if the receiverUsername is for a user , false if it's for a subreddit
  *          401:
- *              description: User unauthorized to view this info
+ *              description: you are unauthorized to do this action
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          500:
- *              description: Server Error
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *      security:
  *       - bearerAuth: []
  */
@@ -179,51 +227,85 @@ router.get("/message/sent");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                               msgID:
+ *                               id:
  *                                 type: string
- *                                 description: Message ID
- *                               text:
- *                                 type: string
- *                                 description: Message Content as text
- *                               type:
- *                                 type: string
- *                                 description: describes the type of message
- *                                 enum:
- *                                  - Post replies
- *                                  - Mentions
- *                                  - Messages
- *                               subredditName:
- *                                 type: string
- *                                 description: subreddit name that the reply or the mention was in
- *                               postTitle:
- *                                 type: string
- *                                 description: the title of the post that the reply or the mention happened in
- *                               senderUsername:
- *                                 type: string
- *                                 description: Username of the sender
- *                               receiverUsername:
- *                                 type: string
- *                                 description: Username of the receiver
- *                               sendAt:
- *                                type: string
- *                                format: date-time
- *                                description: Time of sending the message
- *                               subject:
- *                                 type: string
- *                                 description: Subject of the message
- *                               isReply:
- *                                 type: boolean
- *                                 description: True if the msg is a reply to another , False if the msg isn't a reply to another
- *                               isRead:
- *                                 type: boolean
- *                                 description: True if the msg was read before , False if the msg wasn't read before
- *                                 default: false
- *          404:
- *              description: Page not found
+ *                                 description: Message id
+ *                               data:
+ *                                 type: object
+ *                                 properties:
+ *                                   text:
+ *                                    type: string
+ *                                    description: Message Content as text
+ *                                   senderUsername:
+ *                                    type: string
+ *                                    description: Username of the sender
+ *                                   receiverUsername:
+ *                                    type: string
+ *                                    description: Username of the receiver
+ *                                   sendAt:
+ *                                    type: string
+ *                                    format: date-time
+ *                                    description: Time of sending the message
+ *                                   subject:
+ *                                    type: string
+ *                                    description: Subject of the message
+ *                                   type:
+ *                                    type: string
+ *                                    description: describes the type of message
+ *                                    enum:
+ *                                     - Mentions
+ *                                     - Messages
+ *                                   subredditName:
+ *                                    type: string
+ *                                    description: subreddit name that the reply or the mention was in
+ *                                   isModerator:
+ *                                    type: boolean
+ *                                    description: true if the user is a moderator of the subreddit that the msg was sent via
+ *                                   postTitle:
+ *                                    type: string
+ *                                    description: the title of the post that the reply or the mention happened in
+ *                                   postID:
+ *                                    type: string
+ *                                    description: id of the post that the reply or the mention happened in
+ *                                   commentID:
+ *                                    type: string
+ *                                    description: id of the comment that the reply or the mention happened ( to make it upvote or downvote)
+ *                                   numOfComments:
+ *                                    type: number
+ *                                    description: total number of comments in the post that the mention or reply happened in
+ *                                   isSenderUser:
+ *                                    type: boolean
+ *                                    description: true if the senderUsername is for a user , false if it's for a subreddit
+ *                                   isReceiverUser:
+ *                                    type: boolean
+ *                                    description: true if the receiverUsername is for a user , false if it's for a subreddit
  *          401:
- *              description: User unauthorized to view this info
+ *              description: you are unauthorized to do this action
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          500:
- *              description: Server Error
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *      security:
  *       - bearerAuth: []
  */
@@ -272,31 +354,67 @@ router.get("/message/inbox");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                               msgID:
+ *                               id:
  *                                 type: string
  *                                 description: Message id
- *                               text:
- *                                 type: string
- *                                 description: Message Content as text
- *                               senderUsername:
- *                                 type: string
- *                                 description: Username of the sender
- *                               sendAt:
- *                                type: string
- *                                format: date-time
- *                                description: Time of sending the message
- *                               subject:
- *                                 type: string
- *                                 description: Subject of the message
- *                               isReply:
- *                                 type: boolean
- *                                 description: True if the msg is a reply to another , False if the msg isn't a reply to another
- *          404:
- *              description: Page not found
+ *                               data:
+ *                                 type: object
+ *                                 properties:
+ *                                   text:
+ *                                    type: string
+ *                                    description: Message Content as text
+ *                                   senderUsername:
+ *                                    type: string
+ *                                    description: Username of the receiver
+ *                                   receiverUsername:
+ *                                    type: string
+ *                                    description: Username of the receiver
+ *                                   sendAt:
+ *                                    type: string
+ *                                    format: date-time
+ *                                    description: Time of sending the message
+ *                                   subject:
+ *                                    type: string
+ *                                    description: Subject of the message
+ *                                   subredditName:
+ *                                    type: string
+ *                                    description: name of the subreddit that you send or received the msg via
+ *                                   isModerator:
+ *                                    type: boolean
+ *                                    description: true if the user is a moderator of the subreddit that the msg was sent via
+ *                                   isSenderUser:
+ *                                    type: boolean
+ *                                    description: true if the senderUsername is for a user , false if it's for a subreddit
+ *                                   isReceiverUser:
+ *                                    type: boolean
+ *                                    description: true if the receiverUsername is for a user , false if it's for a subreddit
  *          401:
- *              description: User unauthorized to view this info
+ *              description: you are unauthorized to do this action
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          500:
- *              description: Server Error
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *      security:
  *       - bearerAuth: []
  */
@@ -345,37 +463,73 @@ router.get("/message/unread");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                               msgID:
+ *                               id:
  *                                 type: string
  *                                 description: Message id
- *                               postID:
- *                                 type: string
- *                                 description: post id
- *                               text:
- *                                 type: string
- *                                 description: Message Content as text
- *                               subredditName:
- *                                 type: string
- *                                 description: subreddit name that the reply was in
- *                               postTitle:
- *                                 type: string
- *                                 description: the title of the post that the reply happened in
- *                               senderUsername:
- *                                 type: string
- *                                 description: Username of the sender
- *                               receiverUsername:
- *                                 type: string
- *                                 description: Username of the receiver
- *                               sendAt:
- *                                type: string
- *                                format: date-time
- *                                description: Time of sending the message
- *          404:
- *              description: Page not found
+ *                               data:
+ *                                 type: object
+ *                                 properties:
+ *                                   text:
+ *                                    type: string
+ *                                    description: Message Content as text
+ *                                   senderUsername:
+ *                                    type: string
+ *                                    description: Username of the sender
+ *                                   receiverUsername:
+ *                                    type: string
+ *                                    description: Username of the receiver
+ *                                   sendAt:
+ *                                    type: string
+ *                                    format: date-time
+ *                                    description: Time of sending the message
+ *                                   type:
+ *                                    type: string
+ *                                    description: describes the type of message
+ *                                    enum:
+ *                                     - Mentions
+ *                                     - Messages
+ *                                   subredditName:
+ *                                    type: string
+ *                                    description: subreddit name that the reply was in
+ *                                   postTitle:
+ *                                    type: string
+ *                                    description: the title of the post that the reply happened in
+ *                                   postID:
+ *                                    type: string
+ *                                    description: id of the post that the reply happened in
+ *                                   commentID:
+ *                                    type: string
+ *                                    description: id of the comment that the reply happened in ( to make it upvote or downvote)
+ *                                   numOfComments:
+ *                                    type: number
+ *                                    description: total number of comments in the post that the mention or reply happened in
  *          401:
- *              description: User unauthorized to view this info
+ *              description: you are unauthorized to do this action
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          500:
- *              description: Server Error
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *      security:
  *       - bearerAuth: []
  */
@@ -424,37 +578,73 @@ router.get("/message/post-reply");
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                               msgID:
+ *                               id:
  *                                 type: string
  *                                 description: Message id
- *                               postID:
- *                                 type: string
- *                                 description: post id
- *                               text:
- *                                 type: string
- *                                 description: Message Content as text
- *                               subredditName:
- *                                 type: string
- *                                 description: subreddit name that the reply was in
- *                               postTitle:
- *                                 type: string
- *                                 description: the title of the post that the reply happened in
- *                               senderUsername:
- *                                 type: string
- *                                 description: Username of the sender
- *                               receiverUsername:
- *                                 type: string
- *                                 description: Username of the receiver
- *                               sendAt:
- *                                type: string
- *                                format: date-time
- *                                description: Time of sending the message
- *          404:
- *              description: Page not found
+ *                               data:
+ *                                 type: object
+ *                                 properties:
+ *                                   text:
+ *                                    type: string
+ *                                    description: Message Content as text
+ *                                   senderUsername:
+ *                                    type: string
+ *                                    description: Username of the sender
+ *                                   receiverUsername:
+ *                                    type: string
+ *                                    description: Username of the receiver
+ *                                   sendAt:
+ *                                    type: string
+ *                                    format: date-time
+ *                                    description: Time of sending the message
+ *                                   type:
+ *                                    type: string
+ *                                    description: describes the type of message
+ *                                    enum:
+ *                                     - Mentions
+ *                                     - Messages
+ *                                   subredditName:
+ *                                    type: string
+ *                                    description: subreddit name that the reply was in
+ *                                   postTitle:
+ *                                    type: string
+ *                                    description: the title of the post that the reply happened in
+ *                                   postID:
+ *                                    type: string
+ *                                    description: id of the post that the reply happened in
+ *                                   commentID:
+ *                                    type: string
+ *                                    description: id of the comment that the reply happened in ( to make it upvote or downvote)
+ *                                   numOfComments:
+ *                                    type: number
+ *                                    description: total number of comments in the post that the mention or reply happened in
  *          401:
- *              description: User unauthorized to view this info
+ *              description: you are unauthorized to do this action
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          500:
- *              description: Server Error
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *      security:
  *       - bearerAuth: []
  */
@@ -499,42 +689,76 @@ router.get("/message/mentions");
  *                           type: string
  *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          children:
- *                            msgID:
- *                                 type: string
- *                                 description: Message id
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                               text:
- *                                 type: string
- *                                 description: Message Content as text
- *                               senderUsername:
- *                                 type: string
- *                                 description: Username of the sender
- *                               receiverUsername:
- *                                 type: string
- *                                 description: Username of the receiver
- *                               sendAt:
- *                                type: string
- *                                format: date-time
- *                                description: Time of sending the message
- *                               subject:
- *                                 type: string
- *                                 description: Subject of the message
- *                               isReply:
- *                                 type: boolean
- *                                 description: True if the msg is a reply to another , False if the msg isn't a reply to another
- *                               isRead:
- *                                 type: boolean
- *                                 description: True if the msg was read before , False if the msg wasn't read before
- *                                 default: false
- *          404:
- *              description: Page not found
+ *                                subjectTitle:
+ *                                  type: string
+ *                                  description: contains the username of the person or subreddit that you messaged or the subreddit you sent msg from
+ *                                isUser:
+ *                                  type: boolean
+ *                                  description: true if the subject title content is for a user , false if it is for a subreddit
+ *                                subjectContent:
+ *                                  type: string
+ *                                  description: contains the content of the subject of the msg
+ *                                messages:
+ *                                  type: array
+ *                                  description: List of the messages in that subject
+ *                                  items:
+ *                                     properties:
+ *                                      msgID:
+ *                                        type: string
+ *                                        description: id of the msg
+ *                                      senderUsername:
+ *                                        type: string
+ *                                        description: Username of the sender
+ *                                      receiverUsername:
+ *                                        type: string
+ *                                        description: Username of the receiver
+ *                                      sendAt:
+ *                                        type: string
+ *                                        format: date-time
+ *                                        description: Time of sending the message
+ *                                      subredditName:
+ *                                        type: string
+ *                                        description: Subreddit name that the message was sent via
+ *                                      isModerator:
+ *                                        type: string
+ *                                        description: true if the user is a moderator of the subreddit that the message was sent via
+ *                                      isSenderUser:
+ *                                        type: boolean
+ *                                        description: true if the senderUsername is for a user , false if it's for a subreddit
+ *                                      isReceiverUser:
+ *                                        type: boolean
+ *                                        description: true if the receiverUsername is for a user , false if it's for a subreddit
  *          401:
- *              description: User unauthorized to view this info
+ *              description: you are unauthorized to do this action
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          500:
- *              description: Server Error
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *      security:
  *       - bearerAuth: []
  */

@@ -3,6 +3,7 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import cors from "cors";
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
 import swaggerUI from "swagger-ui-express";
@@ -20,7 +21,10 @@ const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 app.use(
-  multer({ storage: fileStorage, fileFilter: fileFilter }).array("files", 100)
+  multer({ storage: fileStorage, fileFilter: fileFilter }).fields([
+    { name: "images", maxCount: 100 },
+    { name: "videos", maxCount: 100 },
+  ])
 );
 
 // That's morgan for tracking the api in the terminal
@@ -29,7 +33,7 @@ app.use(morgan("dev"));
 
 // Log stream for morgan to make the log file in the server
 const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "access.log"),
+  path.join(__dirname, "logs/access.log"),
   {
     flags: "a",
   }
@@ -48,10 +52,15 @@ const port = process.env.PORT || 3000;
 
 app.use((_req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,PUT,DELETE,PATCH,OPTIONS"
+  );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
   next();
 });
+
+// app.use(cors());
 
 let DB_URL;
 // eslint-disable-next-line max-len

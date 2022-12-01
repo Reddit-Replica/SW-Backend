@@ -8,7 +8,7 @@ import { hashPassword } from "../../utils/passwordUtils.js";
 const request = supertest(app);
 
 // eslint-disable-next-line max-statements
-fdescribe("Testing Post endpoints", () => {
+describe("Testing Post endpoints", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
@@ -264,6 +264,10 @@ fdescribe("Testing Post endpoints", () => {
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
+    const testUser = await User.findById(user.id);
+    expect(
+      testUser.pinnedPosts.find((postId) => postId.toString() === post.id)
+    ).toBeTruthy();
   });
 
   it("Get pinned posts", async () => {
@@ -297,6 +301,10 @@ fdescribe("Testing Post endpoints", () => {
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
+    const testUser = await User.findById(user.id);
+    expect(
+      testUser.pinnedPosts.find((postId) => postId.toString() === post.id)
+    ).toBeFalsy();
   });
 
   it("Unpin a post that has already been unpinned", async () => {
@@ -324,10 +332,7 @@ fdescribe("Testing Post endpoints", () => {
 
   it("Get post insights of a not-found post", async () => {
     const response = await request
-      .get("/post-insights")
-      .send({
-        id: "6369bd49355a4370412a212d",
-      })
+      .get("/post-insights?id=6369bd49355a4370412a212d")
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(404);
@@ -335,10 +340,7 @@ fdescribe("Testing Post endpoints", () => {
 
   it("Get post insights normally", async () => {
     const response = await request
-      .get("/post-insights")
-      .send({
-        id: post.id.toString(),
-      })
+      .get("/post-insights?id=" + post.id.toString())
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
@@ -347,10 +349,7 @@ fdescribe("Testing Post endpoints", () => {
 
   it("Get post details with an optional token", async () => {
     const response = await request
-      .get("/post-details")
-      .send({
-        id: post.id.toString(),
-      })
+      .get("/post-details?id=" + post.id.toString())
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
@@ -358,9 +357,9 @@ fdescribe("Testing Post endpoints", () => {
   });
 
   it("Get post details without an optional token", async () => {
-    const response = await request.get("/post-details").send({
-      id: post.id.toString(),
-    });
+    const response = await request.get(
+      "/post-details?id=" + post.id.toString()
+    );
 
     expect(response.status).toEqual(200);
     expect(response.body).toBeDefined();
@@ -368,10 +367,7 @@ fdescribe("Testing Post endpoints", () => {
 
   it("Get post details of an invalid post id", async () => {
     const response = await request
-      .get("/post-details")
-      .send({
-        id: "6369bd49355a4370412a212d",
-      })
+      .get("/post-details?id=6369bd49355a4370412a212d")
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(404);

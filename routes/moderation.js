@@ -1,4 +1,10 @@
 import express from "express";
+// eslint-disable-next-line max-len
+import postModerationController from "../controllers/HpostCommentModerationController.js";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+import { checkThingMod } from "../middleware/postModeration.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import { checkId } from "../middleware/checkId.js";
 
 // eslint-disable-next-line new-cap
 const moderationRouter = express.Router();
@@ -73,8 +79,8 @@ const moderationRouter = express.Router();
  *      schema:
  *       type: string
  *       enum:
- *        - newestfirst
- *        - oldestfirst
+ *        - new
+ *        - old
  *       default: newestfirst
  *      required: false
  *    - in: query
@@ -160,8 +166,8 @@ moderationRouter.get("/r/:subreddit/about/spam");
  *      schema:
  *       type: string
  *       enum:
- *        - newestfirst
- *        - oldestfirst
+ *        - new
+ *        - old
  *       default: newestfirst
  *      required: false
  *    - in: query
@@ -238,8 +244,8 @@ moderationRouter.get("/r/:subreddit/about/edited");
  *      schema:
  *       type: string
  *       enum:
- *        - newestfirst
- *        - oldestfirst
+ *        - new
+ *        - old
  *       default: newestfirst
  *      required: false
  *    - in: query
@@ -451,7 +457,15 @@ moderationRouter.post("/leave-moderator");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/approve");
+moderationRouter.post(
+  "/approve",
+  verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.approve
+);
 
 /**
  * @swagger
@@ -497,7 +511,15 @@ moderationRouter.post("/approve");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/remove");
+moderationRouter.post(
+  "/remove",
+  verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.remove
+);
 
 /**
  * @swagger
@@ -543,7 +565,15 @@ moderationRouter.post("/remove");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/lock");
+moderationRouter.post(
+  "/lock",
+  verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.lock
+);
 
 /**
  * @swagger
@@ -589,7 +619,15 @@ moderationRouter.post("/lock");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/unlock");
+moderationRouter.post(
+  "/unlock",
+  verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.unlock
+);
 
 /**
  * @swagger

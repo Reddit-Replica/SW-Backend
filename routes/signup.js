@@ -269,16 +269,25 @@ signupRouter.post(
  *   get:
  *     summary: Get an available random username used to create a new account
  *     tags: [Sign Up]
+ *     parameters:
+ *       - in: path
+ *         name: count
+ *         description: number of random usernames you want to get
+ *         required: true
+ *         schema:
+ *           type: number
  *     responses:
  *       201:
- *         description: random username is generated successfully
+ *         description: random usernames are generated successfully
  *         content:
  *           application/json:
  *             schema:
  *               properties:
- *                 username:
- *                   type: string
- *                   description: Random username
+ *                 usernames:
+ *                   type: array
+ *                   description: array of usernames generated
+ *                   items:
+ *                     type: string
  *       500:
  *         description: Internal server error
  */
