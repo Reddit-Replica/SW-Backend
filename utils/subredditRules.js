@@ -42,7 +42,7 @@ export function validateEditingRuleBody(req) {
   }
   if (
     !firstValidate ||
-    (!req.body.ruleOrder && req.body.ruleOrder.toString() !== "0")
+    (!req.body.ruleOrder && req.body.ruleOrder?.toString() !== "0")
   ) {
     return false;
   }
