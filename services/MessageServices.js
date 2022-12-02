@@ -1,4 +1,3 @@
-/* eslint-disable max-statements */
 import User from "../models/User.js";
 import Message from "../models/Message.js";
 import Conversation from "../models/Conversation.js";
@@ -9,6 +8,7 @@ import {
   addUserMention,
 } from "../utils/messagesUtils.js";
 
+//WE MAY USER SERVICE TO GET USER HERE
 /**
  * This function is used to add a message
  * it add the msg to sender's sent messages and to the receiver's received messages
@@ -16,33 +16,40 @@ import {
  * @param {Object} req req object from which we get our data
  * @returns {String} indicates if the message was sent successfully or not
  */
-
 export async function addMessage(req) {
   try {
+    //SAVING MESSAGE TO DATABASE
     const message = await new Message(req.msg).save();
     if (message.isSenderUser) {
+      //GETTING SENDER USER
       const sender = await User.findOne({ username: message.senderUsername });
-      //add this message to the sender user as sent message
+      //ADD THIS MESSAGE TO SENDER SENT MESSAGES
       addSentMessages(sender.id, message);
     }
 
     if (message.isReceiverUser) {
+      //GETTING RECEIVER USER
       const receiver = await User.findOne({
         username: message.receiverUsername,
       });
-      //add this message to the receiver user as received message
+      //ADD THIS MESSAGE TO RECEIVER RECEIVED MESSAGES
       addReceivedMessages(receiver.id, message);
     }
+    //CREATING A NEW CONVERSATIONS USING THE MESSAGE SENT , IF IT WAS CREATED BEFORE THEN THE MESSAGE WILL BE ADDED TO IT THEN
     const conversationId = await createNewConversation(message);
     const conversation = await Conversation.findById(conversationId);
+    //PUSHING THE MESSAGE TO THE CONVERSATION'S MESSAGES
     conversation.messages.push({ messageID: message.id });
+    //SAVING CONVERSATION
     conversation.save();
+    //ADDING THIS CONVERSATION TO THE USERS IF IT EXISTS THERE
     await addConversationToUsers(message, conversationId);
     return "created";
   } catch (err) {
     return "error in creating the message";
   }
 }
+
 /**
  * This function is used to add a mention
  * it add the mention to the receiver mention list
