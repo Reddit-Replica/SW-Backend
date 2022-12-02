@@ -170,7 +170,6 @@ const joinSubreddit = async (req, res) => {
   const authPayload = req.payload;
   //GETTING USER USERNAME
   const username = authPayload.username;
-  const userId = authPayload.userId;
   try {
     //GETTING USER DATA,CHECKING FOR HIS EXISTENCE
     const user = await searchForUserService(username);
@@ -181,7 +180,6 @@ const joinSubreddit = async (req, res) => {
       const result = await addUserToWaitingList(
         subreddit,
         username,
-        userId,
         req.body.message
       );
       res.status(result.statusCode).json(result.message);

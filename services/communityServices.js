@@ -1,6 +1,12 @@
 import Subreddit from "./../models/Community.js";
 import { searchForUserService } from "../services/userServices.js";
-
+/**
+ * This function is used to search for a subreddit with its name
+ * it gets the subreddit from the database then it checks about it's validity
+ * if there is no subreddit or we found one but it's deleted then we return an error
+ * @param {String} subredditName subreddit Name
+ * @returns {Object} error object that contains the msg describing why there is an error and its status code , or if there is no error then it returns the subreddit itself
+ */
 export async function searchForSubreddit(subredditName) {
   //GETTING SUBREDDIT DATA
   const subreddit = await Subreddit.findOne({ title: subredditName });
@@ -9,6 +15,7 @@ export async function searchForSubreddit(subredditName) {
     error.statusCode = 400;
     throw error;
   }
+
   if (subreddit.deletedAt) {
     let error = new Error("This subreddit is deleted");
     error.statusCode = 400;
@@ -16,7 +23,14 @@ export async function searchForSubreddit(subredditName) {
   }
   return subreddit;
 }
-
+/**
+ * This function is used to search for a subreddit with its id
+ * it gets the subreddit from the database then it checks about it's validity
+ * if there is no subreddit or we found one but it's deleted then it will return an error
+ * or if the passed id isn't valid as an object id then it will return an error also
+ * @param {String} subredditId subreddit Id
+ * @returns {Object} error object that contains the msg describing why there is an error and its status code , or if there is no error then it return the subreddit itself
+ */
 export async function searchForSubredditById(subredditId) {
   //GETTING SUBREDDIT DATA
   if (!subredditId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -37,16 +51,18 @@ export async function searchForSubredditById(subredditId) {
   }
   return subreddit;
 }
-
-export async function addUserToWaitingList(
-  subreddit,
-  username,
-  userId,
-  message
-) {
+/**
+ * This function is used to add a user to the waiting list of a subreddit if the requested subreddit was private
+ * @param {Object} subreddit object that contains the data of the subreddit that we will push the user into its waited list
+ * @param {String} username username of the user that wants to join the subreddit
+ * @param {String} message message that the user sent while joining the subreddit
+ * @returns {Object} success object that contains the msg describing what happened and its status code
+ */
+export async function addUserToWaitingList(subreddit, username, message = "") {
+  const user1 = await searchForUserService(username);
   subreddit.waitedUsers.push({
     username: username,
-    userID: userId,
+    userID: user1.id,
     message: message,
   });
   await subreddit.save();
@@ -55,12 +71,19 @@ export async function addUserToWaitingList(
     message: "Your request is sent successfully",
   };
 }
-
+/**
+ * This function is used to add a subreddit to the ones that the user joined
+ * it adds the subreddit to joinedSubreddit list then increment the number of members of the subreddit
+ * @param {object} subreddit object that contains the data of the subreddit that we will add it to users joined Subreddits
+ * @param {object} user object that contains the data of the user that the subreddit will be added to
+ * @returns {Object} success objects that contains the msg describing what happened and its status code
+ */
 export async function addToJoinedSubreddit(user, subreddit) {
   user.joinedSubreddits.push({
     subredditId: subreddit.id,
     name: subreddit.title,
   });
+  console.log(user);
   await user.save();
   subreddit.members += 1;
   await subreddit.save();
@@ -69,7 +92,12 @@ export async function addToJoinedSubreddit(user, subreddit) {
     message: "you joined the subreddit successfully",
   };
 }
-
+/**
+ * This function is used to add a description to a subreddit using one of the moderators
+ * @param {String} subredditName subreddit Name
+ * @param {String} description description of the subreddit that will be added
+ * @returns {Object} success objects that contains the msg describing what happened and its status code
+ */
 export async function addToDescription(subredditName, description) {
   const subreddit = await searchForSubreddit(subredditName);
   subreddit.description = description;
@@ -79,7 +107,12 @@ export async function addToDescription(subredditName, description) {
     message: "description is submitted successfully",
   };
 }
-
+/**
+ * This function is used to add a main Topic to a subreddit using one of the moderators
+ * @param {String} subredditName subreddit Name
+ * @param {String} mainTopic mainTopic of the subreddit that will be added
+ * @returns {Object} success objects that contains the msg describing what happened and its status code
+ */
 export async function addToMainTopic(subredditName, mainTopic) {
   const subreddit = await searchForSubreddit(subredditName);
   subreddit.mainTopic = mainTopic;
@@ -90,7 +123,16 @@ export async function addToMainTopic(subredditName, mainTopic) {
     message: "Successfully updated primary topic!",
   };
 }
-
+/**
+ * This function is used to add sub topics to a subreddit using one of the moderators
+ * firstly it checks if the input is an array or not
+ * then it adds that array to a set then return it to an array to remove all the duplicates that may be in the array
+ * then it checks if the values in this array is valid to be added or not
+ * @param {String} subredditName subreddit Name
+ * @param {Array} subTopics array of sub topics that may be added to the subreddit
+ * @param {Array} referenceArr array of the sub topics that we have and we can't anything is out of that list
+ * @returns {Object} success object that contains the msg describing what happened and its status code , or an error object that describes why there is an error and it's status code
+ */
 export async function addToSubtopics(subredditName, subTopics, referenceArr) {
   if (!Array.isArray(subTopics)) {
     let error = new Error("Subtopics must be an array");
@@ -107,7 +149,12 @@ export async function addToSubtopics(subredditName, subTopics, referenceArr) {
     message: "Community topics saved",
   };
 }
-
+/**
+ * This function is used to validate the array of subtopics that is sent to be added
+ * @param {Array} subTopics array of sub topics that may be added to the subreddit
+ * @param {Array} referenceArr array of the sub topics that we have and we can't anything is out of that list
+ * @returns {Object} error object that contains the msg describing why there is an error and its status code
+ */
 export async function validateSubtopics(subTopics, referenceArr) {
   for (const subtopic of subTopics) {
     if (!referenceArr.includes(subtopic)) {
@@ -117,7 +164,15 @@ export async function validateSubtopics(subTopics, referenceArr) {
     }
   }
 }
-
+/**
+ * This function is used to add a subreddit
+ * it creates a new subreddit by an order of a user
+ * then this subreddit is added to the database and this user will be a moderator in it
+ * this subreddit will be added to user's joined , moderated and owned subreddits
+ * @param {object} req object that contains the data of the subreddit that we will added
+ * @param {object} authPayload object that contains the data of the user that wants to create the subreddit
+ * @returns {Object} success object that contains the msg describing what happened and its status code
+ */
 export async function addSubreddit(req, authPayload) {
   //GETTING USER DATA
   const creatorUsername = authPayload.username;
@@ -128,11 +183,6 @@ export async function addSubreddit(req, authPayload) {
     username: creatorUsername,
     userID: creatorId,
   };
-  const moderators = [];
-  moderators.push({
-    username: creatorUsername,
-    userID: creatorId,
-  });
   const subreddit = await new Subreddit({
     title: subredditName,
     category: category,
@@ -154,7 +204,14 @@ export async function addSubreddit(req, authPayload) {
     message: "The subreddit has been successfully created",
   };
 }
-
+/**
+ * This function is used to make a user a moderator of a subreddit
+ * it adds the subreddit to the list of moderated subreddits in the user
+ * it adds the user to the list of moderators of the subreddit
+ * @param {String} username username of the user
+ * @param {String} subredditName subreddit name
+ * @returns {Object} success object that contains the msg describing what happened and its status code
+ */
 export async function moderateSubreddit(username, subredditName) {
   const user = await searchForUserService(username);
   const subreddit = await searchForSubreddit(subredditName);
@@ -168,11 +225,22 @@ export async function moderateSubreddit(username, subredditName) {
     username: username,
     userID: user.id,
   };
+  for (const moderator of subreddit.moderators) {
+    if (moderator.username === user.username) {
+      let error = new Error(`${user.username} is already a moderator`);
+      error.statusCode = 400;
+      throw error;
+    }
+  }
 
   user.moderatedSubreddits.push(addedSubreddit);
   subreddit.moderators.push(addedUser);
-  console.log(subreddit.moderators);
 
   await user.save();
   await subreddit.save();
+
+  return {
+    statusCode: 200,
+    message: `${username} has been moderator to ${subredditName} successfuly`,
+  };
 }
