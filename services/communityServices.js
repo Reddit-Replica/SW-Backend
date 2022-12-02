@@ -1,4 +1,5 @@
 import Subreddit from "./../models/Community.js";
+import { searchForUserService } from "../services/userServices.js";
 
 export async function searchForSubreddit(subredditName) {
   //GETTING SUBREDDIT DATA
@@ -16,7 +17,7 @@ export async function searchForSubreddit(subredditName) {
   return subreddit;
 }
 
-export async function searchForSubredditbyId(subredditId) {
+export async function searchForSubredditById(subredditId) {
   //GETTING SUBREDDIT DATA
   if (!subredditId.match(/^[0-9a-fA-F]{24}$/)) {
     let error = new Error("This is not a valid subreddit id");
@@ -115,4 +116,63 @@ export async function validateSubtopics(subTopics, referenceArr) {
       throw error;
     }
   }
+}
+
+export async function addSubreddit(req, authPayload) {
+  //GETTING USER DATA
+  const creatorUsername = authPayload.username;
+  const creatorId = authPayload.userId;
+  const moderator = await searchForUserService(creatorUsername);
+  const { subredditName, category, type, nsfw } = req.body;
+  const owner = {
+    username: creatorUsername,
+    userID: creatorId,
+  };
+  const moderators = [];
+  moderators.push({
+    username: creatorUsername,
+    userID: creatorId,
+  });
+  const subreddit = await new Subreddit({
+    title: subredditName,
+    category: category,
+    type: type,
+    nsfw: nsfw,
+    owner: owner,
+  }).save();
+  const addedSubreddit = {
+    subredditId: subreddit.id,
+    name: subredditName,
+  };
+  moderator.ownedSubreddits.push(addedSubreddit);
+  moderator.joinedSubreddits.push(addedSubreddit);
+  await moderator.save();
+
+  await moderateSubreddit(moderator.username, subredditName);
+  return {
+    statusCode: 201,
+    message: "The subreddit has been successfully created",
+  };
+}
+
+export async function moderateSubreddit(username, subredditName) {
+  const user = await searchForUserService(username);
+  const subreddit = await searchForSubreddit(subredditName);
+
+  const addedSubreddit = {
+    subredditId: subreddit.id,
+    name: subredditName,
+  };
+
+  const addedUser = {
+    username: username,
+    userID: user.id,
+  };
+
+  user.moderatedSubreddits.push(addedSubreddit);
+  subreddit.moderators.push(addedUser);
+  console.log(subreddit.moderators);
+
+  await user.save();
+  await subreddit.save();
 }

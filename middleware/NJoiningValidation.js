@@ -1,6 +1,5 @@
 import User from "../models/User.js";
-import Subreddit from "../models/Community.js";
-import { searchForSubredditbyId } from "./../services/communityServices.js";
+import { searchForSubredditById } from "./../services/communityServices.js";
 
 /**
  * Middleware used to check if the user joined the desired subreddit before or not
@@ -24,7 +23,7 @@ export async function checkJoinedBefore(req, res, next) {
     const { joinedSubreddits } = await User.findById(authPayload.userId).select(
       "joinedSubreddits"
     );
-    const subreddit = await searchForSubredditbyId(req.body.subredditId);
+    const subreddit = await searchForSubredditById(req.body.subredditId);
     for (const smallSubreddit of joinedSubreddits) {
       //CHECKING IF THE SUBREDDIT HE WANTS TO JOIN WAS JOINED BEFORE
       if (smallSubreddit.subredditId.toString() === subreddit.id) {

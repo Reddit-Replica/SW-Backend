@@ -1,7 +1,5 @@
 /* eslint-disable max-statements */
 /* eslint-disable max-len */
-import Subreddit from "./../models/Community.js";
-import User from "./../models/User.js";
 import { body } from "express-validator";
 import {
   searchForSubreddit,
@@ -10,8 +8,8 @@ import {
   addToDescription,
   addToSubtopics,
   addToMainTopic,
-  searchForSubredditbyId,
-  validateSubtopics,
+  searchForSubredditById,
+  addSubreddit,
 } from "./../services/communityServices.js";
 import { searchForUserService } from "../services/userServices.js";
 //CHECKING ON SUBREDDIT DATA
@@ -152,50 +150,14 @@ const subTopicValidator = [
 ];
 
 //CREATE SUBREDDIT
-// eslint-disable-next-line max-statements
 const createSubreddit = async (req, res) => {
-  //CHECK FOR TOKEN
-  const authPayload = req.payload;
-  //GETTING USER DATA
-  const creatorUsername = authPayload.username;
-  const creatorId = authPayload.userId;
-  const { subredditName, category, type, nsfw } = req.body;
-  const owner = {
-    username: creatorUsername,
-    userID: creatorId,
-  };
-  const moderators = [];
-  moderators.push({
-    username: creatorUsername,
-    userID: creatorId,
-  });
   try {
-    //ADDING NEW SUBREDDIT
-    const subreddit = await new Subreddit({
-      title: subredditName,
-      category: category,
-      type: type,
-      nsfw: nsfw,
-      owner: owner,
-      moderators: moderators,
-    }).save();
-    //MAKE THE USER OWNER OF THE SUBREDDIT
-    const moderator = await User.findById(creatorId);
-    const addedSubreddit = {
-      subredditId: subreddit.id,
-      name: subredditName,
-    };
-    moderator.ownedSubreddits.push(addedSubreddit);
-    moderator.joinedSubreddits.push(addedSubreddit);
-    moderator.moderatedSubreddits.push(addedSubreddit);
-    await moderator.save();
-    //RETURN RESPONSE
-    return res.status(201).send({
-      subreddit: subreddit,
-    });
+    const result = await addSubreddit(req, req.payload);
+    res.status(result.statusCode).json(result.message);
   } catch (err) {
-    if (err.cause) {
-      return res.status(err.cause).json({
+    console.log(err);
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
         error: err.message,
       });
     } else {
@@ -213,7 +175,7 @@ const joinSubreddit = async (req, res) => {
     //GETTING USER DATA,CHECKING FOR HIS EXISTENCE
     const user = await searchForUserService(username);
     //GETTING SUBREDDIT DATA,CHECKING FOR ITS EXISTENCE
-    const subreddit = await searchForSubredditbyId(req.body.subredditId);
+    const subreddit = await searchForSubredditById(req.body.subredditId);
     //IF THE REQUESTED SUBREDDIT IS PRIVATE,THEN THE USER WOULD BE ADDED TO THE WAITING LIST WAITING FOR MODERATOR TO APPROVE
     if (subreddit.type === "Private") {
       const result = await addUserToWaitingList(
@@ -239,7 +201,6 @@ const joinSubreddit = async (req, res) => {
   }
 };
 
-// eslint-disable-next-line max-statements
 const addDescription = async (req, res) => {
   try {
     //GETTING SUBREDDIT DATA
@@ -281,7 +242,6 @@ const addMainTopic = async (req, res) => {
   }
 };
 
-// eslint-disable-next-line max-statements
 const addSubTopics = async (req, res) => {
   try {
     await searchForSubreddit(req.params.subreddit);
