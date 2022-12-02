@@ -17,7 +17,6 @@ import {
  * @returns {String} indicates if the message was sent successfully or not
  */
 export async function addMessage(req) {
-  try {
     //SAVING MESSAGE TO DATABASE
     const message = await new Message(req.msg).save();
     if (message.isSenderUser) {
@@ -26,7 +25,6 @@ export async function addMessage(req) {
       //ADD THIS MESSAGE TO SENDER SENT MESSAGES
       addSentMessages(sender.id, message);
     }
-
     if (message.isReceiverUser) {
       //GETTING RECEIVER USER
       const receiver = await User.findOne({
@@ -41,13 +39,10 @@ export async function addMessage(req) {
     //PUSHING THE MESSAGE TO THE CONVERSATION'S MESSAGES
     conversation.messages.push({ messageID: message.id });
     //SAVING CONVERSATION
-    conversation.save();
+    await conversation.save();
+    console.log("saved");
     //ADDING THIS CONVERSATION TO THE USERS IF IT EXISTS THERE
     await addConversationToUsers(message, conversationId);
-    return "created";
-  } catch (err) {
-    return "error in creating the message";
-  }
 }
 
 /**
@@ -57,14 +52,9 @@ export async function addMessage(req) {
  * @returns {String} indicates if the message was sent successfully or not
  */
 export async function addMention(req) {
-  try {
     const mention = await new Message(req.msg).save();
     const receiver = await User.findOne({ username: mention.receiverUsername });
     addUserMention(receiver.id, mention);
-    return "created";
-  } catch (err) {
-    return "error in creating the mention";
-  }
 }
 
 /**
@@ -77,7 +67,6 @@ export async function addMention(req) {
  */
 export async function createNewConversation(msg) {
   //HERE WE NEED TO CREATE THE CONVERSATION FROM SCRATCH
-  try {
     //check if the conversation is already in database
     const conversation1 = await Conversation.findOne({
       subject: msg.subject,
@@ -106,9 +95,6 @@ export async function createNewConversation(msg) {
     } else {
       return conversation1.id;
     }
-  } catch (err) {
-    return "error in creating msg";
-  }
 }
 
 /**
@@ -120,14 +106,10 @@ export async function createNewConversation(msg) {
  */
 export async function addToConversation(msg, conversationId) {
   //HERE WE NEED TO ADD THE MSG TO THE CONVERSATION
-  try {
     const conversation = await Conversation.findById(conversationId);
     conversation.messages.push({ messageID: msg.id });
     conversation.save();
     return "added";
-  } catch (err) {
-    return "error in add a message to conversation";
-  }
 }
 /**
  * This function is used to check if the user has already that conversation or we will need to add a new one for him
@@ -136,7 +118,6 @@ export async function addToConversation(msg, conversationId) {
  * @returns {string} defines if the user has already that conversation or not
  */
 async function checkExistingConversation(user, conversationId) {
-  try {
     await user.populate("conversations.conversationId");
     const conversations = user.conversations;
     let valid = false;
@@ -146,10 +127,6 @@ async function checkExistingConversation(user, conversationId) {
       }
     });
     return valid;
-  } catch (err) {
-    // eslint-disable-next-line max-len
-    return "there is an error while checking if that conversation exists or not";
-  }
 }
 /**
  * This function is used to add the conversation to the users in case that they don't have it
@@ -159,7 +136,6 @@ async function checkExistingConversation(user, conversationId) {
  * @returns {string} defines if the conversation was added successfully or not
  */
 async function addConversationToUsers(message, convId) {
-  try {
     if (message.isSenderUser) {
       const userOne = await User.findOne({ username: message.senderUsername });
       const userOneConv = await checkExistingConversation(userOne, convId);
@@ -168,11 +144,10 @@ async function addConversationToUsers(message, convId) {
           conversationId: convId,
           with: message.receiverUsername,
         });
-        userOne.save();
+        await userOne.save();
       }
     }
-
-    if (message.isSenderUser) {
+    if (message.isReceiverUser) {
       const userTwo = await User.findOne({
         username: message.receiverUsername,
       });
@@ -182,12 +157,9 @@ async function addConversationToUsers(message, convId) {
           conversationId: convId,
           with: message.senderUsername,
         });
-        userTwo.save();
+        await userTwo.save();
       }
     }
-  } catch (err) {
-    return "error in add conversation to users";
-  }
 }
 
 /**
@@ -198,45 +170,54 @@ async function addConversationToUsers(message, convId) {
  */
 // eslint-disable-next-line max-statements
 export async function validateMessage(req) {
-  try {
+
     if (req.body.type !== "Mentions" && req.body.type !== "Messages") {
-      return false;
+      let err = new Error("Message type should be either Mentions or Messages");
+      err.statusCode=400;
+      throw err;
     }
     if (req.body.type === "Mentions") {
       if (!req.body.postId) {
-        return false;
+        let err = new Error("Post Id is needed when type is Mentions");
+        err.statusCode=400;
+        throw err;
       }
     }
     if (req.body.type === "Messages") {
       if (!req.body.subject) {
-        return false;
+        let err = new Error("Subject is needed when type is Messages");
+        err.statusCode=400;
+        throw err;
       }
     }
     if (
       !req.body.senderUsername.includes("/") ||
       !req.body.receiverUsername.includes("/")
     ) {
-      return false;
+      let err = new Error("Invalid sender or receiver username");
+      err.statusCode=400;
+      throw err;
     }
     const senderArr = req.body.senderUsername.split("/");
     const receiverArr = req.body.receiverUsername.split("/");
-    const receiver = await User.findOne({
-      username: receiverArr[receiverArr.length - 1],
-    });
+
+
     const msg = {
       text: req.body.text,
       senderUsername: senderArr[senderArr.length - 1],
       receiverUsername: receiverArr[receiverArr.length - 1],
       type: req.body.type,
-      receiverId: receiver.id,
     };
     if (senderArr[senderArr.length - 2] === "r" && msg.type !== "Mentions") {
       msg.isSenderUser = false;
     } else if (senderArr[senderArr.length - 2] === "u") {
       msg.isSenderUser = true;
     } else {
-      return false;
+      let err = new Error("Invalid sender username");
+      err.statusCode=400;
+      throw err;
     }
+
     if (
       receiverArr[receiverArr.length - 2] === "r" &&
       msg.type !== "Mentions"
@@ -245,50 +226,60 @@ export async function validateMessage(req) {
     } else if (receiverArr[receiverArr.length - 2] === "u") {
       msg.isReceiverUser = true;
     } else {
-      return false;
+      let err = new Error("Invalid receiver username");
+      err.statusCode=400;
+      throw err;
     }
-
     if (!msg.isReceiverUser && !msg.isSenderUser) {
-      return false;
+      let err = new Error("Sender and Receiver usernames are necessary");
+      err.statusCode=400;
+      throw err;
     }
-
     if (req.body.postId) {
       msg.postId = req.body.postId;
     }
     if (req.body.subredditName) {
       msg.subredditName = req.body.subredditName;
     }
+
     if (req.body.repliedMsgId) {
       msg.repliedMsgId = req.body.repliedMsgId;
     }
     if (req.body.subject) {
       msg.subject = req.body.subject;
     }
+
     if (msg.isReceiverUser) {
       const receiver = await User.findOne({ username: msg.receiverUsername });
+      msg.receiverId=receiver.id;
       if (!receiver) {
-        return false;
+        let err = new Error("receiver is not found");
+        err.statusCode=400;
+        throw err;
       }
     } else {
       const receiver = await Subreddit.findOne({ title: msg.receiverUsername });
       if (!receiver) {
-        return false;
+        let err = new Error("subreddit name is not found");
+        err.statusCode=400;
+        throw err;
       }
     }
+
     if (msg.isSenderUser) {
       const sender = await User.findOne({ username: msg.senderUsername });
       if (!sender || sender.username !== req.payload.username) {
-        return false;
+        let err = new Error("Failed to send the message");
+        err.statusCode=400;
+        throw err;
       }
     } else {
       const sender = await Subreddit.findOne({ title: msg.senderUsername });
       if (!sender) {
-        return false;
+        let err = new Error("subreddit name is not found");
+        err.statusCode=400;
+        throw err;
       }
     }
     req.msg = msg;
-    return true;
-  } catch (err) {
-    return "error in add validating";
-  }
 }

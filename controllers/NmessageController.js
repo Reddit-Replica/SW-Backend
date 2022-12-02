@@ -35,24 +35,17 @@ const messageValidator = [
 const createMessage = async (req, res) => {
   try {
     //ADDING NEW MESSAGE
-    const valid = await validateMessage(req);
-    if (!valid) {
-      throw new Error("this msg isn't valid to be sent", { cause: 401 });
+    await validateMessage(req);
+    if ((req.msg.type === "Messages")) {
+      await addMessage(req);
     }
-    let msg;
-    if ((req.msg.type = "Messages")) {
-      msg = await addMessage(req);
-    }
-    if ((req.msg.type = "Mentions")) {
-      msg = await addMention(req);
-    }
-    if (msg !== "created") {
-      throw new Error(msg, { cause: 401 });
+    if ((req.msg.type === "Mentions")) {
+      await addMention(req);
     }
     return res.status(201).json("Your message is sent successfully");
   } catch (err) {
-    if (err.cause) {
-      return res.status(err.cause).json({
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
         error: err.message,
       });
     } else {
