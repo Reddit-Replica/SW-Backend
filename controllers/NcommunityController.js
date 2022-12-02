@@ -12,40 +12,6 @@ import {
   addSubreddit,
 } from "./../services/communityServices.js";
 import { searchForUserService } from "../services/userServices.js";
-//CHECKING ON SUBREDDIT DATA
-// eslint-disable-next-line max-statements
-let Categories = [
-  "Sports",
-  "Gaming",
-  "News",
-  "TV",
-  "Aww",
-  "Memes",
-  "Pics & Gifs",
-  "Travel",
-  "Tech",
-  "Music",
-  "Art & Design",
-  "Beauty",
-  "Books & Writing",
-  "Crypto",
-  "Discussion",
-  "E3",
-  "Fashion",
-  "Finance & Business",
-  "Food",
-  "Health & Fitness",
-  "Learning",
-  "Mindblowing",
-  "ourdoors",
-  "parenting",
-  "Photography",
-  "Relationships",
-  "Science",
-  "Videos",
-  "Vroom",
-  "Wholesome",
-];
 let MainTopics = [
   "Activism",
   "Addition Support",
@@ -112,9 +78,7 @@ const subredditValidator = [
     .trim()
     .not()
     .isEmpty()
-    .withMessage("category can not be empty")
-    .isIn(Categories)
-    .withMessage("This category is not available"),
+    .withMessage("category can not be empty"),
   body("type")
     .trim()
     .not()

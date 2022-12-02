@@ -1,5 +1,10 @@
+/* eslint-disable max-statements */
 import Subreddit from "./../models/Community.js";
 import { searchForUserService } from "../services/userServices.js";
+import {
+  getSortedCategories,
+  insertCategoriesIfNotExists,
+} from "../services/categories.js";
 /**
  * This function is used to search for a subreddit with its name
  * it gets the subreddit from the database then it checks about it's validity
@@ -179,6 +184,7 @@ export async function addSubreddit(req, authPayload) {
   const creatorId = authPayload.userId;
   const moderator = await searchForUserService(creatorUsername);
   const { subredditName, category, type, nsfw } = req.body;
+  await checkOnCategory(category);
   const owner = {
     username: creatorUsername,
     userID: creatorId,
@@ -243,4 +249,24 @@ export async function moderateSubreddit(username, subredditName) {
     statusCode: 200,
     message: `${username} has been moderator to ${subredditName} successfuly`,
   };
+}
+/**
+ * This function is used to check if the input category is valid or not
+ * @param {String} category username of the user
+ * @returns {Object} error object that contains the msg describing what happened and its status code
+ */
+async function checkOnCategory(category) {
+  await insertCategoriesIfNotExists();
+  const categories = await getSortedCategories();
+  let includes = false;
+  for (const smallCategory of categories) {
+    if (smallCategory.name === category) {
+      includes = true;
+    }
+  }
+  if (!includes) {
+    let error = new Error(`${category} is not available as a category`);
+    error.statusCode = 404;
+    throw error;
+  }
 }
