@@ -38,10 +38,10 @@ const messageRouter = express.Router();
  *               description: Message Content as text
  *             senderUsername:
  *               type: string
- *               description: Username of the sender
+ *               description: Username of the sender if it was user sent it as /u/username ad if it a subreddit send it as /r/subredditName
  *             receiverUsername:
  *               type: string
- *               description: Username of the receiver
+ *               description: Username of the receiver if it was user sent it as /u/username ad if it a subreddit send it as /r/subredditName
  *             subject:
  *               type: string
  *               description: Subject of the message
@@ -64,10 +64,24 @@ const messageRouter = express.Router();
  *      responses:
  *          201:
  *              description: Your message is sent successfully
- *          401:
- *              description: Unauthorized to send a message
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          500:
- *              description: Server Error
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *      security:
  *       - bearerAuth: []
  */

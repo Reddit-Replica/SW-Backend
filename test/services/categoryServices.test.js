@@ -2,16 +2,19 @@ import {
   insertCategoriesIfNotExists,
   getSortedCategories,
 } from "../../services/categories.js";
+import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "../../models/User.js";
 import Category from "../../models/Category.js";
-import supertest from "supertest";
-import app from "../../app.js";
-supertest(app);
 
 describe("Testing Category services", () => {
+  beforeAll(async () => {
+    await connectDatabase();
+  });
+
   afterAll(async () => {
     await User.deleteMany({});
     await Category.deleteMany({});
+    await closeDatabaseConnection();
   });
 
   it("Should have insertCategoriesIfNotExists method", () => {

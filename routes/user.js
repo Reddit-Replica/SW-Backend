@@ -118,7 +118,7 @@ userRouter.post(
  * @swagger
  * /user/{username}/about:
  *   get:
- *     summary: Return information about the user
+ *     summary: Return information about the user (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [User]
  *     parameters:
  *       - in: path
