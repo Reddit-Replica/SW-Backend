@@ -1,4 +1,3 @@
-import Subreddit from "../models/Community.js";
 import { searchForSubreddit } from "./../services/communityServices.js";
 
 /**
