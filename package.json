@@ -17,7 +17,7 @@
     "test-cover": "istanbul cover --include-all-sources tests/utils/subredditRulesUtilSpec.js && istanbul check-coverage",
     "coverage-report": "npx nyc report --reporter html --reporter text -t .nyc_output  --report-dir coverage/summary",
     "test-jasmine": "set NODE_ENV=testing && jasmine",
-    "coverage-jest": "npm run test-jest -- --coverage"
+    "coverage-jest": "npm run test -- --coverage"
   },
   "repository": {
     "type": "git",
@@ -37,6 +37,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "express-validator": "^6.14.2",
+    "jest-html-reporter": "^3.7.0",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",
     "mongodb": "^4.11.0",
