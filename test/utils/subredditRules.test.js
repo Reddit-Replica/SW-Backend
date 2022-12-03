@@ -72,7 +72,20 @@ describe("Testing subreddit rules utils", () => {
         appliesTo: "comments only",
         description: "test desc",
         reportReason: "test reason",
-        ruleOrder: 2,
+        ruleOrder: 0,
+      },
+    };
+    expect(validateEditingRuleBody(req)).toBe(true);
+  });
+
+  it("Testing a edit body with the rule order", () => {
+    const req = {
+      body: {
+        ruleName: "test rule",
+        appliesTo: "comments only",
+        description: "test desc",
+        reportReason: "test reason",
+        ruleOrder: 1,
       },
     };
     expect(validateEditingRuleBody(req)).toBe(true);
