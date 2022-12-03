@@ -13,6 +13,10 @@ const messageSchema = mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: "Post",
   },
+  commentId:{
+    type: Schema.Types.ObjectId,
+    ref: "Comment",
+  },
   repliedMsgId: {
     type: Schema.Types.ObjectId,
     ref: "Message",
