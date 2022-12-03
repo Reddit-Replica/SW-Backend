@@ -85,6 +85,9 @@
  *         - inSubreddit
  *         - title
  *       properties:
+ *         title:
+ *            type: string
+ *            description: Post title
  *         kind:
  *           type: string
  *           enum:
