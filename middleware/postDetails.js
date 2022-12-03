@@ -13,10 +13,10 @@ import Post from "../models/Post.js";
  * @returns {void}
  */
 export async function checkPostExistence(req, res, next) {
-  const postId = req.body.id;
+  const postId = req.query.id;
   try {
     const post = await Post.findById(postId)?.populate("flair");
-    if (!post || post.deletedAt) {
+    if (!post || post?.deletedAt) {
       return res.status(404).json("Post may be not found or deleted");
     }
     req.post = post;
@@ -46,27 +46,27 @@ export async function setPostActions(req, res, next) {
     if (req.loggedIn) {
       const userId = req.userId;
       const user = await User.findById(userId);
-      const postId = req.body.id;
-      if (user.savedPosts.find((id) => id.toString() === postId)) {
+      const postId = req.query.id;
+      if (user.savedPosts?.find((id) => id.toString() === postId)) {
         req.saved = true;
       }
-      if (user.followedPosts.find((id) => id.toString() === postId)) {
+      if (user.followedPosts?.find((id) => id.toString() === postId)) {
         req.followed = true;
       }
-      if (user.hiddenPosts.find((id) => id.toString() === postId)) {
+      if (user.hiddenPosts?.find((id) => id.toString() === postId)) {
         req.hidden = true;
       }
-      if (user.upvotedPosts.find((id) => id.toString() === postId)) {
+      if (user.upvotedPosts?.find((id) => id.toString() === postId)) {
         req.votingType = 1;
       }
-      if (user.downvotedPosts.find((id) => id.toString() === postId)) {
+      if (user.downvotedPosts?.find((id) => id.toString() === postId)) {
         req.votingType = -1;
       }
-      if (user.spammedPosts.find((id) => id.toString() === postId)) {
+      if (user.spammedPosts?.find((id) => id.toString() === postId)) {
         req.spammed = true;
       }
       if (
-        user.moderatedSubreddits.find(
+        user.moderatedSubreddits?.find(
           (sr) => sr.name === req.post.subredditName
         )
       ) {

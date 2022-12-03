@@ -9,20 +9,49 @@ const messageSchema = mongoose.Schema({
   subreddit: {
     type: String,
   },
-  postTitle: {
+  postId: {
+    type: Schema.Types.ObjectId,
+    ref: "Post",
+  },
+  repliedMsgId: {
+    type: Schema.Types.ObjectId,
+    ref: "Message",
+  },
+  subredditName: {
     type: String,
   },
   text: {
     type: String,
     required: true,
   },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: Date.now(),
+  },
+  editedAt: {
+    type: Date,
+  },
+  deletedAt: {
+    type: Date,
+  },
+  receiverId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   senderUsername: {
     type: String,
     required: true,
   },
+  isSenderUser: {
+    type: Boolean,
+  },
   receiverUsername: {
     type: String,
     required: true,
+  },
+  isReceiverUser: {
+    type: Boolean,
   },
   sentAt: {
     type: Date,
@@ -30,7 +59,6 @@ const messageSchema = mongoose.Schema({
   },
   subject: {
     type: String,
-    required: true,
   },
   isReply: {
     type: Boolean,
