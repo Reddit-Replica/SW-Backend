@@ -15,9 +15,8 @@ import Subreddit from "../models/Community.js";
 
 export async function checkDuplicateSubredditTitle(req, res, next) {
   try {
-    console.log(req.body.title);
     const subreddit = await Subreddit.findOne({
-      title: req.body.title,
+      title: req.body.subredditName,
     });
     if (!subreddit) {
       next();

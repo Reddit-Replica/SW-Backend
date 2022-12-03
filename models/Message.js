@@ -37,7 +37,6 @@ const messageSchema = mongoose.Schema({
   },
   receiverId: {
     type: Schema.Types.ObjectId,
-    required: true,
     ref: "User",
   },
   senderUsername: {
