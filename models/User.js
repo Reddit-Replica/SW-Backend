@@ -75,7 +75,7 @@ const userSchema = mongoose.Schema({
     adultContent: {
       type: Boolean,
       required: true,
-      default: true,
+      default: false,
     },
     autoplayMedia: {
       type: Boolean,

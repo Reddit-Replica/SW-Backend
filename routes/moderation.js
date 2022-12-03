@@ -1,10 +1,16 @@
 import express from "express";
 // eslint-disable-next-line max-len
 import postModerationController from "../controllers/HpostCommentModerationController.js";
-import { verifyAuthToken } from "../middleware/verifyToken.js";
+import postModController from "../controllers/HsubredditPostsController.js";
+import userModController from "../controllers/HuserController.js";
 import { checkThingMod } from "../middleware/postModeration.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { checkId } from "../middleware/checkId.js";
+import {
+  verifyAuthToken,
+  verifyAuthTokenModerator,
+} from "../middleware/verifyToken.js";
+import subredditDetails from "../middleware/subredditDetails.js";
 
 // eslint-disable-next-line new-cap
 const moderationRouter = express.Router();
@@ -115,7 +121,15 @@ const moderationRouter = express.Router();
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/spam");
+moderationRouter.get(
+  "/r/:subreddit/about/spam",
+  verifyAuthToken,
+  postModController.modValidator,
+  validateRequestSchema,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.getSpammedItems
+);
 
 /**
  * @swagger
@@ -202,7 +216,15 @@ moderationRouter.get("/r/:subreddit/about/spam");
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/edited");
+moderationRouter.get(
+  "/r/:subreddit/about/edited",
+  verifyAuthToken,
+  postModController.modValidator,
+  validateRequestSchema,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.getEditedItems
+);
 
 /**
  * @swagger
@@ -280,7 +302,13 @@ moderationRouter.get("/r/:subreddit/about/edited");
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/unmoderated");
+moderationRouter.get(
+  "/r/:subreddit/about/unmoderated",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.getUnmoderatedPosts
+);
 
 /**
  * @swagger
@@ -805,7 +833,13 @@ moderationRouter.post("/unban");
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/about/banned");
+moderationRouter.get(
+  "/r/:subreddit/about/banned",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  userModController.getBannedUsers
+);
 
 /**
  * @swagger
