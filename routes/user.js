@@ -1,7 +1,11 @@
 import express from "express";
+import userController from "../controllers/BuserController.js";
+import { verifyAuthToken } from "./../middleware/verifyToken.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import { optionalToken } from "../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const userRouter = express.Router();
 
 /**
  * @swagger
@@ -52,7 +56,13 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.post("/block-user");
+userRouter.post(
+  "/block-user",
+  verifyAuthToken,
+  userController.blockUserValidator,
+  validateRequestSchema,
+  userController.blockUser
+);
 
 /**
  * @swagger
@@ -96,13 +106,19 @@ router.post("/block-user");
  *     security:
  *       - bearerAuth: []
  */
-router.post("/follow-user");
+userRouter.post(
+  "/follow-user",
+  verifyAuthToken,
+  userController.followUserValidator,
+  validateRequestSchema,
+  userController.followUser
+);
 
 /**
  * @swagger
  * /user/{username}/about:
  *   get:
- *     summary: Return information about the user
+ *     summary: Return information about the user (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [User]
  *     parameters:
  *       - in: path
@@ -181,7 +197,13 @@ router.post("/follow-user");
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/about");
+userRouter.get(
+  "/user/:username/about",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.aboutUser
+);
 
 /**
  * @swagger
@@ -246,7 +268,7 @@ router.get("/user/:username/about");
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/overview");
+userRouter.get("/user/:username/overview");
 
 /**
  * @swagger
@@ -311,7 +333,13 @@ router.get("/user/:username/overview");
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/posts");
+userRouter.get(
+  "/user/:username/posts",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userPosts
+);
 
 /**
  * @swagger
@@ -357,7 +385,13 @@ router.get("/user/:username/posts");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/history");
+userRouter.get(
+  "/user/:username/history",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userHistoryPosts
+);
 
 /**
  * @swagger
@@ -552,7 +586,7 @@ router.get("/user/:username/history");
  *       500:
  *         description: Internal server error
  */
-router.get("/user/:username/comments");
+userRouter.get("/user/:username/comments");
 
 /**
  * @swagger
@@ -621,7 +655,13 @@ router.get("/user/:username/comments");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/upvoted");
+userRouter.get(
+  "/user/:username/upvoted",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userUpvotedPosts
+);
 
 /**
  * @swagger
@@ -690,7 +730,13 @@ router.get("/user/:username/upvoted");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/downvoted");
+userRouter.get(
+  "/user/:username/downvoted",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userDownvotedPosts
+);
 
 /**
  * @swagger
@@ -736,7 +782,7 @@ router.get("/user/:username/downvoted");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/saved");
+userRouter.get("/user/:username/saved");
 
 /**
  * @swagger
@@ -782,6 +828,12 @@ router.get("/user/:username/saved");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/user/:username/hidden");
+userRouter.get(
+  "/user/:username/hidden",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userHiddenPosts
+);
 
-export default router;
+export default userRouter;

@@ -154,6 +154,12 @@ const userSchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  historyPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
   pinnedPosts: [
     {
       type: Schema.Types.ObjectId,
@@ -200,6 +206,18 @@ const userSchema = mongoose.Schema({
     {
       type: Schema.Types.ObjectId,
       ref: "Comment",
+    },
+  ],
+  blockedUsers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  followers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
   ],
   sentMessages: [

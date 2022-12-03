@@ -264,6 +264,10 @@ describe("Testing Post endpoints", () => {
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
+    const testUser = await User.findById(user.id);
+    expect(
+      testUser.pinnedPosts.find((postId) => postId.toString() === post.id)
+    ).toBeTruthy();
   });
 
   it("Get pinned posts", async () => {
@@ -297,6 +301,10 @@ describe("Testing Post endpoints", () => {
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
+    const testUser = await User.findById(user.id);
+    expect(
+      testUser.pinnedPosts.find((postId) => postId.toString() === post.id)
+    ).toBeFalsy();
   });
 
   it("Unpin a post that has already been unpinned", async () => {
