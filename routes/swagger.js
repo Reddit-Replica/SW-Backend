@@ -484,6 +484,27 @@
  *                  description: The type of the show [full post with its comments (your post), summary of the post with its comments]
  *                data:
  *                  properties:
+ *                    subreddit:
+ *                      type: string
+ *                      description: Name of subreddit which contain the post or the comment
+ *                    postedBy:
+ *                      type: string
+ *                      description: The username for the publisher of the post
+ *                    title:
+ *                      type: string
+ *                      description: Title of the post
+ *                    kind:
+ *                      type: string
+ *                      description: Type of content of the post
+ *                      enum:
+ *                        - hybrid
+ *                        - video
+ *                        - image
+ *                        - link
+ *                        - post
+ *                    content:
+ *                      type: string
+ *                      description: Content of the post
  *                    post:
  *                      type: object
  *                      description: Post data
