@@ -80,7 +80,9 @@ const editSubredditRule = async (req, res) => {
     res.status(400).json({
       error: "Bad request",
     });
-  } else if (req.neededRule.ruleOrder.toString() !== req.ruleObject.ruleOrder) {
+  } else if (
+    req.neededRule.ruleOrder.toString() !== req.ruleObject.ruleOrder.toString()
+  ) {
     {
       res.status(400).json({
         error: "Rule id and rule order don't match",

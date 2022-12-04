@@ -18,12 +18,14 @@ const deletePoComMes = async (req, res) => {
   try {
     const { id, type } = req.body;
     let item = {};
+    let itemOwnerId = "ownerId";
     if (type === "post") {
       item = await Post.findById(id);
     } else if (type === "comment") {
       item = await Comment.findById(id);
     } else if (type === "message") {
       item = await Message.findById(id);
+      itemOwnerId = "receiverId";
     } else {
       return res
         .status(400)
@@ -37,7 +39,7 @@ const deletePoComMes = async (req, res) => {
 
     // check if the item was created by the same user making the request
     const { userId } = req.payload;
-    if (item.ownerId.toString() !== userId) {
+    if (item[itemOwnerId].toString() !== userId) {
       return res.status(401).json("Access Denied");
     }
 
@@ -60,7 +62,7 @@ const editComment = async (req, res) => {
 
     // check if the comment was deleted before or does not exist
     if (!comment || comment.deletedAt) {
-      return res.status(404).json("CComment was not found");
+      return res.status(404).json("Comment was not found");
     }
 
     // check if the comment was created by the same user making the request

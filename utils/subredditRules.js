@@ -38,7 +38,12 @@ export function validateCreatingRuleBody(req) {
  */
 export function validateEditingRuleBody(req) {
   const firstValidate = validateCreatingRuleBody(req);
-  if (!firstValidate || !req.body.ruleOrder) {
+  if (!firstValidate) {
+  }
+  if (
+    !firstValidate ||
+    (!req.body.ruleOrder && req.body.ruleOrder?.toString() !== "0")
+  ) {
     return false;
   }
   req.ruleObject.ruleOrder = req.body.ruleOrder;
