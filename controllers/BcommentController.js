@@ -1,9 +1,10 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import Comment from "../models/Comment.js";
 import User from "./../models/User.js";
 import Community from "./../models/Community.js";
 import Post from "./../models/Post.js";
 import mongoose from "mongoose";
+import { commentTreeListing } from "../services/commentListing.js";
 
 const createCommentValidator = [
   body("text").not().isEmpty().withMessage("Text can not be empty"),
@@ -17,6 +18,15 @@ const createCommentValidator = [
     .not()
     .isEmpty()
     .withMessage("Have subreddit boolean can not be empty"),
+];
+
+const getCommentTreeValidator = [
+  param("postId")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Post id can not be empty"),
 ];
 
 // eslint-disable-next-line max-statements
@@ -93,4 +103,32 @@ const createComment = async (req, res) => {
   }
 };
 
-export default { createCommentValidator, createComment };
+const commentTree = async (req, res) => {
+  try {
+    const { sort, before, after, limit } = req.query;
+    const { postId } = req.params;
+
+    const result = await commentTreeListing(req.userId, postId, {
+      sort,
+      before,
+      after,
+      limit,
+    });
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+export default {
+  createCommentValidator,
+  createComment,
+  getCommentTreeValidator,
+  commentTree,
+};
