@@ -1,5 +1,170 @@
 import mongoose from "mongoose";
 import Post from "./../models/Post.js";
+
+/**
+ * Function used to prepare the sorting object that will be used by mongoose to sort the results
+ *
+ * @param {String} listingSort Sorting type used to sort the wanted posts
+ * @returns {Array} Array with two elements [sort, sortingType]
+ */
+function preparePostSort(listingSort) {
+  let result = {},
+    sortingType = {};
+
+  if (!listingSort) {
+    // new
+    listingSort = "new";
+    result = { createdAt: -1 };
+    sortingType = { type: "createdAt" };
+  } else {
+    switch (listingSort) {
+      case "hot":
+        // TODO
+        result = { score: -1 };
+        sortingType = { type: "score" };
+        break;
+      case "top":
+        result = null;
+        break;
+      default:
+        result = { createdAt: -1 };
+        sortingType = { type: "createdAt" };
+        break;
+    }
+  }
+  return [result, sortingType];
+}
+
+/**
+ * Function used to prepare the time interval that will be used by mongoose to match the results
+ *
+ * @param {String} listingTime Time interval that we want to get the post in
+ * @param {String} sort Sorting type
+ * @returns {Object} Object that will be used by mongoose to match the results
+ */
+function preparePostTime(listingTime, sort) {
+  let result = {};
+  if (!listingTime) {
+    return null;
+  } else {
+    if (sort === "top") {
+      const year = new Date().setFullYear(new Date().getFullYear() - 1);
+      const month = new Date().setMonth(new Date().getMonth() - 1);
+      const day = new Date().setDate(new Date().getDate() - 1);
+      const week = new Date().setDate(new Date().getDate() - 7);
+      const hour = new Date().setHours(new Date().getHours() - 1);
+      switch (listingTime) {
+        case "hour":
+          result = { $gt: hour };
+          break;
+        case "day":
+          result = { $gt: day };
+          break;
+        case "week":
+          result = { $gt: week };
+          break;
+        case "month":
+          result = { $gt: month };
+          break;
+        case "year":
+          result = { $gt: year };
+          break;
+        default:
+          result = null;
+          break;
+      }
+    }
+  }
+  return result;
+}
+
+/**
+ * Function used to prepare the limit that will be used by mongoose to limit the results
+ *
+ * @param {Number} listingLimit Time interval that we want to get the post in
+ * @returns {Object} Object that will be used by mongoose to limit the results
+ */
+function preparePostLimit(listingLimit) {
+  let result = {};
+  if (!listingLimit && listingLimit !== 0) {
+    result = 25;
+  } else {
+    listingLimit = parseInt(listingLimit);
+    if (listingLimit > 100) {
+      result = 100;
+    } else if (listingLimit <= 0) {
+      result = 1;
+    } else {
+      result = listingLimit;
+    }
+  }
+  return result;
+}
+
+/**
+ * Function used to prepare the anchor point of the slice that will be used by mongoose to match the results
+ *
+ * @param {String} before Id of the post that we want to get the posts before it
+ * @param {String} after Id of the post that we want to get the posts after it
+ * @param {String} sort Sorting type used to sort the wanted posts
+ * @param {String} sortingType Sorting parameter in the post model
+ * @returns {Object} Object that will be used by mongoose to match the results
+ */
+// eslint-disable-next-line max-statements
+async function preparePostBeforeAfter(before, after, sort, sortingType) {
+  let result = {};
+  if (!after && !before) {
+    return null;
+  } else if (!after && before) {
+    if (mongoose.Types.ObjectId.isValid(before)) {
+      // get the wanted value that we will split from
+      const post = await Post.findById(before);
+      if (!post) {
+        return null;
+      }
+
+      if (sort) {
+        result = {
+          type: sortingType.type,
+          value: { $gt: post[sortingType.type] },
+        };
+      } else {
+        result = {
+          type: "_id",
+          value: { $lt: before },
+        };
+      }
+    } else {
+      return null;
+    }
+  } else if (after && !before) {
+    if (mongoose.Types.ObjectId.isValid(after)) {
+      // get the wanted value that we will split from
+      const post = await Post.findById(after);
+      if (!post) {
+        return null;
+      }
+
+      if (sort) {
+        result = {
+          type: sortingType.type,
+          value: { $lt: post[sortingType.type] },
+        };
+      } else {
+        result = {
+          type: "_id",
+          value: { $gt: after },
+        };
+      }
+    } else {
+      return null;
+    }
+  } else {
+    return null;
+  }
+  return result;
+}
+
 /**
  * Function to prepare the listing parameters and set the appropriate condition that will be used with mongoose later.
  * Check the sort algorithm, time interval for the results, limit of the result, and the anchor point of the slice
@@ -14,125 +179,23 @@ export async function prepareListingPosts(listingParams) {
     sortingType = {};
 
   //prepare the sorting
-  if (!listingParams.sort) {
-    // new
-    listingParams.sort = "new";
-    result.sort = { createdAt: -1 };
-    sortingType = { type: "createdAt" };
-  } else {
-    switch (listingParams.sort) {
-      case "hot":
-        // TODO
-        result.sort = { score: -1 };
-        sortingType = { type: "score" };
-        break;
-      case "top":
-        result.sort = null;
-        break;
-      default:
-        result.sort = { createdAt: -1 };
-        sortingType = { type: "createdAt" };
-        break;
-    }
-  }
+  const sortingResult = preparePostSort(listingParams.sort);
+  result.sort = sortingResult[0];
+  sortingType = sortingResult[1];
 
   //prepare the time
-  if (!listingParams.time) {
-    result.time = null;
-  } else {
-    if (listingParams.sort === "top") {
-      const year = new Date().setFullYear(new Date().getFullYear() - 1);
-      const month = new Date().setMonth(new Date().getMonth() - 1);
-      const day = new Date().setDate(new Date().getDate() - 1);
-      const week = new Date().setDate(new Date().getDate() - 7);
-      const hour = new Date().setHours(new Date().getHours() - 1);
-      switch (listingParams.time) {
-        case "hour":
-          result.time = { $gt: hour };
-          break;
-        case "day":
-          result.time = { $gt: day };
-          break;
-        case "week":
-          result.time = { $gt: week };
-          break;
-        case "month":
-          result.time = { $gt: month };
-          break;
-        case "year":
-          result.time = { $gt: year };
-          break;
-        default:
-          result.time = null;
-          break;
-      }
-    }
-  }
+  result.time = preparePostTime(listingParams.time, listingParams.sort);
 
   // prepare the limit
-  if (!listingParams.limit && listingParams.limit !== 0) {
-    result.limit = 25;
-  } else {
-    listingParams.limit = parseInt(listingParams.limit);
-    if (listingParams.limit > 100) {
-      result.limit = 100;
-    } else if (listingParams.limit <= 0) {
-      result.limit = 1;
-    } else {
-      result.limit = listingParams.limit;
-    }
-  }
+  result.limit = preparePostLimit(listingParams.limit);
 
   // check if after or before
-  if (!listingParams.after && !listingParams.before) {
-    result.listing = null;
-  } else if (!listingParams.after && listingParams.before) {
-    if (mongoose.Types.ObjectId.isValid(listingParams.before)) {
-      // get the wanted value that we will split from
-      const post = await Post.findById(listingParams.before);
-      if (!post) {
-        result.listing = null;
-      } else {
-        if (result.sort) {
-          result.listing = {
-            type: sortingType.type,
-            value: { $gt: post[sortingType.type] },
-          };
-        } else {
-          result.listing = {
-            type: "_id",
-            value: { $lt: listingParams.before },
-          };
-        }
-      }
-    } else {
-      result.listing = null;
-    }
-  } else if (listingParams.after && !listingParams.before) {
-    if (mongoose.Types.ObjectId.isValid(listingParams.after)) {
-      // get the wanted value that we will split from
-      const post = await Post.findById(listingParams.after);
-      if (!post) {
-        result.listing = null;
-      } else {
-        if (result.sort) {
-          result.listing = {
-            type: sortingType.type,
-            value: { $lt: post[sortingType.type] },
-          };
-        } else {
-          result.listing = {
-            type: "_id",
-            value: { $gt: listingParams.after },
-          };
-        }
-      }
-    } else {
-      result.listing = null;
-    }
-  } else {
-    result.listing = null;
-  }
+  result.listing = await preparePostBeforeAfter(
+    listingParams.before,
+    listingParams.after,
+    result.sort,
+    sortingType
+  );
 
   return result;
 }
