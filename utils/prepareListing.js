@@ -292,9 +292,14 @@ async function prepareCommentBeforeAfter(before, after, sort, sortingType) {
       }
 
       if (sort) {
+        let value = { $gt: comment[sortingType.type] };
+        // eslint-disable-next-line max-depth
+        if (sort.createdAt === 1) {
+          value = { $lt: comment[sortingType.type] };
+        }
         result = {
           type: sortingType.type,
-          value: { $gt: comment[sortingType.type] },
+          value: value,
         };
       } else {
         result = {
@@ -314,9 +319,14 @@ async function prepareCommentBeforeAfter(before, after, sort, sortingType) {
       }
 
       if (sort) {
+        let value = { $lt: comment[sortingType.type] };
+        // eslint-disable-next-line max-depth
+        if (sort.createdAt === 1) {
+          value = { $gt: comment[sortingType.type] };
+        }
         result = {
           type: sortingType.type,
-          value: { $lt: comment[sortingType.type] },
+          value: value,
         };
       } else {
         result = {
