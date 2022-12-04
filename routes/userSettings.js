@@ -286,7 +286,13 @@ router.put("/change-email");
  *     security:
  *       - bearerAuth: []
  */
-router.put("/change-password");
+router.put(
+  "/change-password",
+  verifyAuthToken,
+  userSettingsController.changePasswordValidator,
+  validateRequestSchema,
+  userSettingsController.changePassword
+);
 
 /**
  * @swagger

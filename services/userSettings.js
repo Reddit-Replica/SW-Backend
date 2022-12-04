@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import fs from "fs";
-import { comparePasswords } from "../utils/passwordUtils.js";
+import { comparePasswords, hashPassword } from "../utils/passwordUtils.js";
 
 /**
  * A function used to check if a user of a given id exists.
@@ -36,6 +36,24 @@ export function verifyCredentials(user, username, password) {
     error.statusCode = 401;
     throw error;
   }
+}
+
+/**
+ * This function sets a new password for the user but checks first if the
+ * confirmed password matches the new one.
+ * @param {object} user User object
+ * @param {string} newPassword New password to be set
+ * @param {string} confirmNewPassword Repeated new password for confirmation
+ * @returns {void}
+ */
+export async function setNewPassword(user, newPassword, confirmNewPassword) {
+  if (newPassword !== confirmNewPassword) {
+    const error = new Error("New passwords do not match");
+    error.statusCode = 400;
+    throw error;
+  }
+  user.password = hashPassword(newPassword);
+  await user.save();
 }
 
 /**

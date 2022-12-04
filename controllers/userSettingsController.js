@@ -4,6 +4,7 @@ import {
   checkSocialLink,
   deleteFile,
   getUser,
+  setNewPassword,
   verifyCredentials,
 } from "../services/userSettings.js";
 import { listingBlockedUsers } from "../services/userListing.js";
@@ -18,7 +19,7 @@ const deleteValidator = [
   body("password")
     .not()
     .isEmpty()
-    .withMessage("Username must not be empty")
+    .withMessage("Password must not be empty")
     .isLength({ min: 8 })
     .withMessage("Password must be at least 8 chars long"),
 ];
@@ -42,6 +43,27 @@ const socialLinkValidator = [
     .withMessage("Link can't be empty")
     .trim()
     .escape(),
+];
+
+const changePasswordValidator = [
+  body("currentPassword")
+    .not()
+    .isEmpty()
+    .withMessage("Current password must not be empty")
+    .isLength({ min: 8 })
+    .withMessage("Current password must be at least 8 chars long"),
+  body("newPassword")
+    .not()
+    .isEmpty()
+    .withMessage("New password must not be empty")
+    .isLength({ min: 8 })
+    .withMessage("New password must be at least 8 chars long"),
+  body("confirmNewPassword")
+    .not()
+    .isEmpty()
+    .withMessage("Confirm New password must not be empty")
+    .isLength({ min: 8 })
+    .withMessage("Confirm New password must be at least 8 chars long"),
 ];
 
 const getAccountSettings = async (req, res) => {
@@ -287,9 +309,32 @@ const getBlockedUsers = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  const userId = req.payload.userId;
+  const username = req.payload.username;
+  try {
+    const user = await getUser(userId);
+    verifyCredentials(user, username, req.body.currentPassword);
+    await setNewPassword(
+      user,
+      req.body.newPassword,
+      req.body.confirmNewPassword
+    );
+    return res.status(200).json("Password changed successfully");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   deleteValidator,
   socialLinkValidator,
+  changePasswordValidator,
   getAccountSettings,
   editAccountSettings,
   deleteAccount,
@@ -300,4 +345,5 @@ export default {
   addBanner,
   deleteBanner,
   getBlockedUsers,
+  changePassword,
 };
