@@ -2,6 +2,7 @@ import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import commentController from "../controllers/BcommentController.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
+import { optionalToken } from "./../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
 const commentsRouter = express.Router();
@@ -193,7 +194,13 @@ commentsRouter.get(
  *     security:
  *      - bearerAuth: []
  */
-commentsRouter.get("/comments/:postId/:commentId");
+commentsRouter.get(
+  "/comments/:postId/:commentId",
+  optionalToken,
+  commentController.getCommentTreeOfCommentValidator,
+  validateRequestSchema,
+  commentController.commentTreeOfComment
+);
 
 /**
  * @swagger
