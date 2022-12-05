@@ -4,7 +4,10 @@ import User from "./../models/User.js";
 import Community from "./../models/Community.js";
 import Post from "./../models/Post.js";
 import mongoose from "mongoose";
-import { commentTreeListing } from "../services/commentListing.js";
+import {
+  commentTreeListing,
+  checkPostId,
+} from "../services/commentServices.js";
 
 const createCommentValidator = [
   body("text").not().isEmpty().withMessage("Text can not be empty"),
@@ -32,26 +35,42 @@ const getCommentTreeValidator = [
 // eslint-disable-next-line max-statements
 const createComment = async (req, res) => {
   try {
+    // REFACTOR and add postId and ownerAvatar
     const { text, parentId, parentType, level, subredditName, haveSubreddit } =
       req.body;
     const { username, userId } = req.payload;
+
+    if (parentType !== "post" && parentType !== "comment") {
+      return res.status(400).json({ error: "Invalid parent type" });
+    }
 
     const user = await User.findById(userId);
     if (!user || user.deletedAt) {
       return res.status(400).json({ error: "Can not find user with that id" });
     }
 
+    if (!mongoose.Types.ObjectId.isValid(parentId)) {
+      return res.status(400).json({ error: "Invalid parent id" });
+    }
+
     // if the parent is a post get it
     let post = {};
     if (parentType === "post") {
-      if (!mongoose.Types.ObjectId.isValid(parentId)) {
-        return res.status(400).json({ error: "Invalid parent id" });
-      }
       post = await Post.findById(parentId);
       if (!post || post.deletedAt) {
         return res
           .status(400)
           .json({ error: "Can not find post with that id" });
+      }
+    }
+
+    let parentComment = {};
+    if (parentType === "comment") {
+      parentComment = await Comment.findById(parentId);
+      if (!parentComment || parentComment.deletedAt) {
+        return res
+          .status(400)
+          .json({ error: "Can not find comment with that id" });
       }
     }
 
@@ -78,22 +97,23 @@ const createComment = async (req, res) => {
       commentObject.subredditName = subredditName;
     }
 
-    if (parentType !== "post" && parentType !== "comment") {
-      return res.status(400).json({ error: "Invalid parent type" });
-    }
-
     const comment = new Comment(commentObject);
     await comment.save();
 
     user.comments.push(comment._id);
     await user.save();
 
-    const index = post.usersCommented.findIndex(
-      (elem) => elem.toString() === userId
-    );
-    if (index === -1) {
-      post.usersCommented.push(user._id);
-      await post.save();
+    if (parentType === "post") {
+      const index = post.usersCommented.findIndex(
+        (elem) => elem.toString() === userId
+      );
+      if (index === -1) {
+        post.usersCommented.push(user._id);
+        await post.save();
+      }
+    } else {
+      parentComment.children.push(comment._id);
+      await parentComment.save();
     }
 
     res.status(201).json("Comment created successfully");
@@ -108,7 +128,8 @@ const commentTree = async (req, res) => {
     const { sort, before, after, limit } = req.query;
     const { postId } = req.params;
 
-    const result = await commentTreeListing(req.userId, postId, {
+    const post = await checkPostId(postId);
+    const result = await commentTreeListing(req.userId, post, {
       sort,
       before,
       after,
