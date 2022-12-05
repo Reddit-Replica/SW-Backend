@@ -37,7 +37,11 @@ export async function listingUserProfileService(
   let children = [];
   for (const i in result[typeOfListing]) {
     const post = result[typeOfListing][i];
-    if (loggedInUser && loggedInUser.hiddenPosts.includes(post._id)) {
+    if (
+      loggedInUser &&
+      loggedInUser.hiddenPosts.includes(post._id) &&
+      typeOfListing !== "hiddenPosts"
+    ) {
       continue;
     }
 
@@ -57,6 +61,11 @@ export async function listingUserProfileService(
       postedAt: post.createdAt,
       editedAt: post.editedAt,
       postedBy: post.ownerUsername,
+      votingType: 0,
+      saved: false,
+      followed: false,
+      spammed: false,
+      inYourSubreddit: false,
     };
 
     if (loggedInUser) {
