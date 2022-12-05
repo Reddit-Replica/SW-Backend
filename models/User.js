@@ -208,6 +208,30 @@ const userSchema = mongoose.Schema({
       ref: "Comment",
     },
   ],
+  upvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  downvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  followedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  savedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
   blockedUsers: [
     {
       blockedUserId: { type: Schema.Types.ObjectId, ref: "User" },
