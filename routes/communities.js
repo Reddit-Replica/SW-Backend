@@ -386,7 +386,7 @@ communitiesRouter.get("/random-category");
  * @swagger
  * /r/{subreddit}:
  *  get:
- *      summary: Return all the details of the subreddit
+ *      summary: Return all the details of the subreddit (Here the token is optional if the user is logged in add a token if not don't add it)
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
