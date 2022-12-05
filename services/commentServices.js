@@ -80,7 +80,7 @@ function prepareComment(comment, user, checkChildren) {
 
   let children = [];
   if (checkChildren) {
-    for (const i in comment.children) {
+    for (let i = 0; i < comment.children.length; i++) {
       if (i === 5) {
         break;
       }
