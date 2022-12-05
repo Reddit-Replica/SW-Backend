@@ -400,9 +400,6 @@ communitiesRouter.get("/random-category");
  *              content:
  *                  application/json:
  *                      schema:
- *                        type: object
- *                        properties:
- *                          children:
  *                            $ref: '#/components/schemas/community'
  *          404:
  *              description: Page not found

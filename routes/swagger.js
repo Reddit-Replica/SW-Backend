@@ -668,26 +668,6 @@
  *         dateOfCreation:
  *           type: string
  *           description: Date of creating the community
- *         flairs:
- *           type: array
- *           description: list of available flairs to filter by
- *           items:
- *             type: string
- *         rules:
- *           type: array
- *           description: list of the rules of the subreddit
- *           items:
- *             $ref: '#/components/schemas/rules'
- *         bans:
- *           type: array
- *           description: list of the ban questions of the subreddit
- *           items:
- *             $ref: '#/components/schemas/bans'
- *         moderators:
- *           type: array
- *           description: list of the moderators of the subreddit
- *           items:
- *             $ref: '#/components/schemas/moderator'
  *         isMember:
  *           type: boolean
  *           description: True if you are a member of the community , False if you are not a member of the community
@@ -697,24 +677,17 @@
  *         picture:
  *           type: string
  *           description: Path of the picture of the community
- *         communityTheme:
- *           type: boolean
- *           description: True if community theme is on , False if community theme is off
  *         views:
  *           type: number
  *           description: number of views of he community to get the trending search
  *         mainTopic:
- *           type: object
- *           description: The main topic of the subreddit with its subtopics
- *           properties:
- *             topicTitle:
- *               type: string
- *               description: The title of the topic
- *             subtopics:
- *               type: array
- *               description: the array of subtopics of the community
- *               items:
- *                 type: object
+ *           type: string
+ *           description: The main topic of the subreddit
+ *         subtopics:
+ *           type: array
+ *           description: the array of subtopics of the community
+ *           items:
+ *             type: string
  *   ListedPost:
  *       type: object
  *       properties:
