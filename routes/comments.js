@@ -131,13 +131,7 @@ commentsRouter.post(
  *     security:
  *      - bearerAuth: []
  */
-commentsRouter.get(
-  "/comments/:postId",
-  optionalToken,
-  commentController.getCommentTreeValidator,
-  validateRequestSchema,
-  commentController.commentTree
-);
+commentsRouter.get("/comments/:postId");
 
 /**
  * @swagger
