@@ -1,7 +1,8 @@
 import User from "../models/User.js";
-import { body } from "express-validator";
+import { body, param, check } from "express-validator";
 import {
   checkSocialLink,
+  connectToGoogle,
   deleteFile,
   getUser,
   setNewPassword,
@@ -66,6 +67,20 @@ const changePasswordValidator = [
     .withMessage("Confirm New password must be at least 8 chars long"),
 ];
 
+const connectValidator = [
+  param("type")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Type can not be empty"),
+  check("type").isIn("google", "facebook"),
+  body("accessToken")
+    .not()
+    .isEmpty()
+    .withMessage("Access Token must not be empty"),
+];
+
 const getAccountSettings = async (req, res) => {
   const userId = req.payload.userId;
   try {
@@ -89,7 +104,11 @@ const getAccountSettings = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
-      res.status(error.statusCode).json({ error: error.message });
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
     } else {
       res.status(500).json("Internal server error");
     }
@@ -121,7 +140,11 @@ const editAccountSettings = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
-      res.status(error.statusCode).json({ error: error.message });
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
     } else {
       res.status(500).json("Internal server error");
     }
@@ -142,7 +165,11 @@ const deleteAccount = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
-      res.status(error.statusCode).json({ error: error.message });
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
     } else {
       res.status(500).json("Internal server error");
     }
@@ -166,7 +193,11 @@ const addSocialLink = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
-      res.status(error.statusCode).json({ error: error.message });
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
     } else {
       res.status(500).json("Internal server error");
     }
@@ -189,7 +220,11 @@ const deleteSocialLink = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
-      res.status(error.statusCode).json({ error: error.message });
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
     } else {
       res.status(500).json("Internal server error");
     }
@@ -211,7 +246,11 @@ const addProfilePicture = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
-      res.status(error.statusCode).json({ error: error.message });
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
     } else {
       res.status(500).json("Internal server error");
     }
@@ -234,7 +273,11 @@ const deleteProfilePicture = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
-      res.status(error.statusCode).json({ error: error.message });
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
     } else {
       res.status(500).json("Internal server error");
     }
@@ -256,7 +299,11 @@ const addBanner = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
-      res.status(error.statusCode).json({ error: error.message });
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
     } else {
       res.status(500).json("Internal server error");
     }
@@ -279,7 +326,11 @@ const deleteBanner = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
-      res.status(error.statusCode).json({ error: error.message });
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
     } else {
       res.status(500).json("Internal server error");
     }
@@ -302,7 +353,11 @@ const getBlockedUsers = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
-      res.status(error.statusCode).json({ error: error.message });
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
     } else {
       res.status(500).json("Internal server error");
     }
@@ -324,7 +379,37 @@ const changePassword = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
-      res.status(error.statusCode).json({ error: error.message });
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const connect = async (req, res) => {
+  const userId = req.payload.userId;
+  const type = req.params.type;
+  try {
+    const user = await getUser(userId);
+    if (type === "google") {
+      verifyCredentials(user, req.payload.username, req.body.password);
+      connectToGoogle(user, req.body.accessToken);
+    } else {
+    }
+    await user.save();
+    return res.status(200).json("Connected successfully");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
     } else {
       res.status(500).json("Internal server error");
     }
@@ -335,6 +420,7 @@ export default {
   deleteValidator,
   socialLinkValidator,
   changePasswordValidator,
+  connectValidator,
   getAccountSettings,
   editAccountSettings,
   deleteAccount,
@@ -346,4 +432,5 @@ export default {
   deleteBanner,
   getBlockedUsers,
   changePassword,
+  connect,
 };

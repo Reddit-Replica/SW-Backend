@@ -1,3 +1,4 @@
+import jwtDecode from "jwt-decode";
 import User from "../models/User.js";
 import fs from "fs";
 import { comparePasswords, hashPassword } from "../utils/passwordUtils.js";
@@ -101,4 +102,22 @@ export function deleteFile(pathToFile) {
     error.statusCode = 400;
     throw error;
   }
+}
+
+/**
+ * This function gets the google email from the decoded access token
+ * and checks if it's already found or not.
+ * @param {object} user User object
+ * @param {string} accessToken Google access token
+ * @returns {void}
+ */
+export function connectToGoogle(user, accessToken) {
+  const decodedToken = jwtDecode(accessToken);
+  const email = decodedToken.email;
+  if (user.googleEmail === email) {
+    const error = new Error("Google Email already set");
+    error.statusCode = 400;
+    throw error;
+  }
+  user.googleEmail = email;
 }

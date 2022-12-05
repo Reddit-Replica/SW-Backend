@@ -198,7 +198,13 @@ router.patch(
  *     security:
  *       - bearerAuth: []
  */
-router.post("/connect/:type");
+router.post(
+  "/connect/:type",
+  verifyAuthToken,
+  userSettingsController.connectValidator,
+  validateRequestSchema,
+  userSettingsController.connect
+);
 
 /**
  * @swagger
