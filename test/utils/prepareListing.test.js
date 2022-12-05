@@ -1,12 +1,19 @@
-import { prepareListingPosts, postListing } from "../../utils/prepareListing";
+import {
+  prepareListingPosts,
+  postListing,
+  prepareListingComments,
+  commentListing,
+} from "../../utils/prepareListing.js";
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
+import Comment from "./../../models/Comment.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing prepare listing functions", () => {
   let user = {},
-    post1 = {};
+    post1 = {},
+    comment1 = {};
   beforeAll(async () => {
     await connectDatabase();
     user = new User({
@@ -23,10 +30,22 @@ describe("Testing prepare listing functions", () => {
       kind: "hybrid",
     });
     await post1.save();
+
+    comment1 = new Comment({
+      parentId: post1._id,
+      postId: post1._id,
+      parentType: "post",
+      level: 1,
+      content: "Comment Content",
+      ownerId: user._id,
+      ownerUsername: user.username,
+    });
+    comment1.save();
   });
   afterAll(async () => {
     await user.remove();
     await post1.remove();
+    await comment1.remove();
     await closeDatabaseConnection();
   });
 
@@ -295,5 +314,161 @@ describe("Testing prepare listing functions", () => {
       sort: "hot",
     });
     expect(result.find.score).toBeDefined();
+  });
+
+  it("should have prepareListingComments", () => {
+    expect(prepareListingComments).toBeDefined();
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to send empty listing parameters to prepareListingComments", async () => {
+    const result = await prepareListingComments({});
+    expect(result).toEqual({
+      limit: 25,
+      listing: null,
+      sort: { numberOfVotes: -1 },
+    });
+  });
+
+  it("try to send sort = best prepareListingComments", async () => {
+    const result = await prepareListingComments({ sort: "best" });
+    expect(result.sort).toEqual({ numberOfVotes: -1 });
+  });
+
+  it("try to send sort = top prepareListingComments", async () => {
+    const result = await prepareListingComments({ sort: "top" });
+    expect(result.sort).toEqual(null);
+  });
+
+  it("try to send sort = new prepareListingComments", async () => {
+    const result = await prepareListingComments({ sort: "new" });
+    expect(result.sort).toEqual({ createdAt: -1 });
+  });
+
+  it("try to send sort = old prepareListingComments", async () => {
+    const result = await prepareListingComments({ sort: "old" });
+    expect(result.sort).toEqual({ createdAt: 1 });
+  });
+
+  it("try to send sort = invalid prepareListingComments", async () => {
+    const result = await prepareListingComments({ sort: "invalid" });
+    expect(result.sort).toEqual({ numberOfVotes: -1 });
+  });
+
+  it("try to set limit bigger than 100 in prepareListingComments", async () => {
+    const result = await prepareListingComments({ limit: 150 });
+    expect(result.limit).toEqual(100);
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to set limit smaller than or equal 0 in prepareListingComments", async () => {
+    let result = await prepareListingComments({ limit: 0 });
+    expect(result.limit).toEqual(1);
+    result = await prepareListingComments({ limit: -5 });
+    expect(result.limit).toEqual(1);
+  });
+
+  it("try to set limit = 10 in prepareListingComments", async () => {
+    const result = await prepareListingComments({ limit: 10 });
+    expect(result.limit).toEqual(10);
+  });
+
+  it("try to set before with invalid id in commentListing", async () => {
+    const result = await commentListing({ before: "invalid" });
+    expect(result.find).toEqual({ deletedAt: null });
+  });
+
+  it("try to set after with invalid id in commentListing", async () => {
+    const result = await commentListing({ after: "invalid" });
+    expect(result.find).toEqual({ deletedAt: null });
+  });
+
+  it("try to set after with valid id in commentListing", async () => {
+    const result = await commentListing({ after: comment1._id });
+
+    expect(result.find).toEqual({
+      numberOfVotes: { $lt: comment1.numberOfVotes },
+      deletedAt: null,
+    });
+  });
+
+  it("try to set before with valid id in commentListing", async () => {
+    const result = await commentListing({ before: comment1._id });
+    expect(result.find).toEqual({
+      numberOfVotes: { $gt: comment1.numberOfVotes },
+      deletedAt: null,
+    });
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to set before with valid id and sort = top in commentListing", async () => {
+    const result = await commentListing({
+      before: comment1._id,
+      sort: "top",
+    });
+    expect(result.find).toEqual({
+      _id: { $lt: comment1._id },
+      deletedAt: null,
+    });
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to set after with valid id and sort = top in commentListing", async () => {
+    const result = await commentListing({
+      after: comment1._id,
+      sort: "top",
+    });
+    expect(result.find).toEqual({
+      _id: { $gt: comment1._id },
+      deletedAt: null,
+    });
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to set before with valid id and sort = new in commentListing", async () => {
+    const result = await commentListing({
+      before: comment1._id,
+      sort: "new",
+    });
+    expect(result.find).toEqual({
+      createdAt: { $gt: comment1.createdAt },
+      deletedAt: null,
+    });
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to set after with valid id and sort = new in commentListing", async () => {
+    const result = await commentListing({
+      after: comment1._id,
+      sort: "new",
+    });
+    expect(result.find).toEqual({
+      createdAt: { $lt: comment1.createdAt },
+      deletedAt: null,
+    });
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to set before with valid id and sort = old in commentListing", async () => {
+    const result = await commentListing({
+      before: comment1._id,
+      sort: "old",
+    });
+    expect(result.find).toEqual({
+      createdAt: { $lt: comment1.createdAt },
+      deletedAt: null,
+    });
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to set after with valid id and sort = old in commentListing", async () => {
+    const result = await commentListing({
+      after: comment1._id,
+      sort: "old",
+    });
+    expect(result.find).toEqual({
+      createdAt: { $gt: comment1.createdAt },
+      deletedAt: null,
+    });
   });
 });
