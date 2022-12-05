@@ -174,11 +174,15 @@ router.patch(
  *         application/json:
  *           schema:
  *             required:
+ *               - password
  *               - accessToken
  *             properties:
  *               accessToken:
  *                 type: string
  *                 description: Access token from the response of google or facebook
+ *               password:
+ *                 type: string
+ *                 description: Password entered for verification
  *     responses:
  *       200:
  *         description: Connected successfully
@@ -205,6 +209,54 @@ router.post(
   validateRequestSchema,
   userSettingsController.connect
 );
+
+/**
+ * @swagger
+ * /disconnect/{type}:
+ *   post:
+ *     summary: Disconnect google or facebook account
+ *     tags: [User settings]
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         description: Type of disconnect
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - google
+ *             - facebook
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - password
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 description: Password entered for verification
+ *     responses:
+ *       200:
+ *         description: Disconnected successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post("/disconnect/:type");
 
 /**
  * @swagger

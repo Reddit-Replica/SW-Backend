@@ -36,10 +36,10 @@ const createMessage = async (req, res) => {
   try {
     //ADDING NEW MESSAGE
     await validateMessage(req);
-    if ((req.msg.type === "Messages")) {
+    if (req.msg.type === "Messages") {
       await addMessage(req);
     }
-    if ((req.msg.type === "Mentions")) {
+    if (req.msg.type === "Mentions") {
       await addMention(req);
     }
     return res.status(201).json("Your message is sent successfully");

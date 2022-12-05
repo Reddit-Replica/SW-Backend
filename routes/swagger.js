@@ -493,106 +493,22 @@
  *                    title:
  *                      type: string
  *                      description: Title of the post
- *                    type:
+ *                    kind:
  *                      type: string
  *                      description: Type of content of the post
  *                      enum:
- *                        - text
+ *                        - hybrid
  *                        - video
  *                        - image
  *                        - link
+ *                        - post
  *                    content:
  *                      type: string
- *                      description: Content of the post [text, path of the video, path of the image, link]
+ *                      description: Content of the post
  *                    post:
  *                      type: object
  *                      description: Post data
- *                      properties:
- *                        votes:
- *                          type: integer
- *                          description: Total number of votes to that post
- *                        publishTime:
- *                          type: string
- *                          format: date-time
- *                          description: Publish time of the post
- *                        flair:
- *                          type: object
- *                          properties:
- *                            flairId:
- *                              type: string
- *                              description: The id of the flair
- *                            flairText:
- *                              type: string
- *                              description: Flair text
- *                            backgroundColor:
- *                              type: string
- *                              description: Background color of the flair
- *                            textColor:
- *                              type: string
- *                              description: Color of the flair text
- *                        inYourSubreddit:
- *                          type: boolean
- *                          description: If true, then you can approve, remove, or spam that post
- *                        moderation:
- *                          type: object
- *                          description: Moderate the post if you are a moderator in that subreddit
- *                          properties:
- *                            approve:
- *                              type: object
- *                              description: Approve the post
- *                              properties:
- *                                approvedBy:
- *                                  type: string
- *                                  description: Username for the moderator who approved that post
- *                                approvedDate:
- *                                  type: string
- *                                  format: date-time
- *                                  description: Date when that post approved
- *                            remove:
- *                              type: object
- *                              description: Remove the post
- *                              properties:
- *                                removedBy:
- *                                  type: string
- *                                  description: Username for the moderator who removed that post
- *                                removedDate:
- *                                  type: string
- *                                  format: date-time
- *                                  description: Date when that post removed
- *                            spam:
- *                              type: object
- *                              description: Spam the post
- *                              properties:
- *                                spammedBy:
- *                                  type: string
- *                                  description: Username for the moderator who spamed that post
- *                                spammedDate:
- *                                  type: string
- *                                  format: date-time
- *                                  description: Date when that post spamed
- *                            lock:
- *                              type: boolean
- *                              description: If true, then comments are locked in this post
- *                        editTime:
- *                          type: string
- *                          format: date-time
- *                          description: Edit time of the post
- *                        nsfw:
- *                          type: boolean
- *                          description: If true, then this post is NSFW
- *                        spoiler:
- *                          type: boolean
- *                          description: If true, then this post was marked as spoiler
- *                        saved:
- *                          type: boolean
- *                          description: If true, then this post was saved before by the logged-in user
- *                        vote:
- *                          type: integer
- *                          enum:
- *                            - 1
- *                            - 0
- *                            - -1
- *                          description: Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post
+ *                      $ref: '#/components/schemas/PostDetails'
  *                    comments:
  *                      type: array
  *                      description: The comments writen by this user
