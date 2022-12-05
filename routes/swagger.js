@@ -727,6 +727,9 @@
  *               commentedBy:
  *                 type: string
  *                 description: The author of the comment
+ *               userImage:
+ *                 type: string
+ *                 description: Path of the image of the user who wrote the comment
  *               editTime:
  *                 type: string
  *                 format: date-time
@@ -765,7 +768,7 @@
  *                 description: Number of replies to that comment
  *               children:
  *                  type: array
- *                  description: The replies to that comment (Will be same structure as the current comment)
+ *                  description: The replies to that comment (Will be same structure as the current comment) [maximum number of children that can be returned = 5]
  *                  items:
  *                    type: object
  *

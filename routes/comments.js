@@ -2,7 +2,6 @@ import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import commentController from "../controllers/BcommentController.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
-import { optionalToken } from "../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
 const commentsRouter = express.Router();
@@ -231,16 +230,6 @@ commentsRouter.get("/comments/:postId/:commentId");
  *             - top
  *             - new
  *             - old
- *       - in: query
- *         name: depth
- *         description: Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)
- *         schema:
- *           type: integer
- *       - in: query
- *         name: highlightedCommentId
- *         description: Id of a comment in the comment tree to be the highlighted (optional)
- *         schema:
- *           type: integer
  *     responses:
  *       200:
  *         content:
