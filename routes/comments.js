@@ -231,16 +231,6 @@ commentsRouter.get("/comments/:postId/:commentId");
  *             - top
  *             - new
  *             - old
- *       - in: query
- *         name: depth
- *         description: Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)
- *         schema:
- *           type: integer
- *       - in: query
- *         name: highlightedCommentId
- *         description: Id of a comment in the comment tree to be the highlighted (optional)
- *         schema:
- *           type: integer
  *     responses:
  *       200:
  *         content:
