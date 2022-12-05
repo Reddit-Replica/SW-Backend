@@ -88,6 +88,22 @@ const connectValidator = [
     .withMessage("Access Token must not be empty"),
 ];
 
+const disconnectValidator = [
+  param("type")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Type can not be empty"),
+  check("type").isIn("google", "facebook"),
+  body("password")
+    .not()
+    .isEmpty()
+    .withMessage("Password must not be empty")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 chars long"),
+];
+
 const getAccountSettings = async (req, res) => {
   const userId = req.payload.userId;
   try {
@@ -423,10 +439,48 @@ const connect = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
+const disconnect = async (req, res) => {
+  const type = req.params.type;
+  try {
+    const user = await getUser(req.payload.userId);
+    verifyCredentials(user, req.payload.username, req.body.password);
+    if (type === "google") {
+      if (!user.googleEmail) {
+        return res
+          .status(400)
+          .json({ error: "Google Email already disconnected" });
+      }
+      user.googleEmail = undefined;
+    } else {
+      if (!user.facebookEmail) {
+        return res
+          .status(400)
+          .json({ error: "Facebook Email already disconnected" });
+      }
+      user.facebookEmail = undefined;
+    }
+    await user.save();
+    return res.status(200).json("Disconnected successfully");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   deleteValidator,
   socialLinkValidator,
   changePasswordValidator,
+  disconnectValidator,
   connectValidator,
   getAccountSettings,
   editAccountSettings,
@@ -440,4 +494,5 @@ export default {
   getBlockedUsers,
   changePassword,
   connect,
+  disconnect,
 };

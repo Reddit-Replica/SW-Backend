@@ -256,7 +256,13 @@ router.post(
  *     security:
  *       - bearerAuth: []
  */
-router.post("/disconnect/:type");
+router.post(
+  "/disconnect/:type",
+  verifyAuthToken,
+  userSettingsController.disconnectValidator,
+  validateRequestSchema,
+  userSettingsController.disconnect
+);
 
 /**
  * @swagger
