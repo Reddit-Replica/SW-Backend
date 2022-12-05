@@ -6,6 +6,10 @@ const communitySchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  viewName: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
   },
@@ -255,12 +259,18 @@ const communitySchema = mongoose.Schema({
     },
     acceptingRequestsToJoin: {
       type: Boolean,
+      required: true,
+      default: true,
     },
     acceptingRequestsToPost: {
       type: Boolean,
+      required: true,
+      default: true,
     },
     approvedUsersHaveTheAbilityTo: {
-      type: Boolean,
+      type: String,
+      required: true,
+      default: "Post only",
     },
   },
 

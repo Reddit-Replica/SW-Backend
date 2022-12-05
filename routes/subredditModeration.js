@@ -5,6 +5,8 @@ import {
   verifyAuthTokenModerator,
 } from "../middleware/verifyToken.js";
 
+import { validateRequestSchema } from "../middleware/validationResult.js";
+
 import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
 
 // eslint-disable-next-line max-len
@@ -132,7 +134,7 @@ subredditModerationsRouter.get(
  *        - acceptingRequestsToPost
  *        - acceptingRequestsToJoin
  *        - NSFW
- *        - type
+ *        - Type
  *        - region
  *        - language
  *       properties:
@@ -207,6 +209,14 @@ subredditModerationsRouter.get(
  *    - bearerAuth: []
  */
 
-subredditModerationsRouter.put("/r/:subreddit/about/edit");
+subredditModerationsRouter.put(
+  "/r/:subreddit/about/edit",
+  verifyAuthToken,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditModerationsController.subredditSettingsValidator,
+  validateRequestSchema,
+  subredditModerationsController.setSubredditSettings
+);
 
 export default subredditModerationsRouter;

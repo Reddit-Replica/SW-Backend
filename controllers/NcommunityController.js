@@ -12,7 +12,7 @@ import {
   addSubreddit,
 } from "./../services/communityServices.js";
 import { searchForUserService } from "../services/userServices.js";
-let MainTopics = [
+export let MainTopics = [
   "Activism",
   "Addition Support",
   "Animals And Pets",
