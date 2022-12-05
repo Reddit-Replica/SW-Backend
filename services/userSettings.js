@@ -121,3 +121,21 @@ export function connectToGoogle(user, accessToken) {
   }
   user.googleEmail = email;
 }
+
+/**
+ * This function gets the facebook email from the decoded access token
+ * and checks if it's already found or not.
+ * @param {object} user User object
+ * @param {string} accessToken Facebook access token
+ * @returns {void}
+ */
+export function connectToFacebook(user, accessToken) {
+  const decodedToken = jwtDecode(accessToken);
+  const email = decodedToken.email;
+  if (user.facebookEmail === email) {
+    const error = new Error("Facebook Email already set");
+    error.statusCode = 400;
+    throw error;
+  }
+  user.facebookEmail = email;
+}

@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import { body, param, check } from "express-validator";
 import {
   checkSocialLink,
+  connectToFacebook,
   connectToGoogle,
   deleteFile,
   getUser,
@@ -75,6 +76,12 @@ const connectValidator = [
     .isEmpty()
     .withMessage("Type can not be empty"),
   check("type").isIn("google", "facebook"),
+  body("password")
+    .not()
+    .isEmpty()
+    .withMessage("Password must not be empty")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 chars long"),
   body("accessToken")
     .not()
     .isEmpty()
@@ -391,14 +398,14 @@ const changePassword = async (req, res) => {
 };
 
 const connect = async (req, res) => {
-  const userId = req.payload.userId;
   const type = req.params.type;
   try {
-    const user = await getUser(userId);
+    const user = await getUser(req.payload.userId);
+    verifyCredentials(user, req.payload.username, req.body.password);
     if (type === "google") {
-      verifyCredentials(user, req.payload.username, req.body.password);
       connectToGoogle(user, req.body.accessToken);
     } else {
+      connectToFacebook(user, req.body.accessToken);
     }
     await user.save();
     return res.status(200).json("Connected successfully");
