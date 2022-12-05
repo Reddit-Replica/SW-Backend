@@ -122,6 +122,19 @@ const userSchema = mongoose.Schema({
       },
     },
   ],
+  favoritesSubreddits: [
+    {
+      subredditId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
   ownedSubreddits: [
     {
       subredditId: {

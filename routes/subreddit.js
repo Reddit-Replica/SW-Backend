@@ -295,7 +295,7 @@ subRedditRouter.post(
  *                type: array
  *                description: titles of the sub topics in the community
  *                items:
- *                  type: object
+ *                  type: string
  *      responses:
  *          200:
  *              description: Community topics saved

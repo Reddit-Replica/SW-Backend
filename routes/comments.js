@@ -23,6 +23,9 @@ const commentsRouter = express.Router();
  *               text:
  *                 type: string
  *                 description: Comment content (raw markdown text)
+ *               postId:
+ *                 type: string
+ *                 description: id of the post that will contain the comment
  *               parentId:
  *                 type: string
  *                 description: id of the thing being replied to (parent)
@@ -34,7 +37,7 @@ const commentsRouter = express.Router();
  *                    - comment
  *               level:
  *                 type: number
- *                 description: Level of the comment (How deep is it in the comment tree)
+ *                 description: Level of the comment (How deep is it in the comment tree) [min = 1]
  *               subredditName:
  *                 type: string
  *                 description: Subreddit that contain the post
@@ -97,17 +100,6 @@ commentsRouter.post(
  *         schema:
  *           type: integer
  *           default: 25
- *       - in: query
- *         name: sort
- *         description: Comments sorting algorithm
- *         schema:
- *           type: string
- *           default: best
- *           enum:
- *             - best
- *             - top
- *             - new
- *             - old
  *     responses:
  *       200:
  *         content:
