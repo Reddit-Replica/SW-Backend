@@ -235,6 +235,35 @@ const communitySchema = mongoose.Schema({
       ref: "Comment",
     },
   ],
+
+  subredditSettings: {
+    sendWelcomeMessage: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    welcomeMessage: {
+      type: String,
+    },
+    language: {
+      type: String,
+      required: true,
+      default: "English",
+    },
+    region: {
+      type: String,
+    },
+    acceptingRequestsToJoin: {
+      type: Boolean,
+    },
+    acceptingRequestsToPost: {
+      type: Boolean,
+    },
+    approvedUsersHaveTheAbilityTo: {
+      type: Boolean,
+    },
+  },
+
   //NEEDS TO BE AUTO INCREMENT
   //Is used to get random subreddit from categories
   randomIndex: {
