@@ -2,6 +2,7 @@ import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import commentController from "../controllers/BcommentController.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
+import { optionalToken } from "../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
 const commentsRouter = express.Router();
@@ -22,6 +23,9 @@ const commentsRouter = express.Router();
  *               text:
  *                 type: string
  *                 description: Comment content (raw markdown text)
+ *               postId:
+ *                 type: string
+ *                 description: id of the post that will contain the comment
  *               parentId:
  *                 type: string
  *                 description: id of the thing being replied to (parent)
@@ -33,7 +37,7 @@ const commentsRouter = express.Router();
  *                    - comment
  *               level:
  *                 type: number
- *                 description: Level of the comment (How deep is it in the comment tree)
+ *                 description: Level of the comment (How deep is it in the comment tree) [min = 1]
  *               subredditName:
  *                 type: string
  *                 description: Subreddit that contain the post
@@ -69,17 +73,11 @@ commentsRouter.post(
 
 /**
  * @swagger
- * /r/{subreddit}/comments/{postId}:
+ * /comments/{postId}:
  *   get:
  *     summary: Get the comment tree for a given post (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Comments]
  *     parameters:
- *       - in: path
- *         name: subreddit
- *         description: The name of the subreddit
- *         required: true
- *         schema:
- *           type: string
  *       - in: path
  *         name: postId
  *         description: The post id
@@ -113,16 +111,6 @@ commentsRouter.post(
  *             - top
  *             - new
  *             - old
- *       - in: query
- *         name: depth
- *         description: Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)
- *         schema:
- *           type: integer
- *       - in: query
- *         name: comment
- *         description: Id of a comment in the comment tree to be the highlighted (optional)
- *         schema:
- *           type: integer
  *     responses:
  *       200:
  *         content:
@@ -143,21 +131,21 @@ commentsRouter.post(
  *     security:
  *      - bearerAuth: []
  */
-commentsRouter.get("/r/:subreddit/comments/:postId");
+commentsRouter.get(
+  "/comments/:postId",
+  optionalToken,
+  commentController.getCommentTreeValidator,
+  validateRequestSchema,
+  commentController.commentTree
+);
 
 /**
  * @swagger
- * /r/{subreddit}/comments/{postId}/{commentId}:
+ * /comments/{postId}/{commentId}:
  *   get:
  *     summary: Return comment tree of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Comments]
  *     parameters:
- *       - in: path
- *         name: subreddit
- *         description: The name of the subreddit
- *         required: true
- *         schema:
- *           type: string
  *       - in: path
  *         name: postId
  *         description: The post id
@@ -197,16 +185,6 @@ commentsRouter.get("/r/:subreddit/comments/:postId");
  *             - top
  *             - new
  *             - old
- *       - in: query
- *         name: depth
- *         description: Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)
- *         schema:
- *           type: integer
- *       - in: query
- *         name: highlightedCommentId
- *         description: Id of a comment in the comment tree to be highlighted (optional)
- *         schema:
- *           type: integer
  *     responses:
  *       200:
  *         content:
@@ -227,21 +205,15 @@ commentsRouter.get("/r/:subreddit/comments/:postId");
  *     security:
  *      - bearerAuth: []
  */
-commentsRouter.get("/r/:subreddit/comments/:postId/:commentId");
+commentsRouter.get("/comments/:postId/:commentId");
 
 /**
  * @swagger
- * /r/{subreddit}/comments/{postId}/{commentId}/parent-comments:
+ * /comments/{postId}/{commentId}/parent-comments:
  *   get:
  *     summary: Return the parents of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)
  *     tags: [Comments]
  *     parameters:
- *       - in: path
- *         name: subreddit
- *         description: The name of the subreddit
- *         required: true
- *         schema:
- *           type: string
  *       - in: path
  *         name: postId
  *         description: The post id
@@ -339,6 +311,6 @@ commentsRouter.get("/r/:subreddit/comments/:postId/:commentId");
  *     security:
  *      - bearerAuth: []
  */
-commentsRouter.get("/r/:subreddit/comments/:postId/:commentId/parent-comments");
+commentsRouter.get("/comments/:postId/:commentId/parent-comments");
 
 export default commentsRouter;
