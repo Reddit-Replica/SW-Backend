@@ -10,6 +10,11 @@ const commentSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  postId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "Post",
+  },
   subredditName: {
     type: String,
   },
