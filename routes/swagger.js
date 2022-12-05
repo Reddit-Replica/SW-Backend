@@ -653,15 +653,18 @@
  *         title:
  *           type: string
  *           description: Name of the community
+ *         nickname:
+ *           type: string
+ *           description: Nickname of the community
+ *         isModerator:
+ *           type: boolean
+ *           description: If that member is a moderator in that subreddit (to view mod tools button)
  *         category:
  *           type: string
  *           description: Category of the community
  *         members:
  *           type: number
  *           description: Number of members of the community
- *         online:
- *           type: number
- *           description: Number of online members of the community
  *         description:
  *           type: string
  *           description: A brief description of the community

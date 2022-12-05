@@ -153,6 +153,7 @@ const joinSubreddit = async (req, res) => {
       res.status(result.statusCode).json(result.message);
     }
   } catch (err) {
+    console.log(err.message);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
