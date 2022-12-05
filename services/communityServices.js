@@ -286,28 +286,52 @@ export async function checkJoining(user, subredditName) {
 }
 
 export async function checkForPrivateSubreddits(user, subreddit) {
-
-if (subreddit.type==="Private"){
-  for (const smallSubreddit of user.joinedSubreddits) {
-    if (smallSubreddit.name === subreddit.title) {
-      return true;
+  if (subreddit.type === "Private") {
+    for (const smallSubreddit of user.joinedSubreddits) {
+      if (smallSubreddit.name === subreddit.title) {
+        return true;
+      }
     }
+  } else {
+    return true;
   }
-} else {
-  return true;
-}
   let error = new Error(
-    `You haven't joined ${subredditName} yet , to do this action you have to join it first`
+    `${subreddit.title} is a private subreddit, to do this action you have to request for joining it first`
   );
   error.statusCode = 401;
   throw error;
 }
 
-export async function makeSubredditFavorite(user,subredditName,subredditId){
+export async function checkForFavoriteSubreddits(user, subreddit) {
+  for (const smallSubreddit of user.favoritesSubreddits) {
+    if (smallSubreddit.name === subreddit.title) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export async function makeSubredditFavorite(user, subredditName, subredditId) {
   user.favoritesSubreddits.push({
-    subredditId:subredditId,
-    name:subredditName,
+    subredditId: subredditId,
+    name: subredditName,
   });
   await user.save();
+  return {
+    statusCode: 200,
+    message: "subreddit is now favorite",
+  };
+}
 
+export async function removeSubredditFromFavorite(user, subredditName) {
+  user.favoritesSubreddits = user.favoritesSubreddits.filter(
+    (smallSubreddit) => {
+      return smallSubreddit.name !== subredditName;
+    }
+  );
+  await user.save();
+  return {
+    statusCode: 200,
+    message: "subreddit is now un favorite",
+  };
 }
