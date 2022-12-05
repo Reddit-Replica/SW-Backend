@@ -108,6 +108,10 @@
         "type": "object",
         "required": ["kind", "inSubreddit", "title"],
         "properties": {
+          "title": {
+            "type": "string",
+            "description": "Post title"
+          },
           "kind": {
             "type": "string",
             "enum": ["link", "hybrid", "image", "video", "post"]
@@ -626,131 +630,19 @@
                       "type": "string",
                       "description": "Title of the post"
                     },
-                    "type": {
+                    "kind": {
                       "type": "string",
                       "description": "Type of content of the post",
-                      "enum": ["text", "video", "image", "link"]
+                      "enum": ["hybrid", "video", "image", "link", "post"]
                     },
                     "content": {
                       "type": "string",
-                      "description": "Content of the post [text, path of the video, path of the image, link]"
+                      "description": "Content of the post"
                     },
                     "post": {
                       "type": "object",
                       "description": "Post data",
-                      "properties": {
-                        "votes": {
-                          "type": "integer",
-                          "description": "Total number of votes to that post"
-                        },
-                        "publishTime": {
-                          "type": "string",
-                          "format": "date-time",
-                          "description": "Publish time of the post"
-                        },
-                        "flair": {
-                          "type": "object",
-                          "properties": {
-                            "flairId": {
-                              "type": "string",
-                              "description": "The id of the flair"
-                            },
-                            "flairText": {
-                              "type": "string",
-                              "description": "Flair text"
-                            },
-                            "backgroundColor": {
-                              "type": "string",
-                              "description": "Background color of the flair"
-                            },
-                            "textColor": {
-                              "type": "string",
-                              "description": "Color of the flair text"
-                            }
-                          }
-                        },
-                        "inYourSubreddit": {
-                          "type": "boolean",
-                          "description": "If true, then you can approve, remove, or spam that post"
-                        },
-                        "moderation": {
-                          "type": "object",
-                          "description": "Moderate the post if you are a moderator in that subreddit",
-                          "properties": {
-                            "approve": {
-                              "type": "object",
-                              "description": "Approve the post",
-                              "properties": {
-                                "approvedBy": {
-                                  "type": "string",
-                                  "description": "Username for the moderator who approved that post"
-                                },
-                                "approvedDate": {
-                                  "type": "string",
-                                  "format": "date-time",
-                                  "description": "Date when that post approved"
-                                }
-                              }
-                            },
-                            "remove": {
-                              "type": "object",
-                              "description": "Remove the post",
-                              "properties": {
-                                "removedBy": {
-                                  "type": "string",
-                                  "description": "Username for the moderator who removed that post"
-                                },
-                                "removedDate": {
-                                  "type": "string",
-                                  "format": "date-time",
-                                  "description": "Date when that post removed"
-                                }
-                              }
-                            },
-                            "spam": {
-                              "type": "object",
-                              "description": "Spam the post",
-                              "properties": {
-                                "spammedBy": {
-                                  "type": "string",
-                                  "description": "Username for the moderator who spamed that post"
-                                },
-                                "spammedDate": {
-                                  "type": "string",
-                                  "format": "date-time",
-                                  "description": "Date when that post spamed"
-                                }
-                              }
-                            },
-                            "lock": {
-                              "type": "boolean",
-                              "description": "If true, then comments are locked in this post"
-                            }
-                          }
-                        },
-                        "editTime": {
-                          "type": "string",
-                          "format": "date-time",
-                          "description": "Edit time of the post"
-                        },
-                        "nsfw": {
-                          "type": "boolean",
-                          "description": "If true, then this post is NSFW"
-                        },
-                        "spoiler": {
-                          "type": "boolean",
-                          "description": "If true, then this post was marked as spoiler"
-                        },
-                        "saved": {
-                          "type": "boolean",
-                          "description": "If true, then this post was saved before by the logged-in user"
-                        },
-                        "vote": {
-                          "type": "integer",
-                          "enum": [1, 0, -1],
-                          "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
-                        }
-                      }
+                      "$ref": "#/components/schemas/PostDetails"
                     },
                     "comments": {
                       "type": "array",
@@ -1510,6 +1402,388 @@
           },
           "500": {
             "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/comments/{postId}": {
+      "get": {
+        "summary": "Get the comment tree for a given post (Here the token is optional if the user is logged in add a token if not don't add it)",
+        "tags": ["Comments"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "The name of the subreddit",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "postId",
+            "description": "The post id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of comments to return (optional)",
+            "schema": {
+              "type": "integer",
+              "default": 25
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "description": "Comments sorting algorithm",
+            "schema": {
+              "type": "string",
+              "default": "best",
+              "enum": ["best", "top", "new", "old"]
+            }
+          },
+          {
+            "in": "query",
+            "name": "depth",
+            "description": "Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "comment",
+            "description": "Id of a comment in the comment tree to be the highlighted (optional)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentTree"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/comments/{postId}/{commentId}": {
+      "get": {
+        "summary": "Return comment tree of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
+        "tags": ["Comments"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "The name of the subreddit",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "postId",
+            "description": "The post id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "The comment id to show its tree",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of comments to return (optional)",
+            "schema": {
+              "type": "integer",
+              "default": 25
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "description": "Comments sorting algorithm",
+            "schema": {
+              "type": "string",
+              "default": "best",
+              "enum": ["best", "top", "new", "old"]
+            }
+          },
+          {
+            "in": "query",
+            "name": "depth",
+            "description": "Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "highlightedCommentId",
+            "description": "Id of a comment in the comment tree to be highlighted (optional)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentTree"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/comments/{postId}/{commentId}/parent-comments": {
+      "get": {
+        "summary": "Return the parents of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
+        "tags": ["Comments"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "The name of the subreddit",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "postId",
+            "description": "The post id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "commentId",
+            "description": "The comment id to show its tree",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "description": "Comments sorting algorithm",
+            "schema": {
+              "type": "string",
+              "default": "best",
+              "enum": ["best", "top", "new", "old"]
+            }
+          },
+          {
+            "in": "query",
+            "name": "depth",
+            "description": "Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "highlightedCommentId",
+            "description": "Id of a comment in the comment tree to be the highlighted (optional)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "parents": {
+                      "type": "array",
+                      "description": "All the parents for that specific comment",
+                      "items": {
+                        "properties": {
+                          "commentId": {
+                            "type": "string",
+                            "description": "The id of the comment"
+                          },
+                          "commentedBy": {
+                            "type": "string",
+                            "description": "The author of the comment"
+                          },
+                          "editTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Edit time of the comment (if exists)"
+                          },
+                          "publishTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Publish time of the comment"
+                          },
+                          "commentBody": {
+                            "type": "string",
+                            "description": "The comment itself"
+                          },
+                          "votes": {
+                            "type": "integer",
+                            "description": "Total number of votes to that post"
+                          },
+                          "saved": {
+                            "type": "boolean",
+                            "description": "If true, then this comment was saved before by the logged-in user"
+                          },
+                          "followed": {
+                            "type": "boolean",
+                            "description": "If true, then this comment was followed before by the logged-in user"
+                          },
+                          "vote": {
+                            "type": "integer",
+                            "enum": [1, 0, -1],
+                            "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
+                          },
+                          "parent": {
+                            "type": "string",
+                            "description": "The id of the parent comment in the tree"
+                          },
+                          "level": {
+                            "type": "integer",
+                            "description": "The level of the comment [level of nesting]"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
           }
         },
         "security": [
@@ -3287,388 +3561,6 @@
         ]
       }
     },
-    "/r/{subreddit}/comments/{postId}": {
-      "get": {
-        "summary": "Get the comment tree for a given post (Here the token is optional if the user is logged in add a token if not don't add it)",
-        "tags": ["Comments"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "The name of the subreddit",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "postId",
-            "description": "The post id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "before",
-            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "after",
-            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "description": "Maximum number of comments to return (optional)",
-            "schema": {
-              "type": "integer",
-              "default": 25
-            }
-          },
-          {
-            "in": "query",
-            "name": "sort",
-            "description": "Comments sorting algorithm",
-            "schema": {
-              "type": "string",
-              "default": "best",
-              "enum": ["best", "top", "new", "old"]
-            }
-          },
-          {
-            "in": "query",
-            "name": "depth",
-            "description": "Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "comment",
-            "description": "Id of a comment in the comment tree to be the highlighted (optional)",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommentTree"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/comments/{postId}/{commentId}": {
-      "get": {
-        "summary": "Return comment tree of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
-        "tags": ["Comments"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "The name of the subreddit",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "postId",
-            "description": "The post id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "commentId",
-            "description": "The comment id to show its tree",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "before",
-            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "after",
-            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "description": "Maximum number of comments to return (optional)",
-            "schema": {
-              "type": "integer",
-              "default": 25
-            }
-          },
-          {
-            "in": "query",
-            "name": "sort",
-            "description": "Comments sorting algorithm",
-            "schema": {
-              "type": "string",
-              "default": "best",
-              "enum": ["best", "top", "new", "old"]
-            }
-          },
-          {
-            "in": "query",
-            "name": "depth",
-            "description": "Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "highlightedCommentId",
-            "description": "Id of a comment in the comment tree to be highlighted (optional)",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommentTree"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/comments/{postId}/{commentId}/parent-comments": {
-      "get": {
-        "summary": "Return the parents of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
-        "tags": ["Comments"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "The name of the subreddit",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "postId",
-            "description": "The post id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "commentId",
-            "description": "The comment id to show its tree",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "sort",
-            "description": "Comments sorting algorithm",
-            "schema": {
-              "type": "string",
-              "default": "best",
-              "enum": ["best", "top", "new", "old"]
-            }
-          },
-          {
-            "in": "query",
-            "name": "depth",
-            "description": "Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "highlightedCommentId",
-            "description": "Id of a comment in the comment tree to be the highlighted (optional)",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "parents": {
-                      "type": "array",
-                      "description": "All the parents for that specific comment",
-                      "items": {
-                        "properties": {
-                          "commentId": {
-                            "type": "string",
-                            "description": "The id of the comment"
-                          },
-                          "commentedBy": {
-                            "type": "string",
-                            "description": "The author of the comment"
-                          },
-                          "editTime": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "Edit time of the comment (if exists)"
-                          },
-                          "publishTime": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "Publish time of the comment"
-                          },
-                          "commentBody": {
-                            "type": "string",
-                            "description": "The comment itself"
-                          },
-                          "votes": {
-                            "type": "integer",
-                            "description": "Total number of votes to that post"
-                          },
-                          "saved": {
-                            "type": "boolean",
-                            "description": "If true, then this comment was saved before by the logged-in user"
-                          },
-                          "followed": {
-                            "type": "boolean",
-                            "description": "If true, then this comment was followed before by the logged-in user"
-                          },
-                          "vote": {
-                            "type": "integer",
-                            "enum": [1, 0, -1],
-                            "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
-                          },
-                          "parent": {
-                            "type": "string",
-                            "description": "The id of the parent comment in the tree"
-                          },
-                          "level": {
-                            "type": "integer",
-                            "description": "The level of the comment [level of nesting]"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/login": {
       "post": {
         "summary": "Log in to the website",
@@ -3922,11 +3814,11 @@
                   },
                   "senderUsername": {
                     "type": "string",
-                    "description": "Username of the sender"
+                    "description": "Username of the sender if it was user sent it as /u/username ad if it a subreddit send it as /r/subredditName"
                   },
                   "receiverUsername": {
                     "type": "string",
-                    "description": "Username of the receiver"
+                    "description": "Username of the receiver if it was user sent it as /u/username ad if it a subreddit send it as /r/subredditName"
                   },
                   "subject": {
                     "type": "string",
@@ -3958,11 +3850,35 @@
           "201": {
             "description": "Your message is sent successfully"
           },
-          "401": {
-            "description": "Unauthorized to send a message"
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Server Error"
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -4059,6 +3975,14 @@
                               "subject": {
                                 "type": "string",
                                 "description": "Subject of the message"
+                              },
+                              "isSenderUser": {
+                                "type": "boolean",
+                                "description": "true if the senderUsername is for a user , false if it's for a subreddit"
+                              },
+                              "isReceiverUser": {
+                                "type": "boolean",
+                                "description": "true if the receiverUsername is for a user , false if it's for a subreddit"
                               }
                             }
                           }
@@ -4231,6 +4155,14 @@
                               "numOfComments": {
                                 "type": "number",
                                 "description": "total number of comments in the post that the mention or reply happened in"
+                              },
+                              "isSenderUser": {
+                                "type": "boolean",
+                                "description": "true if the senderUsername is for a user , false if it's for a subreddit"
+                              },
+                              "isReceiverUser": {
+                                "type": "boolean",
+                                "description": "true if the receiverUsername is for a user , false if it's for a subreddit"
                               }
                             }
                           }
@@ -4382,6 +4314,14 @@
                               "isModerator": {
                                 "type": "boolean",
                                 "description": "true if the user is a moderator of the subreddit that the msg was sent via"
+                              },
+                              "isSenderUser": {
+                                "type": "boolean",
+                                "description": "true if the senderUsername is for a user , false if it's for a subreddit"
+                              },
+                              "isReceiverUser": {
+                                "type": "boolean",
+                                "description": "true if the receiverUsername is for a user , false if it's for a subreddit"
                               }
                             }
                           }
@@ -4867,6 +4807,14 @@
                                 "isModerator": {
                                   "type": "string",
                                   "description": "true if the user is a moderator of the subreddit that the message was sent via"
+                                },
+                                "isSenderUser": {
+                                  "type": "boolean",
+                                  "description": "true if the senderUsername is for a user , false if it's for a subreddit"
+                                },
+                                "isReceiverUser": {
+                                  "type": "boolean",
+                                  "description": "true if the receiverUsername is for a user , false if it's for a subreddit"
                                 }
                               }
                             }
@@ -9318,7 +9266,7 @@
         "tags": ["Sign Up"],
         "parameters": [
           {
-            "in": "path",
+            "in": "query",
             "name": "count",
             "description": "number of random usernames you want to get",
             "required": true,
@@ -10819,7 +10767,7 @@
     },
     "/user/{username}/about": {
       "get": {
-        "summary": "Return information about the user",
+        "summary": "Return information about the user (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["User"],
         "parameters": [
           {
