@@ -667,9 +667,9 @@ communitiesRouter.post("/r/:subreddit/add-description");
 
 /**
  * @swagger
- * /r/{subreddit}/toggle-favorite:
+ * /r/{subreddit}/make-favorite:
  *  patch:
- *      summary: toggle favorite property of the community
+ *      summary: add a subreddit to the users favorite subreddits
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
@@ -679,16 +679,85 @@ communitiesRouter.post("/r/:subreddit/add-description");
  *           type: string
  *      responses:
  *          200:
- *              description: toggling is done successfully
+ *              description: subreddit is now favorite
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          401:
- *              description: Unauthorized to toggle favorite
+ *              description: You are unauthorized to do this action. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          500:
- *              description: Server Error
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *      security:
  *       - bearerAuth: []
  */
+communitiesRouter.patch("/r/:subreddit/make-favorite");
 
-communitiesRouter.patch("/r/:subreddit/toggle-favorite");
+/**
+ * @swagger
+ * /r/{subreddit}/remove-favorite:
+ *  patch:
+ *      summary: remove a subreddit from the user's favorites subreddits
+ *      tags: [Subreddit]
+ *      parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: the name of the subreddit
+ *         schema:
+ *           type: string
+ *      responses:
+ *          200:
+ *              description: This subreddit is not favorite anymore
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          401:
+ *              description: You are unauthorized to do this action. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          500:
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *      security:
+ *       - bearerAuth: []
+ */
+ communitiesRouter.patch("/r/:subreddit/remove-favorite");
 
 /**
  * @swagger
