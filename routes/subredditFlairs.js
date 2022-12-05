@@ -86,7 +86,7 @@ subredditFlairsRouter.get(
  * @swagger
  * /r/{subreddit}/about/post-flairs/{flairId}:
  *  get:
- *      summary: Returns details of a specific post flair
+ *      summary: Returns details of a specific post flair (Here the token is optional if the user is logged in add a token if not don't add it)
  *      tags: [Posts and comments moderation]
  *      parameters:
  *          - in: path
@@ -146,11 +146,11 @@ subredditFlairsRouter.get(
  */
 subredditFlairsRouter.get(
   "/r/:subreddit/about/post-flairs/:flairId",
-  verifyAuthToken,
+  // verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
   // TODO Think whether i should verify moderator or not? (maybe a user will need that details while creating a post)
-  verifyAuthTokenModerator,
+  // verifyAuthTokenModerator,
   subredditFlairsController.getFlairDetails
 );
 
