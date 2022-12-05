@@ -17,32 +17,32 @@ import {
  * @returns {String} indicates if the message was sent successfully or not
  */
 export async function addMessage(req) {
-    //SAVING MESSAGE TO DATABASE
-    const message = await new Message(req.msg).save();
-    if (message.isSenderUser) {
-      //GETTING SENDER USER
-      const sender = await User.findOne({ username: message.senderUsername });
-      //ADD THIS MESSAGE TO SENDER SENT MESSAGES
-      addSentMessages(sender.id, message);
-    }
-    if (message.isReceiverUser) {
-      //GETTING RECEIVER USER
-      const receiver = await User.findOne({
-        username: message.receiverUsername,
-      });
-      //ADD THIS MESSAGE TO RECEIVER RECEIVED MESSAGES
-      addReceivedMessages(receiver.id, message);
-    }
-    //CREATING A NEW CONVERSATIONS USING THE MESSAGE SENT , IF IT WAS CREATED BEFORE THEN THE MESSAGE WILL BE ADDED TO IT THEN
-    const conversationId = await createNewConversation(message);
-    const conversation = await Conversation.findById(conversationId);
-    //PUSHING THE MESSAGE TO THE CONVERSATION'S MESSAGES
-    conversation.messages.push({ messageID: message.id });
-    //SAVING CONVERSATION
-    await conversation.save();
-    console.log("saved");
-    //ADDING THIS CONVERSATION TO THE USERS IF IT EXISTS THERE
-    await addConversationToUsers(message, conversationId);
+  //SAVING MESSAGE TO DATABASE
+  const message = await new Message(req.msg).save();
+  if (message.isSenderUser) {
+    //GETTING SENDER USER
+    const sender = await User.findOne({ username: message.senderUsername });
+    //ADD THIS MESSAGE TO SENDER SENT MESSAGES
+    addSentMessages(sender.id, message);
+  }
+  if (message.isReceiverUser) {
+    //GETTING RECEIVER USER
+    const receiver = await User.findOne({
+      username: message.receiverUsername,
+    });
+    //ADD THIS MESSAGE TO RECEIVER RECEIVED MESSAGES
+    addReceivedMessages(receiver.id, message);
+  }
+  //CREATING A NEW CONVERSATIONS USING THE MESSAGE SENT , IF IT WAS CREATED BEFORE THEN THE MESSAGE WILL BE ADDED TO IT THEN
+  const conversationId = await createNewConversation(message);
+  const conversation = await Conversation.findById(conversationId);
+  //PUSHING THE MESSAGE TO THE CONVERSATION'S MESSAGES
+  conversation.messages.push({ messageID: message.id });
+  //SAVING CONVERSATION
+  await conversation.save();
+  console.log("saved");
+  //ADDING THIS CONVERSATION TO THE USERS IF IT EXISTS THERE
+  await addConversationToUsers(message, conversationId);
 }
 
 /**
@@ -52,9 +52,9 @@ export async function addMessage(req) {
  * @returns {String} indicates if the message was sent successfully or not
  */
 export async function addMention(req) {
-    const mention = await new Message(req.msg).save();
-    const receiver = await User.findOne({ username: mention.receiverUsername });
-    addUserMention(receiver.id, mention);
+  const mention = await new Message(req.msg).save();
+  const receiver = await User.findOne({ username: mention.receiverUsername });
+  addUserMention(receiver.id, mention);
 }
 
 /**
@@ -67,34 +67,34 @@ export async function addMention(req) {
  */
 export async function createNewConversation(msg) {
   //HERE WE NEED TO CREATE THE CONVERSATION FROM SCRATCH
-    //check if the conversation is already in database
-    const conversation1 = await Conversation.findOne({
+  //check if the conversation is already in database
+  const conversation1 = await Conversation.findOne({
+    subject: msg.subject,
+    firstUsername: msg.senderUsername,
+    secondUsername: msg.receiverUsername,
+  });
+  const conversation2 = await Conversation.findOne({
+    subject: msg.subject,
+    firstUsername: msg.receiverUsername,
+    secondUsername: msg.senderUsername,
+  });
+  //IF THERE IS NO CONVERSATION WITH THESE DATA THEN WE WILL CREATE A NEW ONE
+  if (!conversation1 && !conversation2) {
+    const conversation = await new Conversation({
+      latestDate: msg.sentAt,
       subject: msg.subject,
+      messages: [],
       firstUsername: msg.senderUsername,
       secondUsername: msg.receiverUsername,
-    });
-    const conversation2 = await Conversation.findOne({
-      subject: msg.subject,
-      firstUsername: msg.receiverUsername,
-      secondUsername: msg.senderUsername,
-    });
-    //IF THERE IS NO CONVERSATION WITH THESE DATA THEN WE WILL CREATE A NEW ONE
-    if (!conversation1 && !conversation2) {
-      const conversation = await new Conversation({
-        latestDate: msg.sentAt,
-        subject: msg.subject,
-        messages: [],
-        firstUsername: msg.senderUsername,
-        secondUsername: msg.receiverUsername,
-      }).save();
-      return conversation.id;
-    }
-    //BUT IF THERE IS THEN WE NEED TO RETURN THE ID OF THAT CONVERSATION TO ADD THE MESSAGE INTO IT
-    if (!conversation1) {
-      return conversation2.id;
-    } else {
-      return conversation1.id;
-    }
+    }).save();
+    return conversation.id;
+  }
+  //BUT IF THERE IS THEN WE NEED TO RETURN THE ID OF THAT CONVERSATION TO ADD THE MESSAGE INTO IT
+  if (!conversation1) {
+    return conversation2.id;
+  } else {
+    return conversation1.id;
+  }
 }
 
 /**
@@ -106,10 +106,10 @@ export async function createNewConversation(msg) {
  */
 export async function addToConversation(msg, conversationId) {
   //HERE WE NEED TO ADD THE MSG TO THE CONVERSATION
-    const conversation = await Conversation.findById(conversationId);
-    conversation.messages.push({ messageID: msg.id });
-    conversation.save();
-    return "added";
+  const conversation = await Conversation.findById(conversationId);
+  conversation.messages.push({ messageID: msg.id });
+  conversation.save();
+  return "added";
 }
 /**
  * This function is used to check if the user has already that conversation or we will need to add a new one for him
@@ -118,15 +118,15 @@ export async function addToConversation(msg, conversationId) {
  * @returns {string} defines if the user has already that conversation or not
  */
 async function checkExistingConversation(user, conversationId) {
-    await user.populate("conversations.conversationId");
-    const conversations = user.conversations;
-    let valid = false;
-    conversations.forEach((conversation) => {
-      if (conversation.conversationId.id === conversationId) {
-        valid = true;
-      }
-    });
-    return valid;
+  await user.populate("conversations.conversationId");
+  const conversations = user.conversations;
+  let valid = false;
+  conversations.forEach((conversation) => {
+    if (conversation.conversationId.id === conversationId) {
+      valid = true;
+    }
+  });
+  return valid;
 }
 /**
  * This function is used to add the conversation to the users in case that they don't have it
@@ -136,30 +136,30 @@ async function checkExistingConversation(user, conversationId) {
  * @returns {string} defines if the conversation was added successfully or not
  */
 async function addConversationToUsers(message, convId) {
-    if (message.isSenderUser) {
-      const userOne = await User.findOne({ username: message.senderUsername });
-      const userOneConv = await checkExistingConversation(userOne, convId);
-      if (!userOneConv) {
-        userOne.conversations.push({
-          conversationId: convId,
-          with: message.receiverUsername,
-        });
-        await userOne.save();
-      }
-    }
-    if (message.isReceiverUser) {
-      const userTwo = await User.findOne({
-        username: message.receiverUsername,
+  if (message.isSenderUser) {
+    const userOne = await User.findOne({ username: message.senderUsername });
+    const userOneConv = await checkExistingConversation(userOne, convId);
+    if (!userOneConv) {
+      userOne.conversations.push({
+        conversationId: convId,
+        with: message.receiverUsername,
       });
-      const userTwoConv = await checkExistingConversation(userTwo, convId);
-      if (!userTwoConv) {
-        userTwo.conversations.push({
-          conversationId: convId,
-          with: message.senderUsername,
-        });
-        await userTwo.save();
-      }
+      await userOne.save();
     }
+  }
+  if (message.isReceiverUser) {
+    const userTwo = await User.findOne({
+      username: message.receiverUsername,
+    });
+    const userTwoConv = await checkExistingConversation(userTwo, convId);
+    if (!userTwoConv) {
+      userTwo.conversations.push({
+        conversationId: convId,
+        with: message.senderUsername,
+      });
+      await userTwo.save();
+    }
+  }
 }
 
 /**
@@ -170,116 +170,111 @@ async function addConversationToUsers(message, convId) {
  */
 // eslint-disable-next-line max-statements
 export async function validateMessage(req) {
-
-    if (req.body.type !== "Mentions" && req.body.type !== "Messages") {
-      let err = new Error("Message type should be either Mentions or Messages");
-      err.statusCode=400;
+  if (req.body.type !== "Mentions" && req.body.type !== "Messages") {
+    let err = new Error("Message type should be either Mentions or Messages");
+    err.statusCode = 400;
+    throw err;
+  }
+  if (req.body.type === "Mentions") {
+    if (!req.body.postId) {
+      let err = new Error("Post Id is needed when type is Mentions");
+      err.statusCode = 400;
       throw err;
     }
-    if (req.body.type === "Mentions") {
-      if (!req.body.postId) {
-        let err = new Error("Post Id is needed when type is Mentions");
-        err.statusCode=400;
-        throw err;
-      }
-    }
-    if (req.body.type === "Messages") {
-      if (!req.body.subject) {
-        let err = new Error("Subject is needed when type is Messages");
-        err.statusCode=400;
-        throw err;
-      }
-    }
-    if (
-      !req.body.senderUsername.includes("/") ||
-      !req.body.receiverUsername.includes("/")
-    ) {
-      let err = new Error("Invalid sender or receiver username");
-      err.statusCode=400;
+  }
+  if (req.body.type === "Messages") {
+    if (!req.body.subject) {
+      let err = new Error("Subject is needed when type is Messages");
+      err.statusCode = 400;
       throw err;
     }
-    const senderArr = req.body.senderUsername.split("/");
-    const receiverArr = req.body.receiverUsername.split("/");
+  }
+  if (
+    !req.body.senderUsername.includes("/") ||
+    !req.body.receiverUsername.includes("/")
+  ) {
+    let err = new Error("Invalid sender or receiver username");
+    err.statusCode = 400;
+    throw err;
+  }
+  const senderArr = req.body.senderUsername.split("/");
+  const receiverArr = req.body.receiverUsername.split("/");
 
+  const msg = {
+    text: req.body.text,
+    senderUsername: senderArr[senderArr.length - 1],
+    receiverUsername: receiverArr[receiverArr.length - 1],
+    type: req.body.type,
+  };
+  if (senderArr[senderArr.length - 2] === "r" && msg.type !== "Mentions") {
+    msg.isSenderUser = false;
+  } else if (senderArr[senderArr.length - 2] === "u") {
+    msg.isSenderUser = true;
+  } else {
+    let err = new Error("Invalid sender username");
+    err.statusCode = 400;
+    throw err;
+  }
 
-    const msg = {
-      text: req.body.text,
-      senderUsername: senderArr[senderArr.length - 1],
-      receiverUsername: receiverArr[receiverArr.length - 1],
-      type: req.body.type,
-    };
-    if (senderArr[senderArr.length - 2] === "r" && msg.type !== "Mentions") {
-      msg.isSenderUser = false;
-    } else if (senderArr[senderArr.length - 2] === "u") {
-      msg.isSenderUser = true;
-    } else {
-      let err = new Error("Invalid sender username");
-      err.statusCode=400;
+  if (receiverArr[receiverArr.length - 2] === "r" && msg.type !== "Mentions") {
+    msg.isReceiverUser = false;
+  } else if (receiverArr[receiverArr.length - 2] === "u") {
+    msg.isReceiverUser = true;
+  } else {
+    let err = new Error("Invalid receiver username");
+    err.statusCode = 400;
+    throw err;
+  }
+  if (!msg.isReceiverUser && !msg.isSenderUser) {
+    let err = new Error("Sender and Receiver usernames are necessary");
+    err.statusCode = 400;
+    throw err;
+  }
+  if (req.body.postId) {
+    msg.postId = req.body.postId;
+  }
+  if (req.body.subredditName) {
+    msg.subredditName = req.body.subredditName;
+  }
+
+  if (req.body.repliedMsgId) {
+    msg.repliedMsgId = req.body.repliedMsgId;
+  }
+  if (req.body.subject) {
+    msg.subject = req.body.subject;
+  }
+
+  if (msg.isReceiverUser) {
+    const receiver = await User.findOne({ username: msg.receiverUsername });
+    msg.receiverId = receiver.id;
+    if (!receiver) {
+      let err = new Error("receiver is not found");
+      err.statusCode = 400;
       throw err;
     }
-
-    if (
-      receiverArr[receiverArr.length - 2] === "r" &&
-      msg.type !== "Mentions"
-    ) {
-      msg.isReceiverUser = false;
-    } else if (receiverArr[receiverArr.length - 2] === "u") {
-      msg.isReceiverUser = true;
-    } else {
-      let err = new Error("Invalid receiver username");
-      err.statusCode=400;
+  } else {
+    const receiver = await Subreddit.findOne({ title: msg.receiverUsername });
+    if (!receiver) {
+      let err = new Error("subreddit name is not found");
+      err.statusCode = 400;
       throw err;
     }
-    if (!msg.isReceiverUser && !msg.isSenderUser) {
-      let err = new Error("Sender and Receiver usernames are necessary");
-      err.statusCode=400;
+  }
+
+  if (msg.isSenderUser) {
+    const sender = await User.findOne({ username: msg.senderUsername });
+    if (!sender || sender.username !== req.payload.username) {
+      let err = new Error("Failed to send the message");
+      err.statusCode = 400;
       throw err;
     }
-    if (req.body.postId) {
-      msg.postId = req.body.postId;
+  } else {
+    const sender = await Subreddit.findOne({ title: msg.senderUsername });
+    if (!sender) {
+      let err = new Error("subreddit name is not found");
+      err.statusCode = 400;
+      throw err;
     }
-    if (req.body.subredditName) {
-      msg.subredditName = req.body.subredditName;
-    }
-
-    if (req.body.repliedMsgId) {
-      msg.repliedMsgId = req.body.repliedMsgId;
-    }
-    if (req.body.subject) {
-      msg.subject = req.body.subject;
-    }
-
-    if (msg.isReceiverUser) {
-      const receiver = await User.findOne({ username: msg.receiverUsername });
-      msg.receiverId=receiver.id;
-      if (!receiver) {
-        let err = new Error("receiver is not found");
-        err.statusCode=400;
-        throw err;
-      }
-    } else {
-      const receiver = await Subreddit.findOne({ title: msg.receiverUsername });
-      if (!receiver) {
-        let err = new Error("subreddit name is not found");
-        err.statusCode=400;
-        throw err;
-      }
-    }
-
-    if (msg.isSenderUser) {
-      const sender = await User.findOne({ username: msg.senderUsername });
-      if (!sender || sender.username !== req.payload.username) {
-        let err = new Error("Failed to send the message");
-        err.statusCode=400;
-        throw err;
-      }
-    } else {
-      const sender = await Subreddit.findOne({ title: msg.senderUsername });
-      if (!sender) {
-        let err = new Error("subreddit name is not found");
-        err.statusCode=400;
-        throw err;
-      }
-    }
-    req.msg = msg;
+  }
+  req.msg = msg;
 }
