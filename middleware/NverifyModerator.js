@@ -1,4 +1,4 @@
-import Subreddit from "../models/Community.js";
+import { searchForSubreddit } from "./../services/communityServices.js";
 
 /**
  * Middleware used to check if the user is a moderator in the desired subreddit or not
@@ -18,33 +18,29 @@ import Subreddit from "../models/Community.js";
 export async function checkModerator(req, res, next) {
   const authPayload = req.payload;
   try {
-    const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
-    if (!subreddit) {
-      throw new Error("this subreddit isn't found", { cause: 400 });
-    }
-    if (subreddit.deletedAt) {
-      throw new Error("this subreddit is deleted", { cause: 400 });
-    }
+    const subreddit = await searchForSubreddit(req.params.subreddit);
     // eslint-disable-next-line max-len
     const { moderators } = subreddit;
     let isThere = false;
     const userId = authPayload.userId;
-    moderators.forEach(function (moderator) {
+    for (const moderator of moderators) {
       if (moderator.userID.toString() === userId) {
         isThere = true;
       }
-    });
+    }
     if (isThere) {
       next();
     } else {
-      // eslint-disable-next-line max-len
-      throw new Error("you don't have the right to do this action", {
-        cause: 403,
-      });
+      let error = new Error("you don't have the right to do this action");
+      error.statusCode = 400;
+      throw error;
     }
   } catch (err) {
-    if (err.cause) {
-      return res.status(err.cause).json(err.message);
+    console.log(err);
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
     } else {
       return res.status(500).json("Internal Server Error");
     }

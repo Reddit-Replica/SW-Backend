@@ -48,10 +48,10 @@ const communitiesRouter = express.Router();
  *                            items:
  *                              properties:
  *                               id:
- *                                type:string
+ *                                type: string
  *                                description: id of the subreddit
  *                               data:
- *                                type:object
+ *                                type: object
  *                                properties:
  *                                 title:
  *                                  type: string
@@ -125,10 +125,10 @@ communitiesRouter.get("/subreddits/leaderboard");
  *                            items:
  *                              properties:
  *                               id:
- *                                type:string
+ *                                type: string
  *                                description: id of the subreddit
  *                               data:
- *                                type:object
+ *                                type: object
  *                                properties:
  *                                 title:
  *                                  type: string
@@ -197,10 +197,10 @@ communitiesRouter.get("/subreddits/leaderboard/:categoryName");
  *                            items:
  *                              properties:
  *                               id:
- *                                type:string
+ *                                type: string
  *                                description: id of the subreddit
  *                               data:
- *                                type:object
+ *                                type: object
  *                                properties:
  *                                 title:
  *                                  type: string
@@ -269,10 +269,10 @@ communitiesRouter.get("/custom-random-category");
  *                            items:
  *                              properties:
  *                               id:
- *                                type:string
+ *                                type: string
  *                                description: id of the subreddit
  *                               data:
- *                                type:object
+ *                                type: object
  *                                properties:
  *                                 title:
  *                                  type: string
@@ -330,10 +330,10 @@ communitiesRouter.get("/trending-communities");
  *                            items:
  *                              properties:
  *                               id:
- *                                type:string
+ *                                type: string
  *                                description: id of the subreddit
  *                               data:
- *                                type:object
+ *                                type: object
  *                                properties:
  *                                 title:
  *                                  type: string
@@ -347,16 +347,16 @@ communitiesRouter.get("/trending-communities");
  *                                isMember:
  *                                  type: boolean
  *                                  description: True if you are a member of the community , False if you are not a member of the community
- *                          firstCategoryChildren:
+ *                          SecondCategoryChildren:
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
  *                               id:
- *                                type:string
+ *                                type: string
  *                                description: id of the subreddit
  *                               data:
- *                                type:object
+ *                                type: object
  *                                properties:
  *                                 title:
  *                                  type: string
@@ -557,119 +557,9 @@ communitiesRouter.get("/r/:subreddit/wiki/bans");
 
 /**
  * @swagger
- * /r/{subreddit}/add-main-topic:
- *  post:
- *      summary: add the main topic to the community
- *      tags: [Subreddit]
- *      parameters:
- *       - in: path
- *         name: subreddit
- *         description: the name of the subreddit
- *         schema:
- *           type: string
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *            required:
- *             - mainTopic
- *            properties:
- *             mainTopic:
- *               type: string
- *               description: title of the main topic in the community
- *      responses:
- *          200:
- *              description: main topic is submitted successfully
- *          401:
- *              description: Unauthorized add main topic
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-communitiesRouter.post("/r/:subreddit/add-main-topic");
-
-/**
- * @swagger
- * /r/{subreddit}/add-subtopic:
- *  post:
- *      summary: add subtopics of the community
- *      tags: [Subreddit]
- *      parameters:
- *       - in: path
- *         name: subreddit
- *         description: the name of the subreddit
- *         schema:
- *           type: string
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *            required:
- *             - subTopics
- *            properties:
- *             subTopics:
- *               type: array
- *               description: array of subtopics to be added to community
- *               items:
- *                 type: object
- *      responses:
- *          201:
- *              description: Community topics saved
- *          401:
- *              description: Token may be invalid or not found
- *          500:
- *              description: Server Error like("this subreddit isn't found")
- *      security:
- *       - bearerAuth: []
- */
-
-communitiesRouter.post("/r/:subreddit/add-subtopics");
-
-/**
- * @swagger
- * /r/{subreddit}/add-description:
- *  post:
- *      summary: add description of the community
- *      tags: [Subreddit]
- *      parameters:
- *       - in: path
- *         name: subreddit
- *         description: the name of the subreddit
- *         schema:
- *           type: string
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *            required:
- *             - description
- *            properties:
- *             description:
- *               type: string
- *               description: description of the community (maximum 300)
- *      responses:
- *          201:
- *              description: Subreddit settings updated successfully
- *          401:
- *              description: Token may be invalid or not found
- *          500:
- *              description: Server Error like("this subreddit isn't found")
- *      security:
- *       - bearerAuth: []
- */
-
-communitiesRouter.post("/r/:subreddit/add-description");
-
-/**
- * @swagger
- * /r/{subreddit}/toggle-favorite:
+ * /r/{subreddit}/make-favorite:
  *  patch:
- *      summary: toggle favorite property of the community
+ *      summary: add a subreddit to the users favorite subreddits
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
@@ -679,16 +569,85 @@ communitiesRouter.post("/r/:subreddit/add-description");
  *           type: string
  *      responses:
  *          200:
- *              description: toggling is done successfully
+ *              description: subreddit is now favorite
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          401:
- *              description: Unauthorized to toggle favorite
+ *              description: You are unauthorized to do this action. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          500:
- *              description: Server Error
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *      security:
  *       - bearerAuth: []
  */
+communitiesRouter.patch("/r/:subreddit/make-favorite");
 
-communitiesRouter.patch("/r/:subreddit/toggle-favorite");
+/**
+ * @swagger
+ * /r/{subreddit}/remove-favorite:
+ *  patch:
+ *      summary: remove a subreddit from the user's favorites subreddits
+ *      tags: [Subreddit]
+ *      parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: the name of the subreddit
+ *         schema:
+ *           type: string
+ *      responses:
+ *          200:
+ *              description: This subreddit is not favorite anymore
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          401:
+ *              description: You are unauthorized to do this action. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          500:
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *      security:
+ *       - bearerAuth: []
+ */
+communitiesRouter.patch("/r/:subreddit/remove-favorite");
 
 /**
  * @swagger

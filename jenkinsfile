@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  triggers {
+    githubPush()
+  }
 
   	environment {
 		DOCKERHUB_CREDENTIALS=credentials('Dockerhub')
@@ -13,16 +16,19 @@ pipeline {
             reuseNode true
         }
     }
+
     steps {
               sh "npm i "
+              sh"""
+              cp /Read-it/deployment/envfiles/backend_testing.env ./.env
+              """
               sh "npm run test"
-              // timeout(time: 20, unit: 'SECONDS') {sh "npm run serve"}
       }
   }
 
   stage("intgration testing"){
     steps {
-              echo "till get its commanddsnnnsddder"
+              echo "till get its commanddsnndsddddder"
       }
   }
 
@@ -36,13 +42,13 @@ pipeline {
     stage('Build') {
 
 			steps {
-				sh 'docker build -t waer/frontend:latest .'
+				sh 'docker build -t waer/backend:latest .'
 			}
 		}
 
     stage('Push') {
 			steps {
-				sh 'docker push waer/frontend:latest'
+				sh 'docker push waer/backend:latest'
 			}
 		}
 

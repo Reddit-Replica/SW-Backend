@@ -1,5 +1,6 @@
 import User from "../models/User.js";
-import Subreddit from "../models/Community.js";
+import { searchForSubredditById } from "./../services/communityServices.js";
+
 /**
  * Middleware used to check if the user joined the desired subreddit before or not
  * It gets the subreddits that the user joined before and searches for the desired one
@@ -13,39 +14,43 @@ import Subreddit from "../models/Community.js";
  * @param {function} next Next function
  * @returns {void}
  */
+
+// eslint-disable-next-line max-statements
 export async function checkJoinedBefore(req, res, next) {
-  //CHECK ON USER DATA
   const authPayload = req.payload;
   try {
     //GETTING LIST OF SUBREDDITS THE USER JOINED BEFORE
-    // eslint-disable-next-line max-len
     const { joinedSubreddits } = await User.findById(authPayload.userId).select(
       "joinedSubreddits"
     );
-    joinedSubreddits.forEach(function (subreddit) {
+    const subreddit = await searchForSubredditById(req.body.subredditId);
+    for (const smallSubreddit of joinedSubreddits) {
       //CHECKING IF THE SUBREDDIT HE WANTS TO JOIN WAS JOINED BEFORE
-      if (subreddit.subredditId.toString() === req.body.subredditId) {
+      if (smallSubreddit.subredditId.toString() === subreddit.id) {
         // eslint-disable-next-line max-len
-        throw new Error("you already joined the subreddit", { cause: 409 });
+        let error = new Error("you already joined the subreddit");
+        error.statusCode = 409;
+        throw error;
       }
-    });
-    // eslint-disable-next-line max-len
-    const { waitedUsers } = await Subreddit.findById(req.body.subredditId);
-    waitedUsers.forEach(function (users) {
+    }
+    const waitedUsers = subreddit.waitedUsers;
+    for (const user of waitedUsers) {
       //CHECKING IF THE SUBREDDIT HE WANTS TO JOIN WAS JOINED BEFORE
-      if (users.userID.toString() === authPayload.userId) {
-        throw new Error("your request is already pending", { cause: 409 });
+      if (user.userID.toString() === authPayload.userId) {
+        let error = new Error("your request is already pending");
+        error.statusCode = 409;
+        throw error;
       }
-    });
+    }
     //CONTINUE TO JOIN CONTROLLER TO DO THE LOGIC OF JOINING
     next();
   } catch (err) {
-    if (err.cause) {
-      return res.status(err.cause).json({
+    if (err.statusCode) {
+      res.status(err.statusCode).json({
         error: err.message,
       });
     } else {
-      return res.status(500).json("Internal Server Error");
+      res.status(500).json("Internal Server Error");
     }
   }
 }
