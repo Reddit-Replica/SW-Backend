@@ -2558,186 +2558,9 @@
         ]
       }
     },
-    "/r/{subreddit}/add-main-topic": {
-      "post": {
-        "summary": "add the main topic to the community",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["mainTopic"],
-                "properties": {
-                  "mainTopic": {
-                    "type": "string",
-                    "description": "title of the main topic in the community"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "main topic is submitted successfully"
-          },
-          "401": {
-            "description": "Unauthorized add main topic"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/add-subtopic": {
-      "post": {
-        "summary": "add subtopics to the community",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["title"],
-                "properties": {
-                  "title": {
-                    "type": "array",
-                    "description": "titles of the sub topics in the community",
-                    "items": {
-                      "type": "object"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Community topics saved"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "you don't have the right to do this action"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/add-description": {
-      "post": {
-        "summary": "add description of the community",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["title"],
-                "properties": {
-                  "description": {
-                    "type": "string",
-                    "description": "description of the community (maximum 300)"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "description is submitted successfully"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "you don't have the right to do this action"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/toggle-favorite": {
+    "/r/{subreddit}/make-favorite": {
       "patch": {
-        "summary": "toggle favorite property of the community",
+        "summary": "add a subreddit to the users favorite subreddits",
         "tags": ["Subreddit"],
         "parameters": [
           {
@@ -2751,13 +2574,123 @@
         ],
         "responses": {
           "200": {
-            "description": "toggling is done successfully"
+            "description": "subreddit is now favorite"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized to toggle favorite"
+            "description": "You are unauthorized to do this action. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Server Error"
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/remove-favorite": {
+      "patch": {
+        "summary": "remove a subreddit from the user's favorites subreddits",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "This subreddit is not favorite anymore"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "You are unauthorized to do this action. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -5975,243 +5908,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized access"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/about/edit": {
-      "get": {
-        "summary": "Get the current settings of a subreddit.",
-        "tags": ["Subreddit moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "name of the subreddit.",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The current settings of the subreddit.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "communityName": {
-                      "type": "string",
-                      "description": "The name of the community."
-                    },
-                    "communityTopics": {
-                      "type": "array",
-                      "description": "The topics of the community.",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "topicName": {
-                            "type": "string",
-                            "description": "Name of the topic"
-                          }
-                        }
-                      }
-                    },
-                    "communityDescription": {
-                      "type": "string",
-                      "description": "The description of the community."
-                    },
-                    "sendWelcomeMessage": {
-                      "type": "boolean",
-                      "description": "If that community send a welcome message to the new members or not."
-                    },
-                    "welcomeMessage": {
-                      "type": "string",
-                      "description": "The welcome message of the community. (if sendWelcomeMessage is true)"
-                    },
-                    "language": {
-                      "type": "string",
-                      "description": "The janguage of the community."
-                    },
-                    "region": {
-                      "type": "string",
-                      "description": "The region of the community."
-                    },
-                    "type": {
-                      "type": "string",
-                      "description": "The type of the community.",
-                      "enum": ["Public", "Restricted", "Private"]
-                    },
-                    "NSFW": {
-                      "type": "boolean",
-                      "description": "The community allow +18 content or not."
-                    },
-                    "acceptingRequestsToJoin": {
-                      "type": "boolean",
-                      "description": "Display a button on your private subreddit that allows users to request to join. (if the type is private only)"
-                    },
-                    "acceptingRequestsToPost": {
-                      "type": "boolean",
-                      "description": "Accept posts or not (if the type is restricted only)"
-                    },
-                    "approvedUsersHaveTheAbilityTo": {
-                      "type": "string",
-                      "description": "Approved users have the ability to (if the type is restricted only)",
-                      "enum": ["Post only", "Comment only", "Post & Comment"]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized access"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "put": {
-        "summary": "ٍSet the settings of a subreddit.",
-        "tags": ["Subreddit moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "name of the subreddit.",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": [
-                  "communityName",
-                  "communityTopics",
-                  "communityDescription",
-                  "sendWelcomeMessage",
-                  "welcomeMessage",
-                  "approvedUsersHaveTheAbilityTo",
-                  "acceptingRequestsToPost",
-                  "acceptingRequestsToJoin",
-                  "NSFW",
-                  "type",
-                  "region",
-                  "language"
-                ],
-                "properties": {
-                  "communityName": {
-                    "type": "string",
-                    "description": "The name of the community."
-                  },
-                  "communityTopics": {
-                    "type": "array",
-                    "description": "The topics of the community. (maximum 25 topic)",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "topicName": {
-                          "type": "string",
-                          "description": "Name of the topic"
-                        }
-                      }
-                    }
-                  },
-                  "communityDescription": {
-                    "type": "string",
-                    "description": "The description of the community. (maximum 500 Characters)"
-                  },
-                  "sendWelcomeMessage": {
-                    "type": "boolean",
-                    "description": "If that community send a welcome message to the new members or not."
-                  },
-                  "welcomeMessage": {
-                    "type": "string",
-                    "description": "The welcome message of the community. (if sendWelcomeMessage is true) (maximum 5000 Characters)"
-                  },
-                  "language": {
-                    "type": "string",
-                    "description": "The janguage of the community."
-                  },
-                  "Region": {
-                    "type": "string",
-                    "description": "The region of the community."
-                  },
-                  "Type": {
-                    "type": "string",
-                    "description": "The type of the community.",
-                    "enum": ["Public", "Restricted", "Private"]
-                  },
-                  "NSFW": {
-                    "type": "boolean",
-                    "description": "The community allow +18 content or not."
-                  },
-                  "acceptingRequestsToJoin": {
-                    "type": "boolean",
-                    "description": "Display a button on your private subreddit that allows users to request to join. (if the type is private only)"
-                  },
-                  "acceptingRequestsToPost": {
-                    "type": "boolean",
-                    "description": "Accept posts or not (if the type is restricted only)"
-                  },
-                  "approvedUsersHaveTheAbilityTo": {
-                    "type": "string",
-                    "description": "Approved users have the ability to (if the type is restricted only)",
-                    "enum": ["Post only", "Comment only", "Post & Comment"]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Accepted"
           },
           "400": {
             "description": "Bad Request",
@@ -9532,6 +9228,69 @@
         }
       }
     },
+    "/r/{subreddit}/add-description": {
+      "post": {
+        "summary": "add description of the community",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["title"],
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "description of the community (maximum 300)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "description is submitted successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "you don't have the right to do this action"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/r/{subreddit}/add-maintopic": {
       "post": {
         "summary": "add the main topic to the community",
@@ -9565,6 +9324,72 @@
         "responses": {
           "200": {
             "description": "Successfully updated primary topic!"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "you don't have the right to do this action"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/add-subtopic": {
+      "post": {
+        "summary": "add subtopics to the community",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "array",
+                    "description": "titles of the sub topics in the community",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Community topics saved"
           },
           "400": {
             "description": "The request was invalid. You may refer to response for details around why the request was invalid",
@@ -10218,6 +10043,240 @@
           },
           "500": {
             "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/about/edit": {
+      "get": {
+        "summary": "Get the current settings of a subreddit.",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The current settings of the subreddit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "communityName": {
+                      "type": "string",
+                      "description": "The name of the community."
+                    },
+                    "mainTopic": {
+                      "type": "string",
+                      "description": "The main topic of the community."
+                    },
+                    "sunTopics": {
+                      "type": "array",
+                      "description": "The sub topics of the community.",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "communityDescription": {
+                      "type": "string",
+                      "description": "The description of the community."
+                    },
+                    "sendWelcomeMessage": {
+                      "type": "boolean",
+                      "description": "If that community send a welcome message to the new members or not."
+                    },
+                    "welcomeMessage": {
+                      "type": "string",
+                      "description": "The welcome message of the community. (if sendWelcomeMessage is true)"
+                    },
+                    "language": {
+                      "type": "string",
+                      "description": "The janguage of the community."
+                    },
+                    "region": {
+                      "type": "string",
+                      "description": "The region of the community."
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "The type of the community.",
+                      "enum": ["Public", "Restricted", "Private"]
+                    },
+                    "NSFW": {
+                      "type": "boolean",
+                      "description": "The community allow +18 content or not."
+                    },
+                    "acceptingRequestsToJoin": {
+                      "type": "boolean",
+                      "description": "Display a button on your private subreddit that allows users to request to join. (if the type is private only)"
+                    },
+                    "acceptingRequestsToPost": {
+                      "type": "boolean",
+                      "description": "Accept posts or not (if the type is restricted only)"
+                    },
+                    "approvedUsersHaveTheAbilityTo": {
+                      "type": "string",
+                      "description": "Approved users have the ability to (if the type is restricted only)",
+                      "enum": ["Post only", "Comment only", "Post & Comment"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "ٍSet the settings of a subreddit.",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "communityName",
+                  "mainTopic",
+                  "sunTopics",
+                  "communityDescription",
+                  "sendWelcomeMessage",
+                  "welcomeMessage",
+                  "approvedUsersHaveTheAbilityTo",
+                  "acceptingRequestsToPost",
+                  "acceptingRequestsToJoin",
+                  "NSFW",
+                  "Type",
+                  "region",
+                  "language"
+                ],
+                "properties": {
+                  "communityName": {
+                    "type": "string",
+                    "description": "The name of the community."
+                  },
+                  "mainTopic": {
+                    "type": "string",
+                    "description": "The main topic of the community."
+                  },
+                  "sunTopics": {
+                    "type": "array",
+                    "description": "The sub topics of the community.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "communityDescription": {
+                    "type": "string",
+                    "description": "The description of the community. (maximum 500 Characters)"
+                  },
+                  "sendWelcomeMessage": {
+                    "type": "boolean",
+                    "description": "If that community send a welcome message to the new members or not."
+                  },
+                  "welcomeMessage": {
+                    "type": "string",
+                    "description": "The welcome message of the community. (if sendWelcomeMessage is true) (maximum 5000 Characters)"
+                  },
+                  "language": {
+                    "type": "string",
+                    "description": "The janguage of the community."
+                  },
+                  "Region": {
+                    "type": "string",
+                    "description": "The region of the community."
+                  },
+                  "Type": {
+                    "type": "string",
+                    "description": "The type of the community.",
+                    "enum": ["Public", "Restricted", "Private"]
+                  },
+                  "NSFW": {
+                    "type": "boolean",
+                    "description": "The community allow +18 content or not."
+                  },
+                  "acceptingRequestsToJoin": {
+                    "type": "boolean",
+                    "description": "Display a button on your private subreddit that allows users to request to join. (if the type is private only)"
+                  },
+                  "acceptingRequestsToPost": {
+                    "type": "boolean",
+                    "description": "Accept posts or not (if the type is restricted only)"
+                  },
+                  "approvedUsersHaveTheAbilityTo": {
+                    "type": "string",
+                    "description": "Approved users have the ability to (if the type is restricted only)",
+                    "enum": ["Post only", "Comment only", "Post & Comment"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "security": [
