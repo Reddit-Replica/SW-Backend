@@ -271,6 +271,7 @@ async function checkOnCategory(category) {
     throw error;
   }
 }
+
 export async function checkJoining(user, subredditName) {
   for (const subreddit of user.joinedSubreddits) {
     if (subreddit.name === subredditName) {
@@ -284,3 +285,29 @@ export async function checkJoining(user, subredditName) {
   throw error;
 }
 
+export async function checkForPrivateSubreddits(user, subreddit) {
+
+if (subreddit.type==="Private"){
+  for (const smallSubreddit of user.joinedSubreddits) {
+    if (smallSubreddit.name === subreddit.title) {
+      return true;
+    }
+  }
+} else {
+  return true;
+}
+  let error = new Error(
+    `You haven't joined ${subredditName} yet , to do this action you have to join it first`
+  );
+  error.statusCode = 401;
+  throw error;
+}
+
+export async function makeSubredditFavorite(user,subredditName,subredditId){
+  user.favoritesSubreddits.push({
+    subredditId:subredditId,
+    name:subredditName,
+  });
+  await user.save();
+
+}
