@@ -17,6 +17,7 @@ export async function getSubredditDetails(
   let isModerator = false;
 
   const details = {
+    subredditId: subreddit._id,
     title: subreddit.title,
     nsfw: subreddit.nsfw,
     nickname: subreddit.viewName,
