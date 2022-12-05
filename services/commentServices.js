@@ -26,6 +26,50 @@ export async function checkPostId(postId) {
 }
 
 /**
+ * Function used to check if the id of the comment is valid and if the comment exists in the database
+ *
+ * @param {String} commentId Id of the comment to check
+ * @returns {Object} Comment with that id
+ */
+export async function checkCommentId(commentId) {
+  if (!mongoose.Types.ObjectId.isValid(commentId)) {
+    let error = new Error("Invalid comment id");
+    error.statusCode = 400;
+    throw error;
+  }
+  const comment = await Comment.findById(commentId);
+  if (!comment || comment.deletedAt) {
+    let error = new Error("Can not find a comment with that id");
+    error.statusCode = 400;
+    throw error;
+  }
+  return comment;
+}
+
+/**
+ * Function used to check if the id of the user is valid and if the user exists in the database,
+ * then return the comment lists for that user
+ *
+ * @param {String} loggedInUserId Id of the user to check
+ * @returns {Object} user with that id
+ */
+export async function checkloggedInUser(loggedInUserId) {
+  //get the logged in user
+  let loggedInUser = null;
+  if (loggedInUserId) {
+    if (!mongoose.Types.ObjectId.isValid(loggedInUserId)) {
+      let error = new Error("Invalid id from the token");
+      error.statusCode = 400;
+      throw error;
+    }
+    loggedInUser = await User.findById(loggedInUserId).select(
+      "upvotedComments downvotedComments followedComments savedComments"
+    );
+  }
+  return loggedInUser;
+}
+
+/**
  * Function used to prepare the comment response that will be send to the user,
  * and also check if the logged in user saved, followed, or vote that comment
  *
@@ -97,26 +141,13 @@ function prepareComment(comment, user, checkChildren) {
  * then sort, match, and limit them, then finally save the last id so that it can
  * be used next time to get different results.
  *
- * @param {String} loggedInUserId Id of the logged in user
+ * @param {String} loggedInUser Logged in user object
  * @param {Object} post Post that contains the comments wanted
  * @param {Object} listingParams Listing parameters that was in the query of the request
  * @returns The response to that request containing [statusCode, data]
  */
 // eslint-disable-next-line max-statements
-export async function commentTreeListing(loggedInUserId, post, listingParams) {
-  //get the logged in user
-  let loggedInUser = null;
-  if (loggedInUserId) {
-    if (!mongoose.Types.ObjectId.isValid(loggedInUserId)) {
-      let error = new Error("Invalid id from the token");
-      error.statusCode = 400;
-      throw error;
-    }
-    loggedInUser = await User.findById(loggedInUserId).select(
-      "upvotedComments downvotedComments followedComments savedComments"
-    );
-  }
-
+export async function commentTreeListing(loggedInUser, post, listingParams) {
   // prepare the listing parameters
   const listingResult = await commentListing(listingParams);
 
@@ -125,6 +156,61 @@ export async function commentTreeListing(loggedInUserId, post, listingParams) {
     parentType: "post",
     parentId: post._id,
     level: 1,
+  })
+    .populate("children")
+    .sort(listingResult.sort)
+    .limit(listingResult.limit);
+
+  // prepare the body
+  let children = [];
+  for (const i in result) {
+    const prepareResult = prepareComment(result[i], loggedInUser, true);
+    children.push(prepareResult);
+  }
+
+  let after = "",
+    before = "";
+  if (result.length) {
+    after = result[result.length - 1]._id.toString();
+    before = result[0]._id.toString();
+  }
+
+  return {
+    statusCode: 200,
+    data: {
+      before,
+      after,
+      children,
+    },
+  };
+}
+
+/**
+ * Function that list the children of a certain comment from a certain post
+ * then sort, match, and limit them, then finally save the last id so that it can
+ * be used next time to get different results.
+ *
+ * @param {String} loggedInUser Logged in user object
+ * @param {Object} post Post that contains the comments wanted
+ * @param {Object} comment Comment to list its children
+ * @param {Object} listingParams Listing parameters that was in the query of the request
+ * @returns The response to that request containing [statusCode, data]
+ */
+// eslint-disable-next-line max-statements
+export async function commentTreeOfCommentListing(
+  loggedInUser,
+  post,
+  comment,
+  listingParams
+) {
+  // prepare the listing parameters
+  const listingResult = await commentListing(listingParams);
+
+  const result = await Comment.find({
+    ...listingResult.find,
+    parentType: "comment",
+    parentId: comment._id,
+    postId: post._id,
   })
     .populate("children")
     .sort(listingResult.sort)
