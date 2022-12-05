@@ -757,7 +757,7 @@ communitiesRouter.patch("/r/:subreddit/make-favorite");
  *      security:
  *       - bearerAuth: []
  */
- communitiesRouter.patch("/r/:subreddit/remove-favorite");
+communitiesRouter.patch("/r/:subreddit/remove-favorite");
 
 /**
  * @swagger

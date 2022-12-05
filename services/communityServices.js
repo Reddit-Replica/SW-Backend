@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable max-statements */
 import Subreddit from "./../models/Community.js";
 import { searchForUserService } from "../services/userServices.js";
@@ -270,3 +271,16 @@ async function checkOnCategory(category) {
     throw error;
   }
 }
+export async function checkJoining(user, subredditName) {
+  for (const subreddit of user.joinedSubreddits) {
+    if (subreddit.name === subredditName) {
+      return true;
+    }
+  }
+  let error = new Error(
+    `You haven't joined ${subredditName} yet , to do this action you have to join it first`
+  );
+  error.statusCode = 401;
+  throw error;
+}
+
