@@ -842,6 +842,14 @@
             "type": "string",
             "description": "Name of the community"
           },
+          "nickname": {
+            "type": "string",
+            "description": "Nickname of the community"
+          },
+          "isModerator": {
+            "type": "boolean",
+            "description": "If that member is a moderator in that subreddit (to view mod tools button)"
+          },
           "category": {
             "type": "string",
             "description": "Category of the community"
@@ -850,10 +858,6 @@
             "type": "number",
             "description": "Number of members of the community"
           },
-          "online": {
-            "type": "number",
-            "description": "Number of online members of the community"
-          },
           "description": {
             "type": "string",
             "description": "A brief description of the community"
@@ -861,34 +865,6 @@
           "dateOfCreation": {
             "type": "string",
             "description": "Date of creating the community"
-          },
-          "flairs": {
-            "type": "array",
-            "description": "list of available flairs to filter by",
-            "items": {
-              "type": "string"
-            }
-          },
-          "rules": {
-            "type": "array",
-            "description": "list of the rules of the subreddit",
-            "items": {
-              "$ref": "#/components/schemas/rules"
-            }
-          },
-          "bans": {
-            "type": "array",
-            "description": "list of the ban questions of the subreddit",
-            "items": {
-              "$ref": "#/components/schemas/bans"
-            }
-          },
-          "moderators": {
-            "type": "array",
-            "description": "list of the moderators of the subreddit",
-            "items": {
-              "$ref": "#/components/schemas/moderator"
-            }
           },
           "isMember": {
             "type": "boolean",
@@ -902,29 +878,19 @@
             "type": "string",
             "description": "Path of the picture of the community"
           },
-          "communityTheme": {
-            "type": "boolean",
-            "description": "True if community theme is on , False if community theme is off"
-          },
           "views": {
             "type": "number",
             "description": "number of views of he community to get the trending search"
           },
           "mainTopic": {
-            "type": "object",
-            "description": "The main topic of the subreddit with its subtopics",
-            "properties": {
-              "topicTitle": {
-                "type": "string",
-                "description": "The title of the topic"
-              },
-              "subtopics": {
-                "type": "array",
-                "description": "the array of subtopics of the community",
-                "items": {
-                  "type": "object"
-                }
-              }
+            "type": "string",
+            "description": "The main topic of the subreddit"
+          },
+          "subtopics": {
+            "type": "array",
+            "description": "the array of subtopics of the community",
+            "items": {
+              "type": "string"
             }
           }
         }
@@ -981,6 +947,10 @@
                   "type": "string",
                   "description": "The author of the comment"
                 },
+                "userImage": {
+                  "type": "string",
+                  "description": "Path of the image of the user who wrote the comment"
+                },
                 "editTime": {
                   "type": "string",
                   "format": "date-time",
@@ -1026,7 +996,7 @@
                 },
                 "children": {
                   "type": "array",
-                  "description": "The replies to that comment (Will be same structure as the current comment)",
+                  "description": "The replies to that comment (Will be same structure as the current comment) [maximum number of children that can be returned = 5]",
                   "items": {
                     "type": "object"
                   }
@@ -1352,6 +1322,10 @@
                     "type": "string",
                     "description": "Comment content (raw markdown text)"
                   },
+                  "postId": {
+                    "type": "string",
+                    "description": "id of the post that will contain the comment"
+                  },
                   "parentId": {
                     "type": "string",
                     "description": "id of the thing being replied to (parent)"
@@ -1363,7 +1337,7 @@
                   },
                   "level": {
                     "type": "number",
-                    "description": "Level of the comment (How deep is it in the comment tree)"
+                    "description": "Level of the comment (How deep is it in the comment tree) [min = 1]"
                   },
                   "subredditName": {
                     "type": "string",
@@ -1411,22 +1385,13 @@
         ]
       }
     },
-    "/r/{subreddit}/comments/{postId}": {
+    "/comments/{postId}": {
       "get": {
         "summary": "Get the comment tree for a given post (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
         "parameters": [
           {
             "in": "path",
-            "name": "subreddit",
-            "description": "The name of the subreddit",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
             "name": "postId",
             "description": "The post id",
             "required": true,
@@ -1468,22 +1433,6 @@
               "default": "best",
               "enum": ["best", "top", "new", "old"]
             }
-          },
-          {
-            "in": "query",
-            "name": "depth",
-            "description": "Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "comment",
-            "description": "Id of a comment in the comment tree to be the highlighted (optional)",
-            "schema": {
-              "type": "integer"
-            }
           }
         ],
         "responses": {
@@ -1522,22 +1471,13 @@
         ]
       }
     },
-    "/r/{subreddit}/comments/{postId}/{commentId}": {
+    "/comments/{postId}/{commentId}": {
       "get": {
         "summary": "Return comment tree of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
         "parameters": [
           {
             "in": "path",
-            "name": "subreddit",
-            "description": "The name of the subreddit",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
             "name": "postId",
             "description": "The post id",
             "required": true,
@@ -1588,22 +1528,6 @@
               "default": "best",
               "enum": ["best", "top", "new", "old"]
             }
-          },
-          {
-            "in": "query",
-            "name": "depth",
-            "description": "Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "highlightedCommentId",
-            "description": "Id of a comment in the comment tree to be highlighted (optional)",
-            "schema": {
-              "type": "integer"
-            }
           }
         ],
         "responses": {
@@ -1642,20 +1566,11 @@
         ]
       }
     },
-    "/r/{subreddit}/comments/{postId}/{commentId}/parent-comments": {
+    "/comments/{postId}/{commentId}/parent-comments": {
       "get": {
         "summary": "Return the parents of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
         "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "The name of the subreddit",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "postId",
@@ -1682,22 +1597,6 @@
               "type": "string",
               "default": "best",
               "enum": ["best", "top", "new", "old"]
-            }
-          },
-          {
-            "in": "query",
-            "name": "depth",
-            "description": "Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "highlightedCommentId",
-            "description": "Id of a comment in the comment tree to be the highlighted (optional)",
-            "schema": {
-              "type": "integer"
             }
           }
         ],
@@ -2327,7 +2226,7 @@
     },
     "/r/{subreddit}": {
       "get": {
-        "summary": "Return all the details of the subreddit",
+        "summary": "Return all the details of the subreddit (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Subreddit"],
         "parameters": [
           {
@@ -2345,12 +2244,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "children": {
-                      "$ref": "#/components/schemas/community"
-                    }
-                  }
+                  "$ref": "#/components/schemas/community"
                 }
               }
             }
@@ -9422,7 +9316,7 @@
     },
     "/r/{subreddit}/about/post-flairs": {
       "get": {
-        "summary": "Returns all post flairs of a subreddit",
+        "summary": "Returns all post flairs of a subreddit (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Posts and comments moderation"],
         "parameters": [
           {
@@ -9602,7 +9496,7 @@
     },
     "/r/{subreddit}/about/post-flairs/{flairId}": {
       "get": {
-        "summary": "Returns details of a specific post flair",
+        "summary": "Returns details of a specific post flair (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Posts and comments moderation"],
         "parameters": [
           {
@@ -10382,7 +10276,7 @@
         ]
       },
       "get": {
-        "summary": "Get the rules for a subreddit.",
+        "summary": "Get the rules for a subreddit. (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Subreddit moderation"],
         "parameters": [
           {
@@ -11923,11 +11817,15 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["accessToken"],
+                "required": ["password", "accessToken"],
                 "properties": {
                   "accessToken": {
                     "type": "string",
                     "description": "Access token from the response of google or facebook"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password entered for verification"
                   }
                 }
               }
@@ -11937,6 +11835,71 @@
         "responses": {
           "200": {
             "description": "Connected successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/disconnect/{type}": {
+      "post": {
+        "summary": "Disconnect google or facebook account",
+        "tags": ["User settings"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "type",
+            "description": "Type of disconnect",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["google", "facebook"]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["password"],
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "description": "Password entered for verification"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Disconnected successfully"
           },
           "400": {
             "description": "The request was invalid. You may refer to response for details around why the request was invalid",
@@ -12446,6 +12409,10 @@
                               "username": {
                                 "type": "string",
                                 "description": "Username of the blocked user"
+                              },
+                              "userImage": {
+                                "type": "string",
+                                "description": "Path of the image of the blocked user"
                               },
                               "blockDate": {
                                 "type": "string",
