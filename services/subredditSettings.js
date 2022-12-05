@@ -29,6 +29,11 @@ export function prepareSubredditSettings(subreddit) {
   return settings;
 }
 
+/**
+ * A function used to validate the settings of the subreddit before updating the subreddit settings and throws an error if the settings is invalid
+ * @param {Object} settings the subreddit settings object
+ * @returns {void}
+ */
 function validateSubredditSettings(settings) {
   if (
     settings.Type === "Private" &&
@@ -61,6 +66,12 @@ function validateSubredditSettings(settings) {
   }
 }
 
+/**
+ * A Service function used to update the subreddit settings
+ * @param {Object} subreddit the subreddit object
+ * @param {Object} settings the subreddit settings object
+ * @returns {void}
+ */
 // eslint-disable-next-line max-statements
 export async function updateSubredditSettings(subreddit, settings) {
   if (!settings.hasOwnProperty("communityDescription")) {
