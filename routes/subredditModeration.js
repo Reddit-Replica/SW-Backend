@@ -38,15 +38,14 @@ const subredditModerationsRouter = express.Router();
  *         communityName:
  *          type: string
  *          description: The name of the community.
- *         communityTopics:
+ *         mainTopic:
+ *          type: string
+ *          description: The main topic of the community.
+ *         sunTopics:
  *          type: array
- *          description: The topics of the community.
+ *          description: The sub topics of the community.
  *          items:
- *           type: object
- *           properties:
- *            topicName:
- *             type: string
- *             description: Name of the topic
+ *           type: string
  *         communityDescription:
  *          type: string
  *          description: The description of the community.
@@ -124,7 +123,8 @@ subredditModerationsRouter.get(
  *      schema:
  *       required:
  *        - communityName
- *        - communityTopics
+ *        - mainTopic
+ *        - sunTopics
  *        - communityDescription
  *        - sendWelcomeMessage
  *        - welcomeMessage
@@ -139,15 +139,14 @@ subredditModerationsRouter.get(
  *         communityName:
  *          type: string
  *          description: The name of the community.
- *         communityTopics:
+ *         mainTopic:
+ *          type: string
+ *          description: The main topic of the community.
+ *         sunTopics:
  *          type: array
- *          description: The topics of the community. (maximum 25 topic)
+ *          description: The sub topics of the community.
  *          items:
- *           type: object
- *           properties:
- *            topicName:
- *             type: string
- *             description: Name of the topic
+ *           type: string
  *         communityDescription:
  *          type: string
  *          description: The description of the community. (maximum 500 Characters)
