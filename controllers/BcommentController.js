@@ -7,6 +7,9 @@ import mongoose from "mongoose";
 import {
   commentTreeListing,
   checkPostId,
+  checkCommentId,
+  checkloggedInUser,
+  commentTreeOfCommentListing,
 } from "../services/commentServices.js";
 
 const createCommentValidator = [
@@ -30,6 +33,21 @@ const getCommentTreeValidator = [
     .not()
     .isEmpty()
     .withMessage("Post id can not be empty"),
+];
+
+const getCommentTreeOfCommentValidator = [
+  param("postId")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Post id can not be empty"),
+  param("commentId")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Comment id can not be empty"),
 ];
 
 // eslint-disable-next-line max-statements
@@ -129,7 +147,34 @@ const commentTree = async (req, res) => {
     const { postId } = req.params;
 
     const post = await checkPostId(postId);
-    const result = await commentTreeListing(req.userId, post, {
+    const user = await checkloggedInUser(req.userId);
+    const result = await commentTreeListing(user, post, {
+      sort,
+      before,
+      after,
+      limit,
+    });
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const commentTreeOfComment = async (req, res) => {
+  try {
+    const { sort, before, after, limit } = req.query;
+    const { postId, commentId } = req.params;
+
+    const post = await checkPostId(postId);
+    const comment = await checkCommentId(commentId);
+    const user = await checkloggedInUser(req.userId);
+    const result = await commentTreeOfCommentListing(user, post, comment, {
       sort,
       before,
       after,
@@ -152,4 +197,6 @@ export default {
   createComment,
   getCommentTreeValidator,
   commentTree,
+  getCommentTreeOfCommentValidator,
+  commentTreeOfComment,
 };
