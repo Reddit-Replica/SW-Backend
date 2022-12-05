@@ -1,20 +1,17 @@
 import { body, param } from "express-validator";
-import Comment from "../models/Comment.js";
-import User from "./../models/User.js";
-import Community from "./../models/Community.js";
-import Post from "./../models/Post.js";
-import mongoose from "mongoose";
 import {
   commentTreeListing,
   checkPostId,
   checkCommentId,
   checkloggedInUser,
   commentTreeOfCommentListing,
+  createCommentService,
 } from "../services/commentServices.js";
 
 const createCommentValidator = [
   body("text").not().isEmpty().withMessage("Text can not be empty"),
   body("parentId").not().isEmpty().withMessage("Parent Id can not be empty"),
+  body("postId").not().isEmpty().withMessage("Post Id can not be empty"),
   body("parentType")
     .not()
     .isEmpty()
@@ -53,91 +50,41 @@ const getCommentTreeOfCommentValidator = [
 // eslint-disable-next-line max-statements
 const createComment = async (req, res) => {
   try {
-    // REFACTOR and add postId and ownerAvatar
-    const { text, parentId, parentType, level, subredditName, haveSubreddit } =
-      req.body;
+    const {
+      text,
+      postId,
+      parentId,
+      parentType,
+      level,
+      subredditName,
+      haveSubreddit,
+    } = req.body;
     const { username, userId } = req.payload;
 
-    if (parentType !== "post" && parentType !== "comment") {
-      return res.status(400).json({ error: "Invalid parent type" });
-    }
+    const post = await checkPostId(postId);
+    const result = await createCommentService(
+      {
+        text,
+        parentId,
+        postId,
+        parentType,
+        level,
+        subredditName,
+        haveSubreddit,
+        username,
+        userId,
+      },
+      post
+    );
 
-    const user = await User.findById(userId);
-    if (!user || user.deletedAt) {
-      return res.status(400).json({ error: "Can not find user with that id" });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(parentId)) {
-      return res.status(400).json({ error: "Invalid parent id" });
-    }
-
-    // if the parent is a post get it
-    let post = {};
-    if (parentType === "post") {
-      post = await Post.findById(parentId);
-      if (!post || post.deletedAt) {
-        return res
-          .status(400)
-          .json({ error: "Can not find post with that id" });
-      }
-    }
-
-    let parentComment = {};
-    if (parentType === "comment") {
-      parentComment = await Comment.findById(parentId);
-      if (!parentComment || parentComment.deletedAt) {
-        return res
-          .status(400)
-          .json({ error: "Can not find comment with that id" });
-      }
-    }
-
-    const commentObject = {
-      parentId: parentId,
-      parentType: parentType,
-      level: level,
-      content: text,
-      ownerUsername: username,
-      ownerId: userId,
-    };
-
-    // check if the subreddit exists
-    if (haveSubreddit) {
-      const subreddit = await Community.findOne({
-        title: subredditName,
-        deletedAt: null,
-      });
-      if (!subreddit) {
-        return res
-          .status(400)
-          .json({ error: "Can not find subreddit with that name" });
-      }
-      commentObject.subredditName = subredditName;
-    }
-
-    const comment = new Comment(commentObject);
-    await comment.save();
-
-    user.comments.push(comment._id);
-    await user.save();
-
-    if (parentType === "post") {
-      const index = post.usersCommented.findIndex(
-        (elem) => elem.toString() === userId
-      );
-      if (index === -1) {
-        post.usersCommented.push(user._id);
-        await post.save();
-      }
-    } else {
-      parentComment.children.push(comment._id);
-      await parentComment.save();
-    }
-
-    res.status(201).json("Comment created successfully");
+    res.status(result.statusCode).json(result.data);
   } catch (error) {
-    console.log(error);
-    res.status(500).json("Internal Server Error");
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
   }
 };
 

@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
+import Subreddit from "../models/Community.js";
 
 /**
  * Function used to check if the id of the post is valid and if the post exists in the database
@@ -67,6 +68,99 @@ export async function checkloggedInUser(loggedInUserId) {
     );
   }
   return loggedInUser;
+}
+
+/**
+ * Function used to create a new comment and check every parameter to be a valid one
+ *
+ * @param {Object} data Data required to create a new comment [text, parentId, postId, parentType, level, subredditName, haveSubreddit, username, userId]
+ * @param {Object} post Post object that we want to add the comment to it
+ * @returns The response to that request containing [statusCode, data]
+ */
+// eslint-disable-next-line max-statements
+export async function createCommentService(data, post) {
+  // check the parent type and id
+  if (data.parentType !== "post" && data.parentType !== "comment") {
+    let error = new Error("Invalid parent type");
+    error.statusCode = 400;
+    throw error;
+  }
+  if (!mongoose.Types.ObjectId.isValid(data.parentId)) {
+    let error = new Error("Invalid parent id");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // check the user id and get the user
+  if (!mongoose.Types.ObjectId.isValid(data.userId)) {
+    let error = new Error("Invalid user id");
+    error.statusCode = 400;
+    throw error;
+  }
+  const user = await User.findById(data.userId);
+  if (!user || user.deletedAt) {
+    let error = new Error("Can not find a user with that id");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // get the parent comment if exist
+  let parentComment = {};
+  if (data.parentType === "comment") {
+    parentComment = await checkCommentId(data.parentId);
+  }
+
+  const commentObject = {
+    parentId: data.parentId,
+    postId: post._id,
+    parentType: data.parentType,
+    level: data.level,
+    content: data.text,
+    ownerUsername: data.username,
+    ownerAvatar: user.avatar,
+    ownerId: data.userId,
+  };
+
+  // check if the subreddit exists
+  if (data.haveSubreddit) {
+    const subreddit = await Subreddit.findOne({
+      title: data.subredditName,
+      deletedAt: null,
+    });
+    if (!subreddit) {
+      let error = new Error("Can not find subreddit with that name");
+      error.statusCode = 400;
+      throw error;
+    }
+    commentObject.subredditName = data.subredditName;
+  }
+
+  const comment = new Comment(commentObject);
+  await comment.save();
+
+  // update the user comments array
+  user.comments.push(comment._id);
+  await user.save();
+
+  // add the comment to children of parent comment
+  if (data.parentType === "comment") {
+    parentComment.children.push(comment._id);
+    await parentComment.save();
+  }
+
+  // add the user to the commented users in that post
+  const index = post.usersCommented.findIndex(
+    (elem) => elem.toString() === data.userId
+  );
+  if (index === -1) {
+    post.usersCommented.push(user._id);
+    await post.save();
+  }
+
+  return {
+    statusCode: 201,
+    data: "Comment created successfully",
+  };
 }
 
 /**
