@@ -15,7 +15,7 @@ const subredditFlairsRouter = express.Router();
  * @swagger
  * /r/{subreddit}/about/post-flairs:
  *  get:
- *      summary: Returns all post flairs of a subreddit
+ *      summary: Returns all post flairs of a subreddit (Here the token is optional if the user is logged in add a token if not don't add it)
  *      tags: [Posts and comments moderation]
  *      parameters:
  *          - in: path
@@ -74,11 +74,11 @@ const subredditFlairsRouter = express.Router();
  */
 subredditFlairsRouter.get(
   "/r/:subreddit/about/post-flairs",
-  verifyAuthToken,
+  // verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
   // TODO Think whether i should verify moderator or not? (maybe a user will need that details while creating a post)
-  verifyAuthTokenModerator,
+  // verifyAuthTokenModerator,
   subredditFlairsController.getAllFlairs
 );
 
@@ -86,7 +86,7 @@ subredditFlairsRouter.get(
  * @swagger
  * /r/{subreddit}/about/post-flairs/{flairId}:
  *  get:
- *      summary: Returns details of a specific post flair
+ *      summary: Returns details of a specific post flair (Here the token is optional if the user is logged in add a token if not don't add it)
  *      tags: [Posts and comments moderation]
  *      parameters:
  *          - in: path
@@ -146,11 +146,11 @@ subredditFlairsRouter.get(
  */
 subredditFlairsRouter.get(
   "/r/:subreddit/about/post-flairs/:flairId",
-  verifyAuthToken,
+  // verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
   // TODO Think whether i should verify moderator or not? (maybe a user will need that details while creating a post)
-  verifyAuthTokenModerator,
+  // verifyAuthTokenModerator,
   subredditFlairsController.getFlairDetails
 );
 
@@ -442,7 +442,14 @@ subredditFlairsRouter.post("/r/:subreddit/about/post-flairs-order");
  *      security:
  *          - bearerAuth: []
  */
-subredditFlairsRouter.get("/r/:subreddit/about/post-flairs-settings");
+subredditFlairsRouter.get(
+  "/r/:subreddit/about/post-flairs-settings",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditFlairsController.getFlairsSettings
+);
 
 /**
  * @swagger
@@ -491,6 +498,13 @@ subredditFlairsRouter.get("/r/:subreddit/about/post-flairs-settings");
  *      security:
  *          - bearerAuth: []
  */
-subredditFlairsRouter.post("/r/:subreddit/about/post-flairs-settings");
+subredditFlairsRouter.post(
+  "/r/:subreddit/about/post-flairs-settings",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditFlairsController.editFlairsSettings
+);
 
 export default subredditFlairsRouter;

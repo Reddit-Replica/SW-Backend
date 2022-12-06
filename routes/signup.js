@@ -270,7 +270,7 @@ signupRouter.post(
  *     summary: Get an available random username used to create a new account
  *     tags: [Sign Up]
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: count
  *         description: number of random usernames you want to get
  *         required: true

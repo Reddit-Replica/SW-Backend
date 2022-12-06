@@ -122,6 +122,19 @@ const userSchema = mongoose.Schema({
       },
     },
   ],
+  favoritesSubreddits: [
+    {
+      subredditId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
   ownedSubreddits: [
     {
       subredditId: {
@@ -210,8 +223,11 @@ const userSchema = mongoose.Schema({
   ],
   blockedUsers: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+      blockedUserId: { type: Schema.Types.ObjectId, ref: "User" },
+      blockDate: {
+        type: Date,
+        required: true,
+      },
     },
   ],
   followers: [
@@ -246,26 +262,13 @@ const userSchema = mongoose.Schema({
   ],
   conversations: [
     {
-      latestDate: {
-        type: Date,
-        required: true,
+      conversationId: {
+        type: Schema.Types.ObjectId,
+        ref: "Conversation",
       },
-      subject: {
+      with: {
         type: String,
-        required: true,
       },
-      username: {
-        type: String,
-        required: true,
-      },
-      messages: [
-        {
-          messageID: {
-            type: Schema.Types.ObjectId,
-            ref: "Message",
-          },
-        },
-      ],
     },
   ],
 });

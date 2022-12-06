@@ -1,7 +1,10 @@
 /* eslint-disable max-len */
-import Subreddit from "./../models/Community.js";
-import User from "./../models/User.js";
 import { body } from "express-validator";
+import {
+  addMention,
+  addMessage,
+  validateMessage,
+} from "../services/MessageServices.js";
 
 //CHECKING ON MESSAGE CONTENT
 const messageValidator = [
@@ -20,42 +23,38 @@ const messageValidator = [
     .not()
     .isEmpty()
     .withMessage("receiver username can not be empty"),
-  body("subject")
+  body("type")
     .trim()
     .not()
     .isEmpty()
-    .withMessage("subject can not be empty"),
+    .withMessage("type can not be empty")
+    .isIn(["Mentions", "Messages"])
+    .withMessage("message type must be either Mentions or Messages"),
 ];
 
-//CREATE SUBREDDIT
-// eslint-disable-next-line max-statements
 const createMessage = async (req, res) => {
   try {
-    //MAKE THE USER OWNER OF THE SUBREDDIT
-    const moderator = await User.findById(creatorId);
-    const addedSubreddit = {
-      subredditId: subreddit.id,
-      name: title,
-    };
-    moderator.ownedSubreddits.push(addedSubreddit);
-    await moderator.save();
-    moderator.joinedSubreddits.push(addedSubreddit);
-    await moderator.save();
-    //RETURN RESPONSE
-    return res.status(201).send({
-      subreddit: subreddit,
-    });
+    //ADDING NEW MESSAGE
+    await validateMessage(req);
+    if (req.msg.type === "Messages") {
+      await addMessage(req);
+    }
+    if (req.msg.type === "Mentions") {
+      await addMention(req);
+    }
+    return res.status(201).json("Your message is sent successfully");
   } catch (err) {
-    if (err.cause) {
-      return res.status(err.cause).json({
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
         error: err.message,
       });
     } else {
-      return res.status(500).json("Internal Server Error");
+      return res.status(500).json("Server Error");
     }
   }
 };
 
 export default {
   createMessage,
+  messageValidator,
 };

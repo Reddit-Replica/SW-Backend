@@ -55,7 +55,10 @@ describe("Testing user services functions", () => {
     await userToAction.save();
   });
   afterAll(async () => {
-    await User.deleteMany({});
+    await user.remove();
+    await mainUser.remove();
+    await userToAction.remove();
+    await subreddit.remove();
     await closeDatabaseConnection();
   });
 
@@ -89,7 +92,6 @@ describe("Testing user services functions", () => {
     try {
       await getUserFromJWTService("invalid id");
     } catch (error) {
-      console.log(error);
       expect(error.statusCode).toEqual(400);
       expect(error.message).toEqual("Invalid id from the token");
     }

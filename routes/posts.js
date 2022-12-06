@@ -195,7 +195,7 @@ postRouter.post("/clear-suggested-sort");
  * @swagger
  * /submit:
  *  post:
- *      summary: Submit or share a post to a subreddit. The request body could be json in case there are no images and videos submitted with the post but if there is, then it has to be FormData and the image files will be placed in 'images' and video files will be given in 'videos' along with their captions in imageCaptions and videoCaptions. The kind can also be 'post' in case of sharing a post because it's content will be another post basically and the id of the post being shared is given in the 'sharePostId' field. A hybrid kind means that it can contain text, links, images and videos and an index will be associated with each entry to save the order of these fields and return them in the same order when viewing a post.
+ *      summary: Submit or share a post to a subreddit. The request body could be json in case the kind is not image/video, else it has to be FormData with image files placed in an array "images" as well as imageCaptions and imageLinks and video placed in "video". The kind can also be 'post' in case of sharing a post because it's content will be another post basically and the id of the post being shared is given in the 'sharePostId' field. A hybrid kind means that it can contain text, links, images and videos.
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -206,6 +206,13 @@ postRouter.post("/clear-suggested-sort");
  *      responses:
  *          201:
  *              description: Post submitted successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              id:
+ *                                  type: string
+ *                                  description: New post ID
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:

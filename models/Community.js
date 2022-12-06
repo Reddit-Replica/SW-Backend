@@ -6,6 +6,10 @@ const communitySchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  viewName: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
   },
@@ -37,6 +41,18 @@ const communitySchema = mongoose.Schema({
       ref: "Flair",
     },
   ],
+  flairSettings: {
+    enablePostFlairInThisCommunity: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    allowUsersToAssignTheirOwn: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+  },
   dateOfCreation: {
     type: Date,
     required: true,
@@ -223,6 +239,41 @@ const communitySchema = mongoose.Schema({
       ref: "Comment",
     },
   ],
+
+  subredditSettings: {
+    sendWelcomeMessage: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    welcomeMessage: {
+      type: String,
+    },
+    language: {
+      type: String,
+      required: true,
+      default: "English",
+    },
+    region: {
+      type: String,
+    },
+    acceptingRequestsToJoin: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    acceptingRequestsToPost: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    approvedUsersHaveTheAbilityTo: {
+      type: String,
+      required: true,
+      default: "Post only",
+    },
+  },
+
   //NEEDS TO BE AUTO INCREMENT
   //Is used to get random subreddit from categories
   randomIndex: {

@@ -59,12 +59,15 @@ export async function blockUserService(user, userToBlock, block) {
 
   // get the index of the id of the user to be blocked if he was blocked before
   const index = user.blockedUsers.findIndex(
-    (elem) => elem.toString() === userToBlock._id.toString()
+    (elem) => elem.blockedUserId.toString() === userToBlock._id.toString()
   );
 
   if (block) {
     if (index === -1) {
-      user.blockedUsers.push(userToBlock._id);
+      user.blockedUsers.push({
+        blockedUserId: userToBlock._id,
+        blockDate: Date.now(),
+      });
       await user.save();
     }
     return {
@@ -182,7 +185,10 @@ export async function getUserAboutDataService(username, loggedInUserId) {
   let blocked = false,
     followed = false;
   if (loggedInUser) {
-    blocked = loggedInUser.blockedUsers.includes(user._id);
+    const index = loggedInUser.blockedUsers.findIndex(
+      (elem) => elem.blockedUserId.toString() === user._id.toString()
+    );
+    blocked = index !== -1;
 
     // eslint-disable-next-line new-cap
     followed = user.followers.includes(mongoose.Types.ObjectId(loggedInUserId));
