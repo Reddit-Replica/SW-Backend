@@ -7,9 +7,13 @@ import {
   searchForPost,
   validateFollowPost,
   validateSavedPost,
+  saveComment,
+  unSaveComment,
+  searchForComment,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
-
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//FOLLOW
 const followOrUnfollowPost = async (req, res) => {
   try {
     await validateFollowPost(req);
@@ -32,7 +36,8 @@ const followOrUnfollowPost = async (req, res) => {
     }
   }
 };
-
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//SAVE
 const savePostOrComment = async (req, res) => {
   try {
     await validateSavedPost(req);
@@ -42,7 +47,10 @@ const savePostOrComment = async (req, res) => {
     if (type === "post") {
       const post = await searchForPost(req.body.id);
       result = await savePost(post, user);
-    } else {
+    }
+    if (type === "comment") {
+      const comment = await searchForComment(req.body.id);
+      result - (await saveComment(comment, user));
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
@@ -55,7 +63,8 @@ const savePostOrComment = async (req, res) => {
     }
   }
 };
-
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//UNSAVE
 const unsavePostOrComment = async (req, res) => {
   try {
     await validateSavedPost(req);
@@ -65,7 +74,10 @@ const unsavePostOrComment = async (req, res) => {
     if (type === "post") {
       const post = await searchForPost(req.body.id);
       result = await unSavePost(post, user);
-    } else {
+    }
+    if (type === "comment") {
+      const comment = await searchForComment(req.body.id);
+      result - (await unSaveComment(comment, user));
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
