@@ -17,10 +17,15 @@ import {
   unmarkPostAsSpam,
   markPostAsSpam,
   validateSpam,
-  markCommentAsSpam,unmarkCommentAsSpam,
+  markCommentAsSpam,
+  unmarkCommentAsSpam,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
-import { searchForMessage,markMessageAsSpam,unmarkMessageAsSpam } from "../services/messageServices.js";
+import {
+  searchForMessage,
+  markMessageAsSpam,
+  unmarkMessageAsSpam,
+} from "../services/messageServices.js";
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //FOLLOW
 const followOrUnfollowPost = async (req, res) => {
@@ -152,11 +157,11 @@ const markAsSpam = async (req, res) => {
     }
     if (type === "comment") {
       const comment = await searchForComment(req.body.id);
-      result=await markCommentAsSpam(comment,user);
+      result = await markCommentAsSpam(comment, user);
     }
     if (type === "message") {
-        const message=await searchForMessage(req.body.id);
-        result=await markMessageAsSpam(message,user);
+      const message = await searchForMessage(req.body.id);
+      result = await markMessageAsSpam(message, user);
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
@@ -184,11 +189,11 @@ const unmarkAsSpam = async (req, res) => {
     }
     if (type === "comment") {
       const comment = await searchForComment(req.body.id);
-      result=await unmarkCommentAsSpam(comment,user);
+      result = await unmarkCommentAsSpam(comment, user);
     }
     if (type === "message") {
-        const message=await searchForMessage(req.body.id);
-        result=await unmarkMessageAsSpam(message,user);
+      const message = await searchForMessage(req.body.id);
+      result = await unmarkMessageAsSpam(message, user);
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {

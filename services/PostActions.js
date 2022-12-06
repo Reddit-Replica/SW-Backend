@@ -3,6 +3,7 @@
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 import { searchForSubreddit } from "./communityServices.js";
+import { searchForUserService } from "./userServices.js";
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //GENERAL FUNCTION
 /**
@@ -561,5 +562,110 @@ export async function unmarkCommentAsSpam(comment, user) {
   return {
     statusCode: 200,
     message: "Comment is unspammed successfully",
+  };
+}
+
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//UPVOTING A POST
+/**
+ * This function is used to check if the given post exists in user's upVoted posts
+ * @param {Object} post the post object that we will check for
+ * @param {Object} user the user object that we will search in
+ * @returns {Boolean} detects if the post exists or not
+ */
+function checkForUpVotedPosts(post, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  for (const smallPost of user.upvotedPosts) {
+    if (post.id === smallPost.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+/**
+ * This function is used to check if the given post exists in user's downVoted posts
+ * @param {Object} post the post object that we will check for
+ * @param {Object} user the user object that we will search in
+ * @returns {Boolean} detects if the post exists or not
+ */
+function checkForDownVotedPosts(post, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  for (const smallPost of user.downvotedPosts) {
+    if (post.id === smallPost.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * This function is used to upvote a post
+ * @param {Object} post the post object that we will upvote
+ * @param {Object} user the user object that will upvote the post
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function upVoteAPost(post, user) {
+  const upvoted = checkForUpVotedPosts(post, user);
+  const downvoted = checkForDownVotedPosts(post, user);
+  const postWriter = await searchForUserService(post.ownerUsername);
+  if (upvoted) {
+    let error = new Error("This post is already upvoted");
+    error.statusCode = 409;
+    throw error;
+  }
+  if (downvoted) {
+    user.downvotedPosts = user.downvoted.filter((smallPost) => {
+      return smallPost.toString() !== post.id;
+    });
+    post.numberOfDownvotes--;
+    postWriter.karma++;
+  }
+  post.numberOfUpvotes++;
+  user.upvotedPosts.push(post.id);
+  postWriter.karma++;
+  await post.save();
+  await user.save();
+  await postWriter.save();
+  return {
+    statusCode: 200,
+    message: "Comment is spammed successfully",
+  };
+}
+
+/**
+ * This function is used to downVote a post
+ * @param {Object} post the post object that we will downVote
+ * @param {Object} user the user object that will downVote the post
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function downVoteAPost(post, user) {
+  const upvoted = checkForUpVotedPosts(post, user);
+  const downvoted = checkForDownVotedPosts(post, user);
+  const postWriter = await searchForUserService(post.ownerUsername);
+  if (downvoted) {
+    let error = new Error("This post is already downvoted");
+    error.statusCode = 409;
+    throw error;
+  }
+  if (upvoted) {
+    user.upVoteAPost = user.upvoted.filter((smallPost) => {
+      return smallPost.toString() !== post.id;
+    });
+    post.numberOfDownvotes--;
+    postWriter.karma--;
+  }
+  post.numberOfUpvotes++;
+  user.downvotedPosts.push(post.id);
+  postWriter.karma--;
+  if (postWriter.karma <= 0) {
+    postWriter.karma = 1;
+  }
+  await post.save();
+  await user.save();
+  await postWriter.save();
+
+  return {
+    statusCode: 200,
+    message: "Comment is spammed successfully",
   };
 }
