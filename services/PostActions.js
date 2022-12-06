@@ -2,6 +2,7 @@
 /* eslint-disable max-statements */
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
+import { searchForSubreddit } from "./communityServices.js";
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //GENERAL FUNCTION
 /**
@@ -24,6 +25,16 @@ export async function searchForPost(postId) {
     throw error;
   }
   return post;
+}
+export async function isUserMod(post,user) {
+    const subredditName=post.subredditName;
+    const subreddit=searchForSubreddit(subredditName);
+    for (const moderator of subreddit.moderators) {
+        if (moderator.username===user.username){
+            return true;
+        }
+    }
+    return false;
 }
 /**
  * This function is used to search for a comment
@@ -63,6 +74,37 @@ export async function validateSavedPost(req) {
     let error = new Error(
       "you must enter if you want to saved a post or a comment"
     );
+    error.statusCode = 400;
+    throw error;
+  }
+  if (req.body.type !== "post" && req.body.type !== "comment") {
+    let error = new Error("type must be post or comment");
+    error.statusCode = 400;
+    throw error;
+  }
+}
+
+export async function validateSpam(req) {
+  if (!req.body.id) {
+    let error = new Error(
+      "you must enter the id of the post or comment or message"
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+  if (req.body.type === undefined) {
+    let error = new Error(
+      "you must enter if you want to saved a post or a comment or a message"
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+  if (
+    req.body.type !== "post" &&
+    req.body.type !== "comment" &&
+    req.body.type !== "message"
+  ) {
+    let error = new Error("type must be post or comment or message");
     error.statusCode = 400;
     throw error;
   }
@@ -362,7 +404,7 @@ export async function unhideAPost(post, user) {
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------
-//MART POSTS AS SPAM
+//MARk POSTS AS SPAM
 /**
  * This function is used to check if the given post exists in user's hidden posts
  * @param {Object} post the post object that we will check for
@@ -389,18 +431,25 @@ export async function markPostAsSpam(post, user) {
   //CHECK IF THE POST IS ALREADY HIDDEN
   const spammed = checkForSpammedPosts(post, user);
   if (spammed) {
-    let error = new Error("This Post is already hidden");
+    let error = new Error("This Post is already spammed");
     error.statusCode = 409;
     throw error;
   }
   //ADD THE POST TO USER'S HIDDEN POSTS
   user.spammedPosts.push(post.id);
   await user.save();
-  post.markedSpam=true;
-
+  post.markedSpam = true;
+  /*const moderator=isUserMod(post,user);
+  if (moderator){
+post.moderation.spam={
+    spammedBy:user.username,
+    spammedDate:Date.now(),
+};
+  }*/
+  post.save();
   return {
     statusCode: 200,
-    message: "Post is hidden successfully",
+    message: "Post is spammed successfully",
   };
 }
 
@@ -410,22 +459,27 @@ export async function markPostAsSpam(post, user) {
  * @param {Object} user the user object that will ummark the post as spam
  * @returns {Object} success object that contains the message and status code
  */
- export async function unmarkPostAsSpam(post, user) {
-    //CHECK IF THE POST IS ALREADY HIDDEN
-    const spammed = checkForSpammedPosts(post, user);
-    if (spammed) {
-      let error = new Error("This Post is already hidden");
-      error.statusCode = 409;
-      throw error;
-    }
-    //ADD THE POST TO USER'S HIDDEN POSTS
-    user.spammedPosts.push(post.id);
-    await user.save();
-    post.markedSpam=true;
-  
-    return {
-      statusCode: 200,
-      message: "Post is hidden successfully",
-    };
+export async function unmarkPostAsSpam(post, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  const spammed = checkForSpammedPosts(post, user);
+  if (!spammed) {
+    let error = new Error("This Post is already unspammed");
+    error.statusCode = 409;
+    throw error;
   }
-
+  //ADD THE POST TO USER'S HIDDEN POSTS
+  user.spammedPosts = user.spammedPosts.filter((smallPost) => {
+    return smallPost.toString() !== post.id;
+  });
+  await user.save();
+  post.markedSpam = false;
+    /*const moderator=isUserMod(post,user);
+  if (moderator){
+    post.moderation.spam={};
+  }*/
+  post.save();
+  return {
+    statusCode: 200,
+    message: "Post is unspammed successfully",
+  };
+}

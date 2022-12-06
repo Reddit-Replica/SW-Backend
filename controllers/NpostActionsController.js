@@ -14,6 +14,9 @@ import {
   hideAPost,
   unhideAPost,
   validateHidePost,
+  unmarkPostAsSpam,
+  markPostAsSpam,
+  validateSpam,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
 //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -133,6 +136,58 @@ const unhidePost = async (req, res) => {
     }
   }
 };
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//markAsSpam
+const markAsSpam = async (req, res) => {
+  try {
+    await validateSpam(req);
+    const user = await searchForUserService(req.payload.username);
+    const type = req.body.type;
+    let result;
+    if (type === "post") {
+      const post = await searchForPost(req.body.id);
+      result = await markPostAsSpam(post, user);
+    }
+    if (type === "comment") {
+      const comment = await searchForComment(req.body.id);
+    }
+    if (type === "message") {
+    }
+
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Server Error");
+    }
+  }
+};
+
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//unmarkAsSpam
+const unmarkAsSpam = async (req, res) => {
+  try {
+    await validateSpam(req);
+    const user = await searchForUserService(req.payload.username);
+   // const type = req.body.type;
+    let result;
+    const post = await searchForPost(req.body.id);
+    result = await unmarkPostAsSpam(post, user);
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Server Error");
+    }
+  }
+};
 
 export default {
   followOrUnfollowPost,
@@ -140,4 +195,6 @@ export default {
   unsavePostOrComment,
   hidePost,
   unhidePost,
+  markAsSpam,
+  unmarkAsSpam,
 };

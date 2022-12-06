@@ -99,7 +99,7 @@ router.delete("/delete");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/mark-spam");
+router.post("/mark-spam", verifyAuthToken, postActionsController.markAsSpam);
 
 /**
  * @swagger
@@ -146,7 +146,11 @@ router.post("/mark-spam");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unmark-spam");
+router.post(
+  "/unmark-spam",
+  verifyAuthToken,
+  postActionsController.unmarkAsSpam
+);
 
 /**
  * @swagger
