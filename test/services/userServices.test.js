@@ -34,6 +34,7 @@ describe("Testing user services functions", () => {
 
     subreddit = new Subreddit({
       title: "Subreddit",
+      viewName: "Subreddit",
       category: "Sports",
       type: "Public",
       owner: {
