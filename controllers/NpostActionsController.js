@@ -17,6 +17,7 @@ import {
   unmarkPostAsSpam,
   markPostAsSpam,
   validateSpam,
+  markCommentAsSpam,unmarkCommentAsSpam,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
 //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -150,8 +151,10 @@ const markAsSpam = async (req, res) => {
     }
     if (type === "comment") {
       const comment = await searchForComment(req.body.id);
+      result=await markCommentAsSpam(comment,user);
     }
     if (type === "message") {
+        const message=await searchForMessage(req.body.id);
     }
 
     return res.status(result.statusCode).json(result.message);
@@ -172,7 +175,7 @@ const unmarkAsSpam = async (req, res) => {
   try {
     await validateSpam(req);
     const user = await searchForUserService(req.payload.username);
-   // const type = req.body.type;
+    // const type = req.body.type;
     let result;
     const post = await searchForPost(req.body.id);
     result = await unmarkPostAsSpam(post, user);

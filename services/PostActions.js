@@ -26,15 +26,15 @@ export async function searchForPost(postId) {
   }
   return post;
 }
-export async function isUserMod(post,user) {
-    const subredditName=post.subredditName;
-    const subreddit=searchForSubreddit(subredditName);
-    for (const moderator of subreddit.moderators) {
-        if (moderator.username===user.username){
-            return true;
-        }
+export async function isUserMod(post, user) {
+  const subredditName = post.subredditName;
+  const subreddit = searchForSubreddit(subredditName);
+  for (const moderator of subreddit.moderators) {
+    if (moderator.username === user.username) {
+      return true;
     }
-    return false;
+  }
+  return false;
 }
 /**
  * This function is used to search for a comment
@@ -473,7 +473,7 @@ export async function unmarkPostAsSpam(post, user) {
   });
   await user.save();
   post.markedSpam = false;
-    /*const moderator=isUserMod(post,user);
+  /*const moderator=isUserMod(post,user);
   if (moderator){
     post.moderation.spam={};
   }*/
@@ -481,5 +481,85 @@ export async function unmarkPostAsSpam(post, user) {
   return {
     statusCode: 200,
     message: "Post is unspammed successfully",
+  };
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//MARK COMMENTS AS SPAM
+/**
+ * This function is used to check if the given post exists in user's hidden posts
+ * @param {Object} post the post object that we will check for
+ * @param {Object} user the user object that we will search in
+ * @returns {Boolean} detects if the post exists or not
+ */
+function checkForSpammedComments(comment, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  for (const smallComment of user.spammedComments) {
+    if (comment.id === smallComment.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * This function is used to mark a post as a spam from a user
+ * @param {Object} post the post object that we will mark as spam
+ * @param {Object} user the user object that will mark the post as spam
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function markCommentAsSpam(comment, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  const spammed = checkForSpammedComments(comment, user);
+  if (spammed) {
+    let error = new Error("This Comment is already spammed");
+    error.statusCode = 409;
+    throw error;
+  }
+  //ADD THE POST TO USER'S HIDDEN POSTS
+  user.spammedComments.push(comment.id);
+  await user.save();
+  comment.markedSpam = true;
+  /*const moderator=isUserMod(post,user);
+    if (moderator){
+  post.moderation.spam={
+      spammedBy:user.username,
+      spammedDate:Date.now(),
+  };
+    }*/
+  comment.save();
+  return {
+    statusCode: 200,
+    message: "Comment is spammed successfully",
+  };
+}
+
+/**
+ * This function is used to unmark a post as a spam from a user
+ * @param {Object} post the post object that we will ummark as spam
+ * @param {Object} user the user object that will ummark the post as spam
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function unmarkCommentAsSpam(comment, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  const spammed = checkForSpammedComments(comment, user);
+  if (!spammed) {
+    let error = new Error("This comment is already unspammed");
+    error.statusCode = 409;
+    throw error;
+  }
+  //ADD THE POST TO USER'S HIDDEN POSTS
+  user.spammedComments = user.spammedComments.filter((smallComment) => {
+    return smallComment.toString() !== comment.id;
+  });
+  await user.save();
+  comment.markedSpam = false;
+  /*const moderator=isUserMod(post,user);
+    if (moderator){
+      post.moderation.spam={};
+    }*/
+  comment.save();
+  return {
+    statusCode: 200,
+    message: "Comment is unspammed successfully",
   };
 }
