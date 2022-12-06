@@ -74,9 +74,10 @@ const messageSchema = mongoose.Schema({
     required: true,
     default: false,
   },
-  spamsCount: {
-    type: Number,
-    default: 0,
+  isSpam: {
+    type: Boolean,
+    default: false,
+    required:true,
   },
 });
 

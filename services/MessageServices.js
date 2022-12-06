@@ -271,3 +271,36 @@ export async function validateMessage(req) {
     }
     req.msg = msg;
 }
+
+export async function searchForMessage(messageId) {
+  const msg=await Message.findById(messageId);
+  if (!msg || msg.deletedAt){
+      let error = new Error("Couldn't find a message with that Id");
+      error.statusCode = 404;
+      throw error;
+  }
+  return msg;
+}
+
+export async function markMessageAsSpam(message, user) {
+  // WE CHECK OF THE RECEIVER OF THE MSG IS THE ONE THAT MAKES THE REPORT OR NOT
+  if (message.isReceiverUser) {
+    if (!msg.receiverUsername===user.username){
+      let err = new Error("You can't spam this messages, you are not the receiver");
+      err.statusCode=400;
+      throw err;
+    }
+    //SHOULD BE ADDED TO SPAMMED MESSAGES LIST TO THE ADMIN
+    msg.isSpam=true;
+    await msg.save();
+    return {
+      statusCode: 200,
+      message: "Message is Spammed",
+    };
+  } else {
+    let err = new Error("You can't spam this message it was sent to subreddit");
+    err.statusCode=400;
+    throw err;
+
+  }
+}

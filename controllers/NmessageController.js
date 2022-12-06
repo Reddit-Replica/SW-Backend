@@ -3,7 +3,7 @@ import { body } from "express-validator";
 import {
   addMention,
   addMessage,
-  validateMessage,
+  validateMessage,markMessageAsSpam,searchForMessage
 } from "../services/MessageServices.js";
 
 //CHECKING ON MESSAGE CONTENT
@@ -54,7 +54,13 @@ const createMessage = async (req, res) => {
   }
 };
 
+const markMsgAsSpam=async (req,res)=>{
+  
+
+};
+
 export default {
   createMessage,
   messageValidator,
+  markMsgAsSpam,
 };
