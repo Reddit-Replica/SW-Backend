@@ -272,8 +272,7 @@ export async function commentTreeListing(loggedInUser, post, listingParams) {
   // prepare the body
   let children = [];
   for (const i in result) {
-    const prepareResult = prepareComment(result[i], loggedInUser, true);
-    children.push(prepareResult);
+    children.push(prepareComment(result[i], loggedInUser, true));
   }
 
   let after = "",
@@ -327,8 +326,7 @@ export async function commentTreeOfCommentListing(
   // prepare the body
   let children = [];
   for (const i in result) {
-    const prepareResult = prepareComment(result[i], loggedInUser, true);
-    children.push(prepareResult);
+    children.push(prepareComment(result[i], loggedInUser, true));
   }
 
   let after = "",
