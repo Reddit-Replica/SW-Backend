@@ -301,7 +301,7 @@ export async function markMessageAsSpam(message, user) {
   //SHOULD BE ADDED TO SPAMMED MESSAGES LIST TO THE ADMIN
   if (message.isSpam) {
     let err = new Error("Msg is already spammed");
-    err.statusCode = 400;
+    err.statusCode = 409;
     throw err;
   }
   message.isSpam = true;
@@ -309,6 +309,22 @@ export async function markMessageAsSpam(message, user) {
   return {
     statusCode: 200,
     message: "Message has been spammed successfully",
+  };
+}
+
+export async function unmarkMessageAsSpam(message, user) {
+  await checkForMsgReceiver(message, user);
+  //SHOULD BE ADDED TO SPAMMED MESSAGES LIST TO THE ADMIN
+  if (!message.isSpam) {
+    let err = new Error("Msg is already unspammed");
+    err.statusCode = 409;
+    throw err;
+  }
+  message.isSpam = false;
+  await message.save();
+  return {
+    statusCode: 200,
+    message: "Message has been unspammed successfully",
   };
 }
 

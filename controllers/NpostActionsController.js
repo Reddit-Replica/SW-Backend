@@ -20,6 +20,7 @@ import {
   markCommentAsSpam,unmarkCommentAsSpam,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
+import { searchForMessage,markMessageAsSpam,unmarkMessageAsSpam } from "../services/messageServices.js";
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //FOLLOW
 const followOrUnfollowPost = async (req, res) => {
@@ -86,7 +87,7 @@ const unsavePostOrComment = async (req, res) => {
     }
     if (type === "comment") {
       const comment = await searchForComment(req.body.id);
-      result - (await unSaveComment(comment, user));
+      result = await unSaveComment(comment, user);
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
@@ -155,8 +156,8 @@ const markAsSpam = async (req, res) => {
     }
     if (type === "message") {
         const message=await searchForMessage(req.body.id);
+        result=await markMessageAsSpam(message,user);
     }
-
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
     if (err.statusCode) {
@@ -175,10 +176,20 @@ const unmarkAsSpam = async (req, res) => {
   try {
     await validateSpam(req);
     const user = await searchForUserService(req.payload.username);
-    // const type = req.body.type;
+    const type = req.body.type;
     let result;
-    const post = await searchForPost(req.body.id);
-    result = await unmarkPostAsSpam(post, user);
+    if (type === "post") {
+      const post = await searchForPost(req.body.id);
+      result = await unmarkPostAsSpam(post, user);
+    }
+    if (type === "comment") {
+      const comment = await searchForComment(req.body.id);
+      result=await unmarkCommentAsSpam(comment,user);
+    }
+    if (type === "message") {
+        const message=await searchForMessage(req.body.id);
+        result=await unmarkMessageAsSpam(message,user);
+    }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
     console.log(err);
