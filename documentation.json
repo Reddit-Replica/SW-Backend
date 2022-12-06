@@ -831,7 +831,11 @@
           },
           "type": {
             "type": "string",
-            "description": "type of the community",
+            "description": "type of the community"
+          },
+          "subredditId": {
+            "type": "string",
+            "description": "id of the community",
             "enum": ["private", "public", "restricted"]
           },
           "isFavorite": {
@@ -842,6 +846,14 @@
             "type": "string",
             "description": "Name of the community"
           },
+          "nickname": {
+            "type": "string",
+            "description": "Nickname of the community"
+          },
+          "isModerator": {
+            "type": "boolean",
+            "description": "If that member is a moderator in that subreddit (to view mod tools button)"
+          },
           "category": {
             "type": "string",
             "description": "Category of the community"
@@ -850,10 +862,6 @@
             "type": "number",
             "description": "Number of members of the community"
           },
-          "online": {
-            "type": "number",
-            "description": "Number of online members of the community"
-          },
           "description": {
             "type": "string",
             "description": "A brief description of the community"
@@ -861,34 +869,6 @@
           "dateOfCreation": {
             "type": "string",
             "description": "Date of creating the community"
-          },
-          "flairs": {
-            "type": "array",
-            "description": "list of available flairs to filter by",
-            "items": {
-              "type": "string"
-            }
-          },
-          "rules": {
-            "type": "array",
-            "description": "list of the rules of the subreddit",
-            "items": {
-              "$ref": "#/components/schemas/rules"
-            }
-          },
-          "bans": {
-            "type": "array",
-            "description": "list of the ban questions of the subreddit",
-            "items": {
-              "$ref": "#/components/schemas/bans"
-            }
-          },
-          "moderators": {
-            "type": "array",
-            "description": "list of the moderators of the subreddit",
-            "items": {
-              "$ref": "#/components/schemas/moderator"
-            }
           },
           "isMember": {
             "type": "boolean",
@@ -902,29 +882,19 @@
             "type": "string",
             "description": "Path of the picture of the community"
           },
-          "communityTheme": {
-            "type": "boolean",
-            "description": "True if community theme is on , False if community theme is off"
-          },
           "views": {
             "type": "number",
             "description": "number of views of he community to get the trending search"
           },
           "mainTopic": {
-            "type": "object",
-            "description": "The main topic of the subreddit with its subtopics",
-            "properties": {
-              "topicTitle": {
-                "type": "string",
-                "description": "The title of the topic"
-              },
-              "subtopics": {
-                "type": "array",
-                "description": "the array of subtopics of the community",
-                "items": {
-                  "type": "object"
-                }
-              }
+            "type": "string",
+            "description": "The main topic of the subreddit"
+          },
+          "subtopics": {
+            "type": "array",
+            "description": "the array of subtopics of the community",
+            "items": {
+              "type": "string"
             }
           }
         }
@@ -981,6 +951,10 @@
                   "type": "string",
                   "description": "The author of the comment"
                 },
+                "userImage": {
+                  "type": "string",
+                  "description": "Path of the image of the user who wrote the comment"
+                },
                 "editTime": {
                   "type": "string",
                   "format": "date-time",
@@ -1026,7 +1000,7 @@
                 },
                 "children": {
                   "type": "array",
-                  "description": "The replies to that comment (Will be same structure as the current comment)",
+                  "description": "The replies to that comment (Will be same structure as the current comment) [maximum number of children that can be returned = 5]",
                   "items": {
                     "type": "object"
                   }
@@ -1352,6 +1326,10 @@
                     "type": "string",
                     "description": "Comment content (raw markdown text)"
                   },
+                  "postId": {
+                    "type": "string",
+                    "description": "id of the post that will contain the comment"
+                  },
                   "parentId": {
                     "type": "string",
                     "description": "id of the thing being replied to (parent)"
@@ -1363,7 +1341,7 @@
                   },
                   "level": {
                     "type": "number",
-                    "description": "Level of the comment (How deep is it in the comment tree)"
+                    "description": "Level of the comment (How deep is it in the comment tree) [min = 1]"
                   },
                   "subredditName": {
                     "type": "string",
@@ -1411,22 +1389,13 @@
         ]
       }
     },
-    "/r/{subreddit}/comments/{postId}": {
+    "/comments/{postId}": {
       "get": {
         "summary": "Get the comment tree for a given post (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
         "parameters": [
           {
             "in": "path",
-            "name": "subreddit",
-            "description": "The name of the subreddit",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
             "name": "postId",
             "description": "The post id",
             "required": true,
@@ -1468,22 +1437,6 @@
               "default": "best",
               "enum": ["best", "top", "new", "old"]
             }
-          },
-          {
-            "in": "query",
-            "name": "depth",
-            "description": "Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "comment",
-            "description": "Id of a comment in the comment tree to be the highlighted (optional)",
-            "schema": {
-              "type": "integer"
-            }
           }
         ],
         "responses": {
@@ -1522,22 +1475,13 @@
         ]
       }
     },
-    "/r/{subreddit}/comments/{postId}/{commentId}": {
+    "/comments/{postId}/{commentId}": {
       "get": {
         "summary": "Return comment tree of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
         "parameters": [
           {
             "in": "path",
-            "name": "subreddit",
-            "description": "The name of the subreddit",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
             "name": "postId",
             "description": "The post id",
             "required": true,
@@ -1588,22 +1532,6 @@
               "default": "best",
               "enum": ["best", "top", "new", "old"]
             }
-          },
-          {
-            "in": "query",
-            "name": "depth",
-            "description": "Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "highlightedCommentId",
-            "description": "Id of a comment in the comment tree to be highlighted (optional)",
-            "schema": {
-              "type": "integer"
-            }
           }
         ],
         "responses": {
@@ -1642,20 +1570,11 @@
         ]
       }
     },
-    "/r/{subreddit}/comments/{postId}/{commentId}/parent-comments": {
+    "/comments/{postId}/{commentId}/parent-comments": {
       "get": {
         "summary": "Return the parents of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Comments"],
         "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "The name of the subreddit",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "postId",
@@ -1682,22 +1601,6 @@
               "type": "string",
               "default": "best",
               "enum": ["best", "top", "new", "old"]
-            }
-          },
-          {
-            "in": "query",
-            "name": "depth",
-            "description": "Maximum depth of subtrees of comments [how many levels of replies to a comment] (optional)",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "highlightedCommentId",
-            "description": "Id of a comment in the comment tree to be the highlighted (optional)",
-            "schema": {
-              "type": "integer"
             }
           }
         ],
@@ -2327,7 +2230,7 @@
     },
     "/r/{subreddit}": {
       "get": {
-        "summary": "Return all the details of the subreddit",
+        "summary": "Return all the details of the subreddit (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Subreddit"],
         "parameters": [
           {
@@ -2345,12 +2248,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "children": {
-                      "$ref": "#/components/schemas/community"
-                    }
-                  }
+                  "$ref": "#/components/schemas/community"
                 }
               }
             }
@@ -2558,186 +2456,9 @@
         ]
       }
     },
-    "/r/{subreddit}/add-main-topic": {
-      "post": {
-        "summary": "add the main topic to the community",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["mainTopic"],
-                "properties": {
-                  "mainTopic": {
-                    "type": "string",
-                    "description": "title of the main topic in the community"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "main topic is submitted successfully"
-          },
-          "401": {
-            "description": "Unauthorized add main topic"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/add-subtopic": {
-      "post": {
-        "summary": "add subtopics to the community",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["title"],
-                "properties": {
-                  "title": {
-                    "type": "array",
-                    "description": "titles of the sub topics in the community",
-                    "items": {
-                      "type": "object"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Community topics saved"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "you don't have the right to do this action"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/add-description": {
-      "post": {
-        "summary": "add description of the community",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["title"],
-                "properties": {
-                  "description": {
-                    "type": "string",
-                    "description": "description of the community (maximum 300)"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "description is submitted successfully"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "you don't have the right to do this action"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/toggle-favorite": {
+    "/r/{subreddit}/make-favorite": {
       "patch": {
-        "summary": "toggle favorite property of the community",
+        "summary": "add a subreddit to the users favorite subreddits",
         "tags": ["Subreddit"],
         "parameters": [
           {
@@ -2751,13 +2472,123 @@
         ],
         "responses": {
           "200": {
-            "description": "toggling is done successfully"
+            "description": "subreddit is now favorite"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized to toggle favorite"
+            "description": "You are unauthorized to do this action. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Server Error"
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/remove-favorite": {
+      "patch": {
+        "summary": "remove a subreddit from the user's favorites subreddits",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "This subreddit is not favorite anymore"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "You are unauthorized to do this action. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -5975,243 +5806,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized access"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/about/edit": {
-      "get": {
-        "summary": "Get the current settings of a subreddit.",
-        "tags": ["Subreddit moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "name of the subreddit.",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The current settings of the subreddit.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "communityName": {
-                      "type": "string",
-                      "description": "The name of the community."
-                    },
-                    "communityTopics": {
-                      "type": "array",
-                      "description": "The topics of the community.",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "topicName": {
-                            "type": "string",
-                            "description": "Name of the topic"
-                          }
-                        }
-                      }
-                    },
-                    "communityDescription": {
-                      "type": "string",
-                      "description": "The description of the community."
-                    },
-                    "sendWelcomeMessage": {
-                      "type": "boolean",
-                      "description": "If that community send a welcome message to the new members or not."
-                    },
-                    "welcomeMessage": {
-                      "type": "string",
-                      "description": "The welcome message of the community. (if sendWelcomeMessage is true)"
-                    },
-                    "language": {
-                      "type": "string",
-                      "description": "The janguage of the community."
-                    },
-                    "region": {
-                      "type": "string",
-                      "description": "The region of the community."
-                    },
-                    "type": {
-                      "type": "string",
-                      "description": "The type of the community.",
-                      "enum": ["Public", "Restricted", "Private"]
-                    },
-                    "NSFW": {
-                      "type": "boolean",
-                      "description": "The community allow +18 content or not."
-                    },
-                    "acceptingRequestsToJoin": {
-                      "type": "boolean",
-                      "description": "Display a button on your private subreddit that allows users to request to join. (if the type is private only)"
-                    },
-                    "acceptingRequestsToPost": {
-                      "type": "boolean",
-                      "description": "Accept posts or not (if the type is restricted only)"
-                    },
-                    "approvedUsersHaveTheAbilityTo": {
-                      "type": "string",
-                      "description": "Approved users have the ability to (if the type is restricted only)",
-                      "enum": ["Post only", "Comment only", "Post & Comment"]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized access"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "put": {
-        "summary": "ٍSet the settings of a subreddit.",
-        "tags": ["Subreddit moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "name of the subreddit.",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": [
-                  "communityName",
-                  "communityTopics",
-                  "communityDescription",
-                  "sendWelcomeMessage",
-                  "welcomeMessage",
-                  "approvedUsersHaveTheAbilityTo",
-                  "acceptingRequestsToPost",
-                  "acceptingRequestsToJoin",
-                  "NSFW",
-                  "type",
-                  "region",
-                  "language"
-                ],
-                "properties": {
-                  "communityName": {
-                    "type": "string",
-                    "description": "The name of the community."
-                  },
-                  "communityTopics": {
-                    "type": "array",
-                    "description": "The topics of the community. (maximum 25 topic)",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "topicName": {
-                          "type": "string",
-                          "description": "Name of the topic"
-                        }
-                      }
-                    }
-                  },
-                  "communityDescription": {
-                    "type": "string",
-                    "description": "The description of the community. (maximum 500 Characters)"
-                  },
-                  "sendWelcomeMessage": {
-                    "type": "boolean",
-                    "description": "If that community send a welcome message to the new members or not."
-                  },
-                  "welcomeMessage": {
-                    "type": "string",
-                    "description": "The welcome message of the community. (if sendWelcomeMessage is true) (maximum 5000 Characters)"
-                  },
-                  "language": {
-                    "type": "string",
-                    "description": "The janguage of the community."
-                  },
-                  "Region": {
-                    "type": "string",
-                    "description": "The region of the community."
-                  },
-                  "Type": {
-                    "type": "string",
-                    "description": "The type of the community.",
-                    "enum": ["Public", "Restricted", "Private"]
-                  },
-                  "NSFW": {
-                    "type": "boolean",
-                    "description": "The community allow +18 content or not."
-                  },
-                  "acceptingRequestsToJoin": {
-                    "type": "boolean",
-                    "description": "Display a button on your private subreddit that allows users to request to join. (if the type is private only)"
-                  },
-                  "acceptingRequestsToPost": {
-                    "type": "boolean",
-                    "description": "Accept posts or not (if the type is restricted only)"
-                  },
-                  "approvedUsersHaveTheAbilityTo": {
-                    "type": "string",
-                    "description": "Approved users have the ability to (if the type is restricted only)",
-                    "enum": ["Post only", "Comment only", "Post & Comment"]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Accepted"
           },
           "400": {
             "description": "Bad Request",
@@ -9532,6 +9126,69 @@
         }
       }
     },
+    "/r/{subreddit}/add-description": {
+      "post": {
+        "summary": "add description of the community",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["title"],
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "description of the community (maximum 300)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "description is submitted successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "you don't have the right to do this action"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/r/{subreddit}/add-maintopic": {
       "post": {
         "summary": "add the main topic to the community",
@@ -9595,9 +9252,75 @@
         ]
       }
     },
+    "/r/{subreddit}/add-subtopic": {
+      "post": {
+        "summary": "add subtopics to the community",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "array",
+                    "description": "titles of the sub topics in the community",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Community topics saved"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "you don't have the right to do this action"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/r/{subreddit}/about/post-flairs": {
       "get": {
-        "summary": "Returns all post flairs of a subreddit",
+        "summary": "Returns all post flairs of a subreddit (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Posts and comments moderation"],
         "parameters": [
           {
@@ -9777,7 +9500,7 @@
     },
     "/r/{subreddit}/about/post-flairs/{flairId}": {
       "get": {
-        "summary": "Returns details of a specific post flair",
+        "summary": "Returns details of a specific post flair (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Posts and comments moderation"],
         "parameters": [
           {
@@ -10227,6 +9950,240 @@
         ]
       }
     },
+    "/r/{subreddit}/about/edit": {
+      "get": {
+        "summary": "Get the current settings of a subreddit.",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The current settings of the subreddit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "communityName": {
+                      "type": "string",
+                      "description": "The name of the community."
+                    },
+                    "mainTopic": {
+                      "type": "string",
+                      "description": "The main topic of the community."
+                    },
+                    "sunTopics": {
+                      "type": "array",
+                      "description": "The sub topics of the community.",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "communityDescription": {
+                      "type": "string",
+                      "description": "The description of the community."
+                    },
+                    "sendWelcomeMessage": {
+                      "type": "boolean",
+                      "description": "If that community send a welcome message to the new members or not."
+                    },
+                    "welcomeMessage": {
+                      "type": "string",
+                      "description": "The welcome message of the community. (if sendWelcomeMessage is true)"
+                    },
+                    "language": {
+                      "type": "string",
+                      "description": "The janguage of the community."
+                    },
+                    "region": {
+                      "type": "string",
+                      "description": "The region of the community."
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "The type of the community.",
+                      "enum": ["Public", "Restricted", "Private"]
+                    },
+                    "NSFW": {
+                      "type": "boolean",
+                      "description": "The community allow +18 content or not."
+                    },
+                    "acceptingRequestsToJoin": {
+                      "type": "boolean",
+                      "description": "Display a button on your private subreddit that allows users to request to join. (if the type is private only)"
+                    },
+                    "acceptingRequestsToPost": {
+                      "type": "boolean",
+                      "description": "Accept posts or not (if the type is restricted only)"
+                    },
+                    "approvedUsersHaveTheAbilityTo": {
+                      "type": "string",
+                      "description": "Approved users have the ability to (if the type is restricted only)",
+                      "enum": ["Post only", "Comment only", "Post & Comment"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "ٍSet the settings of a subreddit.",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "communityName",
+                  "mainTopic",
+                  "sunTopics",
+                  "communityDescription",
+                  "sendWelcomeMessage",
+                  "welcomeMessage",
+                  "approvedUsersHaveTheAbilityTo",
+                  "acceptingRequestsToPost",
+                  "acceptingRequestsToJoin",
+                  "NSFW",
+                  "Type",
+                  "region",
+                  "language"
+                ],
+                "properties": {
+                  "communityName": {
+                    "type": "string",
+                    "description": "The name of the community."
+                  },
+                  "mainTopic": {
+                    "type": "string",
+                    "description": "The main topic of the community."
+                  },
+                  "sunTopics": {
+                    "type": "array",
+                    "description": "The sub topics of the community.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "communityDescription": {
+                    "type": "string",
+                    "description": "The description of the community. (maximum 500 Characters)"
+                  },
+                  "sendWelcomeMessage": {
+                    "type": "boolean",
+                    "description": "If that community send a welcome message to the new members or not."
+                  },
+                  "welcomeMessage": {
+                    "type": "string",
+                    "description": "The welcome message of the community. (if sendWelcomeMessage is true) (maximum 5000 Characters)"
+                  },
+                  "language": {
+                    "type": "string",
+                    "description": "The janguage of the community."
+                  },
+                  "Region": {
+                    "type": "string",
+                    "description": "The region of the community."
+                  },
+                  "Type": {
+                    "type": "string",
+                    "description": "The type of the community.",
+                    "enum": ["Public", "Restricted", "Private"]
+                  },
+                  "NSFW": {
+                    "type": "boolean",
+                    "description": "The community allow +18 content or not."
+                  },
+                  "acceptingRequestsToJoin": {
+                    "type": "boolean",
+                    "description": "Display a button on your private subreddit that allows users to request to join. (if the type is private only)"
+                  },
+                  "acceptingRequestsToPost": {
+                    "type": "boolean",
+                    "description": "Accept posts or not (if the type is restricted only)"
+                  },
+                  "approvedUsersHaveTheAbilityTo": {
+                    "type": "string",
+                    "description": "Approved users have the ability to (if the type is restricted only)",
+                    "enum": ["Post only", "Comment only", "Post & Comment"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/r/{subreddit}/about/rules": {
       "post": {
         "summary": "Add a rule to subreddit.",
@@ -10323,7 +10280,7 @@
         ]
       },
       "get": {
-        "summary": "Get the rules for a subreddit.",
+        "summary": "Get the rules for a subreddit. (Here the token is optional if the user is logged in add a token if not don't add it)",
         "tags": ["Subreddit moderation"],
         "parameters": [
           {
@@ -10644,7 +10601,1256 @@
         ]
       }
     },
-
+    "components": {
+      "schemas": {
+        "FlairSettings": {
+          "type": "object",
+          "properties": {
+            "modOnly": {
+              "type": "boolean",
+              "description": "Flair is only available for mods to select"
+            },
+            "allowUserEdits": {
+              "type": "boolean",
+              "description": "User will be able to edit flair text"
+            },
+            "flairType": {
+              "type": "string",
+              "enum": ["Text and emojis", "Text only", "Emojis only"]
+            },
+            "emojisLimit": {
+              "type": "number",
+              "description": "Limit to the number of emojis in the flair (1 - 10)"
+            }
+          }
+        },
+        "Flair": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "id of the flair"
+            },
+            "flairName": {
+              "type": "string",
+              "description": "Name of the flair"
+            },
+            "order": {
+              "type": "number",
+              "description": "Order of the flair among the rest"
+            },
+            "backgroundColor": {
+              "type": "string",
+              "description": "Background color of the flair"
+            },
+            "textColor": {
+              "type": "string",
+              "description": "Color of the flair name"
+            }
+          }
+        },
+        "Thing": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "id of a thing"
+            },
+            "type": {
+              "type": "string",
+              "enum": ["post", "comment"]
+            }
+          }
+        },
+        "Comment": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Comment ID"
+            },
+            "text": {
+              "type": "string",
+              "description": "Comment content (raw markdown text)"
+            },
+            "parentId": {
+              "type": "string",
+              "description": "id of the thing being replied to (parent)"
+            },
+            "parentType": {
+              "type": "string",
+              "enum": ["post", "comment"]
+            },
+            "level": {
+              "type": "number",
+              "description": "Level of the comment (How deep is it in the comment tree)"
+            }
+          }
+        },
+        "Category": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Category id"
+            },
+            "name": {
+              "type": "string",
+              "description": "A category name"
+            }
+          }
+        },
+        "PostSubmission": {
+          "type": "object",
+          "required": ["kind", "inSubreddit", "title"],
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Post title"
+            },
+            "kind": {
+              "type": "string",
+              "enum": ["link", "hybrid", "image", "video", "post"]
+            },
+            "subreddit": {
+              "type": "string",
+              "description": "Subreddit name"
+            },
+            "inSubreddit": {
+              "type": "boolean",
+              "description": "True if the post is submitted in a subreddit, False if it's in the user account (not a subreddit)"
+            },
+            "texts": {
+              "type": "array",
+              "description": "Texts input separated by an \"enter\" when writing text in the post with an index indicating the positin of this text",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "The text written itself"
+                  },
+                  "index": {
+                    "type": "number",
+                    "description": "Text position"
+                  }
+                }
+              }
+            },
+            "links": {
+              "type": "array",
+              "description": "Links input in the post containing the link title and url as well as the index indicating it's position in the post field",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "link": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "description": "Link title submitted"
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "Link Url"
+                      }
+                    }
+                  },
+                  "index": {
+                    "type": "number",
+                    "description": "Link position"
+                  }
+                }
+              }
+            },
+            "imageCaptions": {
+              "type": "array",
+              "description": "Image captions of each image submitted and an element in it should be null if the image doesn't have a caption (Do not skip the element). This array will contain an index only when the kind is 'hybrid' but will only be an array of captions without indices if the kind is 'image'",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "caption": {
+                    "type": "string",
+                    "description": "Image caption"
+                  },
+                  "index": {
+                    "type": "number",
+                    "description": "Image caption position"
+                  }
+                }
+              }
+            },
+            "videoCaptions": {
+              "type": "array",
+              "description": "Video captions of each video submitted and an element in it should be null if the video doesn't have a caption (Do not skip the element)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "caption": {
+                    "type": "string",
+                    "description": "Video caption"
+                  },
+                  "index": {
+                    "type": "number",
+                    "description": "Video caption position"
+                  }
+                }
+              }
+            },
+            "images": {
+              "type": "array",
+              "description": "image files",
+              "items": {
+                "type": "object"
+              }
+            },
+            "imageLinks": {
+              "type": "array",
+              "description": "Links written for the images submitted (only when kind = images)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "videos": {
+              "type": "array",
+              "description": "Video files",
+              "items": {
+                "type": "object"
+              }
+            },
+            "link": {
+              "type": "string",
+              "description": "Link submission in case the kind is 'link'"
+            },
+            "nsfw": {
+              "type": "boolean",
+              "description": "Not Safe for Work"
+            },
+            "spoiler": {
+              "type": "boolean",
+              "description": "Blur the content of the post"
+            },
+            "flairId": {
+              "type": "string",
+              "description": "Flair ID"
+            },
+            "sendReplies": {
+              "type": "boolean",
+              "description": "Allow post reply notifications"
+            },
+            "sharePostId": {
+              "type": "string",
+              "description": "id of a post (given in case of sharing a post)"
+            },
+            "scheduleDate": {
+              "type": "string",
+              "format": "date",
+              "description": "Date for the post submitted at in case of scheduling it"
+            },
+            "scheduleTime": {
+              "type": "string",
+              "format": "time",
+              "description": "Time required for the post to be submitted at in case of scheduling it"
+            },
+            "scheduleTimeZone": {
+              "type": "string",
+              "format": "time_zone",
+              "description": "Time zone chosen when scheduling a post"
+            }
+          }
+        },
+        "PostDetails": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": ["link", "hybrid", "image", "video", "post"]
+            },
+            "title": {
+              "type": "string",
+              "description": "Title of the submission"
+            },
+            "subreddit": {
+              "type": "string",
+              "description": "Subreddit name"
+            },
+            "link": {
+              "type": "string",
+              "description": "Post link in case the kind is 'link'"
+            },
+            "images": {
+              "type": "array",
+              "description": "Post content (kind = images)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "description": "Image path"
+                  },
+                  "caption": {
+                    "type": "string",
+                    "description": "Image caption"
+                  },
+                  "link": {
+                    "type": "string",
+                    "description": "Image link"
+                  }
+                }
+              }
+            },
+            "video": {
+              "type": "string",
+              "description": "Video path in case the kind is 'video'"
+            },
+            "hybridContent": {
+              "type": "array",
+              "description": "Hybrid content of the post returned with the correct order just like as they were inserted when initially submitting the post. The content part of the object could be string when type is text, or an object (title and url) if type is link, or an object (path and caption) if type is image or video",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Content type",
+                    "enum": ["image", "video", "text", "link"]
+                  },
+                  "content": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "nsfw": {
+              "type": "boolean",
+              "description": "Not Safe for Work"
+            },
+            "spoiler": {
+              "type": "boolean",
+              "description": "Blur the content of the post"
+            },
+            "sharePostId": {
+              "type": "string",
+              "description": "Post id in case of containing info of a shared post (kind = post)"
+            },
+            "flair": {
+              "$ref": "#/components/schemas/Flair"
+            },
+            "comments": {
+              "type": "number",
+              "description": "Total number of comments on a post"
+            },
+            "votes": {
+              "type": "number",
+              "description": "Total number of votes on a post"
+            },
+            "postedAt": {
+              "type": "string",
+              "description": "The time in which this post was published"
+            },
+            "sendReplies": {
+              "type": "boolean",
+              "description": "Indicates whether replies on a post are turned on/off"
+            },
+            "markedSpam": {
+              "type": "boolean",
+              "description": "Indicates whether post was spammed by the owner"
+            },
+            "suggestedSort": {
+              "type": "string",
+              "description": "Post suggested sort"
+            },
+            "editedAt": {
+              "type": "string",
+              "description": "The time in which this post was edited"
+            },
+            "postedBy": {
+              "type": "string",
+              "description": "Name of the user associated with the post"
+            },
+            "votingType": {
+              "type": "integer",
+              "enum": [1, 0, -1],
+              "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
+            },
+            "saved": {
+              "type": "boolean",
+              "default": false,
+              "description": "If true, then the post was saved by the logged in user"
+            },
+            "followed": {
+              "type": "boolean",
+              "default": false,
+              "description": "If true, then the post was followed by the logged in user"
+            },
+            "hidden": {
+              "type": "boolean",
+              "default": false,
+              "description": "If true, then the post was marked hidden by the logged in user"
+            },
+            "spammed": {
+              "type": "boolean",
+              "default": false,
+              "description": "If true, then the post was marked spam by the logged in user"
+            },
+            "inYourSubreddit": {
+              "type": "boolean",
+              "default": false,
+              "description": "If true, then you can approve, remove, or spam that post"
+            },
+            "moderation": {
+              "type": "object",
+              "description": "Moderate the post if you are a moderator in that subreddit",
+              "properties": {
+                "approve": {
+                  "type": "object",
+                  "description": "Approve the post",
+                  "properties": {
+                    "approvedBy": {
+                      "type": "string",
+                      "description": "Username for the moderator who approved that post"
+                    },
+                    "approvedDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Date when that post approved"
+                    }
+                  }
+                },
+                "remove": {
+                  "type": "object",
+                  "description": "Remove the post",
+                  "properties": {
+                    "removedBy": {
+                      "type": "string",
+                      "description": "Username for the moderator who removed that post"
+                    },
+                    "removedDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Date when that post removed"
+                    }
+                  }
+                },
+                "spam": {
+                  "type": "object",
+                  "description": "Spam the post",
+                  "properties": {
+                    "spammedBy": {
+                      "type": "string",
+                      "description": "Username for the moderator who spamed that post"
+                    },
+                    "spammedDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Date when that post spamed"
+                    }
+                  }
+                },
+                "lock": {
+                  "type": "boolean",
+                  "description": "If true, then comments are locked in this post"
+                }
+              }
+            }
+          }
+        },
+        "Post": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "id of a post"
+            },
+            "kind": {
+              "type": "string",
+              "enum": ["link", "text", "image", "video", "post"]
+            },
+            "subreddit": {
+              "type": "string",
+              "description": "Subreddit name"
+            },
+            "content": {
+              "type": "string",
+              "description": "Post content (text/url/video) - will contain path of a video in case (kind = video)"
+            },
+            "images": {
+              "type": "array",
+              "description": "Post content (images)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "description": "Image path"
+                  },
+                  "caption": {
+                    "type": "string",
+                    "description": "Image caption"
+                  },
+                  "link": {
+                    "type": "string",
+                    "description": "Image link"
+                  }
+                }
+              }
+            },
+            "nsfw": {
+              "type": "boolean",
+              "description": "Not Safe for Work"
+            },
+            "spoiler": {
+              "type": "boolean",
+              "description": "Blur the content of the post"
+            },
+            "title": {
+              "type": "string",
+              "description": "Title of the submission"
+            },
+            "sharePostId": {
+              "type": "string",
+              "description": "Post id in case of containing info of a shared post (kind = post)"
+            },
+            "flair": {
+              "$ref": "#/components/schemas/Flair"
+            },
+            "comments": {
+              "type": "number",
+              "description": "Total number of comments on a post"
+            },
+            "votes": {
+              "type": "number",
+              "description": "Total number of votes on a post"
+            },
+            "postedAt": {
+              "type": "string",
+              "description": "The time in which this post was published"
+            },
+            "postedBy": {
+              "type": "string",
+              "description": "Name of the user associated with the post"
+            }
+          }
+        },
+        "Notifications": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Title of the notification (maximum:120)"
+            },
+            "content": {
+              "type": "object",
+              "description": "An object that has every detail that we want to send"
+            },
+            "includedSegments": {
+              "type": "array",
+              "description": "An array hat describes which devices we will send notification to",
+              "items": {
+                "type": "object"
+              }
+            },
+            "contentAvailable": {
+              "type": "boolean",
+              "description": "true if this notification will be send if the device is off ,false if it won't"
+            },
+            "smallIcon": {
+              "type": "string",
+              "description": "the path of the icon of the notification"
+            },
+            "data": {
+              "type": "object",
+              "description": "the external data that you want to send with the notification"
+            },
+            "senderId": {
+              "type": "string",
+              "description": "Name of the sender of the notification"
+            },
+            "receiverId": {
+              "type": "number",
+              "description": "Name of the sender of the notification"
+            },
+            "isRead": {
+              "type": "boolean",
+              "description": "True if the notification is read , False if the message is not read"
+            },
+            "sentAt": {
+              "type": "string",
+              "description": "The time of sending the notification"
+            },
+            "nsfw": {
+              "type": "boolean",
+              "description": "not safe for work"
+            },
+            "isHidden": {
+              "type": "boolean",
+              "description": "true if the notification is hidden , false if notification is not hidden"
+            }
+          }
+        },
+        "UserOverview": {
+          "type": "object",
+          "properties": {
+            "before": {
+              "type": "string",
+              "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
+            },
+            "after": {
+              "type": "string",
+              "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
+            },
+            "children": {
+              "type": "array",
+              "description": "List of [Things] to return",
+              "items": {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Id of the post or the post containing the comments"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["fullPost", "summaryPost"],
+                    "description": "The type of the show [full post with its comments (your post), summary of the post with its comments]"
+                  },
+                  "data": {
+                    "properties": {
+                      "subreddit": {
+                        "type": "string",
+                        "description": "Name of subreddit which contain the post or the comment"
+                      },
+                      "postedBy": {
+                        "type": "string",
+                        "description": "The username for the publisher of the post"
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Title of the post"
+                      },
+                      "kind": {
+                        "type": "string",
+                        "description": "Type of content of the post",
+                        "enum": ["hybrid", "video", "image", "link", "post"]
+                      },
+                      "content": {
+                        "type": "string",
+                        "description": "Content of the post"
+                      },
+                      "post": {
+                        "type": "object",
+                        "description": "Post data",
+                        "$ref": "#/components/schemas/PostDetails"
+                      },
+                      "comments": {
+                        "type": "array",
+                        "description": "The comments writen by this user",
+                        "items": {
+                          "properties": {
+                            "commentId": {
+                              "type": "string",
+                              "description": "The id of the comment"
+                            },
+                            "commentedBy": {
+                              "type": "string",
+                              "description": "The username of the comment owner"
+                            },
+                            "commentBody": {
+                              "type": "string",
+                              "description": "The comment itself"
+                            },
+                            "points": {
+                              "type": "integer",
+                              "description": "The points to that comment [up votes - down votes]"
+                            },
+                            "publishTime": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "Publish time for the comment"
+                            },
+                            "editTime": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "Edit time for the comment"
+                            },
+                            "parent": {
+                              "type": "string",
+                              "description": "The id of the parent comment in the tree"
+                            },
+                            "level": {
+                              "type": "integer",
+                              "description": "The level of the comment [level of nesting]"
+                            },
+                            "inYourSubreddit": {
+                              "type": "boolean",
+                              "description": "If true, then you can approve, remove, or spam that post"
+                            },
+                            "moderation": {
+                              "type": "object",
+                              "description": "Moderate the post if you are a moderator in that subreddit",
+                              "properties": {
+                                "approve": {
+                                  "type": "object",
+                                  "description": "Approve the post",
+                                  "properties": {
+                                    "approvedBy": {
+                                      "type": "string",
+                                      "description": "Username for the moderator who approved that post"
+                                    },
+                                    "approvedDate": {
+                                      "type": "string",
+                                      "format": "date-time",
+                                      "description": "Date when that post approved"
+                                    }
+                                  }
+                                },
+                                "remove": {
+                                  "type": "object",
+                                  "description": "Remove the post",
+                                  "properties": {
+                                    "removedBy": {
+                                      "type": "string",
+                                      "description": "Username for the moderator who removed that post"
+                                    },
+                                    "removedDate": {
+                                      "type": "string",
+                                      "format": "date-time",
+                                      "description": "Date when that post removed"
+                                    }
+                                  }
+                                },
+                                "spam": {
+                                  "type": "object",
+                                  "description": "Spam the post",
+                                  "properties": {
+                                    "spammedBy": {
+                                      "type": "string",
+                                      "description": "Username for the moderator who spamed that post"
+                                    },
+                                    "spammedDate": {
+                                      "type": "string",
+                                      "format": "date-time",
+                                      "description": "Date when that post spamed"
+                                    }
+                                  }
+                                },
+                                "lock": {
+                                  "type": "boolean",
+                                  "description": "If true, then comments are locked in this post"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "Threads": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "full name of the thread"
+            }
+          }
+        },
+        "bans": {
+          "type": "object",
+          "properties": {
+            "banTitle": {
+              "type": "string",
+              "description": "The title of the ban question"
+            },
+            "banFullDescription": {
+              "type": "string",
+              "description": "he answer of the ban question to appear in wiki page"
+            }
+          }
+        },
+        "rules": {
+          "type": "object",
+          "properties": {
+            "ruleTitle": {
+              "type": "string",
+              "description": "The title of the rule"
+            },
+            "ruleDescription": {
+              "type": "string",
+              "description": "The description of the rule"
+            },
+            "questions": {
+              "type": "array",
+              "description": "questions to appear in wiki page",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ruleFullDescription": {
+              "type": "string",
+              "description": "The full description of the rule o appear in wiki page"
+            }
+          }
+        },
+        "moderator": {
+          "type": "object",
+          "properties": {
+            "username": {
+              "type": "string",
+              "description": "The username of the moderator"
+            },
+            "nickname": {
+              "type": "string",
+              "description": "The nickname of the moderator"
+            },
+            "dateOfModeration": {
+              "type": "string",
+              "description": "he date of being a moderator"
+            },
+            "permissions": {
+              "type": "array",
+              "description": "array of permissions the moderator has",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "community": {
+          "type": "object",
+          "properties": {
+            "nsfw": {
+              "type": "boolean",
+              "description": "not safe for work"
+            },
+            "type": {
+              "type": "string",
+              "description": "type of the community"
+            },
+            "subredditId": {
+              "type": "string",
+              "description": "id of the community",
+              "enum": ["private", "public", "restricted"]
+            },
+            "isFavorite": {
+              "type": "boolean",
+              "description": "true if the subreddit is marked as favorite , false if it's not favorite"
+            },
+            "title": {
+              "type": "string",
+              "description": "Name of the community"
+            },
+            "nickname": {
+              "type": "string",
+              "description": "Nickname of the community"
+            },
+            "isModerator": {
+              "type": "boolean",
+              "description": "If that member is a moderator in that subreddit (to view mod tools button)"
+            },
+            "category": {
+              "type": "string",
+              "description": "Category of the community"
+            },
+            "members": {
+              "type": "number",
+              "description": "Number of members of the community"
+            },
+            "description": {
+              "type": "string",
+              "description": "A brief description of the community"
+            },
+            "dateOfCreation": {
+              "type": "string",
+              "description": "Date of creating the community"
+            },
+            "isMember": {
+              "type": "boolean",
+              "description": "True if you are a member of the community , False if you are not a member of the community"
+            },
+            "banner": {
+              "type": "string",
+              "description": "Path of the banner of the community"
+            },
+            "picture": {
+              "type": "string",
+              "description": "Path of the picture of the community"
+            },
+            "views": {
+              "type": "number",
+              "description": "number of views of he community to get the trending search"
+            },
+            "mainTopic": {
+              "type": "string",
+              "description": "The main topic of the subreddit"
+            },
+            "subtopics": {
+              "type": "array",
+              "description": "the array of subtopics of the community",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "ListedPost": {
+          "type": "object",
+          "properties": {
+            "after": {
+              "type": "string",
+              "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
+            },
+            "before": {
+              "type": "string",
+              "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
+            },
+            "children": {
+              "type": "array",
+              "description": "List of posts to return",
+              "items": {
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Id of the post"
+                  },
+                  "data": {
+                    "$ref": "#/components/schemas/PostDetails"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "CommentTree": {
+          "type": "object",
+          "properties": {
+            "after": {
+              "type": "string",
+              "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
+            },
+            "before": {
+              "type": "string",
+              "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
+            },
+            "children": {
+              "type": "array",
+              "description": "The comment tree for the post",
+              "items": {
+                "properties": {
+                  "commentId": {
+                    "type": "string",
+                    "description": "The id of the comment"
+                  },
+                  "commentedBy": {
+                    "type": "string",
+                    "description": "The author of the comment"
+                  },
+                  "userImage": {
+                    "type": "string",
+                    "description": "Path of the image of the user who wrote the comment"
+                  },
+                  "editTime": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Edit time of the comment (if exists)"
+                  },
+                  "publishTime": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Publish time of the comment"
+                  },
+                  "commentBody": {
+                    "type": "string",
+                    "description": "The comment itself"
+                  },
+                  "votes": {
+                    "type": "integer",
+                    "description": "Total number of votes to that post"
+                  },
+                  "saved": {
+                    "type": "boolean",
+                    "description": "If true, then this comment was saved before by the logged-in user"
+                  },
+                  "followed": {
+                    "type": "boolean",
+                    "description": "If true, then this comment was followed before by the logged-in user"
+                  },
+                  "vote": {
+                    "type": "integer",
+                    "enum": [1, 0, -1],
+                    "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
+                  },
+                  "parent": {
+                    "type": "string",
+                    "description": "The id of the parent comment in the tree"
+                  },
+                  "level": {
+                    "type": "integer",
+                    "description": "The level of the comment [level of nesting]"
+                  },
+                  "numberofChildren": {
+                    "type": "integer",
+                    "description": "Number of replies to that comment"
+                  },
+                  "children": {
+                    "type": "array",
+                    "description": "The replies to that comment (Will be same structure as the current comment) [maximum number of children that can be returned = 5]",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "Message": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The special full name for each message"
+            },
+            "type": {
+              "type": "string",
+              "description": "describes the type of message,we have three types",
+              "enum": ["Messages", "Post Replies", "Username Mentions"]
+            },
+            "subredditName": {
+              "type": "string",
+              "description": "the name of subreddit that the mention or the reply happened in, it will be needed in the case of post replies and mentions"
+            },
+            "postTitle": {
+              "type": "string",
+              "description": "the title of the post that the mention or reply happened in, it will be needed in the case of post replies and mentions"
+            },
+            "text": {
+              "type": "string",
+              "description": "Message Content as text"
+            },
+            "senderUsername": {
+              "type": "string",
+              "description": "Username of the sender"
+            },
+            "receiverUsername": {
+              "type": "string",
+              "description": "Username of the receiver"
+            },
+            "sentAt": {
+              "type": "string",
+              "description": "Time of sending the message"
+            },
+            "subject": {
+              "type": "string",
+              "description": "Subject of the message"
+            },
+            "isReply": {
+              "type": "boolean",
+              "description": "True if the msg is a reply to another , False if the msg isn't a reply to another"
+            },
+            "isRead": {
+              "type": "boolean",
+              "description": "True if the msg was read before , False if the msg wasn't read before",
+              "default": false
+            },
+            "spamsCount": {
+              "type": "number",
+              "description": "Number of the spams this comment took",
+              "default": 0
+            }
+          }
+        },
+        "ListItem": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "this item's identifier."
+            },
+            "type": {
+              "type": "string",
+              "enum": ["Post", "Comment"],
+              "description": "the type of this item whether it is a comment or a post."
+            },
+            "data": {
+              "type": "object",
+              "description": "A custom data structure used to hold valuable information.",
+              "properties": {
+                "subreddit": {
+                  "type": "string",
+                  "description": "Name of subreddit which contain the post"
+                },
+                "postedBy": {
+                  "type": "string",
+                  "description": "The username for the publisher of the post"
+                },
+                "commentedBy": {
+                  "type": "string",
+                  "description": "The username for the user made the comment (in case that item has a type comment)."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Title of the post"
+                },
+                "content": {
+                  "type": "string",
+                  "description": "Content of the post [text, video, image, link] (in case that item has a type post)."
+                },
+                "commentContent": {
+                  "type": "string",
+                  "description": "Content of the comment (in case that item has a type comment)."
+                },
+                "postUpVotes": {
+                  "type": "integer",
+                  "description": "Number of Up votes to that post (in case that item has a type post)."
+                },
+                "postDownVotes": {
+                  "type": "integer",
+                  "description": "Number of Down votes to that post (in case that item has a type post)."
+                },
+                "commentUpVotes": {
+                  "type": "integer",
+                  "description": "Number of Up votes to that comment (in case that item has a type comment)."
+                },
+                "commentDownVotes": {
+                  "type": "integer",
+                  "description": "Number of Down votes to that comment (in case that item has a type comment)."
+                },
+                "numberOfComments": {
+                  "type": "integer",
+                  "description": "Total number of comments (in case that item has a type post)."
+                },
+                "edited": {
+                  "type": "boolean",
+                  "description": "If true, then this post or comment is edited"
+                },
+                "editTime": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Edit time of the post or comment"
+                },
+                "publishTime": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Publish time of the post"
+                },
+                "commentPublishTime": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Publish time of the Comment (in case that item has a type comment)."
+                },
+                "saved": {
+                  "type": "boolean",
+                  "description": "If true, then this post or comment is saved before by that moderator."
+                },
+                "vote": {
+                  "type": "integer",
+                  "enum": [1, 0, -1],
+                  "description": "Used to know if that moderator voted up [1] or down [-1] or didn't vote [0] to that post or comment"
+                }
+              }
+            }
+          }
+        },
+        "ListingPost": {
+          "type": "object",
+          "properties": {
+            "before": {
+              "type": "string",
+              "description": "The fullname of the listing that follows before this page. null if there is no previous page."
+            },
+            "after": {
+              "type": "string",
+              "description": "The fullname of the listing that follows after this page. null if there is no next page."
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ListItem"
+              }
+            }
+          }
+        },
+        "ListingUserItem": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "this item's identifier."
+            },
+            "data": {
+              "type": "object",
+              "description": "A custom data structure used to hold valuable information.",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "description": "Username of the banned user"
+                },
+                "userPhoto": {
+                  "type": "string",
+                  "description": "The link of the user profile picture"
+                },
+                "bannedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "The time at which the user is banned"
+                },
+                "banPeriod": {
+                  "type": "integer",
+                  "description": "The period that user will be banned in days if not permanent."
+                },
+                "modNote": {
+                  "type": "string",
+                  "description": "Note on that ban"
+                },
+                "noteInclude": {
+                  "type": "string",
+                  "description": "Note to include in ban message"
+                },
+                "reasonForBan": {
+                  "type": "string",
+                  "description": "The reason for banning that user.",
+                  "enum": [
+                    "Spam",
+                    "Personal and confidential information",
+                    "Threatening, harassing, or inciting violence",
+                    "Other"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "ListingUser": {
+          "type": "object",
+          "properties": {
+            "before": {
+              "type": "string",
+              "description": "The fullname of the listing that follows before this page. null if there is no previous page."
+            },
+            "after": {
+              "type": "string",
+              "description": "The fullname of the listing that follows after this page. null if there is no next page."
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ListingUserItem"
+              }
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    },
     "/block-user": {
       "post": {
         "summary": "Block or unblock a user",
@@ -11864,11 +13070,15 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["accessToken"],
+                "required": ["password", "accessToken"],
                 "properties": {
                   "accessToken": {
                     "type": "string",
                     "description": "Access token from the response of google or facebook"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password entered for verification"
                   }
                 }
               }
@@ -11878,6 +13088,71 @@
         "responses": {
           "200": {
             "description": "Connected successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/disconnect/{type}": {
+      "post": {
+        "summary": "Disconnect google or facebook account",
+        "tags": ["User settings"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "type",
+            "description": "Type of disconnect",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["google", "facebook"]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["password"],
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "description": "Password entered for verification"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Disconnected successfully"
           },
           "400": {
             "description": "The request was invalid. You may refer to response for details around why the request was invalid",
@@ -12387,6 +13662,10 @@
                               "username": {
                                 "type": "string",
                                 "description": "Username of the blocked user"
+                              },
+                              "userImage": {
+                                "type": "string",
+                                "description": "Path of the image of the blocked user"
                               },
                               "blockDate": {
                                 "type": "string",
