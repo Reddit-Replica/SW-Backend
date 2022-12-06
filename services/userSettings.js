@@ -1,6 +1,7 @@
+import jwtDecode from "jwt-decode";
 import User from "../models/User.js";
 import fs from "fs";
-import { comparePasswords } from "../utils/passwordUtils.js";
+import { comparePasswords, hashPassword } from "../utils/passwordUtils.js";
 
 /**
  * A function used to check if a user of a given id exists.
@@ -36,6 +37,24 @@ export function verifyCredentials(user, username, password) {
     error.statusCode = 401;
     throw error;
   }
+}
+
+/**
+ * This function sets a new password for the user but checks first if the
+ * confirmed password matches the new one.
+ * @param {object} user User object
+ * @param {string} newPassword New password to be set
+ * @param {string} confirmNewPassword Repeated new password for confirmation
+ * @returns {void}
+ */
+export async function setNewPassword(user, newPassword, confirmNewPassword) {
+  if (newPassword !== confirmNewPassword) {
+    const error = new Error("New passwords do not match");
+    error.statusCode = 400;
+    throw error;
+  }
+  user.password = hashPassword(newPassword);
+  await user.save();
 }
 
 /**
@@ -83,4 +102,40 @@ export function deleteFile(pathToFile) {
     error.statusCode = 400;
     throw error;
   }
+}
+
+/**
+ * This function gets the google email from the decoded access token
+ * and checks if it's already found or not.
+ * @param {object} user User object
+ * @param {string} accessToken Google access token
+ * @returns {void}
+ */
+export function connectToGoogle(user, accessToken) {
+  const decodedToken = jwtDecode(accessToken);
+  const email = decodedToken.email;
+  if (user.googleEmail === email) {
+    const error = new Error("Google Email already set");
+    error.statusCode = 400;
+    throw error;
+  }
+  user.googleEmail = email;
+}
+
+/**
+ * This function gets the facebook email from the decoded access token
+ * and checks if it's already found or not.
+ * @param {object} user User object
+ * @param {string} accessToken Facebook access token
+ * @returns {void}
+ */
+export function connectToFacebook(user, accessToken) {
+  const decodedToken = jwtDecode(accessToken);
+  const email = decodedToken.email;
+  if (user.facebookEmail === email) {
+    const error = new Error("Facebook Email already set");
+    error.statusCode = 400;
+    throw error;
+  }
+  user.facebookEmail = email;
 }

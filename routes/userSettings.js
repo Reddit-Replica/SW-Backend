@@ -174,11 +174,15 @@ router.patch(
  *         application/json:
  *           schema:
  *             required:
+ *               - password
  *               - accessToken
  *             properties:
  *               accessToken:
  *                 type: string
  *                 description: Access token from the response of google or facebook
+ *               password:
+ *                 type: string
+ *                 description: Password entered for verification
  *     responses:
  *       200:
  *         description: Connected successfully
@@ -198,7 +202,67 @@ router.patch(
  *     security:
  *       - bearerAuth: []
  */
-router.post("/connect/:type");
+router.post(
+  "/connect/:type",
+  verifyAuthToken,
+  userSettingsController.connectValidator,
+  validateRequestSchema,
+  userSettingsController.connect
+);
+
+/**
+ * @swagger
+ * /disconnect/{type}:
+ *   post:
+ *     summary: Disconnect google or facebook account
+ *     tags: [User settings]
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         description: Type of disconnect
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - google
+ *             - facebook
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - password
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 description: Password entered for verification
+ *     responses:
+ *       200:
+ *         description: Disconnected successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post(
+  "/disconnect/:type",
+  verifyAuthToken,
+  userSettingsController.disconnectValidator,
+  validateRequestSchema,
+  userSettingsController.disconnect
+);
 
 /**
  * @swagger
@@ -286,7 +350,13 @@ router.put("/change-email");
  *     security:
  *       - bearerAuth: []
  */
-router.put("/change-password");
+router.put(
+  "/change-password",
+  verifyAuthToken,
+  userSettingsController.changePasswordValidator,
+  validateRequestSchema,
+  userSettingsController.changePassword
+);
 
 /**
  * @swagger
@@ -598,6 +668,9 @@ router.delete(
  *                           username:
  *                             type: string
  *                             description: Username of the blocked user
+ *                           userImage:
+ *                             type: string
+ *                             description: Path of the image of the blocked user
  *                           blockDate:
  *                             type: string
  *                             format: date-time
