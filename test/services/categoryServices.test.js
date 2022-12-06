@@ -3,7 +3,6 @@ import {
   getSortedCategories,
 } from "../../services/categories.js";
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
-import User from "../../models/User.js";
 import Category from "../../models/Category.js";
 
 describe("Testing Category services", () => {
@@ -12,7 +11,6 @@ describe("Testing Category services", () => {
   });
 
   afterAll(async () => {
-    await User.deleteMany({});
     await Category.deleteMany({});
     await closeDatabaseConnection();
   });

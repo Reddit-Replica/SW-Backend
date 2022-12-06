@@ -1,6 +1,6 @@
 import Subreddit from "../models/Community.js";
 import User from "../models/User.js";
-import { userListing } from "../utils/prepareListing.js";
+import { userListing } from "../utils/prepareUserListing.js";
 
 // eslint-disable-next-line max-statements
 export async function listingBannedUsers(

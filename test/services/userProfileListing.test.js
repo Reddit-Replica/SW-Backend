@@ -93,7 +93,7 @@ describe("Testing user profile listing services functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to user after parameter while with listingUserProfileService function", async () => {
+  it("try to use after parameter with listingUserProfileService function", async () => {
     const result = await listingUserProfileService(
       user,
       loggedInUser,
@@ -104,7 +104,7 @@ describe("Testing user profile listing services functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to user before parameter while with listingUserProfileService function", async () => {
+  it("try to use before parameter with listingUserProfileService function", async () => {
     const result = await listingUserProfileService(
       user,
       loggedInUser,
