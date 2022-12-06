@@ -11,6 +11,9 @@ import {
   saveComment,
   unSaveComment,
   searchForComment,
+  hideAPost,
+  unhideAPost,
+  validateHidePost,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
 //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -51,7 +54,7 @@ const savePostOrComment = async (req, res) => {
     }
     if (type === "comment") {
       const comment = await searchForComment(req.body.id);
-      result=saveComment(comment, user);
+      result = saveComment(comment, user);
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
@@ -92,9 +95,49 @@ const unsavePostOrComment = async (req, res) => {
     }
   }
 };
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//HIDE
+const hidePost = async (req, res) => {
+  try {
+    await validateHidePost(req);
+    const user = await searchForUserService(req.payload.username);
+    const post = await searchForPost(req.body.id);
+    const result = await hideAPost(post, user);
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Server Error");
+    }
+  }
+};
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//UNHIDE
+const unhidePost = async (req, res) => {
+  try {
+    await validateHidePost(req);
+    const user = await searchForUserService(req.payload.username);
+    const post = await searchForPost(req.body.id);
+    const result = await unhideAPost(post, user);
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Server Error");
+    }
+  }
+};
 
 export default {
   followOrUnfollowPost,
   savePostOrComment,
   unsavePostOrComment,
+  hidePost,
+  unhidePost,
 };

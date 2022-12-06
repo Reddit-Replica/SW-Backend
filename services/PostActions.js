@@ -86,6 +86,18 @@ export async function validateFollowPost(req) {
     throw error;
   }
 }
+/**
+ * This function is used to validate the request of hide a post
+ * @param {Object} req req object that contains the input data
+ * @returns {Object} error object that contains the error message and Status code
+ */
+export async function validateHidePost(req) {
+  if (!req.body.id) {
+    let error = new Error("you must enter the id of the post");
+    error.statusCode = 400;
+    throw error;
+  }
+}
 
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //SAVE AND UNSAVE POSTS
@@ -143,11 +155,9 @@ export async function unSavePost(post, user) {
     throw error;
   }
 
-  console.log(user.savedPosts);
   user.savedPosts = user.savedPosts.filter((smallPost) => {
     return smallPost.toString() !== post.id;
   });
-  console.log(user.savedPosts);
   await user.save();
   return {
     statusCode: 200,
@@ -233,7 +243,6 @@ export async function unSaveComment(comment, user) {
 async function checkForFollowedPosts(post, user) {
   //CHECK IF THE POST IS ALREADY SAVED
   for (const smallPost of user.followedPosts) {
-    console.log(smallPost.toString(), post.id);
     if (post.id === smallPost.toString()) {
       return true;
     }
@@ -284,5 +293,70 @@ export async function unfollowPost(post, user) {
   return {
     statusCode: 200,
     message: "Unfollowed. You will not get updates on this post anymore.",
+  };
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//HIDE AND UNHIDE POSTS
+/**
+ * This function is used to check if the given post exists in user's hidden posts
+ * @param {Object} post the post object that we will check for
+ * @param {Object} user the user object that we will search in
+ * @returns {Boolean} detects if the post exists or not
+ */
+function checkForHiddenPosts(post, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  for (const smallPost of user.hiddenPosts) {
+    if (post.id === smallPost.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * This function is used to hide a post from a user
+ * @param {Object} post the post object that we will hide
+ * @param {Object} user the user object that we will hide the post to
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function hideAPost(post, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  const hidden = checkForHiddenPosts(post, user);
+  if (hidden) {
+    let error = new Error("This Post is already hidden");
+    error.statusCode = 409;
+    throw error;
+  }
+  //ADD THE POST TO USER'S HIDDEN POSTS
+  user.hiddenPosts.push(post.id);
+  await user.save();
+  return {
+    statusCode: 200,
+    message: "Post is hidden successfully",
+  };
+}
+
+/**
+ * This function is used to unhide a post to a user
+ * @param {Object} post the post object that we will unhide
+ * @param {Object} user the user object that we will hide the post from
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function unhideAPost(post, user) {
+  //CHECK IF THE POST IS ALREADY SAVED
+  const hidden = checkForHiddenPosts(post, user);
+  if (!hidden) {
+    let error = new Error("This Post is not hidden already");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  user.hiddenPosts = user.hiddenPosts.filter((smallPost) => {
+    return smallPost.toString() !== post.id;
+  });
+  await user.save();
+  return {
+    statusCode: 200,
+    message: "Post is unhidden successfully",
   };
 }

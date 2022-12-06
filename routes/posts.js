@@ -112,7 +112,9 @@ postRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/hide");
+postRouter.post("/hide",
+verifyAuthToken,
+postActionsController.hidePost);
 
 /**
  * @swagger
