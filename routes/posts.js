@@ -1,5 +1,6 @@
 import express from "express";
 import postController from "../controllers/HpostController.js";
+import postActionsController from "../controllers/NpostActionsController.js";
 import { optionalToken } from "../middleware/optionalToken.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
@@ -67,7 +68,11 @@ const postRouter = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/follow-post");
+postRouter.post(
+  "/follow-post",
+  verifyAuthToken,
+  postActionsController.followOrUnfollowPost
+);
 
 /**
  * @swagger
