@@ -3,7 +3,7 @@ import app from "../../app.js";
 import Post from "./../../models/Post.js";
 import User from "../../models/User.js";
 import Comment from "../../models/Comment.js";
-import Community from "../../models/Community.js";
+import Subreddit from "../../models/Community.js";
 import { generateJWT } from "../../utils/generateTokens.js";
 
 const request = supertest(app);
@@ -33,10 +33,11 @@ describe("Testing comment endpoints", () => {
     });
     await post.save();
 
-    subreddit = new Community({
+    subreddit = new Subreddit({
       type: "public",
       title: "funny",
       category: "fun",
+      viewName: "LOL",
       owner: {
         username: user.username,
         userID: user._id,
@@ -170,6 +171,7 @@ describe("Testing comment endpoints", () => {
         text: "Comment title",
         parentType: "post",
         parentId: post._id,
+        postId: post._id,
         level: 1,
         subredditName: "funny",
         haveSubreddit: true,
@@ -186,6 +188,7 @@ describe("Testing comment endpoints", () => {
         text: "Comment title",
         parentType: "post",
         parentId: post._id,
+        postId: post._id,
         level: 1,
         haveSubreddit: false,
       })

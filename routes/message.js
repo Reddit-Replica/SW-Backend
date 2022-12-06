@@ -801,7 +801,23 @@ router.get("/message/messages");
  *          200:
  *              description: Message has been unread successfully
  *          401:
- *              description: Unauthorized to unread this message
+ *              description: you are unauthorized to do this action
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          500:
  *              description: Server Error
  *      security:
@@ -809,6 +825,52 @@ router.get("/message/messages");
  */
 
 router.patch("/unread-message");
+/**
+ * @swagger
+ * /spam-message:
+ *  patch:
+ *      summary: spam a Message
+ *      tags: [Messages]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *              - id
+ *             properties:
+ *              id:
+ *                type: string
+ *                description: Full name of the message you want to spam
+ *      responses:
+ *          200:
+ *              description: Message has been spammed successfully
+ *          401:
+ *              description: you are unauthorized to do this action
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.patch("/spam-message");
 
 /**
  * @swagger

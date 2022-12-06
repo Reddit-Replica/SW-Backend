@@ -2,6 +2,7 @@ import express from "express";
 import subredditDetailsController from "../controllers/subredditDetails.js";
 import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
+import { optionalToken } from "../middleware/optionalToken.js";
 // eslint-disable-next-line new-cap
 const communitiesRouter = express.Router();
 
@@ -386,7 +387,7 @@ communitiesRouter.get("/random-category");
  * @swagger
  * /r/{subreddit}:
  *  get:
- *      summary: Return all the details of the subreddit
+ *      summary: Return all the details of the subreddit (Here the token is optional if the user is logged in add a token if not don't add it)
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
@@ -413,7 +414,7 @@ communitiesRouter.get("/random-category");
 
 communitiesRouter.get(
   "/r/:subreddit",
-  verifyAuthToken,
+  optionalToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
   subredditDetailsController.subredditDetails

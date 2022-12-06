@@ -75,7 +75,7 @@ const userSchema = mongoose.Schema({
     adultContent: {
       type: Boolean,
       required: true,
-      default: true,
+      default: false,
     },
     autoplayMedia: {
       type: Boolean,
@@ -209,13 +209,43 @@ const userSchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  savedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
   spammedPosts: [
     {
       type: Schema.Types.ObjectId,
       ref: "Post",
     },
   ],
-  comments: [
+  commentedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  upvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  downvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  followedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  savedComments: [
     {
       type: Schema.Types.ObjectId,
       ref: "Comment",
