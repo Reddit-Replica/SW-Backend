@@ -470,4 +470,145 @@ describe("Testing comment services functions", () => {
     });
     expect(result.data.children[0].followed).toEqual(true);
   });
+
+  it("should have commentTreeOfCommentListing function", () => {
+    expect(commentTreeOfCommentListing).toBeDefined();
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to get the comments of a parent comment with no comments", async () => {
+    const result = await commentTreeOfCommentListing(
+      loggedInUser,
+      post1,
+      firstLevelComment3,
+      {}
+    );
+    expect(result).toEqual({
+      statusCode: 200,
+      data: { before: "", after: "", children: [] },
+    });
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to get the comments of a parent comment with 3 comments", async () => {
+    const result = await commentTreeOfCommentListing(
+      loggedInUser,
+      post1,
+      firstLevelComment1,
+      {}
+    );
+    expect(result.statusCode).toEqual(200);
+    expect(result.data.children.length).toEqual(3);
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to use after parameter with commentTreeOfCommentListing function", async () => {
+    const result = await commentTreeOfCommentListing(
+      loggedInUser,
+      post1,
+      firstLevelComment1,
+      {
+        after: secondLevelComment1._id,
+        sort: "best",
+      }
+    );
+    expect(result.data.children.length).toEqual(2);
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to use before parameter with commentTreeOfCommentListing function", async () => {
+    const result = await commentTreeOfCommentListing(
+      loggedInUser,
+      post1,
+      firstLevelComment1,
+      {
+        before: secondLevelComment3._id,
+        sort: "best",
+      }
+    );
+    expect(result.data.children.length).toEqual(2);
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to use limit parameter with commentTreeOfCommentListing function", async () => {
+    const result = await commentTreeOfCommentListing(
+      loggedInUser,
+      post1,
+      firstLevelComment1,
+      {
+        sort: "best",
+        limit: 1,
+      }
+    );
+    expect(result.data.children.length).toEqual(1);
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to the comments of a post and let other user upvote them", async () => {
+    loggedInUser.upvotedComments.push(secondLevelComment1._id);
+    await loggedInUser.save();
+
+    const result = await commentTreeOfCommentListing(
+      loggedInUser,
+      post1,
+      firstLevelComment1,
+      {
+        sort: "best",
+        limit: 1,
+      }
+    );
+    expect(result.data.children[0].vote).toEqual(1);
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to the comments of a post and let other user downvote them", async () => {
+    loggedInUser.downvotedComments.push(secondLevelComment2._id);
+    await loggedInUser.save();
+
+    const result = await commentTreeOfCommentListing(
+      loggedInUser,
+      post1,
+      firstLevelComment1,
+      {
+        sort: "best",
+        after: secondLevelComment1._id,
+        limit: 1,
+      }
+    );
+    expect(result.data.children[0].vote).toEqual(-1);
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to the comments of a post and let other user save them", async () => {
+    loggedInUser.savedComments.push(secondLevelComment1._id);
+    await loggedInUser.save();
+
+    const result = await commentTreeOfCommentListing(
+      loggedInUser,
+      post1,
+      firstLevelComment1,
+      {
+        sort: "best",
+        limit: 1,
+      }
+    );
+    expect(result.data.children[0].saved).toEqual(true);
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to the comments of a post and let other user follow them", async () => {
+    loggedInUser.followedComments.push(secondLevelComment1._id);
+    await loggedInUser.save();
+
+    const result = await commentTreeOfCommentListing(
+      loggedInUser,
+      post1,
+      firstLevelComment1,
+      {
+        sort: "best",
+        limit: 1,
+      }
+    );
+    expect(result.data.children[0].followed).toEqual(true);
+  });
 });
