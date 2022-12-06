@@ -215,6 +215,12 @@ const userSchema = mongoose.Schema({
       ref: "Comment",
     },
   ],
+  spammedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
   spammedPosts: [
     {
       type: Schema.Types.ObjectId,
