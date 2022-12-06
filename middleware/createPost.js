@@ -59,7 +59,6 @@ export async function checkPostSubreddit(req, res, next) {
  * @param {function} next Next function
  * @returns {void}
  */
-// eslint-disable-next-line max-statements
 export async function checkPostFlair(req, res, next) {
   const flairId = req.body.flairId;
   try {
@@ -78,115 +77,18 @@ export async function checkPostFlair(req, res, next) {
 }
 
 /**
- * Middleware used to check if the post kind is hybrid and then extracts
- * the text, images, videos, and links content from the body along with image
- * and video captions. The hybridContent object is formed according to the
- * structure in the Post model and passed with the request.
+ * Middleware used to check if the post kind is hybrid and then sets the
+ * post content as given from the rich text editor in the body with no changes.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
  * @param {function} next Next function
  * @returns {void}
  */
-// eslint-disable-next-line max-statements
 export async function checkHybridPost(req, res, next) {
   const kind = req.body.kind;
   if (kind === "hybrid") {
-    let images = [];
-    let videos = [];
-    const imageFiles = req.files?.images;
-    const videoFiles = req.files?.videos;
-    const { texts, links, imageCaptions, videoCaptions } = req.body;
-    if (imageFiles && !imageCaptions) {
-      for (const image of imageFiles) {
-        deleteFile(image.path);
-      }
-      if (videoFiles) {
-        // eslint-disable-next-line max-depth
-        for (const video of videoFiles) {
-          deleteFile(video.path);
-        }
-      }
-      return res.status(400).json({
-        error: "Image captions are required",
-      });
-    }
-    if (imageFiles?.length !== imageCaptions?.length) {
-      if (imageFiles) {
-        // eslint-disable-next-line max-depth
-        for (const image of imageFiles) {
-          deleteFile(image.path);
-        }
-      }
-      if (videoFiles) {
-        // eslint-disable-next-line max-depth
-        for (const video of videoFiles) {
-          deleteFile(video.path);
-        }
-      }
-      return res.status(400).json({
-        error: "Each image should have a caption",
-      });
-    }
-    if (videoFiles && !videoCaptions) {
-      if (imageFiles) {
-        // eslint-disable-next-line max-depth
-        for (const image of imageFiles) {
-          deleteFile(image.path);
-        }
-      }
-      for (const video of videoFiles) {
-        deleteFile(video.path);
-      }
-      return res.status(400).json({
-        error: "Video captions are required",
-      });
-    }
-    if (videoFiles?.length !== videoCaptions?.length) {
-      if (imageFiles) {
-        // eslint-disable-next-line max-depth
-        for (const image of imageFiles) {
-          deleteFile(image.path);
-        }
-      }
-      if (videoFiles) {
-        // eslint-disable-next-line max-depth
-        for (const video of videoFiles) {
-          deleteFile(video.path);
-        }
-      }
-      return res.status(400).json({
-        error: "Each video should have a caption",
-      });
-    }
-    if (imageFiles) {
-      for (let i = 0; i < imageFiles.length; i++) {
-        images.push({
-          image: {
-            path: imageFiles[i].path,
-            caption: imageCaptions[i].caption,
-          },
-          index: imageCaptions[i].index,
-        });
-      }
-    }
-    if (videoFiles) {
-      for (let i = 0; i < videoFiles.length; i++) {
-        videos.push({
-          video: {
-            path: videoFiles[i].path,
-            caption: videoCaptions[i].caption,
-          },
-          index: videoCaptions[i].index,
-        });
-      }
-    }
-    req.hybridContent = {
-      texts,
-      links,
-      images,
-      videos,
-    };
+    req.content = req.body.content;
   }
   next();
 }
@@ -205,10 +107,10 @@ export async function checkHybridPost(req, res, next) {
 // eslint-disable-next-line max-statements
 export function checkImagesAndVideos(req, res, next) {
   const kind = req.body.kind;
-  const imageCaptions = req.body.imageCaptions;
-  const imageLinks = req.body.imageLinks;
-  let images = [];
   if (kind === "image") {
+    const imageCaptions = req.body.imageCaptions;
+    const imageLinks = req.body.imageLinks;
+    let images = [];
     const imageFiles = req.files.images;
     if (!imageFiles) {
       return res.status(404).json("Images not found");
@@ -235,19 +137,19 @@ export function checkImagesAndVideos(req, res, next) {
     });
     req.images = images;
   } else if (kind === "video") {
-    const videoFiles = req.files.videos;
-    if (!videoFiles) {
-      return res.status(404).json("Videos not found");
+    const videoFile = req.files.video;
+    if (!videoFile) {
+      return res.status(404).json("Video not found");
     }
-    if (videoFiles.length > 1) {
-      for (const video of videoFiles) {
+    if (videoFile.length > 1) {
+      for (const video of videoFile) {
         deleteFile(video.path);
       }
       return res.status(400).json({
         error: "Videos can only have one video",
       });
     }
-    req.video = videoFiles[0].path;
+    req.video = videoFile[0].path;
   }
   next();
 }
@@ -328,7 +230,7 @@ export async function postSubmission(req, res, next) {
       nsfw: nsfw,
       spoiler: spoiler,
       flair: flairId,
-      hybridContent: req.hybridContent,
+      content: req.content,
       sendReplies: sendReplies,
       sharePostId: sharePostId,
       scheduleDate: scheduleDate,
