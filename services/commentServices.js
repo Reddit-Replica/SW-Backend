@@ -138,9 +138,16 @@ export async function createCommentService(data, post) {
   const comment = new Comment(commentObject);
   await comment.save();
 
-  // update the user comments array
-  user.comments.push(comment._id);
-  await user.save();
+  // update commentedPosts array for that user
+  if (post.ownerId.toString() !== data.userId.toString()) {
+    const index = user.commentedPosts.findIndex(
+      (elem) => elem.toString() === post._id.toString()
+    );
+    if (index === -1) {
+      user.commentedPosts.push(post._id);
+      await user.save();
+    }
+  }
 
   // add the comment to children of parent comment
   if (data.parentType === "comment") {

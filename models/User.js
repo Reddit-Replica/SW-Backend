@@ -215,10 +215,10 @@ const userSchema = mongoose.Schema({
       ref: "Post",
     },
   ],
-  comments: [
+  commentedPosts: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Comment",
+      ref: "Post",
     },
   ],
   upvotedComments: [
