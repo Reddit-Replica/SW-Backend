@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "set NODE_ENV=development && nodemon app.js",
     "start": "node app.js",
-    "test": "set NODE_ENV=testing && node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test": "set NODE_ENV=testing && node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
     "doc": "swagger-jsdoc-generator config.json > documentation.json",
     "doc2": "redoc-cli bundle -o apidoc/index.html documentation.json",
     "lint": "eslint ./**/*.js",
