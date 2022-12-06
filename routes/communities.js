@@ -2,7 +2,7 @@ import express from "express";
 import subredditDetailsController from "../controllers/subredditDetails.js";
 import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
-import { optionalToken } from "../middleware/optionalToken.js";
+import subredditController from "../controllers/NcommunityController.js";
 // eslint-disable-next-line new-cap
 const communitiesRouter = express.Router();
 
@@ -598,7 +598,11 @@ communitiesRouter.get("/r/:subreddit/wiki/bans");
  *      security:
  *       - bearerAuth: []
  */
-communitiesRouter.patch("/r/:subreddit/make-favorite");
+communitiesRouter.patch(
+  "/r/:subreddit/make-favorite",
+  verifyAuthToken,
+  subredditController.addToFavorite
+);
 
 /**
  * @swagger
@@ -645,7 +649,11 @@ communitiesRouter.patch("/r/:subreddit/make-favorite");
  *      security:
  *       - bearerAuth: []
  */
-communitiesRouter.patch("/r/:subreddit/remove-favorite");
+communitiesRouter.patch(
+  "/r/:subreddit/remove-favorite",
+  verifyAuthToken,
+  subredditController.removeFromFavorite
+);
 
 /**
  * @swagger
