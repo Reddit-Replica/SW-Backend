@@ -360,3 +360,72 @@ export async function unhideAPost(post, user) {
     message: "Post is unhidden successfully",
   };
 }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//MART POSTS AS SPAM
+/**
+ * This function is used to check if the given post exists in user's hidden posts
+ * @param {Object} post the post object that we will check for
+ * @param {Object} user the user object that we will search in
+ * @returns {Boolean} detects if the post exists or not
+ */
+function checkForSpammedPosts(post, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  for (const smallPost of user.spammedPosts) {
+    if (post.id === smallPost.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * This function is used to mark a post as a spam from a user
+ * @param {Object} post the post object that we will mark as spam
+ * @param {Object} user the user object that will mark the post as spam
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function markPostAsSpam(post, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  const spammed = checkForSpammedPosts(post, user);
+  if (spammed) {
+    let error = new Error("This Post is already hidden");
+    error.statusCode = 409;
+    throw error;
+  }
+  //ADD THE POST TO USER'S HIDDEN POSTS
+  user.spammedPosts.push(post.id);
+  await user.save();
+  post.markedSpam=true;
+
+  return {
+    statusCode: 200,
+    message: "Post is hidden successfully",
+  };
+}
+
+/**
+ * This function is used to unmark a post as a spam from a user
+ * @param {Object} post the post object that we will ummark as spam
+ * @param {Object} user the user object that will ummark the post as spam
+ * @returns {Object} success object that contains the message and status code
+ */
+ export async function unmarkPostAsSpam(post, user) {
+    //CHECK IF THE POST IS ALREADY HIDDEN
+    const spammed = checkForSpammedPosts(post, user);
+    if (spammed) {
+      let error = new Error("This Post is already hidden");
+      error.statusCode = 409;
+      throw error;
+    }
+    //ADD THE POST TO USER'S HIDDEN POSTS
+    user.spammedPosts.push(post.id);
+    await user.save();
+    post.markedSpam=true;
+  
+    return {
+      statusCode: 200,
+      message: "Post is hidden successfully",
+    };
+  }
+
