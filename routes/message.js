@@ -870,7 +870,7 @@ router.patch("/unread-message");
  *       - bearerAuth: []
  */
 
- router.patch("/spam-message");
+router.patch("/spam-message");
 
 /**
  * @swagger
