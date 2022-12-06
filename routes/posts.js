@@ -206,6 +206,13 @@ postRouter.post("/clear-suggested-sort");
  *      responses:
  *          201:
  *              description: Post submitted successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              id:
+ *                                  type: string
+ *                                  description: New post ID
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
