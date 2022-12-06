@@ -1,4 +1,7 @@
 import express from "express";
+import postActionsController from "../controllers/NpostActionsController.js";
+
+import { verifyAuthToken } from "../middleware/verifyToken.js";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -189,7 +192,7 @@ router.post("/unmark-spam");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/save");
+router.post("/save", verifyAuthToken, postActionsController.savePostOrComment);
 
 /**
  * @swagger
@@ -282,7 +285,11 @@ router.post("/send-replies");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unsave");
+router.post(
+  "/unsave",
+  verifyAuthToken,
+  postActionsController.unsavePostOrComment
+);
 
 /**
  * @swagger
