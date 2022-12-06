@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import { postListing } from "../utils/prepareListing.js";
+import { postListing } from "../utils/preparePostListing.js";
 
 /**
  * Function that get the posts that we want to list from a certain user

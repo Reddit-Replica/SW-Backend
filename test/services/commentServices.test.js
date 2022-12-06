@@ -460,7 +460,7 @@ describe("Testing comment services functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to the comments of a post and let other user follow them", async () => {
+  it("try to get the comments of a post and let other user follow them", async () => {
     loggedInUser.followedComments.push(firstLevelComment1._id);
     await loggedInUser.save();
 
@@ -596,7 +596,7 @@ describe("Testing comment services functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to the comments of a post and let other user follow them", async () => {
+  it("try to get the comments of a post and let other user follow them", async () => {
     loggedInUser.followedComments.push(secondLevelComment1._id);
     await loggedInUser.save();
 

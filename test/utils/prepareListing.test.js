@@ -1,9 +1,12 @@
 import {
   prepareListingPosts,
   postListing,
-  prepareListingComments,
-  commentListing,
-} from "../../utils/prepareListing.js";
+} from "../../utils/preparePostListing.js";
+import {
+  prepareListingCommentTree,
+  commentTreeListing,
+} from "../../utils/prepareCommentListing.js";
+
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
@@ -316,13 +319,13 @@ describe("Testing prepare listing functions", () => {
     expect(result.find.score).toBeDefined();
   });
 
-  it("should have prepareListingComments", () => {
-    expect(prepareListingComments).toBeDefined();
+  it("should have prepareListingCommentTree", () => {
+    expect(prepareListingCommentTree).toBeDefined();
   });
 
   // eslint-disable-next-line max-len
-  it("try to send empty listing parameters to prepareListingComments", async () => {
-    const result = await prepareListingComments({});
+  it("try to send empty listing parameters to prepareListingCommentTree", async () => {
+    const result = await prepareListingCommentTree({});
     expect(result).toEqual({
       limit: 25,
       listing: null,
@@ -330,61 +333,62 @@ describe("Testing prepare listing functions", () => {
     });
   });
 
-  it("try to send sort = best prepareListingComments", async () => {
-    const result = await prepareListingComments({ sort: "best" });
+  it("try to send sort = best prepareListingCommentTree", async () => {
+    const result = await prepareListingCommentTree({ sort: "best" });
     expect(result.sort).toEqual({ numberOfVotes: -1 });
   });
 
-  it("try to send sort = top prepareListingComments", async () => {
-    const result = await prepareListingComments({ sort: "top" });
+  it("try to send sort = top prepareListingCommentTree", async () => {
+    const result = await prepareListingCommentTree({ sort: "top" });
     expect(result.sort).toEqual(null);
   });
 
-  it("try to send sort = new prepareListingComments", async () => {
-    const result = await prepareListingComments({ sort: "new" });
+  it("try to send sort = new prepareListingCommentTree", async () => {
+    const result = await prepareListingCommentTree({ sort: "new" });
     expect(result.sort).toEqual({ createdAt: -1 });
   });
 
-  it("try to send sort = old prepareListingComments", async () => {
-    const result = await prepareListingComments({ sort: "old" });
+  it("try to send sort = old prepareListingCommentTree", async () => {
+    const result = await prepareListingCommentTree({ sort: "old" });
     expect(result.sort).toEqual({ createdAt: 1 });
   });
 
-  it("try to send sort = invalid prepareListingComments", async () => {
-    const result = await prepareListingComments({ sort: "invalid" });
+  it("try to send sort = invalid prepareListingCommentTree", async () => {
+    const result = await prepareListingCommentTree({ sort: "invalid" });
     expect(result.sort).toEqual({ numberOfVotes: -1 });
   });
 
-  it("try to set limit bigger than 100 in prepareListingComments", async () => {
-    const result = await prepareListingComments({ limit: 150 });
+  // eslint-disable-next-line max-len
+  it("try to set limit bigger than 100 in prepareListingCommentTree", async () => {
+    const result = await prepareListingCommentTree({ limit: 150 });
     expect(result.limit).toEqual(100);
   });
 
   // eslint-disable-next-line max-len
-  it("try to set limit smaller than or equal 0 in prepareListingComments", async () => {
-    let result = await prepareListingComments({ limit: 0 });
+  it("try to set limit smaller than or equal 0 in prepareListingCommentTree", async () => {
+    let result = await prepareListingCommentTree({ limit: 0 });
     expect(result.limit).toEqual(1);
-    result = await prepareListingComments({ limit: -5 });
+    result = await prepareListingCommentTree({ limit: -5 });
     expect(result.limit).toEqual(1);
   });
 
-  it("try to set limit = 10 in prepareListingComments", async () => {
-    const result = await prepareListingComments({ limit: 10 });
+  it("try to set limit = 10 in prepareListingCommentTree", async () => {
+    const result = await prepareListingCommentTree({ limit: 10 });
     expect(result.limit).toEqual(10);
   });
 
-  it("try to set before with invalid id in commentListing", async () => {
-    const result = await commentListing({ before: "invalid" });
+  it("try to set before with invalid id in commentTreeListing", async () => {
+    const result = await commentTreeListing({ before: "invalid" });
     expect(result.find).toEqual({ deletedAt: null });
   });
 
-  it("try to set after with invalid id in commentListing", async () => {
-    const result = await commentListing({ after: "invalid" });
+  it("try to set after with invalid id in commentTreeListing", async () => {
+    const result = await commentTreeListing({ after: "invalid" });
     expect(result.find).toEqual({ deletedAt: null });
   });
 
-  it("try to set after with valid id in commentListing", async () => {
-    const result = await commentListing({ after: comment1._id });
+  it("try to set after with valid id in commentTreeListing", async () => {
+    const result = await commentTreeListing({ after: comment1._id });
 
     expect(result.find).toEqual({
       numberOfVotes: { $lt: comment1.numberOfVotes },
@@ -392,8 +396,8 @@ describe("Testing prepare listing functions", () => {
     });
   });
 
-  it("try to set before with valid id in commentListing", async () => {
-    const result = await commentListing({ before: comment1._id });
+  it("try to set before with valid id in commentTreeListing", async () => {
+    const result = await commentTreeListing({ before: comment1._id });
     expect(result.find).toEqual({
       numberOfVotes: { $gt: comment1.numberOfVotes },
       deletedAt: null,
@@ -401,8 +405,8 @@ describe("Testing prepare listing functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to set before with valid id and sort = top in commentListing", async () => {
-    const result = await commentListing({
+  it("try to set before with valid id and sort = top in commentTreeListing", async () => {
+    const result = await commentTreeListing({
       before: comment1._id,
       sort: "top",
     });
@@ -413,8 +417,8 @@ describe("Testing prepare listing functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to set after with valid id and sort = top in commentListing", async () => {
-    const result = await commentListing({
+  it("try to set after with valid id and sort = top in commentTreeListing", async () => {
+    const result = await commentTreeListing({
       after: comment1._id,
       sort: "top",
     });
@@ -425,8 +429,8 @@ describe("Testing prepare listing functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to set before with valid id and sort = new in commentListing", async () => {
-    const result = await commentListing({
+  it("try to set before with valid id and sort = new in commentTreeListing", async () => {
+    const result = await commentTreeListing({
       before: comment1._id,
       sort: "new",
     });
@@ -437,8 +441,8 @@ describe("Testing prepare listing functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to set after with valid id and sort = new in commentListing", async () => {
-    const result = await commentListing({
+  it("try to set after with valid id and sort = new in commentTreeListing", async () => {
+    const result = await commentTreeListing({
       after: comment1._id,
       sort: "new",
     });
@@ -449,8 +453,8 @@ describe("Testing prepare listing functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to set before with valid id and sort = old in commentListing", async () => {
-    const result = await commentListing({
+  it("try to set before with valid id and sort = old in commentTreeListing", async () => {
+    const result = await commentTreeListing({
       before: comment1._id,
       sort: "old",
     });
@@ -461,8 +465,8 @@ describe("Testing prepare listing functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to set after with valid id and sort = old in commentListing", async () => {
-    const result = await commentListing({
+  it("try to set after with valid id and sort = old in commentTreeListing", async () => {
+    const result = await commentTreeListing({
       after: comment1._id,
       sort: "old",
     });

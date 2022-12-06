@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Post from "./../models/Post.js";
+import Post from "../models/Post.js";
 import { prepareLimit } from "./prepareLimit.js";
 
 /**W
