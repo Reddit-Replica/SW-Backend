@@ -22,6 +22,9 @@ const submit = async (req, res) => {
   const post = req.post;
   try {
     user.posts.push(post.id);
+    user.upvotedPosts.push(post.id);
+    post.numberOfUpvotes = 1;
+    await post.save();
     await user.save();
     res.status(201).json("Post submitted successfully!");
   } catch (err) {
