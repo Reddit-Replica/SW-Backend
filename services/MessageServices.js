@@ -50,9 +50,9 @@ export async function addMessage(req) {
  * @returns {String} indicates if the message was sent successfully or not
  */
 export async function addMention(req) {
-    const mention = await new Message(req.msg).save();
-    const receiver = await User.findOne({ username: mention.receiverUsername });
-    addUserMention(receiver.id, mention);
+  const mention = await new Message(req.msg).save();
+  const receiver = await User.findOne({ username: mention.receiverUsername });
+  addUserMention(receiver.id, mention);
 }
 /**
  * This function is used to create a new conversation
@@ -151,15 +151,22 @@ async function addConversationToUsers(message, convId) {
       const userTwo = await User.findOne({
         username: message.receiverUsername,
       });
-      const userTwoConv = await checkExistingConversation(userTwo, convId);
-      if (!userTwoConv) {
-        userTwo.conversations.push({
-          conversationId: convId,
-          with: message.senderUsername,
-        });
-        await userTwo.save();
-      }
+      await userOne.save();
     }
+  }
+  if (message.isReceiverUser) {
+    const userTwo = await User.findOne({
+      username: message.receiverUsername,
+    });
+    const userTwoConv = await checkExistingConversation(userTwo, convId);
+    if (!userTwoConv) {
+      userTwo.conversations.push({
+        conversationId: convId,
+        with: message.senderUsername,
+      });
+      await userTwo.save();
+    }
+  }
 }
 
 /**
