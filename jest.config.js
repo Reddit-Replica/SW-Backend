@@ -1,4 +1,5 @@
 export default {
+  testTimeout: 30000,
   testEnvironment: "jest-environment-node",
   transform: {},
   coverageReporters: ["clover", "json", "lcov", ["text", { skipFull: true }]],
