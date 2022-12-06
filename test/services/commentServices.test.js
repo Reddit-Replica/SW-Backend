@@ -4,8 +4,8 @@ import {
   checkCommentId,
   checkloggedInUser,
   createCommentService,
-  commentTreeListing,
-  commentTreeOfCommentListing,
+  commentTreeListingService,
+  commentTreeOfCommentListingService,
 } from "../../services/commentServices";
 import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
@@ -377,12 +377,12 @@ describe("Testing comment services functions", () => {
     await Comment.deleteOne({ content: "Comment for test" });
   });
 
-  it("should have commentTreeListing function", () => {
-    expect(commentTreeListing).toBeDefined();
+  it("should have commentTreeListingService function", () => {
+    expect(commentTreeListingService).toBeDefined();
   });
 
   it("try to get the comments of a post with no comments", async () => {
-    const result = await commentTreeListing(loggedInUser, post2, {});
+    const result = await commentTreeListingService(loggedInUser, post2, {});
     expect(result).toEqual({
       statusCode: 200,
       data: { before: "", after: "", children: [] },
@@ -390,14 +390,14 @@ describe("Testing comment services functions", () => {
   });
 
   it("try to get the comments of a post with 3 comments", async () => {
-    const result = await commentTreeListing(loggedInUser, post1, {});
+    const result = await commentTreeListingService(loggedInUser, post1, {});
     expect(result.statusCode).toEqual(200);
     expect(result.data.children.length).toEqual(3);
   });
 
   // eslint-disable-next-line max-len
-  it("try to use after parameter with commentTreeListing function", async () => {
-    const result = await commentTreeListing(loggedInUser, post1, {
+  it("try to use after parameter with commentTreeListingService function", async () => {
+    const result = await commentTreeListingService(loggedInUser, post1, {
       after: firstLevelComment1._id,
       sort: "best",
     });
@@ -405,8 +405,8 @@ describe("Testing comment services functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to use before parameter with commentTreeListing function", async () => {
-    const result = await commentTreeListing(loggedInUser, post1, {
+  it("try to use before parameter with commentTreeListingService function", async () => {
+    const result = await commentTreeListingService(loggedInUser, post1, {
       before: firstLevelComment3._id,
       sort: "best",
     });
@@ -414,8 +414,8 @@ describe("Testing comment services functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to use limit parameter with commentTreeListing function", async () => {
-    const result = await commentTreeListing(loggedInUser, post1, {
+  it("try to use limit parameter with commentTreeListingService function", async () => {
+    const result = await commentTreeListingService(loggedInUser, post1, {
       sort: "best",
       limit: 1,
     });
@@ -427,7 +427,7 @@ describe("Testing comment services functions", () => {
     loggedInUser.upvotedComments.push(firstLevelComment1._id);
     await loggedInUser.save();
 
-    const result = await commentTreeListing(loggedInUser, post1, {
+    const result = await commentTreeListingService(loggedInUser, post1, {
       sort: "best",
       limit: 1,
     });
@@ -439,7 +439,7 @@ describe("Testing comment services functions", () => {
     loggedInUser.downvotedComments.push(firstLevelComment2._id);
     await loggedInUser.save();
 
-    const result = await commentTreeListing(loggedInUser, post1, {
+    const result = await commentTreeListingService(loggedInUser, post1, {
       sort: "best",
       after: firstLevelComment1._id,
       limit: 1,
@@ -452,7 +452,7 @@ describe("Testing comment services functions", () => {
     loggedInUser.savedComments.push(firstLevelComment1._id);
     await loggedInUser.save();
 
-    const result = await commentTreeListing(loggedInUser, post1, {
+    const result = await commentTreeListingService(loggedInUser, post1, {
       sort: "best",
       limit: 1,
     });
@@ -464,20 +464,20 @@ describe("Testing comment services functions", () => {
     loggedInUser.followedComments.push(firstLevelComment1._id);
     await loggedInUser.save();
 
-    const result = await commentTreeListing(loggedInUser, post1, {
+    const result = await commentTreeListingService(loggedInUser, post1, {
       sort: "best",
       limit: 1,
     });
     expect(result.data.children[0].followed).toEqual(true);
   });
 
-  it("should have commentTreeOfCommentListing function", () => {
-    expect(commentTreeOfCommentListing).toBeDefined();
+  it("should have commentTreeOfCommentListingService function", () => {
+    expect(commentTreeOfCommentListingService).toBeDefined();
   });
 
   // eslint-disable-next-line max-len
   it("try to get the comments of a parent comment with no comments", async () => {
-    const result = await commentTreeOfCommentListing(
+    const result = await commentTreeOfCommentListingService(
       loggedInUser,
       post1,
       firstLevelComment3,
@@ -491,7 +491,7 @@ describe("Testing comment services functions", () => {
 
   // eslint-disable-next-line max-len
   it("try to get the comments of a parent comment with 3 comments", async () => {
-    const result = await commentTreeOfCommentListing(
+    const result = await commentTreeOfCommentListingService(
       loggedInUser,
       post1,
       firstLevelComment1,
@@ -502,8 +502,8 @@ describe("Testing comment services functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to use after parameter with commentTreeOfCommentListing function", async () => {
-    const result = await commentTreeOfCommentListing(
+  it("try to use after parameter with commentTreeOfCommentListingService function", async () => {
+    const result = await commentTreeOfCommentListingService(
       loggedInUser,
       post1,
       firstLevelComment1,
@@ -516,8 +516,8 @@ describe("Testing comment services functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to use before parameter with commentTreeOfCommentListing function", async () => {
-    const result = await commentTreeOfCommentListing(
+  it("try to use before parameter with commentTreeOfCommentListingService function", async () => {
+    const result = await commentTreeOfCommentListingService(
       loggedInUser,
       post1,
       firstLevelComment1,
@@ -530,8 +530,8 @@ describe("Testing comment services functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("try to use limit parameter with commentTreeOfCommentListing function", async () => {
-    const result = await commentTreeOfCommentListing(
+  it("try to use limit parameter with commentTreeOfCommentListingService function", async () => {
+    const result = await commentTreeOfCommentListingService(
       loggedInUser,
       post1,
       firstLevelComment1,
@@ -548,7 +548,7 @@ describe("Testing comment services functions", () => {
     loggedInUser.upvotedComments.push(secondLevelComment1._id);
     await loggedInUser.save();
 
-    const result = await commentTreeOfCommentListing(
+    const result = await commentTreeOfCommentListingService(
       loggedInUser,
       post1,
       firstLevelComment1,
@@ -565,7 +565,7 @@ describe("Testing comment services functions", () => {
     loggedInUser.downvotedComments.push(secondLevelComment2._id);
     await loggedInUser.save();
 
-    const result = await commentTreeOfCommentListing(
+    const result = await commentTreeOfCommentListingService(
       loggedInUser,
       post1,
       firstLevelComment1,
@@ -583,7 +583,7 @@ describe("Testing comment services functions", () => {
     loggedInUser.savedComments.push(secondLevelComment1._id);
     await loggedInUser.save();
 
-    const result = await commentTreeOfCommentListing(
+    const result = await commentTreeOfCommentListingService(
       loggedInUser,
       post1,
       firstLevelComment1,
@@ -600,7 +600,7 @@ describe("Testing comment services functions", () => {
     loggedInUser.followedComments.push(secondLevelComment1._id);
     await loggedInUser.save();
 
-    const result = await commentTreeOfCommentListing(
+    const result = await commentTreeOfCommentListingService(
       loggedInUser,
       post1,
       firstLevelComment1,

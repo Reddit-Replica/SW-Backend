@@ -1,10 +1,10 @@
 import { body, param } from "express-validator";
 import {
-  commentTreeListing,
+  commentTreeListingService,
   checkPostId,
   checkCommentId,
   checkloggedInUser,
-  commentTreeOfCommentListing,
+  commentTreeOfCommentListingService,
   createCommentService,
 } from "../services/commentServices.js";
 
@@ -95,7 +95,7 @@ const commentTree = async (req, res) => {
 
     const post = await checkPostId(postId);
     const user = await checkloggedInUser(req.userId);
-    const result = await commentTreeListing(user, post, {
+    const result = await commentTreeListingService(user, post, {
       sort,
       before,
       after,
@@ -121,12 +121,17 @@ const commentTreeOfComment = async (req, res) => {
     const post = await checkPostId(postId);
     const comment = await checkCommentId(commentId);
     const user = await checkloggedInUser(req.userId);
-    const result = await commentTreeOfCommentListing(user, post, comment, {
-      sort,
-      before,
-      after,
-      limit,
-    });
+    const result = await commentTreeOfCommentListingService(
+      user,
+      post,
+      comment,
+      {
+        sort,
+        before,
+        after,
+        limit,
+      }
+    );
 
     res.status(result.statusCode).json(result.data);
   } catch (error) {

@@ -23,7 +23,9 @@ const __dirname = path.dirname(__filename);
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).fields([
     { name: "images", maxCount: 100 },
-    { name: "videos", maxCount: 100 },
+    { name: "video", maxCount: 1 },
+    { name: "avatar", maxCount: 1 },
+    { name: "banner", maxCount: 1 },
   ])
 );
 

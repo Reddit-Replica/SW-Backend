@@ -1,4 +1,4 @@
-import { commentListing } from "../utils/prepareListing.js";
+import { commentTreeListing } from "../utils/prepareListing.js";
 import mongoose from "mongoose";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
@@ -255,9 +255,13 @@ function prepareComment(comment, user, checkChildren) {
  * @returns The response to that request containing [statusCode, data]
  */
 // eslint-disable-next-line max-statements
-export async function commentTreeListing(loggedInUser, post, listingParams) {
+export async function commentTreeListingService(
+  loggedInUser,
+  post,
+  listingParams
+) {
   // prepare the listing parameters
-  const listingResult = await commentListing(listingParams);
+  const listingResult = await commentTreeListing(listingParams);
 
   const result = await Comment.find({
     ...listingResult.find,
@@ -304,14 +308,14 @@ export async function commentTreeListing(loggedInUser, post, listingParams) {
  * @returns The response to that request containing [statusCode, data]
  */
 // eslint-disable-next-line max-statements
-export async function commentTreeOfCommentListing(
+export async function commentTreeOfCommentListingService(
   loggedInUser,
   post,
   comment,
   listingParams
 ) {
   // prepare the listing parameters
-  const listingResult = await commentListing(listingParams);
+  const listingResult = await commentTreeListing(listingParams);
 
   const result = await Comment.find({
     ...listingResult.find,
