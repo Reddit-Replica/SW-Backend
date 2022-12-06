@@ -24,71 +24,8 @@ const postSchema = mongoose.Schema({
     default: "hybrid",
     required: true,
   },
-  hybridContent: {
-    texts: [
-      {
-        text: {
-          type: String,
-          required: true,
-        },
-        index: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
-    images: [
-      {
-        image: {
-          path: {
-            type: String,
-            required: true,
-          },
-          caption: {
-            type: String,
-          },
-        },
-        index: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
-    videos: [
-      {
-        video: {
-          path: {
-            type: String,
-            required: true,
-          },
-          caption: {
-            type: String,
-          },
-        },
-        index: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
-    links: [
-      {
-        link: {
-          title: {
-            type: String,
-            required: true,
-          },
-          url: {
-            type: String,
-            required: true,
-          },
-        },
-        index: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
+  content: {
+    type: Object,
   },
   images: [
     {

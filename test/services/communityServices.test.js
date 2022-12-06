@@ -48,6 +48,7 @@ describe("Testing community service functions", () => {
 
     deletedSubreddit = await new Subreddit({
       title: "DeletedSubreddit",
+      viewName: "DeletedSubreddit",
       category: "Art",
       type: "Public",
       nsfw: false,

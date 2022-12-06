@@ -102,75 +102,29 @@
  *         inSubreddit:
  *           type: boolean
  *           description: True if the post is submitted in a subreddit, False if it's in the user account (not a subreddit)
- *         texts:
- *           type: array
- *           description: Texts input separated by an "enter" when writing text in the post with an index indicating the positin of this text
- *           items:
- *               type: object
- *               properties:
- *                   text:
- *                       type: string
- *                       description: The text written itself
- *                   index:
- *                       type: number
- *                       description: Text position
- *         links:
- *           type: array
- *           description: Links input in the post containing the link title and url as well as the index indicating it's position in the post field
- *           items:
- *               type: object
- *               properties:
- *                   link:
- *                       type: object
- *                       properties:
- *                           title:
- *                               type: string
- *                               description: Link title submitted
- *                           url:
- *                               type: string
- *                               description: Link Url
- *                   index:
- *                       type: number
- *                       description: Link position
- *         imageCaptions:
- *           type: array
- *           description: Image captions of each image submitted and an element in it should be null if the image doesn't have a caption (Do not skip the element). This array will contain an index only when the kind is 'hybrid' but will only be an array of captions without indices if the kind is 'image'
- *           items:
- *               type: object
- *               properties:
- *                   caption:
- *                       type: string
- *                       description: Image caption
- *                   index:
- *                       type: number
- *                       description: Image caption position
- *         videoCaptions:
- *           type: array
- *           description: Video captions of each video submitted and an element in it should be null if the video doesn't have a caption (Do not skip the element)
- *           items:
- *               type: object
- *               properties:
- *                   caption:
- *                       type: string
- *                       description: Video caption
- *                   index:
- *                       type: number
- *                       description: Video caption position
+ *         content:
+ *           type: object
+ *           description: Object received directly from the WYSIWYG tool
  *         images:
  *           type: array
  *           description: image files
  *           items:
  *              type: object
+ *         imageCaptions:
+ *           type: array
+ *           description: Image captions of each image submitted and an element in it should be null if the image doesn't have a caption (Do not skip the element)
+ *           items:
+ *               type: string
+ *               description: Image caption
  *         imageLinks:
  *           type: array
  *           description: Links written for the images submitted (only when kind = images)
  *           items:
  *              type: string
- *         videos:
- *           type: array
- *           description: Video files
- *           items:
- *              type: object
+ *              description: Image Link
+ *         video:
+ *           type: object
+ *           description: Video file in case the kind is 'video'
  *         link:
  *           type: string
  *           description: Link submission in case the kind is 'link'
@@ -220,10 +174,10 @@
  *           description: Subreddit name
  *         link:
  *           type: string
- *           description: Post link in case the kind is 'link'
+ *           description: Post link (kind = link)
  *         images:
  *           type: array
- *           description: Post content (kind = images)
+ *           description: Post content (kind = image)
  *           items:
  *              type: object
  *              properties:
@@ -238,23 +192,10 @@
  *                   description: Image link
  *         video:
  *           type: string
- *           description: Video path in case the kind is 'video'
- *         hybridContent:
- *           type: array
- *           description: Hybrid content of the post returned with the correct order just like as they were inserted when initially submitting the post. The content part of the object could be string when type is text, or an object (title and url) if type is link, or an object (path and caption) if type is image or video
- *           items:
- *               type: object
- *               properties:
- *                  type:
- *                     type: string
- *                     description: Content type
- *                     enum:
- *                         - image
- *                         - video
- *                         - text
- *                         - link
- *                  content:
- *                     type: object
+ *           description: Video path (kind = video)
+ *         content:
+ *           type: object
+ *           description: Post content (kind = hybrid)
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
@@ -367,19 +308,19 @@
  *           type: string
  *           enum:
  *              - link
- *              - text
+ *              - hybrid
  *              - image
  *              - video
  *              - post
  *         subreddit:
  *           type: string
  *           description: Subreddit name
- *         content:
+ *         link:
  *           type: string
- *           description: Post content (text/url/video) - will contain path of a video in case (kind = video)
+ *           description: Post link (kind = link)
  *         images:
  *           type: array
- *           description: Post content (images)
+ *           description: Images (kind = image)
  *           items:
  *              type: object
  *              properties:
@@ -392,6 +333,12 @@
  *                 link:
  *                   type: string
  *                   description: Image link
+ *         video:
+ *           type: string
+ *           description: Video path (kind = video)
+ *         content:
+ *           type: object
+ *           description: Post content (kind = hybrid)
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
@@ -643,6 +590,9 @@
  *         type:
  *           type: string
  *           description: type of the community
+ *         subredditId:
+ *           type: string
+ *           description: id of the community
  *           enum:
  *             - private
  *             - public
@@ -653,41 +603,24 @@
  *         title:
  *           type: string
  *           description: Name of the community
+ *         nickname:
+ *           type: string
+ *           description: Nickname of the community
+ *         isModerator:
+ *           type: boolean
+ *           description: If that member is a moderator in that subreddit (to view mod tools button)
  *         category:
  *           type: string
  *           description: Category of the community
  *         members:
  *           type: number
  *           description: Number of members of the community
- *         online:
- *           type: number
- *           description: Number of online members of the community
  *         description:
  *           type: string
  *           description: A brief description of the community
  *         dateOfCreation:
  *           type: string
  *           description: Date of creating the community
- *         flairs:
- *           type: array
- *           description: list of available flairs to filter by
- *           items:
- *             type: string
- *         rules:
- *           type: array
- *           description: list of the rules of the subreddit
- *           items:
- *             $ref: '#/components/schemas/rules'
- *         bans:
- *           type: array
- *           description: list of the ban questions of the subreddit
- *           items:
- *             $ref: '#/components/schemas/bans'
- *         moderators:
- *           type: array
- *           description: list of the moderators of the subreddit
- *           items:
- *             $ref: '#/components/schemas/moderator'
  *         isMember:
  *           type: boolean
  *           description: True if you are a member of the community , False if you are not a member of the community
@@ -697,24 +630,17 @@
  *         picture:
  *           type: string
  *           description: Path of the picture of the community
- *         communityTheme:
- *           type: boolean
- *           description: True if community theme is on , False if community theme is off
  *         views:
  *           type: number
  *           description: number of views of he community to get the trending search
  *         mainTopic:
- *           type: object
- *           description: The main topic of the subreddit with its subtopics
- *           properties:
- *             topicTitle:
- *               type: string
- *               description: The title of the topic
- *             subtopics:
- *               type: array
- *               description: the array of subtopics of the community
- *               items:
- *                 type: object
+ *           type: string
+ *           description: The main topic of the subreddit
+ *         subtopics:
+ *           type: array
+ *           description: the array of subtopics of the community
+ *           items:
+ *             type: string
  *   ListedPost:
  *       type: object
  *       properties:
@@ -754,6 +680,9 @@
  *               commentedBy:
  *                 type: string
  *                 description: The author of the comment
+ *               userImage:
+ *                 type: string
+ *                 description: Path of the image of the user who wrote the comment
  *               editTime:
  *                 type: string
  *                 format: date-time
@@ -792,7 +721,7 @@
  *                 description: Number of replies to that comment
  *               children:
  *                  type: array
- *                  description: The replies to that comment (Will be same structure as the current comment)
+ *                  description: The replies to that comment (Will be same structure as the current comment) [maximum number of children that can be returned = 5]
  *                  items:
  *                    type: object
  *

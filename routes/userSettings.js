@@ -668,6 +668,9 @@ router.delete(
  *                           username:
  *                             type: string
  *                             description: Username of the blocked user
+ *                           userImage:
+ *                             type: string
+ *                             description: Path of the image of the blocked user
  *                           blockDate:
  *                             type: string
  *                             format: date-time

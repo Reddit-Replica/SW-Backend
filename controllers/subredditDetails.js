@@ -1,82 +1,22 @@
-/*
-{
-  "children": {
-    "nsfw": true,
-    "type": "private",
-    "isFavorite": true,
-    "title": "string",
-    "category": "string",
-    "members": 0,
-    "online": 0,
-    "description": "string",
-    "dateOfCreation": "string",
-    "flairs": [
-      "string"
-    ],
-    "rules": [
-      {
-        "ruleTitle": "string",
-        "ruleDescription": "string",
-        "questions": [
-          "string"
-        ],
-        "ruleFullDescription": "string"
-      }
-    ],
-    "bans": [
-      {
-        "banTitle": "string",
-        "banFullDescription": "string"
-      }
-    ],
-    "moderators": [
-      {
-        "username": "string",
-        "nickname": "string",
-        "dateOfModeration": "string",
-        "permissions": [
-          "string"
-        ]
-      }
-    ],
-    "isMember": true,
-    "banner": "string",
-    "picture": "string",
-    "communityTheme": true,
-    "views": 0,
-    "mainTopic": {
-      "topicTitle": "string",
-      "subtopics": [
-        {}
-      ]
+import { getSubredditDetails } from "../services/subredditDetails.js";
+
+const subredditDetails = async (req, res) => {
+  try {
+    const subreddit = req.subreddit;
+    const subbredditDetails = await getSubredditDetails(
+      subreddit,
+      req.loggedIn,
+      req.payload
+    );
+    res.status(200).json(subbredditDetails);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
     }
   }
-}
-*/
-const subredditDetails = async (req, res) => {
-  const subreddit = req.subreddit;
-  // console.log(subreddit);
-
-  const resObject = {
-    children: {
-      title: subreddit.title,
-      nsfw: subreddit.nsfw,
-      type: subreddit.type,
-      category: subreddit.category,
-      members: subreddit.members,
-      // online: subreddit.online,
-      description: subreddit.description,
-      dateOfCreation: subreddit.dateOfCreation,
-      rules: subreddit.rules,
-      banner: subreddit.banner,
-      picture: subreddit.picture,
-      flairs: subreddit.flairs,
-      moderators: subreddit.moderators,
-      views: subreddit.views,
-    },
-  };
-  // console.log(resObject);
-  res.status(200).json(resObject);
 };
 
 export default {
