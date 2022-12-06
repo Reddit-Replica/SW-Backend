@@ -80,56 +80,6 @@ export async function setPostActions(req, res, next) {
 }
 
 /**
- * Middleware used to set the hybrid content of a post in case it is present
- * by ordering it according to the index and restructuring each element to
- * contain only the type of the content and the data itself. The newly created object
- * is sent to the next middleware to return it in the hybridContent field
- *
- * @param {Object} req Request object
- * @param {Object} res Response object
- * @param {function} next Next function
- * @returns {void}
- */
-// eslint-disable-next-line max-statements
-export async function setHybridContent(req, res, next) {
-  const post = req.post;
-  const content = post.hybridContent;
-  if (content) {
-    const orderedContent = new Map();
-    content.texts?.forEach((element) => {
-      orderedContent.set(element.index, {
-        type: "text",
-        content: element.text,
-      });
-    });
-    content.images?.forEach((element) => {
-      orderedContent.set(element.index, {
-        type: "image",
-        content: element.image,
-      });
-    });
-    content.videos?.forEach((element) => {
-      orderedContent.set(element.index, {
-        type: "video",
-        content: element.video,
-      });
-    });
-    content.links?.forEach((element) => {
-      orderedContent.set(element.index, {
-        type: "link",
-        content: element.link,
-      });
-    });
-    let orderedArr = [...orderedContent].sort();
-    orderedArr = orderedArr.map((el) => {
-      return el[1];
-    });
-    req.hybridContent = orderedArr;
-  }
-  next();
-}
-
-/**
  * Middleware used to generate a post object from the post parameters
  * given from the previous middleware to be returned with a status code
  * of 200 in the controller.
@@ -148,7 +98,7 @@ export async function getPostDetails(req, res, next) {
     link: post.link,
     images: post.images,
     video: post.video,
-    hybridContent: req.hybridContent,
+    content: post.content,
     nsfw: post.nsfw,
     spoiler: post.spoiler,
     markedSpam: post.markedSpam,

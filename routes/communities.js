@@ -387,7 +387,7 @@ communitiesRouter.get("/random-category");
  * @swagger
  * /r/{subreddit}:
  *  get:
- *      summary: Return all the details of the subreddit
+ *      summary: Return all the details of the subreddit (Here the token is optional if the user is logged in add a token if not don't add it)
  *      tags: [Subreddit]
  *      parameters:
  *       - in: path
@@ -401,9 +401,6 @@ communitiesRouter.get("/random-category");
  *              content:
  *                  application/json:
  *                      schema:
- *                        type: object
- *                        properties:
- *                          children:
  *                            $ref: '#/components/schemas/community'
  *          404:
  *              description: Page not found
@@ -417,7 +414,7 @@ communitiesRouter.get("/random-category");
 
 communitiesRouter.get(
   "/r/:subreddit",
-  verifyAuthToken,
+  optionalToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
   subredditDetailsController.subredditDetails

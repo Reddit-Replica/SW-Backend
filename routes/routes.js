@@ -13,6 +13,8 @@ import userRouter from "./user.js";
 import categoryRouter from "./categories.js";
 import subredditFlairsRouter from "./subredditFlairs.js";
 import messageRouter from "./message.js";
+import subredditModerationsRouter from "./subredditModeration.js";
+import userSettingsRouter from "./userSettings.js";
 // eslint-disable-next-line new-cap
 const mainRouter = express.Router();
 
@@ -29,11 +31,13 @@ mainRouter.use(subredditRouter);
 mainRouter.use(subredditRulesRouter);
 mainRouter.use(categoryRouter);
 mainRouter.use(subredditFlairsRouter);
+mainRouter.use(userSettingsRouter);
 mainRouter.use(messageRouter);
+mainRouter.use(subredditModerationsRouter);
 
 // ! should add your router before this middleware
 mainRouter.use((req, res) => {
-  res.status(400).json(`Can't ${req.method} ${req.url}`);
+  res.status(404).json(`Can't ${req.method} ${req.url}`);
 });
 
 export default mainRouter;
