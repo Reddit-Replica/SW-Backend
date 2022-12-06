@@ -75,7 +75,7 @@ const userSchema = mongoose.Schema({
     adultContent: {
       type: Boolean,
       required: true,
-      default: true,
+      default: false,
     },
     autoplayMedia: {
       type: Boolean,
@@ -110,6 +110,19 @@ const userSchema = mongoose.Schema({
     ],
   },
   joinedSubreddits: [
+    {
+      subredditId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  favoritesSubreddits: [
     {
       subredditId: {
         type: Schema.Types.ObjectId,
@@ -202,7 +215,31 @@ const userSchema = mongoose.Schema({
       ref: "Post",
     },
   ],
-  comments: [
+  commentedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  upvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  downvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  followedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  savedComments: [
     {
       type: Schema.Types.ObjectId,
       ref: "Comment",

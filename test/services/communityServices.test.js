@@ -13,6 +13,7 @@ import {
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
 import Subreddit from "./../../models/Community.js";
+import Category from "./../../models/Category.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing community service functions", () => {
@@ -48,6 +49,7 @@ describe("Testing community service functions", () => {
 
     deletedSubreddit = await new Subreddit({
       title: "DeletedSubreddit",
+      viewName: "DeletedSubreddit",
       category: "Art",
       type: "Public",
       nsfw: false,
@@ -60,13 +62,9 @@ describe("Testing community service functions", () => {
   });
 
   afterAll(async () => {
-    await normalUser.remove();
-    await moderatorUser.remove();
-    await secondNormalUser.remove();
-    await deletedUser.remove();
-    await deletedSubreddit.remove();
-    subreddit = await searchForSubreddit("Hunter");
-    await subreddit.remove();
+    await User.deleteMany({});
+    await Subreddit.deleteMany({});
+    await Category.deleteMany({});
     await closeDatabaseConnection();
   });
 

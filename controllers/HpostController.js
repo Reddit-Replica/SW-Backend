@@ -22,8 +22,13 @@ const submit = async (req, res) => {
   const post = req.post;
   try {
     user.posts.push(post.id);
+    user.upvotedPosts.push(post.id);
+    post.numberOfUpvotes = 1;
+    await post.save();
     await user.save();
-    res.status(201).json("Post submitted successfully!");
+    res.status(201).json({
+      id: post.id.toString(),
+    });
   } catch (err) {
     res.status(500).json("Internal server error");
   }
