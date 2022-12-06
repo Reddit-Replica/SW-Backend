@@ -52,6 +52,13 @@ export async function addToCommentFollowedUsers(user, comment) {
   await comment.save();
 }
 
+
+/**
+ * A function used to remove the comment from the user followed comments
+ * @param {ObjectId} userId the id of the user
+ * @param {ObjectId} commentId the id of the comment
+ * @returns {Object} the neededComment and user to make the next step easier
+ */
 export async function removeFromUserFollowedComments(userId, commentId) {
   const neededUser = await User.findById(userId);
   const neededComment = await validateExistingComment(commentId);
@@ -68,6 +75,13 @@ export async function removeFromUserFollowedComments(userId, commentId) {
   return { comment: neededComment, user: neededUser };
 }
 
+
+/**
+ * A function used to remove the user from the comment following users
+ * @param {User} user that specific user
+ * @param {Comment} comment that specific comment
+ * @returns {void}
+ */
 export async function removeFromCommentFollowedUsers(user, comment) {
   const userIndex = comment.followingUsers.findIndex(
     (userItem) => userItem.userId.toString() === user._id.toString()
