@@ -8,7 +8,6 @@ import {
   addUserMention,
 } from "../utils/messagesUtils.js";
 
-//WE MAY USER SERVICE TO GET USER HERE
 /**
  * This function is used to add a message
  * it add the msg to sender's sent messages and to the receiver's received messages
