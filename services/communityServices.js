@@ -191,6 +191,7 @@ export async function addSubreddit(req, authPayload) {
   };
   const subreddit = await new Subreddit({
     title: subredditName,
+    viewName: subredditName,
     category: category,
     type: type,
     nsfw: nsfw,

@@ -10,11 +10,12 @@ import verifyUser from "../utils/verifyUser.js";
  * @param {function} next Next function
  * @returns {void}
  */
-export function optionalToken(req, res, next) {
+export function optionalToken(req, _res, next) {
   const authResult = verifyUser(req);
   if (authResult) {
     req.loggedIn = true;
     req.userId = authResult.userId;
+    req.payload = authResult;
   } else {
     req.loggedIn = false;
   }

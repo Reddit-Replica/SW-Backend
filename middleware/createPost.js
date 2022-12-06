@@ -2,6 +2,7 @@ import Subreddit from "../models/Community.js";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import Flair from "../models/Flair.js";
+import { deleteFile } from "../services/userSettings.js";
 
 /**
  * Middleware used to check the post is being submitted in a subreddit
@@ -97,21 +98,63 @@ export async function checkHybridPost(req, res, next) {
     const videoFiles = req.files?.videos;
     const { texts, links, imageCaptions, videoCaptions } = req.body;
     if (imageFiles && !imageCaptions) {
+      for (const image of imageFiles) {
+        deleteFile(image.path);
+      }
+      if (videoFiles) {
+        // eslint-disable-next-line max-depth
+        for (const video of videoFiles) {
+          deleteFile(video.path);
+        }
+      }
       return res.status(400).json({
         error: "Image captions are required",
       });
     }
     if (imageFiles?.length !== imageCaptions?.length) {
+      if (imageFiles) {
+        // eslint-disable-next-line max-depth
+        for (const image of imageFiles) {
+          deleteFile(image.path);
+        }
+      }
+      if (videoFiles) {
+        // eslint-disable-next-line max-depth
+        for (const video of videoFiles) {
+          deleteFile(video.path);
+        }
+      }
       return res.status(400).json({
         error: "Each image should have a caption",
       });
     }
     if (videoFiles && !videoCaptions) {
+      if (imageFiles) {
+        // eslint-disable-next-line max-depth
+        for (const image of imageFiles) {
+          deleteFile(image.path);
+        }
+      }
+      for (const video of videoFiles) {
+        deleteFile(video.path);
+      }
       return res.status(400).json({
         error: "Video captions are required",
       });
     }
     if (videoFiles?.length !== videoCaptions?.length) {
+      if (imageFiles) {
+        // eslint-disable-next-line max-depth
+        for (const image of imageFiles) {
+          deleteFile(image.path);
+        }
+      }
+      if (videoFiles) {
+        // eslint-disable-next-line max-depth
+        for (const video of videoFiles) {
+          deleteFile(video.path);
+        }
+      }
       return res.status(400).json({
         error: "Each video should have a caption",
       });
@@ -174,6 +217,9 @@ export function checkImagesAndVideos(req, res, next) {
       imageFiles.length !== imageCaptions?.length ||
       imageFiles.length !== imageLinks?.length
     ) {
+      for (const image of imageFiles) {
+        deleteFile(image.path);
+      }
       return res.status(400).json({
         error: "Each image should have a caption and a link",
       });
@@ -194,6 +240,9 @@ export function checkImagesAndVideos(req, res, next) {
       return res.status(404).json("Videos not found");
     }
     if (videoFiles.length > 1) {
+      for (const video of videoFiles) {
+        deleteFile(video.path);
+      }
       return res.status(400).json({
         error: "Videos can only have one video",
       });
