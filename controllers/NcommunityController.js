@@ -10,6 +10,10 @@ import {
   addToMainTopic,
   searchForSubredditById,
   addSubreddit,
+  checkForPrivateSubreddits,
+  makeSubredditFavorite,
+  checkForFavoriteSubreddits,
+  removeSubredditFromFavorite,
 } from "./../services/communityServices.js";
 import { searchForUserService } from "../services/userServices.js";
 export let MainTopics = [
@@ -253,6 +257,63 @@ const moderate = async(req,res)=>{
   }
 };
 */
+const addToFavorite = async (req, res) => {
+  try {
+    const subreddit = await searchForSubreddit(req.params.subreddit);
+    const user = await searchForUserService(req.payload.username);
+    await checkForPrivateSubreddits(user, subreddit);
+    const isFavorite = await checkForFavoriteSubreddits(user, subreddit);
+    if (isFavorite) {
+      let error = new Error(
+        `${subreddit.title} is a favorite subreddit already`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+    const result = await makeSubredditFavorite(
+      user,
+      subreddit.title,
+      subreddit.id
+    );
+
+    //SENDING RESPONSES
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const removeFromFavorite = async (req, res) => {
+  try {
+    const subreddit = await searchForSubreddit(req.params.subreddit);
+    const user = await searchForUserService(req.payload.username);
+    await checkForPrivateSubreddits(user, subreddit);
+    const isFavorite = await checkForFavoriteSubreddits(user, subreddit);
+    if (!isFavorite) {
+      let error = new Error(`${subreddit.title} is not favorite already`);
+      error.statusCode = 400;
+      throw error;
+    }
+    const result = await removeSubredditFromFavorite(user, subreddit.title);
+
+    //SENDING RESPONSES
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
 
 export default {
   createSubreddit,
@@ -264,4 +325,6 @@ export default {
   addSubTopics,
   mainTopicValidator,
   subTopicValidator,
+  addToFavorite,
+  removeFromFavorite,
 };
