@@ -590,6 +590,9 @@
  *         type:
  *           type: string
  *           description: type of the community
+ *         subredditId:
+ *           type: string
+ *           description: id of the community
  *           enum:
  *             - private
  *             - public
@@ -600,41 +603,24 @@
  *         title:
  *           type: string
  *           description: Name of the community
+ *         nickname:
+ *           type: string
+ *           description: Nickname of the community
+ *         isModerator:
+ *           type: boolean
+ *           description: If that member is a moderator in that subreddit (to view mod tools button)
  *         category:
  *           type: string
  *           description: Category of the community
  *         members:
  *           type: number
  *           description: Number of members of the community
- *         online:
- *           type: number
- *           description: Number of online members of the community
  *         description:
  *           type: string
  *           description: A brief description of the community
  *         dateOfCreation:
  *           type: string
  *           description: Date of creating the community
- *         flairs:
- *           type: array
- *           description: list of available flairs to filter by
- *           items:
- *             type: string
- *         rules:
- *           type: array
- *           description: list of the rules of the subreddit
- *           items:
- *             $ref: '#/components/schemas/rules'
- *         bans:
- *           type: array
- *           description: list of the ban questions of the subreddit
- *           items:
- *             $ref: '#/components/schemas/bans'
- *         moderators:
- *           type: array
- *           description: list of the moderators of the subreddit
- *           items:
- *             $ref: '#/components/schemas/moderator'
  *         isMember:
  *           type: boolean
  *           description: True if you are a member of the community , False if you are not a member of the community
@@ -644,24 +630,17 @@
  *         picture:
  *           type: string
  *           description: Path of the picture of the community
- *         communityTheme:
- *           type: boolean
- *           description: True if community theme is on , False if community theme is off
  *         views:
  *           type: number
  *           description: number of views of he community to get the trending search
  *         mainTopic:
- *           type: object
- *           description: The main topic of the subreddit with its subtopics
- *           properties:
- *             topicTitle:
- *               type: string
- *               description: The title of the topic
- *             subtopics:
- *               type: array
- *               description: the array of subtopics of the community
- *               items:
- *                 type: object
+ *           type: string
+ *           description: The main topic of the subreddit
+ *         subtopics:
+ *           type: array
+ *           description: the array of subtopics of the community
+ *           items:
+ *             type: string
  *   ListedPost:
  *       type: object
  *       properties:
@@ -701,6 +680,9 @@
  *               commentedBy:
  *                 type: string
  *                 description: The author of the comment
+ *               userImage:
+ *                 type: string
+ *                 description: Path of the image of the user who wrote the comment
  *               editTime:
  *                 type: string
  *                 format: date-time
@@ -739,7 +721,7 @@
  *                 description: Number of replies to that comment
  *               children:
  *                  type: array
- *                  description: The replies to that comment (Will be same structure as the current comment)
+ *                  description: The replies to that comment (Will be same structure as the current comment) [maximum number of children that can be returned = 5]
  *                  items:
  *                    type: object
  *
