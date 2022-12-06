@@ -1,6 +1,7 @@
 import Subreddit from "../models/Community.js";
 import Post from "../models/Post.js";
-import { postListing, commentListing } from "../utils/prepareListing.js";
+import { commentListing } from "../utils/prepareCommentListing.js";
+import { postListing } from "../utils/prepareListing.js";
 
 // eslint-disable-next-line max-statements
 export async function listingSubredditPosts(

@@ -1,9 +1,9 @@
-import { commentTreeListing } from "../utils/prepareListing.js";
 import mongoose from "mongoose";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
+import { commentTreeListing } from "../utils/prepareCommentListing.js";
 
 /**
  * Function used to check if the id of the post is valid and if the post exists in the database
