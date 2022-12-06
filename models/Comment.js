@@ -98,6 +98,18 @@ const commentSchema = mongoose.Schema({
       default: false,
     },
   },
+  followingUsers: [
+    {
+      username: {
+        type: String,
+        required: true,
+      },
+      userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    },
+  ],
 });
 
 const Comment = mongoose.model("Comment", commentSchema);
