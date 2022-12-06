@@ -1,5 +1,6 @@
 import express from "express";
 import postController from "../controllers/HpostController.js";
+import postActionsController from "../controllers/NpostActionsController.js";
 import { optionalToken } from "../middleware/optionalToken.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
@@ -20,6 +21,7 @@ import {
 import {
   checkPostExistence,
   getPostDetails,
+  setHybridContent,
   setPostActions,
 } from "../middleware/postDetails.js";
 
@@ -66,7 +68,11 @@ const postRouter = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/follow-post");
+postRouter.post(
+  "/follow-post",
+  verifyAuthToken,
+  postActionsController.followOrUnfollowPost
+);
 
 /**
  * @swagger
@@ -107,7 +113,7 @@ postRouter.post("/follow-post");
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/hide");
+postRouter.post("/hide", verifyAuthToken, postActionsController.hidePost);
 
 /**
  * @swagger
@@ -283,7 +289,7 @@ postRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/unhide");
+postRouter.post("/unhide", verifyAuthToken, postActionsController.unhidePost);
 
 /**
  * @swagger
@@ -392,6 +398,7 @@ postRouter.get(
   validateRequestSchema,
   checkPostExistence,
   setPostActions,
+  setHybridContent,
   getPostDetails,
   postController.postDetails
 );
