@@ -89,6 +89,28 @@ export function checkSocialLink(user, type, displayText, link) {
 }
 
 /**
+ * A function used to check whether the same social link exists or not
+ * @param {object} user User object
+ * @param {string} type Social Link type
+ * @param {string} displayText Display text in the link
+ * @param {string} link The link itself
+ * @returns {void}
+ */
+export function checkDuplicateSocialLink(user, type, displayText, link) {
+  user.userSettings.socialLinks.forEach((socialLink) => {
+    if (
+      socialLink.type === type &&
+      socialLink.displayText === displayText &&
+      socialLink.link === link
+    ) {
+      const error = new Error("Social link already added before");
+      error.statusCode = 400;
+      throw error;
+    }
+  });
+}
+
+/**
  * A function that is used to delete a file from the server
  * @param {string} pathToFile File path
  * @returns {void}
