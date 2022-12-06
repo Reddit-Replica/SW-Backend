@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import { body, param, check } from "express-validator";
 import {
+  checkDuplicateSocialLink,
   checkSocialLink,
   connectToFacebook,
   connectToGoogle,
@@ -199,12 +200,24 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
 const addSocialLink = async (req, res) => {
   const userId = req.payload.userId;
   try {
     const user = await getUser(userId);
     if (!user.userSettings.socialLinks) {
       user.userSettings.socialLinks = [];
+    }
+    checkDuplicateSocialLink(
+      user,
+      req.body.type,
+      req.body.displayText,
+      req.body.link
+    );
+    if (user.userSettings.socialLinks.length >= 5) {
+      return res.status(400).json({
+        error: "Max social links limit reached",
+      });
     }
     user.userSettings.socialLinks.push({
       type: req.body.type,
