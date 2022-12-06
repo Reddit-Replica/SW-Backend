@@ -30,7 +30,7 @@ const postRouter = express.Router();
  * @swagger
  * /follow-post:
  *  post:
- *      summary: Follow or unfollow a post.
+ *      summary: Follow a post.
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -39,15 +39,12 @@ const postRouter = express.Router();
  *           schema:
  *              type: object
  *              properties:
- *                  follow:
- *                      type: boolean
- *                      description: True to follow or False to unfollow
- *                  id:
+ *                  postId:
  *                      type: string
  *                      description: id of a post
  *      responses:
  *          200:
- *              description: Followed/Unfollowed post successfully
+ *              description: Followed post successfully
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -58,7 +55,7 @@ const postRouter = express.Router();
  *                                  type: string
  *                                  description: Type of error
  *          401:
- *              description: User unauthorized to follow/unfollow this post
+ *              description: User unauthorized to follow this post
  *          404:
  *              description: Post not found
  *          500:
@@ -67,6 +64,45 @@ const postRouter = express.Router();
  *       - bearerAuth: []
  */
 postRouter.post("/follow-post");
+
+/**
+ * @swagger
+ * /unfollow-post:
+ *  post:
+ *      summary: Unfollow a post.
+ *      tags: [Posts]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *              type: object
+ *              properties:
+ *                  postId:
+ *                      type: string
+ *                      description: id of a post
+ *      responses:
+ *          200:
+ *              description: Unfollowed post successfully
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why this happened.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: Type of error
+ *          401:
+ *              description: User unauthorized to unfollow this post
+ *          404:
+ *              description: Post not found
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+postRouter.post("/unfollow-post");
 
 /**
  * @swagger
