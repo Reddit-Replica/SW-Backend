@@ -3,8 +3,12 @@ import { body } from "express-validator";
 import {
   addMention,
   addMessage,
-  validateMessage,markMessageAsSpam,searchForMessage
+  validateMessage,
+  markMessageAsSpam,
+  searchForMessage,
+  unreadMessage,
 } from "../services/MessageServices.js";
+import { searchForUserService } from "../services/userServices.js";
 
 //CHECKING ON MESSAGE CONTENT
 const messageValidator = [
@@ -54,13 +58,43 @@ const createMessage = async (req, res) => {
   }
 };
 
-const markMsgAsSpam=async (req,res)=>{
-  
+const markMsgAsSpam = async (req, res) => {
+  try {
+    const user = await searchForUserService(req.payload.username);
+    const msg = await searchForMessage(req.body.id);
+    const result = await markMessageAsSpam(msg, user);
+    res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Server Error");
+    }
+  }
+};
 
+const unreadMsg = async (req, res) => {
+  try {
+    const user = await searchForUserService(req.payload.username);
+    const msg = await searchForMessage(req.body.id);
+    const result = await unreadMessage(msg, user);
+    res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Server Error");
+    }
+  }
 };
 
 export default {
   createMessage,
   messageValidator,
   markMsgAsSpam,
+  unreadMsg,
 };
