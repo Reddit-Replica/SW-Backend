@@ -206,6 +206,38 @@ export async function prepareListingPosts(listingParams) {
 }
 
 /**
+ * Function to create the exact condition that will be used by mongoose directly to list posts.
+ * Used to map every listing parameter to the exact query that mongoose will use later
+ *
+ * @param {Object} listingParams Listing parameters sent in the request query [sort, time, before, after, limit]
+ * @returns {Object} The final results that will be used by mongoose to list posts
+ */
+export async function postListing(listingParams) {
+  let result = {};
+  listingParams = await prepareListingPosts(listingParams);
+
+  if (listingParams.time && listingParams.listing) {
+    result.find = {
+      createdAt: listingParams.time,
+      deletedAt: null,
+    };
+    result.find[listingParams.listing.type] = listingParams.listing.value;
+  } else if (listingParams.time) {
+    result.find = { createdAt: listingParams.time, deletedAt: null };
+  } else if (listingParams.listing) {
+    result.find = { deletedAt: null };
+    result.find[listingParams.listing.type] = listingParams.listing.value;
+  } else {
+    result.find = { deletedAt: null };
+  }
+
+  result.sort = listingParams.sort;
+  result.limit = listingParams.limit;
+
+  return result;
+}
+
+/**
  * Function to prepare the listing parameters for users and set the appropriate condition that will be used with mongoose later.
  * Check the limit of the result, and the anchor point of the slice to get the previous or next things
  *
@@ -274,7 +306,7 @@ export async function prepareListingUsers(listingParams) {
  * Function to create the exact condition that will be used by mongoose directly to list users.
  * Used to map every listing parameter to the exact query that mongoose will use later
  *
- * @param {Object} listingParams Result of prepareListingParameters function
+ * @param {Object} listingParams Listing parameters sent in the request query [before, after, limit]
  * @returns {Object} The final results that will be used by mongoose to list posts
  */
 export async function userListing(listingParams) {
@@ -287,38 +319,6 @@ export async function userListing(listingParams) {
     result.find = { deletedAt: null };
   }
 
-  result.limit = listingParams.limit;
-
-  return result;
-}
-
-/**
- * Function to create the exact condition that will be used by mongoose directly to list posts.
- * Used to map every listing parameter to the exact query that mongoose will use later
- *
- * @param {Object} listingParams Result of prepareListingPosts function
- * @returns {Object} The final results that will be used by mongoose to list posts
- */
-export async function postListing(listingParams) {
-  let result = {};
-  listingParams = await prepareListingPosts(listingParams);
-
-  if (listingParams.time && listingParams.listing) {
-    result.find = {
-      createdAt: listingParams.time,
-      deletedAt: null,
-    };
-    result.find[listingParams.listing.type] = listingParams.listing.value;
-  } else if (listingParams.time) {
-    result.find = { createdAt: listingParams.time, deletedAt: null };
-  } else if (listingParams.listing) {
-    result.find = { deletedAt: null };
-    result.find[listingParams.listing.type] = listingParams.listing.value;
-  } else {
-    result.find = { deletedAt: null };
-  }
-
-  result.sort = listingParams.sort;
   result.limit = listingParams.limit;
 
   return result;
@@ -470,7 +470,7 @@ export async function prepareListingCommentTree(listingParams) {
  * Function to create the exact condition that will be used by mongoose directly to list comments.
  * Used to map every listing parameter to the exact query that mongoose will use later
  *
- * @param {Object} listingParams Result of prepareListingCommentTree function
+ * @param {Object} listingParams Listing parameters sent in the request query [sort, before, after, limit]
  * @returns {Object} The final results that will be used by mongoose to list comments
  */
 export async function commentTreeListing(listingParams) {
@@ -634,7 +634,7 @@ export async function prepareListingComments(listingParams) {
  * Function to create the exact condition that will be used by mongoose directly to list comments.
  * Used to map every listing parameter to the exact query that mongoose will use later
  *
- * @param {Object} listingParams Result of prepareListingParameters function
+ * @param {Object} listingParams Listing parameters sent in the request query [sort, time, before, after, limit]
  * @returns {Object} The final results that will be used by mongoose to list posts
  */
 export async function commentListing(listingParams) {
