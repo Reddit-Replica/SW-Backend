@@ -285,7 +285,11 @@ router.post("/send-replies");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unsave");
+router.post(
+  "/unsave",
+  verifyAuthToken,
+  postActionsController.unsavePostOrComment
+);
 
 /**
  * @swagger

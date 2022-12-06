@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 /* eslint-disable max-len */
 import {
   unfollowPost,
@@ -50,10 +51,11 @@ const savePostOrComment = async (req, res) => {
     }
     if (type === "comment") {
       const comment = await searchForComment(req.body.id);
-      result - (await saveComment(comment, user));
+      result=saveComment(comment, user);
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
+    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,

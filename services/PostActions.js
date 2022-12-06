@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable max-statements */
 import Post from "../models/Post.js";
+import Comment from "../models/Comment.js";
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //GENERAL FUNCTION
 /**
@@ -141,9 +142,12 @@ export async function unSavePost(post, user) {
     error.statusCode = 400;
     throw error;
   }
+
+  console.log(user.savedPosts);
   user.savedPosts = user.savedPosts.filter((smallPost) => {
-    return smallPost.toString !== post.id;
+    return smallPost.toString() !== post.id;
   });
+  console.log(user.savedPosts);
   await user.save();
   return {
     statusCode: 200,
@@ -208,7 +212,7 @@ export async function unSaveComment(comment, user) {
     throw error;
   }
   user.savedComments = user.savedComments.filter((smallComment) => {
-    return smallComment.toString !== comment.id;
+    return smallComment.toString() !== comment.id;
   });
   await user.save();
   return {
