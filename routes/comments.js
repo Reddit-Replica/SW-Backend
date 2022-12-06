@@ -46,6 +46,13 @@ const commentsRouter = express.Router();
  *      responses:
  *          201:
  *              description: Comment created successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              id:
+ *                                  type: string
+ *                                  description: Id of the created comment
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
