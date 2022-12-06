@@ -44,7 +44,7 @@ function preparePostSort(listingSort) {
  * @returns {Object} Object that will be used by mongoose to match the results
  */
 function preparePostTime(listingTime, sort) {
-  let result = {};
+  let result = null;
   if (!listingTime) {
     return null;
   } else {
