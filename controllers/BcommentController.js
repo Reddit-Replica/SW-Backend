@@ -9,7 +9,10 @@ import {
 } from "../services/commentServices.js";
 
 const createCommentValidator = [
-  body("text").not().isEmpty().withMessage("Text can not be empty"),
+  body("content")
+    .not()
+    .isEmpty()
+    .withMessage("Content of the comment can not be empty"),
   body("parentId").not().isEmpty().withMessage("Parent Id can not be empty"),
   body("postId").not().isEmpty().withMessage("Post Id can not be empty"),
   body("parentType")
@@ -51,7 +54,7 @@ const getCommentTreeOfCommentValidator = [
 const createComment = async (req, res) => {
   try {
     const {
-      text,
+      content,
       postId,
       parentId,
       parentType,
@@ -64,7 +67,7 @@ const createComment = async (req, res) => {
     const post = await checkPostId(postId);
     const result = await createCommentService(
       {
-        text,
+        content,
         parentId,
         postId,
         parentType,

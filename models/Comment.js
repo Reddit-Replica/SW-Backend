@@ -27,8 +27,7 @@ const commentSchema = mongoose.Schema({
     required: true,
   },
   content: {
-    type: String,
-    required: true,
+    type: Object,
   },
   numberOfVotes: {
     type: Number,

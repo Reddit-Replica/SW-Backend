@@ -77,7 +77,7 @@ describe("Testing comment services functions", () => {
       postId: post1._id,
       parentType: "post",
       level: 1,
-      content: "Comment 1",
+      content: { text: "Comment 1" },
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 10,
@@ -89,7 +89,7 @@ describe("Testing comment services functions", () => {
       postId: post1._id,
       parentType: "post",
       level: 1,
-      content: "Comment 2",
+      content: { text: "Comment 2" },
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 5,
@@ -101,7 +101,7 @@ describe("Testing comment services functions", () => {
       postId: post1._id,
       parentType: "post",
       level: 1,
-      content: "Comment 3",
+      content: { text: "Comment 3" },
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 1,
@@ -113,7 +113,7 @@ describe("Testing comment services functions", () => {
       postId: post1._id,
       parentType: "comment",
       level: 2,
-      content: "Comment 2/1",
+      content: { text: "Comment 2/1" },
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 10,
@@ -125,7 +125,7 @@ describe("Testing comment services functions", () => {
       postId: post1._id,
       parentType: "comment",
       level: 2,
-      content: "Comment 2/2",
+      content: { text: "Comment 2/2" },
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 5,
@@ -137,7 +137,7 @@ describe("Testing comment services functions", () => {
       postId: post1._id,
       parentType: "comment",
       level: 2,
-      content: "Comment 2/3",
+      content: { text: "Comment 2/3" },
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 1,
@@ -190,7 +190,7 @@ describe("Testing comment services functions", () => {
 
   it("try to use checkCommentId function with valid comment id", async () => {
     const result = await checkCommentId(firstLevelComment1._id);
-    expect(result.content).toEqual("Comment 1");
+    expect(result.content).toEqual({ text: "Comment 1" });
   });
 
   it("should have checkloggedInUser function", () => {
@@ -223,7 +223,7 @@ describe("Testing comment services functions", () => {
     try {
       await createCommentService(
         {
-          text: "Comment for test",
+          content: { text: "Comment for testing" },
           parentId: post1._id,
           postId: post1._id,
           parentType: "invalid",
@@ -243,7 +243,7 @@ describe("Testing comment services functions", () => {
     try {
       await createCommentService(
         {
-          text: "Comment for test",
+          content: { text: "Comment for testing" },
           parentId: "invalid",
           postId: post1._id,
           parentType: "post",
@@ -262,7 +262,7 @@ describe("Testing comment services functions", () => {
     try {
       await createCommentService(
         {
-          text: "Comment for test",
+          content: { text: "Comment for testing" },
           parentId: post1._id,
           postId: post1._id,
           parentType: "post",
@@ -282,7 +282,7 @@ describe("Testing comment services functions", () => {
     try {
       await createCommentService(
         {
-          text: "Comment for test",
+          content: { text: "Comment for testing" },
           parentId: post1._id,
           postId: post1._id,
           parentType: "post",
@@ -303,7 +303,7 @@ describe("Testing comment services functions", () => {
   it("try to create comment with all valid parameters and without subreddit", async () => {
     const result = await createCommentService(
       {
-        text: "Comment for test",
+        content: { text: "Comment for testing" },
         parentId: post1._id,
         postId: post1._id,
         parentType: "post",
@@ -315,14 +315,14 @@ describe("Testing comment services functions", () => {
       post1
     );
     expect(result.statusCode).toEqual(201);
-    await Comment.deleteOne({ content: "Comment for test" });
+    await Comment.deleteOne({ content: { text: "Comment for testing" } });
   });
 
   // eslint-disable-next-line max-len
   it("try to create comment with all valid parameters and with subreddit", async () => {
     const result = await createCommentService(
       {
-        text: "Comment for test",
+        content: { text: "Comment for testing" },
         parentId: post1._id,
         postId: post1._id,
         parentType: "post",
@@ -335,14 +335,14 @@ describe("Testing comment services functions", () => {
       post1
     );
     expect(result.statusCode).toEqual(201);
-    await Comment.deleteOne({ content: "Comment for test" });
+    await Comment.deleteOne({ content: { text: "Comment for testing" } });
   });
 
   // eslint-disable-next-line max-len
   it("try to create comment with all valid parameters and without subreddit to post of other user", async () => {
     const result = await createCommentService(
       {
-        text: "Comment for test",
+        content: { text: "Comment for testing" },
         parentId: post2._id,
         postId: post2._id,
         parentType: "post",
@@ -354,14 +354,14 @@ describe("Testing comment services functions", () => {
       post2
     );
     expect(result.statusCode).toEqual(201);
-    await Comment.deleteOne({ content: "Comment for test" });
+    await Comment.deleteOne({ content: { text: "Comment for testing" } });
   });
 
   // eslint-disable-next-line max-len
   it("try to create comment with all valid parameters and with subreddit", async () => {
     const result = await createCommentService(
       {
-        text: "Comment for test",
+        content: { text: "Comment for testing" },
         parentId: post2._id,
         postId: post2._id,
         parentType: "post",
@@ -374,7 +374,7 @@ describe("Testing comment services functions", () => {
       post2
     );
     expect(result.statusCode).toEqual(201);
-    await Comment.deleteOne({ content: "Comment for test" });
+    await Comment.deleteOne({ content: { text: "Comment for testing" } });
   });
 
   it("should have commentTreeListingService function", () => {

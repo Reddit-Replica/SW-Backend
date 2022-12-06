@@ -20,9 +20,9 @@ const commentsRouter = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *               text:
- *                 type: string
- *                 description: Comment content (raw markdown text)
+ *               content:
+ *                 type: object
+ *                 description: Comment content
  *               postId:
  *                 type: string
  *                 description: id of the post that will contain the comment

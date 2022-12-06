@@ -73,7 +73,7 @@ export async function checkloggedInUser(loggedInUserId) {
 /**
  * Function used to create a new comment and check every parameter to be a valid one
  *
- * @param {Object} data Data required to create a new comment [text, parentId, postId, parentType, level, subredditName, haveSubreddit, username, userId]
+ * @param {Object} data Data required to create a new comment [content, parentId, postId, parentType, level, subredditName, haveSubreddit, username, userId]
  * @param {Object} post Post object that we want to add the comment to it
  * @returns The response to that request containing [statusCode, data]
  */
@@ -115,7 +115,7 @@ export async function createCommentService(data, post) {
     postId: post._id,
     parentType: data.parentType,
     level: data.level,
-    content: data.text,
+    content: data.content,
     ownerUsername: data.username,
     ownerAvatar: user.avatar,
     ownerId: data.userId,
