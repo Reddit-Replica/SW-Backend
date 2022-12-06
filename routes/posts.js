@@ -20,7 +20,6 @@ import {
 import {
   checkPostExistence,
   getPostDetails,
-  setHybridContent,
   setPostActions,
 } from "../middleware/postDetails.js";
 
@@ -393,7 +392,6 @@ postRouter.get(
   validateRequestSchema,
   checkPostExistence,
   setPostActions,
-  setHybridContent,
   getPostDetails,
   postController.postDetails
 );

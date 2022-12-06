@@ -1,5 +1,11 @@
 import User from "../models/User.js";
 
+/**
+ * A function used to get the subreddit Details
+ * @param {Object} subreddit the subreddit to get the Details
+ * @param {Boolean} isLoggedIn to know if the user is logged in or not
+ * @returns {Object} the details of the subreddit
+ */
 // eslint-disable-next-line max-statements
 export async function getSubredditDetails(
   subreddit,
@@ -11,6 +17,7 @@ export async function getSubredditDetails(
   let isModerator = false;
 
   const details = {
+    subredditId: subreddit._id,
     title: subreddit.title,
     nsfw: subreddit.nsfw,
     nickname: subreddit.viewName,
