@@ -92,7 +92,7 @@ commentActionsRouter.post(
   verifyAuthToken,
   commentActionsController.followUnfollowValidator,
   validateRequestSchema,
-  commentActionsController.followComment
+  commentActionsController.unfollowComment
 );
 
 export default commentActionsRouter;

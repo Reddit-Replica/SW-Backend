@@ -51,3 +51,27 @@ export async function addToCommentFollowedUsers(user, comment) {
   });
   await comment.save();
 }
+
+export async function removeFromUserFollowedComments(userId, commentId) {
+  const neededUser = await User.findById(userId);
+  const neededComment = await validateExistingComment(commentId);
+  const commentIndex = neededUser.followedComments.findIndex(
+    (comment) => comment.toString() === commentId
+  );
+  if (commentIndex === -1) {
+    const error = new Error("You are not following this comment");
+    error.statusCode = 400;
+    throw error;
+  }
+  neededUser.followedComments.splice(commentIndex, 1);
+  await neededUser.save();
+  return { comment: neededComment, user: neededUser };
+}
+
+export async function removeFromCommentFollowedUsers(user, comment) {
+  const userIndex = comment.followingUsers.findIndex(
+    (userItem) => userItem.userId.toString() === user._id.toString()
+  );
+  comment.followingUsers.splice(userIndex, 1);
+  await comment.save();
+}
