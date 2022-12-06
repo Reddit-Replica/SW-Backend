@@ -181,6 +181,10 @@ export async function createCommentService(data, post) {
  */
 // eslint-disable-next-line max-statements
 function prepareComment(comment, user, checkChildren) {
+  if (comment.deletedAt) {
+    return null;
+  }
+
   let data = {
     commentId: comment._id.toString(),
     commentedBy: comment.ownerUsername,
@@ -229,7 +233,10 @@ function prepareComment(comment, user, checkChildren) {
       if (i === 5) {
         break;
       }
-      children.push(prepareComment(comment.children[i], user, false));
+      const resultData = prepareComment(comment.children[i], user, false);
+      if (resultData) {
+        children.push(resultData);
+      }
     }
   }
   data.children = children;
