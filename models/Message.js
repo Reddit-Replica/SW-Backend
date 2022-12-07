@@ -13,6 +13,10 @@ const messageSchema = mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: "Post",
   },
+  commentId: {
+    type: Schema.Types.ObjectId,
+    ref: "Comment",
+  },
   repliedMsgId: {
     type: Schema.Types.ObjectId,
     ref: "Message",
@@ -45,6 +49,7 @@ const messageSchema = mongoose.Schema({
   },
   isSenderUser: {
     type: Boolean,
+    required: true,
   },
   receiverUsername: {
     type: String,
@@ -52,6 +57,7 @@ const messageSchema = mongoose.Schema({
   },
   isReceiverUser: {
     type: Boolean,
+    required: true,
   },
   sentAt: {
     type: Date,
@@ -70,9 +76,10 @@ const messageSchema = mongoose.Schema({
     required: true,
     default: false,
   },
-  spamsCount: {
-    type: Number,
-    default: 0,
+  isSpam: {
+    type: Boolean,
+    default: false,
+    required: true,
   },
 });
 
