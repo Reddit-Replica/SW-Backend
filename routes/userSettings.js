@@ -304,7 +304,13 @@ router.post(
  *     security:
  *       - bearerAuth: []
  */
-router.put("/change-email");
+router.put(
+  "/change-email",
+  verifyAuthToken,
+  userSettingsController.changeEmailValidator,
+  validateRequestSchema,
+  userSettingsController.changeEmail
+);
 
 /**
  * @swagger

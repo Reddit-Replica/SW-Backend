@@ -2,6 +2,8 @@ import jwtDecode from "jwt-decode";
 import User from "../models/User.js";
 import fs from "fs";
 import { comparePasswords, hashPassword } from "../utils/passwordUtils.js";
+import { sendVerifyEmail } from "../utils/sendEmails.js";
+import { generateVerifyToken } from "../utils/generateTokens.js";
 
 /**
  * A function used to check if a user of a given id exists.
@@ -54,6 +56,28 @@ export async function setNewPassword(user, newPassword, confirmNewPassword) {
     throw error;
   }
   user.password = hashPassword(newPassword);
+  await user.save();
+}
+
+/**
+ * This function sets a new email for the user but first sends
+ * a verification email
+ * @param {object} user User object
+ * @param {string} userId user ID
+ * @param {string} toEmail New email to be verified
+ * @returns {void}
+ */
+export async function setNewEmail(user, userId, toEmail) {
+  const verifyToken = await generateVerifyToken(userId, "verifyEmail");
+  const sentEmail = sendVerifyEmail(toEmail, userId, verifyToken);
+
+  if (!sentEmail) {
+    const error = new Error("Email was not sent due to an error.");
+    error.statusCode = 400;
+    throw error;
+  }
+  user.email = toEmail;
+  user.userSettings.verifiedEmail = false;
   await user.save();
 }
 
