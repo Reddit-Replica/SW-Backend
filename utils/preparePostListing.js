@@ -28,8 +28,8 @@ function preparePostSort(listingSort) {
         result = null;
         break;
       case "old":
-        result.sort = { createdAt: 1 };
-        result.sortingType = { type: "createdAt" };
+        result = { createdAt: 1 };
+        sortingType = { type: "createdAt" };
         break;
       default:
         result = { createdAt: -1 };
