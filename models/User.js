@@ -35,6 +35,16 @@ const userSchema = mongoose.Schema({
     required: true,
     default: 1,
   },
+  upVotes:{
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  downVotes:{
+    type: Number,
+    required: true,
+    default: 0,
+  },
   createdAt: {
     type: Date,
     required: true,
