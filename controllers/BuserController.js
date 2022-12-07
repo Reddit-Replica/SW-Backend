@@ -1,5 +1,8 @@
 import { body, param } from "express-validator";
-import { listingUserProfileService } from "../services/userProfileListing.js";
+import {
+  listingUserProfileService,
+  listingUserOverview,
+} from "../services/userProfileListing.js";
 import {
   getUserFromJWTService,
   searchForUserService,
@@ -102,7 +105,12 @@ const userPosts = async (req, res) => {
     const { sort, time, before, after, limit } = req.query;
 
     const userToShow = await searchForUserService(req.params.username);
-    const user = await getUserFromJWTService(req.userId);
+    let user = null;
+    try {
+      user = await getUserFromJWTService(req.userId);
+    } catch (error) {
+      console.log(error.message);
+    }
 
     const result = await listingUserProfileService(userToShow, user, "posts", {
       sort,
@@ -231,6 +239,36 @@ const userHistoryPosts = async (req, res) => {
   }
 };
 
+const UserOverview = async (req, res) => {
+  try {
+    const { sort, time, before, after, limit } = req.query;
+    const userToShow = await searchForUserService(req.params.username);
+    let user = null;
+    try {
+      user = await getUserFromJWTService(req.userId);
+    } catch (error) {
+      console.log(error.message);
+    }
+
+    const result = await listingUserOverview(userToShow, user, {
+      sort,
+      time,
+      before,
+      after,
+      limit,
+    });
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   blockUserValidator,
   blockUser,
@@ -243,4 +281,5 @@ export default {
   userDownvotedPosts,
   userHiddenPosts,
   userHistoryPosts,
+  UserOverview,
 };

@@ -268,7 +268,13 @@ userRouter.get(
  *       500:
  *         description: Internal server error
  */
-userRouter.get("/user/:username/overview");
+userRouter.get(
+  "/user/:username/overview",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.UserOverview
+);
 
 /**
  * @swagger
