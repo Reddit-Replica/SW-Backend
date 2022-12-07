@@ -30,6 +30,25 @@ export async function searchForSubreddit(subredditName) {
   return subreddit;
 }
 /**
+ * This function is used to check if the subredditName is available or not
+ * it gets the subreddit from the database then it checks about it's validity
+ * if there is no subreddit then it's available
+ * @param {String} subredditName subreddit Name
+ * @returns {Object} error object that contains the msg describing why there is an error and its status code , or if there is no error then it returns the subreddit itself
+ */
+export async function subredditNameAvailable(subredditName) {
+  const subreddit = await Subreddit.findOne({ title: subredditName });
+  if (!subreddit) {
+    return {
+      statusCode: 200,
+      message: "The subreddit's name is available",
+    };
+  }
+  let error = new Error("Subreddit's name is already taken");
+  error.statusCode = 409;
+  throw error;
+}
+/**
  * This function is used to search for a subreddit with its id
  * it gets the subreddit from the database then it checks about it's validity
  * if there is no subreddit or we found one but it's deleted then it will return an error

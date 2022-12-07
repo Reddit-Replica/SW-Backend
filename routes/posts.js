@@ -71,6 +71,8 @@ const postRouter = express.Router();
 postRouter.post(
   "/follow-post",
   verifyAuthToken,
+  postActionsController.followValidator,
+  validateRequestSchema,
   postActionsController.followOrUnfollowPost
 );
 
@@ -113,7 +115,13 @@ postRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/hide", verifyAuthToken, postActionsController.hidePost);
+postRouter.post(
+  "/hide",
+  verifyAuthToken,
+  postActionsController.hideValidator,
+  validateRequestSchema,
+  postActionsController.hidePost
+);
 
 /**
  * @swagger
@@ -289,7 +297,13 @@ postRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/unhide", verifyAuthToken, postActionsController.unhidePost);
+postRouter.post(
+  "/unhide",
+  verifyAuthToken,
+  postActionsController.hideValidator,
+  validateRequestSchema,
+  postActionsController.unhidePost
+);
 
 /**
  * @swagger

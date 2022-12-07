@@ -2,8 +2,10 @@
 /* eslint-disable max-statements */
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
+import { searchForSubreddit } from "./communityServices.js";
+import { searchForUserService } from "./userServices.js";
 //------------------------------------------------------------------------------------------------------------------------------------------------
-//GENERAL FUNCTION
+//GENERAL FUNCTIONS
 /**
  * This function is used to search for a post
  * it makes sure that the id of the post is a valid id
@@ -24,6 +26,24 @@ export async function searchForPost(postId) {
     throw error;
   }
   return post;
+}
+/**
+ * This function is used to check if the user that made the post action is a moderator or not
+ * it gets the subreddit that the post is in
+ * then it checks if the user who made the post action is a moderator in that subreddit or not
+ * @param {Object} post the post object that we will check for
+ * @param {Object} user the user object that made the action
+ * @returns {Boolean} indicates whether the user is a mod or not
+ */
+export async function isUserMod(post, user) {
+  const subredditName = post.subredditName;
+  const subreddit = searchForSubreddit(subredditName);
+  for (const moderator of subreddit.moderators) {
+    if (moderator.username === user.username) {
+      return true;
+    }
+  }
+  return false;
 }
 /**
  * This function is used to search for a comment
@@ -47,45 +67,6 @@ export async function searchForComment(commentId) {
   return comment;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-//VALIDATION SERVICES
-/**
- * This function is used to validate the request of save a post
- * @param {Object} req req object that contains the input data
- * @returns {Object} error object that contains the error message and Status code
- */
-export async function validateSavedPost(req) {
-  if (!req.body.id) {
-    let error = new Error("you must enter the id of the post or comment");
-    error.statusCode = 400;
-    throw error;
-  }
-  if (req.body.type === undefined) {
-    let error = new Error(
-      "you must enter if you want to saved a post or a comment"
-    );
-    error.statusCode = 400;
-    throw error;
-  }
-}
-/**
- * This function is used to validate the request of follow a post
- * @param {Object} req req object that contains the input data
- * @returns {Object} error object that contains the error message and Status code
- */
-export async function validateFollowPost(req) {
-  if (!req.body.id) {
-    let error = new Error("you must enter the id of the post");
-    error.statusCode = 400;
-    throw error;
-  }
-  if (req.body.follow === undefined) {
-    let error = new Error(
-      "you must enter if you want to follow the post or not"
-    );
-    error.statusCode = 400;
-    throw error;
-  }
-}
 /**
  * This function is used to validate the request of hide a post
  * @param {Object} req req object that contains the input data
@@ -230,16 +211,14 @@ export async function unSaveComment(comment, user) {
     message: "comment is unsaved successfully",
   };
 }
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//FOLLOW AND UNFOLLOW POSTS
 /**
  * This function is used to check if the given post exists in user's followed posts
  * @param {Object} post the post object that we will check for
  * @param {Object} user the user object that we will search in
  * @returns {Boolean} detects if the post exists or not
  */
-
-//------------------------------------------------------------------------------------------------------------------------------------------------
-//FOLLOW AND UNFOLLOW POSTS
-
 async function checkForFollowedPosts(post, user) {
   //CHECK IF THE POST IS ALREADY SAVED
   for (const smallPost of user.followedPosts) {
@@ -359,4 +338,435 @@ export async function unhideAPost(post, user) {
     statusCode: 200,
     message: "Post is unhidden successfully",
   };
+}
+
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//MARk POSTS AS SPAM
+/**
+ * This function is used to check if the given post exists in user's hidden posts
+ * @param {Object} post the post object that we will check for
+ * @param {Object} user the user object that we will search in
+ * @returns {Boolean} detects if the post exists or not
+ */
+function checkForSpammedPosts(post, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  for (const smallPost of user.spammedPosts) {
+    if (post.id === smallPost.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * This function is used to mark a post as a spam from a user
+ * @param {Object} post the post object that we will mark as spam
+ * @param {Object} user the user object that will mark the post as spam
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function markPostAsSpam(post, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  const spammed = checkForSpammedPosts(post, user);
+  if (spammed) {
+    let error = new Error("This Post is already spammed");
+    error.statusCode = 409;
+    throw error;
+  }
+  //ADD THE POST TO USER'S HIDDEN POSTS
+  user.spammedPosts.push(post.id);
+  await user.save();
+  post.markedSpam = true;
+  /*const moderator=isUserMod(post,user);
+  if (moderator){
+post.moderation.spam={
+    spammedBy:user.username,
+    spammedDate:Date.now(),
+};
+  }*/
+  post.save();
+  return {
+    statusCode: 200,
+    message: "Post is spammed successfully",
+  };
+}
+
+/**
+ * This function is used to unmark a post as a spam from a user
+ * @param {Object} post the post object that we will ummark as spam
+ * @param {Object} user the user object that will ummark the post as spam
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function unmarkPostAsSpam(post, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  const spammed = checkForSpammedPosts(post, user);
+  if (!spammed) {
+    let error = new Error("This Post is already unspammed");
+    error.statusCode = 409;
+    throw error;
+  }
+  //ADD THE POST TO USER'S HIDDEN POSTS
+  user.spammedPosts = user.spammedPosts.filter((smallPost) => {
+    return smallPost.toString() !== post.id;
+  });
+  await user.save();
+  post.markedSpam = false;
+  /*const moderator=isUserMod(post,user);
+  if (moderator){
+    post.moderation.spam={};
+  }*/
+  post.save();
+  return {
+    statusCode: 200,
+    message: "Post is unspammed successfully",
+  };
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//MARK COMMENTS AS SPAM
+/**
+ * This function is used to check if the given post exists in user's hidden posts
+ * @param {Object} post the post object that we will check for
+ * @param {Object} user the user object that we will search in
+ * @returns {Boolean} detects if the post exists or not
+ */
+function checkForSpammedComments(comment, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  for (const smallComment of user.spammedComments) {
+    if (comment.id === smallComment.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * This function is used to mark a post as a spam from a user
+ * @param {Object} post the post object that we will mark as spam
+ * @param {Object} user the user object that will mark the post as spam
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function markCommentAsSpam(comment, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  const spammed = checkForSpammedComments(comment, user);
+  if (spammed) {
+    let error = new Error("This Comment is already spammed");
+    error.statusCode = 409;
+    throw error;
+  }
+  //ADD THE POST TO USER'S HIDDEN POSTS
+  user.spammedComments.push(comment.id);
+  await user.save();
+  comment.markedSpam = true;
+  /*const moderator=isUserMod(post,user);
+    if (moderator){
+  post.moderation.spam={
+      spammedBy:user.username,
+      spammedDate:Date.now(),
+  };
+    }*/
+  comment.save();
+  return {
+    statusCode: 200,
+    message: "Comment is spammed successfully",
+  };
+}
+
+/**
+ * This function is used to unmark a post as a spam from a user
+ * @param {Object} post the post object that we will ummark as spam
+ * @param {Object} user the user object that will ummark the post as spam
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function unmarkCommentAsSpam(comment, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  const spammed = checkForSpammedComments(comment, user);
+  if (!spammed) {
+    let error = new Error("This comment is already unspammed");
+    error.statusCode = 409;
+    throw error;
+  }
+  //ADD THE POST TO USER'S HIDDEN POSTS
+  user.spammedComments = user.spammedComments.filter((smallComment) => {
+    return smallComment.toString() !== comment.id;
+  });
+  await user.save();
+  comment.markedSpam = false;
+  /*const moderator=isUserMod(post,user);
+    if (moderator){
+      post.moderation.spam={};
+    }*/
+  comment.save();
+  return {
+    statusCode: 200,
+    message: "Comment is unspammed successfully",
+  };
+}
+
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//UPVOTING AND DOWNVOTING A POST
+/**
+ * This function is used to check if the given post exists in user's upVoted posts
+ * @param {Object} post the post object that we will check for
+ * @param {Object} user the user object that we will search in
+ * @returns {Boolean} detects if the post exists or not
+ */
+function checkForUpVotedPosts(post, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  for (const smallPost of user.upvotedPosts) {
+    if (post.id === smallPost.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+/**
+ * This function is used to check if the given post exists in user's downVoted posts
+ * @param {Object} post the post object that we will check for
+ * @param {Object} user the user object that we will search in
+ * @returns {Boolean} detects if the post exists or not
+ */
+function checkForDownVotedPosts(post, user) {
+  //CHECK IF THE POST IS ALREADY HIDDEN
+  for (const smallPost of user.downvotedPosts) {
+    if (post.id === smallPost.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * This function is used to upvote a post
+ * @param {Object} post the post object that we will upvote
+ * @param {Object} user the user object that will upvote the post
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function upVoteAPost(post, user) {
+  let result = {};
+  //CHECKING IF THE POST EXISTS IN UPVOTED POSTS IN THE USER
+  const upvoted = checkForUpVotedPosts(post, user);
+  //CHECKING IF THE POST EXISTS IN DOWNVOTED POSTS IN THE USER
+  const downvoted = checkForDownVotedPosts(post, user);
+  //GETTING THE USER WHO WROTE THE POST TO CHANGE HIS KARMA
+  const postWriter = await searchForUserService(post.ownerUsername);
+  //IF THE POST IS UPVOTED AND IT'S ALREADY UPVOTED THEN IT WILL CANCEL THE UPVOTE THAT IT HAD
+  if (upvoted) {
+    user.upvotedPosts = user.upvotedPosts.filter((smallPost) => {
+      return smallPost.toString() !== post.id;
+    });
+    post.numberOfUpvotes--;
+    postWriter.upVotes--;
+    result = {
+      statusCode: 200,
+      message: "Post upvote is cancelled successfully",
+    };
+    //IF IT'S NOT UPVOTED THEN WE HAVE TWO CASES
+  } else {
+    if (downvoted) {
+      //FIRST CASE IF THE POST WAS DOWNVOTED THEN WE WILL CANCEL THAT DOWNVOTE AND MODIFY ON KARMA
+      user.downvotedPosts = user.downvotedPosts.filter((smallPost) => {
+        return smallPost.toString() !== post.id;
+      });
+      post.numberOfDownvotes--;
+      postWriter.downVotes--;
+    }
+    //THEN THE SECOND MODIFICATION THAT MUST HAPPEN IN CASE THE POST WASN'T UPVOTED ALREADY
+    post.numberOfUpvotes++;
+    user.upvotedPosts.push(post.id);
+    postWriter.upVotes++;
+    result = {
+      statusCode: 200,
+      message: "Post is Upvoted successfully",
+    };
+  }
+  postWriter.karma = postWriter.upVotes - postWriter.downVotes;
+  await post.save();
+  await user.save();
+  await postWriter.save();
+  return result;
+}
+
+/**
+ * This function is used to downVote a post
+ * @param {Object} post the post object that we will downVote
+ * @param {Object} user the user object that will downVote the post
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function downVoteAPost(post, user) {
+  let result = {};
+  //CHECKING IF THE POST EXISTS IN UPVOTED POSTS IN THE USER
+  const upvoted = checkForUpVotedPosts(post, user);
+  //CHECKING IF THE POST EXISTS IN DOWNVOTED POSTS IN THE USER
+  const downvoted = checkForDownVotedPosts(post, user);
+  //GETTING THE USER WHO WROTE THE POST TO CHANGE HIS KARMA
+  const postWriter = await searchForUserService(post.ownerUsername);
+  //IF THE POST IS DOWNVOTED AND IT'S ALREADY DOWNVOTED THEN IT WILL CANCEL THE DOWNVOTE THAT IT HAD
+  if (downvoted) {
+    user.downvotedPosts = user.downvotedPosts.filter((smallPost) => {
+      return smallPost.toString() !== post.id;
+    });
+    post.numberOfDownvotes--;
+    postWriter.downVotes--;
+    result = {
+      statusCode: 200,
+      message: "Post downvote is cancelled successfully",
+    };
+    //IF IT'S NOT DOWNVOTED THEN WE HAVE TWO CASES
+  } else {
+    //FIRST CASE IF THE POST WAS UPVOTED THEN WE WILL CANCEL THAT UPVOTE AND MODIFY ON KARMA
+    if (upvoted) {
+      user.upvotedPosts = user.upvotedPosts.filter((smallPost) => {
+        return smallPost.toString() !== post.id;
+      });
+      post.numberOfUpvotes--;
+      postWriter.upVotes--;
+    }
+    //THEN THE SECOND MODIFICATION THAT MUST HAPPEN IN CASE THE POST WASN'T DOWNVOTED ALREADY
+    post.numberOfDownvotes++;
+    user.downvotedPosts.push(post.id);
+    postWriter.downVotes++;
+    result = {
+      statusCode: 200,
+      message: "Post is Downvoted successfully",
+    };
+  }
+  postWriter.karma = postWriter.upVotes - postWriter.downVotes;
+  await post.save();
+  await user.save();
+  await postWriter.save();
+
+  return result;
+}
+
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//UPVOTING AND DOWNVOTING A Comment
+/**
+ * This function is used to check if the given post exists in user's upVoted comments
+ * @param {Object} comment the comment object that we will check for
+ * @param {Object} user the user object that we will search in
+ * @returns {Boolean} detects if the post exists or not
+ */
+function checkForUpVotedComments(comment, user) {
+  for (const smallComment of user.upvotedComments) {
+    if (comment.id === smallComment.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+/**
+ * This function is used to check if the given post exists in user's downVoted comments
+ * @param {Object} comment the comment object that we will check for
+ * @param {Object} user the user object that we will search in
+ * @returns {Boolean} detects if the post exists or not
+ */
+function checkForDownVotedComments(comment, user) {
+  for (const smallComment of user.downvotedComments) {
+    if (comment.id === smallComment.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * This function is used to upvote a comment
+ * @param {Object} comment the comment object that we will upvote
+ * @param {Object} user the user object that will upvote the comment
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function upVoteAComment(comment, user) {
+  let result = {};
+  //CHECKING IF THE COMMENT EXISTS IN UPVOTED COMMENT IN THE USER
+  const upvoted = checkForUpVotedComments(comment, user);
+  //CHECKING IF THE COMMENT EXISTS IN DOWNVOTED COMMENT IN THE USER
+  const downvoted = checkForDownVotedComments(comment, user);
+  //GETTING THE USER WHO WROTE THE COMMENT TO CHANGE HIS KARMA
+  const commentWriter = await searchForUserService(comment.ownerUsername);
+  //IF THE COMMENT IS UPVOTED AND IT'S ALREADY UPVOTED THEN IT WILL CANCEL THE UPVOTE THAT IT HAD
+  if (upvoted) {
+    user.upvotedComments = user.upvotedComments.filter((smallComment) => {
+      return smallComment.toString() !== comment.id;
+    });
+    comment.numberOfVotes--;
+    commentWriter.upVotes--;
+    result = {
+      statusCode: 200,
+      message: "Comment upvote is cancelled successfully",
+    };
+    //IF IT'S NOT UPVOTED THEN WE HAVE TWO CASES
+  } else {
+    if (downvoted) {
+      //FIRST CASE IF THE POST WAS DOWNVOTED THEN WE WILL CANCEL THAT DOWNVOTE AND MODIFY ON KARMA
+      user.downvotedComments = user.downvotedComments.filter((smallComment) => {
+        return smallComment.toString() !== comment.id;
+      });
+      comment.numberOfVotes++;
+      commentWriter.downVotes--;
+    }
+    //THEN THE SECOND MODIFICATION THAT MUST HAPPEN IN CASE THE COMMENT WASN'T UPVOTED ALREADY
+    comment.numberOfVotes++;
+    user.upvotedComments.push(comment.id);
+    commentWriter.upVotes++;
+    result = {
+      statusCode: 200,
+      message: "comment is Upvoted successfully",
+    };
+  }
+  commentWriter.karma = commentWriter.upVotes - commentWriter.downVotes;
+  await comment.save();
+  await user.save();
+  await commentWriter.save();
+  return result;
+}
+
+/**
+ * This function is used to downVote a comment
+ * @param {Object} comment the comment object that we will downVote
+ * @param {Object} user the user object that will downVote the comment
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function downVoteAComment(comment, user) {
+  let result = {};
+  //CHECKING IF THE COMMENT EXISTS IN UPVOTED COMMENT IN THE USER
+  const upvoted = checkForUpVotedComments(comment, user);
+  //CHECKING IF THE COMMENT EXISTS IN DOWNVOTED COMMENT IN THE USER
+  const downvoted = checkForDownVotedComments(comment, user);
+  //GETTING THE USER WHO WROTE THE COMMENT TO CHANGE HIS KARMA
+  const commentWriter = await searchForUserService(comment.ownerUsername);
+  //IF THE COMMENT IS DOWNVOTED AND IT'S ALREADY DOWNVOTED THEN IT WILL CANCEL THE DOWNVOTE THAT IT HAD
+  if (downvoted) {
+    user.downvotedComments = user.downvotedComments.filter((smallComment) => {
+      return smallComment.toString() !== comment.id;
+    });
+    comment.numberOfVotes++;
+    commentWriter.downVotes--;
+    result = {
+      statusCode: 200,
+      message: "Comment downvote is cancelled successfully",
+    };
+    //IF IT'S NOT DOWNVOTED THEN WE HAVE TWO CASES
+  } else {
+    //FIRST CASE IF THE COMMENT WAS UPVOTED THEN WE WILL CANCEL THAT UPVOTE AND MODIFY ON KARMA
+    if (upvoted) {
+      user.upvotedComments = user.upvotedComments.filter((smallComment) => {
+        return smallComment.toString() !== comment.id;
+      });
+      comment.numberOfVotes--;
+      commentWriter.upVotes--;
+    }
+    //THEN THE SECOND MODIFICATION THAT MUST HAPPEN IN CASE THE COMMENT WASN'T DOWNVOTED ALREADY
+    comment.numberOfVotes--;
+    user.downvotedComments.push(comment.id);
+    commentWriter.downVotes++;
+    result = {
+      statusCode: 200,
+      message: "Post is Downvoted successfully",
+    };
+  }
+  commentWriter.karma = commentWriter.upVotes - commentWriter.downVotes;
+  await comment.save();
+  await user.save();
+  await commentWriter.save();
+
+  return result;
 }

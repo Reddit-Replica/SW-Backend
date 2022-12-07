@@ -1,6 +1,8 @@
 import express from "express";
 import postActionsController from "../controllers/NpostActionsController.js";
 
+import { validateRequestSchema } from "../middleware/validationResult.js";
+
 import { verifyAuthToken } from "../middleware/verifyToken.js";
 
 // eslint-disable-next-line new-cap
@@ -54,7 +56,13 @@ const router = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-router.post("/mark-spam");
+router.post(
+  "/mark-spam",
+  verifyAuthToken,
+  postActionsController.spamValidator,
+  validateRequestSchema,
+  postActionsController.markAsSpam
+);
 
 /**
  * @swagger
@@ -101,7 +109,13 @@ router.post("/mark-spam");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/unmark-spam");
+router.post(
+  "/unmark-spam",
+  verifyAuthToken,
+  postActionsController.spamValidator,
+  validateRequestSchema,
+  postActionsController.unmarkAsSpam
+);
 
 /**
  * @swagger
@@ -147,7 +161,13 @@ router.post("/unmark-spam");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/save", verifyAuthToken, postActionsController.savePostOrComment);
+router.post(
+  "/save",
+  verifyAuthToken,
+  postActionsController.saveValidator,
+  validateRequestSchema,
+  postActionsController.savePostOrComment
+);
 
 /**
  * @swagger
@@ -243,6 +263,8 @@ router.post("/send-replies");
 router.post(
   "/unsave",
   verifyAuthToken,
+  postActionsController.saveValidator,
+  validateRequestSchema,
   postActionsController.unsavePostOrComment
 );
 
@@ -291,6 +313,12 @@ router.post(
  *      security:
  *       - bearerAuth: []
  */
-router.post("/vote");
+router.post(
+  "/vote",
+  verifyAuthToken,
+  postActionsController.voteValidator,
+  validateRequestSchema,
+  postActionsController.vote
+);
 
 export default router;
