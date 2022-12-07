@@ -605,30 +605,44 @@ function checkForDownVotedPosts(post, user) {
  * @returns {Object} success object that contains the message and status code
  */
 export async function upVoteAPost(post, user) {
+  //CHECKING IF THE POST EXISTS IN UPVOTED POSTS IN THE USER
   const upvoted = checkForUpVotedPosts(post, user);
+  //CHECKING IF THE POST EXISTS IN DOWNVOTED POSTS IN THE USER
   const downvoted = checkForDownVotedPosts(post, user);
+  //GETTING THE USER WHO WROTE THE POST TO CHANGE HIS KARMA
   const postWriter = await searchForUserService(post.ownerUsername);
+  //IF THE POST IS UPVOTED AND IT'S ALREADY UPVOTED THEN IT WILL CANCEL THE UPVOTE THAT IT HAD
   if (upvoted) {
-    let error = new Error("This post is already upvoted");
-    error.statusCode = 409;
-    throw error;
-  }
-  if (downvoted) {
-    user.downvotedPosts = user.downvoted.filter((smallPost) => {
+    user.upvotedPosts = user.upvotedPosts.filter((smallPost) => {
       return smallPost.toString() !== post.id;
     });
-    post.numberOfDownvotes--;
+    post.numberOfUpvotes--;
+    postWriter.karma--;
+    //IF IT'S NOT UPVOTED THEN WE HAVE TWO CASES
+  } else {
+    if (downvoted) {
+      //FIRST CASE IF THE POST WAS DOWNVOTED THEN WE WILL CANCEL THAT DOWNVOTE AND MODIFY ON KARMA
+      user.downvotedPosts = user.downvoted.filter((smallPost) => {
+        return smallPost.toString() !== post.id;
+      });
+      post.numberOfDownvotes--;
+      postWriter.karma++;
+    }
+    //THEN THE SECOND MODIFICATION THAT MUST HAPPEN IN CASE THE POST WASN'T UPVOTED ALREADY
+    post.numberOfUpvotes++;
+    user.upvotedPosts.push(post.id);
     postWriter.karma++;
   }
-  post.numberOfUpvotes++;
-  user.upvotedPosts.push(post.id);
-  postWriter.karma++;
+
+  if (postWriter.karma <= 0) {
+    postWriter.karma = 1;
+  }
   await post.save();
   await user.save();
   await postWriter.save();
   return {
     statusCode: 200,
-    message: "Comment is spammed successfully",
+    message: "Post is Upvoted successfully",
   };
 }
 
@@ -639,24 +653,34 @@ export async function upVoteAPost(post, user) {
  * @returns {Object} success object that contains the message and status code
  */
 export async function downVoteAPost(post, user) {
+  //CHECKING IF THE POST EXISTS IN UPVOTED POSTS IN THE USER
   const upvoted = checkForUpVotedPosts(post, user);
+  //CHECKING IF THE POST EXISTS IN DOWNVOTED POSTS IN THE USER
   const downvoted = checkForDownVotedPosts(post, user);
+  //GETTING THE USER WHO WROTE THE POST TO CHANGE HIS KARMA
   const postWriter = await searchForUserService(post.ownerUsername);
+  //IF THE POST IS DOWNVOTED AND IT'S ALREADY DOWNVOTED THEN IT WILL CANCEL THE DOWNVOTE THAT IT HAD
   if (downvoted) {
-    let error = new Error("This post is already downvoted");
-    error.statusCode = 409;
-    throw error;
-  }
-  if (upvoted) {
-    user.upVoteAPost = user.upvoted.filter((smallPost) => {
+    user.downvotedPosts = user.downvoted.filter((smallPost) => {
       return smallPost.toString() !== post.id;
     });
     post.numberOfDownvotes--;
+    postWriter.karma++;
+    //IF IT'S NOT DOWNVOTED THEN WE HAVE TWO CASES
+  } else {
+    //FIRST CASE IF THE POST WAS UPVOTED THEN WE WILL CANCEL THAT UPVOTE AND MODIFY ON KARMA
+    if (upvoted) {
+      user.upvotedPosts = user.upvotedPosts.filter((smallPost) => {
+        return smallPost.toString() !== post.id;
+      });
+      post.numberOfUpvotes--;
+      postWriter.karma--;
+    }
+    //THEN THE SECOND MODIFICATION THAT MUST HAPPEN IN CASE THE POST WASN'T DOWNVOTED ALREADY
+    post.numberOfUpvotes++;
+    user.downvotedPosts.push(post.id);
     postWriter.karma--;
   }
-  post.numberOfUpvotes++;
-  user.downvotedPosts.push(post.id);
-  postWriter.karma--;
   if (postWriter.karma <= 0) {
     postWriter.karma = 1;
   }
@@ -666,6 +690,6 @@ export async function downVoteAPost(post, user) {
 
   return {
     statusCode: 200,
-    message: "Comment is spammed successfully",
+    message: "Post is downvoted successfully",
   };
 }

@@ -19,6 +19,8 @@ import {
   validateSpam,
   markCommentAsSpam,
   unmarkCommentAsSpam,
+  downVoteAPost,
+  upVoteAPost,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
 import {
@@ -144,7 +146,7 @@ const unhidePost = async (req, res) => {
   }
 };
 //------------------------------------------------------------------------------------------------------------------------------------------------
-//markAsSpam
+//MARK AS SPAM
 const markAsSpam = async (req, res) => {
   try {
     await validateSpam(req);
@@ -176,7 +178,7 @@ const markAsSpam = async (req, res) => {
 };
 
 //------------------------------------------------------------------------------------------------------------------------------------------------
-//unmarkAsSpam
+//UNMARK AS SPAM
 const unmarkAsSpam = async (req, res) => {
   try {
     await validateSpam(req);
@@ -208,6 +210,48 @@ const unmarkAsSpam = async (req, res) => {
   }
 };
 
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//VOTE
+const vote = async (req, res) => {
+  try {
+    await validateSpam(req);
+    const user = await searchForUserService(req.payload.username);
+    const type = req.body.type;
+    const direction = req.body.direction;
+
+    let result;
+    if (direction===1){
+      if (type === "post") {
+        const post = await searchForPost(req.body.id);
+        result = await upVoteAPost(post, user);
+      }
+      if (type === "comment") {
+       /* const comment = await searchForComment(req.body.id);
+        result = await unmarkCommentAsSpam(comment, user);*/
+      }
+    } else if (direction===-1){
+      if (type === "post") {
+        const post = await searchForPost(req.body.id);
+        result = await downVoteAPost(post, user);
+      }
+      if (type === "comment") {
+      /*  const comment = await searchForComment(req.body.id);
+        result = await unmarkCommentAsSpam(comment, user);*/
+      }
+    }
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Server Error");
+    }
+  }
+};
+
 export default {
   followOrUnfollowPost,
   savePostOrComment,
@@ -216,4 +260,5 @@ export default {
   unhidePost,
   markAsSpam,
   unmarkAsSpam,
+  vote,
 };

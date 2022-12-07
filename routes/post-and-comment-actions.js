@@ -340,6 +340,7 @@ router.post(
  *      security:
  *       - bearerAuth: []
  */
-router.post("/vote");
+router.post("/vote",  verifyAuthToken,
+postActionsController.vote);
 
 export default router;
