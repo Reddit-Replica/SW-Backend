@@ -146,10 +146,17 @@ export async function listingUserProfileService(
  * @param {Object} loggedInUser Logged in user object
  * @param {String} postId Id of the post
  * @param {String} typeOfListing Used to know if the listing for normal overview or saved overview
+ * @param {Boolean} requestComments Flag used to know that comments will not have a parent object
  * @returns {Array} Array of comments wrote by the user to that post
  */
 // eslint-disable-next-line max-statements
-async function getPostComments(user, loggedInUser, postId, typeOfListing) {
+async function getPostComments(
+  user,
+  loggedInUser,
+  postId,
+  typeOfListing,
+  requestComments
+) {
   // get all the comments of the post that was written by the user
   const comments = await Comment.find({ postId: postId, ownerId: user._id });
   let readyComments = [];
@@ -171,12 +178,13 @@ async function getPostComments(user, loggedInUser, postId, typeOfListing) {
       points: comment.numberOfVotes,
       publishTime: comment.createdAt,
       editTime: comment.editedAt,
+      parent: comment.parentId,
       level: comment.level,
       inYourSubreddit: false,
     };
 
     // add parent data
-    if (comment.parentType === "comment") {
+    if (comment.parentType === "comment" && !requestComments) {
       const parent = await Comment.findById(comment.parentId);
       data.parent = {
         commentId: parent._id,
@@ -215,6 +223,7 @@ async function getPostComments(user, loggedInUser, postId, typeOfListing) {
  * @param {Object} user User that we want to list his posts + comments
  * @param {Object} loggedInUser Logged in user that did the request
  * @param {String} typeOfListing Name of the list in the user model that we want to list
+ * @param {Boolean} requestComments Flag used to know that posts will only be wit type = summaryPost
  * @param {Object} listingParams Listing parameters that was in the query of the request
  * @returns {Object} The response to that request containing [statusCode, data]
  */
@@ -223,6 +232,7 @@ export async function listingUserOverview(
   user,
   loggedInUser,
   typeOfListing,
+  requestComments,
   listingParams
 ) {
   // prepare the listing parameters
@@ -249,13 +259,20 @@ export async function listingUserOverview(
       }
     }
 
-    let type = "summaryPost";
-    if (user.posts.includes(post._id)) {
-      type = "fullPost";
+    // if request comments only, then need to check if there is any comments at all
+    const comments = await getPostComments(
+      user,
+      loggedInUser,
+      post._id,
+      typeOfListing,
+      requestComments
+    );
+    if (requestComments && comments.length === 0) {
+      continue;
     }
+
     let postData = {
       id: result[typeOfListing][i]._id.toString(),
-      type,
       data: {
         post: {
           kind: post.kind,
@@ -286,6 +303,15 @@ export async function listingUserOverview(
         comments: [],
       },
     };
+    let type = "summaryPost";
+    if (user.posts.includes(post._id)) {
+      type = "fullPost";
+    }
+    if (!requestComments) {
+      postData.type = type;
+    }
+
+    postData.data.comments = comments;
 
     if (loggedInUser) {
       // check voting type
@@ -330,13 +356,6 @@ export async function listingUserOverview(
         postData.data.post.inYourSubreddit = false;
       }
     }
-
-    postData.data.comments = await getPostComments(
-      user,
-      loggedInUser,
-      post._id,
-      typeOfListing
-    );
 
     children.push(postData);
   }
