@@ -160,7 +160,7 @@ const postSchema = mongoose.Schema({
   scheduleTimeZone: {
     type: String,
   },
-  hotSore: {
+  hotScore: {
     type: Number,
     default: 0,
   },
@@ -168,7 +168,7 @@ const postSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-  bestSore: {
+  bestScore: {
     type: Number,
     default: 0,
   },
