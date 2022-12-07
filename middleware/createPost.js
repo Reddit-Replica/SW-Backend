@@ -121,7 +121,7 @@ export function checkImagesAndVideos(req, res, next) {
     const imageCaptions = req.body.imageCaptions;
     const imageLinks = req.body.imageLinks;
     let images = [];
-    const imageFiles = req.files.images;
+    const imageFiles = req.files?.images;
     if (!imageFiles) {
       return res.status(404).json("Images not found");
     }
@@ -147,7 +147,7 @@ export function checkImagesAndVideos(req, res, next) {
     });
     req.images = images;
   } else if (kind === "video") {
-    const videoFile = req.files.video;
+    const videoFile = req.files?.video;
     if (!videoFile) {
       return res.status(404).json("Video not found");
     }
