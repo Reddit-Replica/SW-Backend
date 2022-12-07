@@ -160,11 +160,19 @@ const postSchema = mongoose.Schema({
   scheduleTimeZone: {
     type: String,
   },
-  score: {
+  hotSore: {
     type: Number,
     default: 0,
   },
-  timingScore: {
+  hotTimingScore: {
+    type: Number,
+    default: 0,
+  },
+  bestSore: {
+    type: Number,
+    default: 0,
+  },
+  bestTimingScore: {
     type: Number,
     default: 0,
   },
