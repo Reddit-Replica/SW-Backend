@@ -32,15 +32,15 @@ export async function listingBannedUsers(
   for (const i in result[typeOfListing]) {
     const user = result[typeOfListing][i];
 
-    let userData = { id: result[typeOfListing][i]._id.toString() };
+    let userData = { id: result[typeOfListing][i].userID.toString() };
     userData.data = {
       username: user.username,
-      userPhoto: user.userPhoto,
-      bannedAt: user.ban.bannedAt,
-      banPeriod: user.ban.banPeriod,
-      modNote: user.ban.modNote,
-      noteInclude: user.ban.noteInclude,
-      reasonForBan: user.ban.reasonForBan,
+      userPhoto: user.avatar,
+      bannedAt: user.bannedAt,
+      banPeriod: user.banPeriod,
+      modNote: user.modNote,
+      noteInclude: user.noteInclude,
+      reasonForBan: user.reasonForBan,
     };
 
     children.push(userData);
@@ -50,8 +50,8 @@ export async function listingBannedUsers(
     before = "";
   if (result[typeOfListing].length) {
     after =
-      result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
-    before = result[typeOfListing][0]._id.toString();
+      result[typeOfListing][result[typeOfListing].length - 1].userID.toString();
+    before = result[typeOfListing][0].userID.toString();
   }
   return {
     statusCode: 200,

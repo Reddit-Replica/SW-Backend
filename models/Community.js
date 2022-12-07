@@ -152,6 +152,24 @@ const communitySchema = mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
       },
+      avatar: {
+        type: String,
+      },
+      bannedAt: {
+        type: Date,
+      },
+      banPeriod: {
+        type: Number,
+      },
+      modNote: {
+        type: String,
+      },
+      noteInclude: {
+        type: String,
+      },
+      reasonForBan: {
+        type: String,
+      },
     },
   ],
   mutedUsers: [
