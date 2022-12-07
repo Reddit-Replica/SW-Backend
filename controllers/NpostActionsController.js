@@ -85,14 +85,14 @@ const followOrUnfollowPost = async (req, res) => {
     const post = await searchForPost(req.body.id);
     const user = await searchForUserService(req.payload.username);
     let result;
-    if (req.body.follow) {
+    const follow=req.body.follow;
+    if (follow==="true") {
       result = await followPost(post, user);
     } else {
       result = await unfollowPost(post, user);
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
