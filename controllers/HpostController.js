@@ -26,7 +26,7 @@ const submit = async (req, res) => {
     post.numberOfUpvotes = 1;
     user.upVotes += 1;
     user.karma += 1;
-    post.timingScore = post.createdAt.getTime() / 100000;
+    post.timingScore = post.createdAt.getTime() / 10000;
     await post.save();
     await user.save();
     res.status(201).json({
