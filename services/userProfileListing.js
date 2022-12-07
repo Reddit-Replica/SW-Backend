@@ -142,19 +142,28 @@ export async function listingUserProfileService(
  * Function used to get the comments of a user to a certain post and return the data based on
  * logged in user interactions to the comments.
  *
- * @param {String} userId Id of the user
+ * @param {String} user User object
  * @param {Object} loggedInUser Logged in user object
  * @param {String} postId Id of the post
+ * @param {String} typeOfListing Used to know if the listing for normal overview or saved overview
  * @returns {Array} Array of comments wrote by the user to that post
  */
 // eslint-disable-next-line max-statements
-async function getPostComments(userId, loggedInUser, postId) {
+async function getPostComments(user, loggedInUser, postId, typeOfListing) {
   // get all the comments of the post that was written by the user
-  const comments = await Comment.find({ postId: postId, ownerId: userId });
+  const comments = await Comment.find({ postId: postId, ownerId: user._id });
   let readyComments = [];
 
   for (const i in comments) {
     const comment = comments[i];
+
+    // check if the comment is saved if the listing is savedPosts
+    if (typeOfListing === "savedPosts") {
+      if (!user.savedComments.includes(comment._id)) {
+        continue;
+      }
+    }
+
     let data = {
       commentId: comment._id,
       commentedBy: comment.ownerUsername,
@@ -233,8 +242,11 @@ export async function listingUserOverview(
   let children = [];
   for (const i in result[typeOfListing]) {
     const post = result[typeOfListing][i];
-    if (loggedInUser && loggedInUser.hiddenPosts.includes(post._id)) {
-      continue;
+    if (typeOfListing !== "savedPosts") {
+      // hidden posts can be displayed in saved posts and comments page
+      if (loggedInUser && loggedInUser.hiddenPosts.includes(post._id)) {
+        continue;
+      }
     }
 
     let type = "summaryPost";
@@ -320,9 +332,10 @@ export async function listingUserOverview(
     }
 
     postData.data.comments = await getPostComments(
-      user._id,
+      user,
       loggedInUser,
-      post._id
+      post._id,
+      typeOfListing
     );
 
     children.push(postData);
