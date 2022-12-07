@@ -14,6 +14,7 @@ import {
   makeSubredditFavorite,
   checkForFavoriteSubreddits,
   removeSubredditFromFavorite,
+  subredditNameAvailable,
 } from "./../services/communityServices.js";
 import { searchForUserService } from "../services/userServices.js";
 export let MainTopics = [
@@ -229,6 +230,23 @@ const addSubTopics = async (req, res) => {
   }
 };
 
+const availableSubredditName = async (req, res) => {
+  try {
+    const result = await subredditNameAvailable(req.query.subredditName);
+    //SENDING RESPONSES
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
 /* we need to add moderated subreddits in user then we will push this user to them
 const moderate = async(req,res)=>{
   const authPayload = verifyUser(req);
@@ -325,4 +343,5 @@ export default {
   subTopicValidator,
   addToFavorite,
   removeFromFavorite,
+  availableSubredditName,
 };
