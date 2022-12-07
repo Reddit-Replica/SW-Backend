@@ -579,6 +579,7 @@ export async function upVoteAPost(post, user) {
     };
   }
   postWriter.karma = postWriter.upVotes - postWriter.downVotes;
+  post.numberOfVotes=post.numberOfUpvotes-post.numberOfDownvotes;
   await post.save();
   await user.save();
   await postWriter.save();
@@ -630,6 +631,7 @@ export async function downVoteAPost(post, user) {
     };
   }
   postWriter.karma = postWriter.upVotes - postWriter.downVotes;
+  post.numberOfVotes=post.numberOfUpvotes-post.numberOfDownvotes;
   await post.save();
   await user.save();
   await postWriter.save();
