@@ -273,7 +273,7 @@ userRouter.get(
   optionalToken,
   userController.usernameValidator,
   validateRequestSchema,
-  userController.UserOverview
+  userController.userOverview
 );
 
 /**

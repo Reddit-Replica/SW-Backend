@@ -205,15 +205,20 @@ async function getPostComments(userId, loggedInUser, postId) {
  *
  * @param {Object} user User that we want to list his posts + comments
  * @param {Object} loggedInUser Logged in user that did the request
+ * @param {String} typeOfListing Name of the list in the user model that we want to list
  * @param {Object} listingParams Listing parameters that was in the query of the request
  * @returns {Object} The response to that request containing [statusCode, data]
  */
 // eslint-disable-next-line max-statements
-export async function listingUserOverview(user, loggedInUser, listingParams) {
+export async function listingUserOverview(
+  user,
+  loggedInUser,
+  typeOfListing,
+  listingParams
+) {
   // prepare the listing parameters
   const listingResult = await postListing(listingParams);
 
-  const typeOfListing = "commentedPosts";
   const result = await User.findOne({ username: user.username })
     .select(typeOfListing)
     .populate({

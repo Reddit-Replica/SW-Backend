@@ -239,7 +239,7 @@ const userHistoryPosts = async (req, res) => {
   }
 };
 
-const UserOverview = async (req, res) => {
+const userOverview = async (req, res) => {
   try {
     const { sort, time, before, after, limit } = req.query;
     const userToShow = await searchForUserService(req.params.username);
@@ -250,13 +250,18 @@ const UserOverview = async (req, res) => {
       console.log(error.message);
     }
 
-    const result = await listingUserOverview(userToShow, user, {
-      sort,
-      time,
-      before,
-      after,
-      limit,
-    });
+    const result = await listingUserOverview(
+      userToShow,
+      user,
+      "commentedPosts",
+      {
+        sort,
+        time,
+        before,
+        after,
+        limit,
+      }
+    );
 
     res.status(result.statusCode).json(result.data);
   } catch (error) {
@@ -281,5 +286,5 @@ export default {
   userDownvotedPosts,
   userHiddenPosts,
   userHistoryPosts,
-  UserOverview,
+  userOverview,
 };
