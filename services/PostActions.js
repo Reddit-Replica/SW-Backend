@@ -618,7 +618,7 @@ export async function upVoteAPost(post, user) {
       return smallPost.toString() !== post.id;
     });
     post.numberOfUpvotes--;
-    postWriter.karma--;
+    postWriter.upVotes--;
     result={
       statusCode: 200,
       message: "Post upvote is cancelled successfully",
@@ -631,21 +631,18 @@ export async function upVoteAPost(post, user) {
         return smallPost.toString() !== post.id;
       });
       post.numberOfDownvotes--;
-      postWriter.karma++;
+      postWriter.downVotes--;
     }
     //THEN THE SECOND MODIFICATION THAT MUST HAPPEN IN CASE THE POST WASN'T UPVOTED ALREADY
     post.numberOfUpvotes++;
     user.upvotedPosts.push(post.id);
-    postWriter.karma++;
+    postWriter.upVotes++;
     result={
       statusCode: 200,
       message: "Post is Upvoted successfully",
     };
   }
-
-  if (postWriter.karma <= 0) {
-    postWriter.karma = 1;
-  }
+  postWriter.karma=postWriter.upVotes-postWriter.downVotes;
   await post.save();
   await user.save();
   await postWriter.save();
@@ -672,7 +669,7 @@ export async function downVoteAPost(post, user) {
       return smallPost.toString() !== post.id;
     });
     post.numberOfDownvotes--;
-    postWriter.karma++;
+    postWriter.downVotes--;
     result={
       statusCode: 200,
       message: "Post downvote is cancelled successfully",
@@ -685,20 +682,18 @@ export async function downVoteAPost(post, user) {
         return smallPost.toString() !== post.id;
       });
       post.numberOfUpvotes--;
-      postWriter.karma--;
+      postWriter.upVotes--;
     }
     //THEN THE SECOND MODIFICATION THAT MUST HAPPEN IN CASE THE POST WASN'T DOWNVOTED ALREADY
     post.numberOfDownvotes++;
     user.downvotedPosts.push(post.id);
-    postWriter.karma--;
+    postWriter.downVotes++;
     result={
       statusCode: 200,
       message: "Post is Downvoted successfully",
     };
   }
-  if (postWriter.karma <= 0) {
-    postWriter.karma = 1;
-  }
+  postWriter.karma=postWriter.upVotes-postWriter.downVotes;
   await post.save();
   await user.save();
   await postWriter.save();
