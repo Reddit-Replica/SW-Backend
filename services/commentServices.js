@@ -166,7 +166,7 @@ export async function createCommentService(data, post) {
 
   return {
     statusCode: 201,
-    data: "Comment created successfully",
+    data: { id: comment._id },
   };
 }
 
