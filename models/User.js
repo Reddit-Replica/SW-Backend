@@ -249,7 +249,31 @@ const userSchema = mongoose.Schema({
       ref: "Post",
     },
   ],
-  comments: [
+  commentedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  upvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  downvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  followedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  savedComments: [
     {
       type: Schema.Types.ObjectId,
       ref: "Comment",

@@ -2,6 +2,7 @@ import express from "express";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import commentController from "../controllers/BcommentController.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
+import { optionalToken } from "./../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
 const commentsRouter = express.Router();
@@ -46,6 +47,13 @@ const commentsRouter = express.Router();
  *      responses:
  *          201:
  *              description: Comment created successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              id:
+ *                                  type: string
+ *                                  description: Id of the created comment
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -99,17 +107,6 @@ commentsRouter.post(
  *         schema:
  *           type: integer
  *           default: 25
- *       - in: query
- *         name: sort
- *         description: Comments sorting algorithm
- *         schema:
- *           type: string
- *           default: best
- *           enum:
- *             - best
- *             - top
- *             - new
- *             - old
  *     responses:
  *       200:
  *         content:
@@ -130,7 +127,13 @@ commentsRouter.post(
  *     security:
  *      - bearerAuth: []
  */
-commentsRouter.get("/comments/:postId");
+commentsRouter.get(
+  "/comments/:postId",
+  optionalToken,
+  commentController.getCommentTreeValidator,
+  validateRequestSchema,
+  commentController.commentTree
+);
 
 /**
  * @swagger
@@ -198,7 +201,13 @@ commentsRouter.get("/comments/:postId");
  *     security:
  *      - bearerAuth: []
  */
-commentsRouter.get("/comments/:postId/:commentId");
+commentsRouter.get(
+  "/comments/:postId/:commentId",
+  optionalToken,
+  commentController.getCommentTreeOfCommentValidator,
+  validateRequestSchema,
+  commentController.commentTreeOfComment
+);
 
 /**
  * @swagger
