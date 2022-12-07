@@ -36,6 +36,7 @@ mainRouter.use(subredditFlairsRouter);
 mainRouter.use(userSettingsRouter);
 mainRouter.use(messageRouter);
 mainRouter.use(subredditModerationsRouter);
+mainRouter.use(postAndCommentActionsRouter);
 mainRouter.use(commentActionsRouter);
 
 // ! should add your router before this middleware
