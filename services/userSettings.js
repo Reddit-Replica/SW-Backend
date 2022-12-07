@@ -55,6 +55,11 @@ export async function setNewPassword(user, newPassword, confirmNewPassword) {
     error.statusCode = 400;
     throw error;
   }
+  if (comparePasswords(newPassword, user.password)) {
+    const error = new Error("New password is the same as the old password");
+    error.statusCode = 400;
+    throw error;
+  }
   user.password = hashPassword(newPassword);
   await user.save();
 }
