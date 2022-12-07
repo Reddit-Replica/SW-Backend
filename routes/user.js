@@ -681,7 +681,13 @@ userRouter.get(
  *     security:
  *       - bearerAuth: []
  */
-userRouter.get("/user/:username/saved");
+userRouter.get(
+  "/user/:username/saved",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userSavedPostsAndComments
+);
 
 /**
  * @swagger

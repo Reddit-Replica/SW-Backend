@@ -274,6 +274,34 @@ const userOverview = async (req, res) => {
   }
 };
 
+const userSavedPostsAndComments = async (req, res) => {
+  try {
+    if (req.params.username !== req.payload.username) {
+      return res.status(401).json("Access Denied");
+    }
+    const { sort, time, before, after, limit } = req.query;
+    const userToShow = await searchForUserService(req.params.username);
+    const user = await getUserFromJWTService(req.payload.userId);
+
+    const result = await listingUserOverview(userToShow, user, "savedPosts", {
+      sort,
+      time,
+      before,
+      after,
+      limit,
+    });
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   blockUserValidator,
   blockUser,
@@ -287,4 +315,5 @@ export default {
   userHiddenPosts,
   userHistoryPosts,
   userOverview,
+  userSavedPostsAndComments,
 };
