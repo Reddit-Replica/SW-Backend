@@ -28,6 +28,25 @@ import {
   markMessageAsSpam,
   unmarkMessageAsSpam,
 } from "../services/messageServices.js";
+
+import { body } from "express-validator";
+const voteValidator = [
+  body("id").trim().not().isEmpty().withMessage("id content can not be empty"),
+  body("direction")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("direction can not be empty")
+    .isIn([1, -1])
+    .withMessage("direction must be either 1 or -1"),
+  body("type")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("type can not be empty")
+    .isIn(["post", "comments"])
+    .withMessage("vote type must be either post or comment"),
+];
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //FOLLOW
 const followOrUnfollowPost = async (req, res) => {
@@ -217,25 +236,26 @@ const vote = async (req, res) => {
     await validateSpam(req);
     const user = await searchForUserService(req.payload.username);
     const type = req.body.type;
-    const direction = req.body.direction;
+    const direction = parseInt(req.body.direction);
 
     let result;
-    if (direction===1){
+    if (direction === 1) {
+      console.log("haaa");
       if (type === "post") {
         const post = await searchForPost(req.body.id);
         result = await upVoteAPost(post, user);
       }
       if (type === "comment") {
-       /* const comment = await searchForComment(req.body.id);
+        /* const comment = await searchForComment(req.body.id);
         result = await unmarkCommentAsSpam(comment, user);*/
       }
-    } else if (direction===-1){
+    } else if (direction === -1) {
       if (type === "post") {
         const post = await searchForPost(req.body.id);
         result = await downVoteAPost(post, user);
       }
       if (type === "comment") {
-      /*  const comment = await searchForComment(req.body.id);
+        /*  const comment = await searchForComment(req.body.id);
         result = await unmarkCommentAsSpam(comment, user);*/
       }
     }
@@ -261,4 +281,5 @@ export default {
   markAsSpam,
   unmarkAsSpam,
   vote,
+  voteValidator,
 };

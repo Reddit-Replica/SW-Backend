@@ -1,6 +1,8 @@
 import express from "express";
 import postActionsController from "../controllers/NpostActionsController.js";
 
+import { validateRequestSchema } from "../middleware/validationResult.js";
+
 import { verifyAuthToken } from "../middleware/verifyToken.js";
 
 // eslint-disable-next-line new-cap
@@ -340,7 +342,12 @@ router.post(
  *      security:
  *       - bearerAuth: []
  */
-router.post("/vote",  verifyAuthToken,
-postActionsController.vote);
+router.post(
+  "/vote",
+  verifyAuthToken,
+  postActionsController.voteValidator,
+  validateRequestSchema,
+  postActionsController.vote
+);
 
 export default router;

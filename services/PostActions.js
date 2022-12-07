@@ -605,6 +605,7 @@ function checkForDownVotedPosts(post, user) {
  * @returns {Object} success object that contains the message and status code
  */
 export async function upVoteAPost(post, user) {
+  let result={};
   //CHECKING IF THE POST EXISTS IN UPVOTED POSTS IN THE USER
   const upvoted = checkForUpVotedPosts(post, user);
   //CHECKING IF THE POST EXISTS IN DOWNVOTED POSTS IN THE USER
@@ -618,11 +619,15 @@ export async function upVoteAPost(post, user) {
     });
     post.numberOfUpvotes--;
     postWriter.karma--;
+    result={
+      statusCode: 200,
+      message: "Post upvote is cancelled successfully",
+    };
     //IF IT'S NOT UPVOTED THEN WE HAVE TWO CASES
   } else {
     if (downvoted) {
       //FIRST CASE IF THE POST WAS DOWNVOTED THEN WE WILL CANCEL THAT DOWNVOTE AND MODIFY ON KARMA
-      user.downvotedPosts = user.downvoted.filter((smallPost) => {
+      user.downvotedPosts = user.downvotedPosts.filter((smallPost) => {
         return smallPost.toString() !== post.id;
       });
       post.numberOfDownvotes--;
@@ -632,6 +637,10 @@ export async function upVoteAPost(post, user) {
     post.numberOfUpvotes++;
     user.upvotedPosts.push(post.id);
     postWriter.karma++;
+    result={
+      statusCode: 200,
+      message: "Post is Upvoted successfully",
+    };
   }
 
   if (postWriter.karma <= 0) {
@@ -640,10 +649,7 @@ export async function upVoteAPost(post, user) {
   await post.save();
   await user.save();
   await postWriter.save();
-  return {
-    statusCode: 200,
-    message: "Post is Upvoted successfully",
-  };
+  return result;
 }
 
 /**
@@ -653,6 +659,7 @@ export async function upVoteAPost(post, user) {
  * @returns {Object} success object that contains the message and status code
  */
 export async function downVoteAPost(post, user) {
+  let result={};
   //CHECKING IF THE POST EXISTS IN UPVOTED POSTS IN THE USER
   const upvoted = checkForUpVotedPosts(post, user);
   //CHECKING IF THE POST EXISTS IN DOWNVOTED POSTS IN THE USER
@@ -661,11 +668,15 @@ export async function downVoteAPost(post, user) {
   const postWriter = await searchForUserService(post.ownerUsername);
   //IF THE POST IS DOWNVOTED AND IT'S ALREADY DOWNVOTED THEN IT WILL CANCEL THE DOWNVOTE THAT IT HAD
   if (downvoted) {
-    user.downvotedPosts = user.downvoted.filter((smallPost) => {
+    user.downvotedPosts = user.downvotedPosts.filter((smallPost) => {
       return smallPost.toString() !== post.id;
     });
     post.numberOfDownvotes--;
     postWriter.karma++;
+    result={
+      statusCode: 200,
+      message: "Post downvote is cancelled successfully",
+    };
     //IF IT'S NOT DOWNVOTED THEN WE HAVE TWO CASES
   } else {
     //FIRST CASE IF THE POST WAS UPVOTED THEN WE WILL CANCEL THAT UPVOTE AND MODIFY ON KARMA
@@ -677,9 +688,13 @@ export async function downVoteAPost(post, user) {
       postWriter.karma--;
     }
     //THEN THE SECOND MODIFICATION THAT MUST HAPPEN IN CASE THE POST WASN'T DOWNVOTED ALREADY
-    post.numberOfUpvotes++;
+    post.numberOfDownvotes++;
     user.downvotedPosts.push(post.id);
     postWriter.karma--;
+    result={
+      statusCode: 200,
+      message: "Post is Downvoted successfully",
+    };
   }
   if (postWriter.karma <= 0) {
     postWriter.karma = 1;
@@ -688,8 +703,5 @@ export async function downVoteAPost(post, user) {
   await user.save();
   await postWriter.save();
 
-  return {
-    statusCode: 200,
-    message: "Post is downvoted successfully",
-  };
+  return result;
 }
