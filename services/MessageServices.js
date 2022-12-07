@@ -314,7 +314,7 @@ export async function markMessageAsSpam(message, user) {
 
 export async function unmarkMessageAsSpam(message, user) {
   await checkForMsgReceiver(message, user);
-  //SHOULD BE ADDED TO SPAMMED MESSAGES LIST TO THE ADMIN
+  //SHOULD BE REMOVED FROM SPAMMED MESSAGES LIST OF THE ADMIN
   if (!message.isSpam) {
     let err = new Error("Msg is already unspammed");
     err.statusCode = 409;
