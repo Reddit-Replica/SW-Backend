@@ -628,6 +628,29 @@ userRouter.get(
  *           type: string
  *         required: true
  *       - in: query
+ *         name: sort
+ *         description: The sorting algorithm used
+ *         schema:
+ *           type: string
+ *           default: new
+ *           enum:
+ *             - new
+ *             - hot
+ *             - top
+ *       - in: query
+ *         name: time
+ *         description: The time interval for the results (used with top only)
+ *         schema:
+ *           type: string
+ *           default: all
+ *           enum:
+ *             - hour
+ *             - day
+ *             - week
+ *             - month
+ *             - year
+ *             - all
+ *       - in: query
  *         name: before
  *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
  *         schema:
