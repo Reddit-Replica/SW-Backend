@@ -462,7 +462,13 @@ userRouter.get(
  *       500:
  *         description: Internal server error
  */
-userRouter.get("/user/:username/comments");
+userRouter.get(
+  "/user/:username/comments",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userComments
+);
 
 /**
  * @swagger

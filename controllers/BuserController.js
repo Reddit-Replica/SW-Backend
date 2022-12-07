@@ -254,6 +254,7 @@ const userOverview = async (req, res) => {
       userToShow,
       user,
       "commentedPosts",
+      false,
       {
         sort,
         time,
@@ -283,13 +284,55 @@ const userSavedPostsAndComments = async (req, res) => {
     const userToShow = await searchForUserService(req.params.username);
     const user = await getUserFromJWTService(req.payload.userId);
 
-    const result = await listingUserOverview(userToShow, user, "savedPosts", {
-      sort,
-      time,
-      before,
-      after,
-      limit,
-    });
+    const result = await listingUserOverview(
+      userToShow,
+      user,
+      "savedPosts",
+      false,
+      {
+        sort,
+        time,
+        before,
+        after,
+        limit,
+      }
+    );
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const userComments = async (req, res) => {
+  try {
+    const { sort, time, before, after, limit } = req.query;
+    const userToShow = await searchForUserService(req.params.username);
+    let user = null;
+    try {
+      user = await getUserFromJWTService(req.userId);
+    } catch (error) {
+      console.log(error.message);
+    }
+
+    const result = await listingUserOverview(
+      userToShow,
+      user,
+      "commentedPosts",
+      true,
+      {
+        sort,
+        time,
+        before,
+        after,
+        limit,
+      }
+    );
 
     res.status(result.statusCode).json(result.data);
   } catch (error) {
@@ -316,4 +359,5 @@ export default {
   userHistoryPosts,
   userOverview,
   userSavedPostsAndComments,
+  userComments,
 };
