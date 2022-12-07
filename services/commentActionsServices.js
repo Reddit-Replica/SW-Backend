@@ -52,7 +52,6 @@ export async function addToCommentFollowedUsers(user, comment) {
   await comment.save();
 }
 
-
 /**
  * A function used to remove the comment from the user followed comments
  * @param {ObjectId} userId the id of the user
@@ -74,7 +73,6 @@ export async function removeFromUserFollowedComments(userId, commentId) {
   await neededUser.save();
   return { comment: neededComment, user: neededUser };
 }
-
 
 /**
  * A function used to remove the user from the comment following users

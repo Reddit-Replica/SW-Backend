@@ -51,7 +51,10 @@ export async function addMessage(req) {
  */
 export async function addMention(req) {
   const mention = await new Message(req.msg).save();
-  const receiver = await User.findOne({ username: mention.receiverUsername });
+  const receiver = await User.findOne({
+    username: mention.receiverUsername,
+    deletedAt: undefined,
+  });
   addUserMention(receiver.id, mention);
 }
 /**
@@ -136,7 +139,10 @@ async function checkExistingConversation(user, conversationId) {
 async function addConversationToUsers(message, convId) {
   // WE SEARCH FOR THE SENDER TO CHECK IF HE HAS THE CONVERSATION OR NOT
   if (message.isSenderUser) {
-    const userOne = await User.findOne({ username: message.senderUsername });
+    const userOne = await User.findOne({
+      username: message.senderUsername,
+      deletedAt: undefined,
+    });
     const userOneConv = await checkExistingConversation(userOne, convId);
     if (!userOneConv) {
       userOne.conversations.push({
@@ -149,6 +155,7 @@ async function addConversationToUsers(message, convId) {
   if (message.isReceiverUser) {
     const userTwo = await User.findOne({
       username: message.receiverUsername,
+      deletedAt: undefined,
     });
     const userTwoConv = await checkExistingConversation(userTwo, convId);
     if (!userTwoConv) {
