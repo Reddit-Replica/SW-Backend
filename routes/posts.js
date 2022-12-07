@@ -1,5 +1,6 @@
 import express from "express";
 import postController from "../controllers/HpostController.js";
+import postActionsController from "../controllers/NpostActionsController.js";
 import { optionalToken } from "../middleware/optionalToken.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
@@ -66,7 +67,13 @@ const postRouter = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/follow-post");
+postRouter.post(
+  "/follow-post",
+  verifyAuthToken,
+  postActionsController.followValidator,
+  validateRequestSchema,
+  postActionsController.followOrUnfollowPost
+);
 
 /**
  * @swagger
@@ -107,7 +114,13 @@ postRouter.post("/follow-post");
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/hide");
+postRouter.post(
+  "/hide",
+  verifyAuthToken,
+  postActionsController.hideValidator,
+  validateRequestSchema,
+  postActionsController.hidePost
+);
 
 /**
  * @swagger
@@ -283,7 +296,13 @@ postRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/unhide");
+postRouter.post(
+  "/unhide",
+  verifyAuthToken,
+  postActionsController.hideValidator,
+  validateRequestSchema,
+  postActionsController.unhidePost
+);
 
 /**
  * @swagger

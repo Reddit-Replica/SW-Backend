@@ -1,14 +1,14 @@
+/* eslint-disable max-len */
 import User from "../models/User.js";
 import Message from "../models/Message.js";
 import Conversation from "../models/Conversation.js";
-import Subreddit from "../models/Community.js";
 import {
   addSentMessages,
   addReceivedMessages,
   addUserMention,
 } from "../utils/messagesUtils.js";
-
-//WE MAY USER SERVICE TO GET USER HERE
+import { searchForUserService } from "./userServices.js";
+import { searchForSubreddit } from "./communityServices.js";
 /**
  * This function is used to add a message
  * it add the msg to sender's sent messages and to the receiver's received messages
@@ -19,32 +19,30 @@ import {
 export async function addMessage(req) {
   //SAVING MESSAGE TO DATABASE
   const message = await new Message(req.msg).save();
+
+  //IN CASE OF THE SENDER IS A USER THEN THIS MESSAGE WILL BE ADDED TO HIS SENT MESSAGES , IF IT'S A SUBREDDIT THEN IT WON'T BE ADDED
   if (message.isSenderUser) {
-    //GETTING SENDER USER
-    const sender = await User.findOne({ username: message.senderUsername });
+    const sender = await searchForUserService(message.senderUsername);
     //ADD THIS MESSAGE TO SENDER SENT MESSAGES
     addSentMessages(sender.id, message);
   }
+
+  //IN CASE OF THE RECEIVER IS A USER THEN THIS MESSAGE WILL BE ADDED TO HIS RECEIVED MESSAGES , IF IT'S A SUBREDDIT THEN IT WON'T BE ADDED
   if (message.isReceiverUser) {
-    //GETTING RECEIVER USER
-    const receiver = await User.findOne({
-      username: message.receiverUsername,
-    });
+    const receiver = await searchForUserService(message.receiverUsername); //
     //ADD THIS MESSAGE TO RECEIVER RECEIVED MESSAGES
     addReceivedMessages(receiver.id, message);
   }
-  //CREATING A NEW CONVERSATIONS USING THE MESSAGE SENT , IF IT WAS CREATED BEFORE THEN THE MESSAGE WILL BE ADDED TO IT THEN
+
+  //CREATING A NEW CONVERSATIONS USING THE MESSAGE SENT
   const conversationId = await createNewConversation(message);
+  //GETTING THE CONVERSATION SO WE WOULD BE ABLE TO ADD THE MSG TO IT
   const conversation = await Conversation.findById(conversationId);
-  //PUSHING THE MESSAGE TO THE CONVERSATION'S MESSAGES
   conversation.messages.push({ messageID: message.id });
-  //SAVING CONVERSATION
   await conversation.save();
-  console.log("saved");
   //ADDING THIS CONVERSATION TO THE USERS IF IT EXISTS THERE
   await addConversationToUsers(message, conversationId);
 }
-
 /**
  * This function is used to add a mention
  * it add the mention to the receiver mention list
@@ -56,7 +54,6 @@ export async function addMention(req) {
   const receiver = await User.findOne({ username: mention.receiverUsername });
   addUserMention(receiver.id, mention);
 }
-
 /**
  * This function is used to create a new conversation
  * firstly we check if there was an existing one with the same users and subject
@@ -67,57 +64,58 @@ export async function addMention(req) {
  */
 export async function createNewConversation(msg) {
   //HERE WE NEED TO CREATE THE CONVERSATION FROM SCRATCH
-  //check if the conversation is already in database
-  const conversation1 = await Conversation.findOne({
+  //CHECK IF THE CONVERSATION IS IN THE DATABASE
+  const conversation = await Conversation.findOne({
     subject: msg.subject,
-    firstUsername: msg.senderUsername,
-    secondUsername: msg.receiverUsername,
+    $or: [
+      { firstUsername: msg.senderUsername },
+      { firstUsername: msg.receiverUsername },
+    ],
+    $or: [
+      { secondUsername: msg.senderUsername },
+      { secondUsername: msg.receiverUsername },
+    ],
   });
-  const conversation2 = await Conversation.findOne({
-    subject: msg.subject,
-    firstUsername: msg.receiverUsername,
-    secondUsername: msg.senderUsername,
-  });
-  //IF THERE IS NO CONVERSATION WITH THESE DATA THEN WE WILL CREATE A NEW ONE
-  if (!conversation1 && !conversation2) {
-    const conversation = await new Conversation({
+  //IF THERE IS NO CONVERSATION WITH THESE DATA THEN WE WILL CREATE A NEW ONE AND RETURN ITS ID , BUT IF THERE IS SO WE WILL RETURN THE ID OF THE EXISTING ONE
+  if (!conversation) {
+    const createdConversation = await new Conversation({
       latestDate: msg.sentAt,
       subject: msg.subject,
       messages: [],
       firstUsername: msg.senderUsername,
       secondUsername: msg.receiverUsername,
     }).save();
+    return createdConversation.id;
+  } else {
     return conversation.id;
   }
-  //BUT IF THERE IS THEN WE NEED TO RETURN THE ID OF THAT CONVERSATION TO ADD THE MESSAGE INTO IT
-  if (!conversation1) {
-    return conversation2.id;
-  } else {
-    return conversation1.id;
-  }
 }
-
 /**
  * This function is used to add new messages to the conversation
  * at each time we send a message then this message will be added to a conversation throw this function
  * @param {Object} msg msg object to add it to the conversation
  * @param {Object} conversationId the id of the conversation we want to add that message to
- * @returns {String} defines if the message was added successfully or not
+ * @returns {Object} defines if there is an error or not and specifies the kind of the error if there was
  */
 export async function addToConversation(msg, conversationId) {
   //HERE WE NEED TO ADD THE MSG TO THE CONVERSATION
   const conversation = await Conversation.findById(conversationId);
+  if (!conversation) {
+    let err = new Error("This conversation is not found");
+    err.statusCode = 400;
+    throw err;
+  }
   conversation.messages.push({ messageID: msg.id });
   conversation.save();
-  return "added";
 }
 /**
  * This function is used to check if the user has already that conversation or we will need to add a new one for him
  * @param {Object} user user object to check if he has the that conversation or not
  * @param {Object} conversationId the id of the conversation we want to check if the user had it or not
- * @returns {string} defines if the user has already that conversation or not
+ * @returns {Boolean} defines if the user has already that conversation or not
  */
 async function checkExistingConversation(user, conversationId) {
+  //CHECKING IF THE USER HAVE ALREADY THAT CONVERSATION OR WE NEED TO ADD IT
   await user.populate("conversations.conversationId");
   const conversations = user.conversations;
   let valid = false;
@@ -136,6 +134,7 @@ async function checkExistingConversation(user, conversationId) {
  * @returns {string} defines if the conversation was added successfully or not
  */
 async function addConversationToUsers(message, convId) {
+  // WE SEARCH FOR THE SENDER TO CHECK IF HE HAS THE CONVERSATION OR NOT
   if (message.isSenderUser) {
     const userOne = await User.findOne({ username: message.senderUsername });
     const userOneConv = await checkExistingConversation(userOne, convId);
@@ -170,11 +169,14 @@ async function addConversationToUsers(message, convId) {
  */
 // eslint-disable-next-line max-statements
 export async function validateMessage(req) {
+  //MESSAGE TYPE MUST BE MENTIONS OR MESSAGES ONLY
   if (req.body.type !== "Mentions" && req.body.type !== "Messages") {
     let err = new Error("Message type should be either Mentions or Messages");
     err.statusCode = 400;
     throw err;
   }
+  //IF THE TYPE IS MENTION THEN POST ID MUST BE ADDED
+  // => WE NEED TO ADD COMMENT ID ALSO
   if (req.body.type === "Mentions") {
     if (!req.body.postId) {
       let err = new Error("Post Id is needed when type is Mentions");
@@ -182,6 +184,7 @@ export async function validateMessage(req) {
       throw err;
     }
   }
+  //IF THE TYPE IS COMMENT THEN SUBJECT MUST BE ADDED
   if (req.body.type === "Messages") {
     if (!req.body.subject) {
       let err = new Error("Subject is needed when type is Messages");
@@ -189,6 +192,7 @@ export async function validateMessage(req) {
       throw err;
     }
   }
+  //SENDER AND RECEIVER USERNAME MUST BE IN THE FORM /U/USERNAME OR /R/SUBREDDITNAME
   if (
     !req.body.senderUsername.includes("/") ||
     !req.body.receiverUsername.includes("/")
@@ -197,15 +201,18 @@ export async function validateMessage(req) {
     err.statusCode = 400;
     throw err;
   }
+  //CREATING THE ARRAY THAT WILL BE USED TO GET THE KIND AND USERNAME OF THE SENDER AND RECEIVER
   const senderArr = req.body.senderUsername.split("/");
   const receiverArr = req.body.receiverUsername.split("/");
 
+  //CREATING THE MAIN STRUCTURE OF THE MESSAGE
   const msg = {
     text: req.body.text,
     senderUsername: senderArr[senderArr.length - 1],
     receiverUsername: receiverArr[receiverArr.length - 1],
     type: req.body.type,
   };
+  //CHECKING IF THE SENDER IS SUBREDDIT OR NORMAL USER
   if (senderArr[senderArr.length - 2] === "r" && msg.type !== "Mentions") {
     msg.isSenderUser = false;
   } else if (senderArr[senderArr.length - 2] === "u") {
@@ -215,7 +222,7 @@ export async function validateMessage(req) {
     err.statusCode = 400;
     throw err;
   }
-
+  //CHECKING IF THE RECEIVER IS A SUBREDDIT OR A NORMAL USER
   if (receiverArr[receiverArr.length - 2] === "r" && msg.type !== "Mentions") {
     msg.isReceiverUser = false;
   } else if (receiverArr[receiverArr.length - 2] === "u") {
@@ -225,11 +232,13 @@ export async function validateMessage(req) {
     err.statusCode = 400;
     throw err;
   }
+  //YOU CAN'T SEND A MSG FROM A SUBREDDIT TO ANOTHER
   if (!msg.isReceiverUser && !msg.isSenderUser) {
-    let err = new Error("Sender and Receiver usernames are necessary");
+    let err = new Error("You can't send a message from a subreddit to another");
     err.statusCode = 400;
     throw err;
   }
+  //ADDING EXTRA PARTS OF THE MESSAGE IF IT'S IN THE BODY
   if (req.body.postId) {
     msg.postId = req.body.postId;
   }
@@ -243,38 +252,93 @@ export async function validateMessage(req) {
   if (req.body.subject) {
     msg.subject = req.body.subject;
   }
-
+  //CHECKING IF THE RECEIVER IS AVAILABLE OR NOT
   if (msg.isReceiverUser) {
-    const receiver = await User.findOne({ username: msg.receiverUsername });
+    const receiver = await searchForUserService(msg.receiverUsername);
     msg.receiverId = receiver.id;
-    if (!receiver) {
-      let err = new Error("receiver is not found");
-      err.statusCode = 400;
-      throw err;
-    }
   } else {
-    const receiver = await Subreddit.findOne({ title: msg.receiverUsername });
-    if (!receiver) {
-      let err = new Error("subreddit name is not found");
-      err.statusCode = 400;
-      throw err;
-    }
+    await searchForSubreddit(msg.receiverUsername);
   }
-
+  //CHECKING IF THE SENDER IS AVAILABLE OR NOT
   if (msg.isSenderUser) {
-    const sender = await User.findOne({ username: msg.senderUsername });
-    if (!sender || sender.username !== req.payload.username) {
-      let err = new Error("Failed to send the message");
-      err.statusCode = 400;
-      throw err;
-    }
+    await searchForUserService(msg.senderUsername);
   } else {
-    const sender = await Subreddit.findOne({ title: msg.senderUsername });
-    if (!sender) {
-      let err = new Error("subreddit name is not found");
-      err.statusCode = 400;
-      throw err;
-    }
+    await searchForSubreddit(msg.senderUsername);
   }
   req.msg = msg;
+}
+
+export async function searchForMessage(messageId) {
+  const msg = await Message.findById(messageId);
+  if (!msg || msg.deletedAt) {
+    let error = new Error("Couldn't find a message with that Id");
+    error.statusCode = 404;
+    throw error;
+  }
+  return msg;
+}
+
+async function checkForMsgReceiver(message, user) {
+  if (message.isReceiverUser) {
+    if (!(message.receiverUsername === user.username)) {
+      let err = new Error(
+        "You can't do action to this messages, you are not the receiver"
+      );
+      err.statusCode = 400;
+      throw err;
+    }
+  } else {
+    let err = new Error(
+      "You can't do this action to this message,it was sent to subreddit"
+    );
+    err.statusCode = 400;
+    throw err;
+  }
+}
+
+export async function markMessageAsSpam(message, user) {
+  await checkForMsgReceiver(message, user);
+  //SHOULD BE ADDED TO SPAMMED MESSAGES LIST TO THE ADMIN
+  if (message.isSpam) {
+    let err = new Error("Msg is already spammed");
+    err.statusCode = 409;
+    throw err;
+  }
+  message.isSpam = true;
+  await message.save();
+  return {
+    statusCode: 200,
+    message: "Message has been spammed successfully",
+  };
+}
+
+export async function unmarkMessageAsSpam(message, user) {
+  await checkForMsgReceiver(message, user);
+  //SHOULD BE REMOVED FROM SPAMMED MESSAGES LIST OF THE ADMIN
+  if (!message.isSpam) {
+    let err = new Error("Msg is already unspammed");
+    err.statusCode = 409;
+    throw err;
+  }
+  message.isSpam = false;
+  await message.save();
+  return {
+    statusCode: 200,
+    message: "Message has been unspammed successfully",
+  };
+}
+
+export async function unreadMessage(message, user) {
+  await checkForMsgReceiver(message, user);
+  if (!message.isRead) {
+    let err = new Error("Msg is already unread");
+    err.statusCode = 400;
+    throw err;
+  }
+  message.isRead = false;
+  await message.save();
+  return {
+    statusCode: 200,
+    message: "Message has been unread successfully",
+  };
 }

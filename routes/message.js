@@ -824,7 +824,7 @@ router.get("/message/messages");
  *       - bearerAuth: []
  */
 
-router.patch("/unread-message");
+router.patch("/unread-message", verifyAuthToken, messageController.unreadMsg);
 /**
  * @swagger
  * /spam-message:
@@ -870,7 +870,7 @@ router.patch("/unread-message");
  *       - bearerAuth: []
  */
 
- router.patch("/spam-message");
+router.patch("/spam-message", verifyAuthToken, messageController.markMsgAsSpam);
 
 /**
  * @swagger

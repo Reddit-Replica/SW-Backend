@@ -62,7 +62,17 @@ export async function checkPostSubreddit(req, res, next) {
 export async function checkPostFlair(req, res, next) {
   const flairId = req.body.flairId;
   try {
+    if (flairId && !req.subreddit) {
+      return res.status(400).json({
+        error: "The given flair should belong to a subreddit",
+      });
+    }
     if (req.subreddit && flairId) {
+      if (!mongoose.Types.ObjectId.isValid(flairId)) {
+        return res.status(400).json({
+          error: "Invalid Flair id (should be in the correct format)",
+        });
+      }
       const flair = await Flair.findById(flairId).populate("subreddit");
       if (flair.subreddit.title !== req.subreddit) {
         return res.status(400).json({
