@@ -101,7 +101,13 @@ router.delete("/delete");
  *      security:
  *       - bearerAuth: []
  */
-router.post("/mark-spam", verifyAuthToken, postActionsController.markAsSpam);
+router.post(
+  "/mark-spam",
+  verifyAuthToken,
+  postActionsController.spamValidator,
+  validateRequestSchema,
+  postActionsController.markAsSpam
+);
 
 /**
  * @swagger
@@ -151,6 +157,8 @@ router.post("/mark-spam", verifyAuthToken, postActionsController.markAsSpam);
 router.post(
   "/unmark-spam",
   verifyAuthToken,
+  postActionsController.spamValidator,
+  validateRequestSchema,
   postActionsController.unmarkAsSpam
 );
 
@@ -198,7 +206,13 @@ router.post(
  *      security:
  *       - bearerAuth: []
  */
-router.post("/save", verifyAuthToken, postActionsController.savePostOrComment);
+router.post(
+  "/save",
+  verifyAuthToken,
+  postActionsController.saveValidator,
+  validateRequestSchema,
+  postActionsController.savePostOrComment
+);
 
 /**
  * @swagger
@@ -294,6 +308,8 @@ router.post("/send-replies");
 router.post(
   "/unsave",
   verifyAuthToken,
+  postActionsController.saveValidator,
+  validateRequestSchema,
   postActionsController.unsavePostOrComment
 );
 

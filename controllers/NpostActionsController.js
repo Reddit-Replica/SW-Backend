@@ -6,17 +6,13 @@ import {
   unSavePost,
   savePost,
   searchForPost,
-  validateFollowPost,
-  validateSavedPost,
   saveComment,
   unSaveComment,
   searchForComment,
   hideAPost,
   unhideAPost,
-  validateHidePost,
   unmarkPostAsSpam,
   markPostAsSpam,
-  validateSpam,
   markCommentAsSpam,
   unmarkCommentAsSpam,
   downVoteAPost,
@@ -30,6 +26,8 @@ import {
 } from "../services/messageServices.js";
 
 import { body } from "express-validator";
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//VALIDATION
 const voteValidator = [
   body("id").trim().not().isEmpty().withMessage("id content can not be empty"),
   body("direction")
@@ -44,14 +42,46 @@ const voteValidator = [
     .not()
     .isEmpty()
     .withMessage("type can not be empty")
-    .isIn(["post", "comments"])
+    .isIn(["post", "comment"])
     .withMessage("vote type must be either post or comment"),
+];
+const saveValidator = [
+  body("id").trim().not().isEmpty().withMessage("id content can not be empty"),
+  body("type")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("type can not be empty")
+    .isIn(["post", "comment"])
+    .withMessage("vote type must be either post or comment"),
+];
+const spamValidator = [
+  body("id").trim().not().isEmpty().withMessage("id content can not be empty"),
+  body("type")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("type can not be empty")
+    .isIn(["post", "comment", "message"])
+    .withMessage("vote type must be either post or comment or message"),
+];
+const followValidator = [
+  body("id").trim().not().isEmpty().withMessage("id content can not be empty"),
+  body("follow")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("type can not be empty")
+    .isBoolean()
+    .withMessage("follow must be true or false"),
+];
+const hideValidator = [
+  body("id").trim().not().isEmpty().withMessage("id content can not be empty"),
 ];
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //FOLLOW
 const followOrUnfollowPost = async (req, res) => {
   try {
-    await validateFollowPost(req);
     const post = await searchForPost(req.body.id);
     const user = await searchForUserService(req.payload.username);
     let result;
@@ -62,6 +92,7 @@ const followOrUnfollowPost = async (req, res) => {
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
+    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -75,7 +106,6 @@ const followOrUnfollowPost = async (req, res) => {
 //SAVE
 const savePostOrComment = async (req, res) => {
   try {
-    await validateSavedPost(req);
     const type = req.body.type;
     let result;
     const user = await searchForUserService(req.payload.username);
@@ -103,7 +133,6 @@ const savePostOrComment = async (req, res) => {
 //UNSAVE
 const unsavePostOrComment = async (req, res) => {
   try {
-    await validateSavedPost(req);
     const type = req.body.type;
     let result;
     const user = await searchForUserService(req.payload.username);
@@ -130,7 +159,6 @@ const unsavePostOrComment = async (req, res) => {
 //HIDE
 const hidePost = async (req, res) => {
   try {
-    await validateHidePost(req);
     const user = await searchForUserService(req.payload.username);
     const post = await searchForPost(req.body.id);
     const result = await hideAPost(post, user);
@@ -149,7 +177,6 @@ const hidePost = async (req, res) => {
 //UNHIDE
 const unhidePost = async (req, res) => {
   try {
-    await validateHidePost(req);
     const user = await searchForUserService(req.payload.username);
     const post = await searchForPost(req.body.id);
     const result = await unhideAPost(post, user);
@@ -168,7 +195,6 @@ const unhidePost = async (req, res) => {
 //MARK AS SPAM
 const markAsSpam = async (req, res) => {
   try {
-    await validateSpam(req);
     const user = await searchForUserService(req.payload.username);
     const type = req.body.type;
     let result;
@@ -200,7 +226,6 @@ const markAsSpam = async (req, res) => {
 //UNMARK AS SPAM
 const unmarkAsSpam = async (req, res) => {
   try {
-    await validateSpam(req);
     const user = await searchForUserService(req.payload.username);
     const type = req.body.type;
     let result;
@@ -233,7 +258,6 @@ const unmarkAsSpam = async (req, res) => {
 //VOTE
 const vote = async (req, res) => {
   try {
-    await validateSpam(req);
     const user = await searchForUserService(req.payload.username);
     const type = req.body.type;
     const direction = parseInt(req.body.direction);
@@ -246,8 +270,8 @@ const vote = async (req, res) => {
         result = await upVoteAPost(post, user);
       }
       if (type === "comment") {
-        /* const comment = await searchForComment(req.body.id);
-        result = await unmarkCommentAsSpam(comment, user);*/
+        const comment = await searchForComment(req.body.id);
+        result = await unmarkCommentAsSpam(comment, user);
       }
     } else if (direction === -1) {
       if (type === "post") {
@@ -255,8 +279,8 @@ const vote = async (req, res) => {
         result = await downVoteAPost(post, user);
       }
       if (type === "comment") {
-        /*  const comment = await searchForComment(req.body.id);
-        result = await unmarkCommentAsSpam(comment, user);*/
+        const comment = await searchForComment(req.body.id);
+        result = await unmarkCommentAsSpam(comment, user);
       }
     }
     return res.status(result.statusCode).json(result.message);
@@ -282,4 +306,8 @@ export default {
   unmarkAsSpam,
   vote,
   voteValidator,
+  saveValidator,
+  hideValidator,
+  followValidator,
+  spamValidator,
 };

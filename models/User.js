@@ -35,12 +35,12 @@ const userSchema = mongoose.Schema({
     required: true,
     default: 1,
   },
-  upVotes:{
+  upVotes: {
     type: Number,
     required: true,
     default: 0,
   },
-  downVotes:{
+  downVotes: {
     type: Number,
     required: true,
     default: 0,
