@@ -166,7 +166,11 @@ subRedditRouter.post(
  *       500:
  *         description: Internal server error
  */
-subRedditRouter.get("/subreddit-name-available");
+subRedditRouter.get(
+  "/subreddit-name-available",
+  verifyAuthToken,
+  subredditController.availableSubredditName
+);
 
 /**
  * @swagger
