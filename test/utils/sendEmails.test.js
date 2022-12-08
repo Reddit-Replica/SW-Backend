@@ -1,11 +1,11 @@
-import {
-  sendResetPasswordEmail,
-  sendVerifyEmail,
-  sendUsernameEmail,
-} from "../../utils/sendEmails.js";
-import User from "../../models/User.js";
-import Token from "./../../models/VerifyToken.js";
-import { connectDatabase, closeDatabaseConnection } from "./../database.js";
+// import {
+//   sendResetPasswordEmail,
+//   sendVerifyEmail,
+//   sendUsernameEmail,
+// } from "../../utils/sendEmails.js";
+// import User from "../../models/User.js";
+// import Token from "./../../models/VerifyToken.js";
+// import { connectDatabase, closeDatabaseConnection } from "./../database.js";
 
 describe("Testing send emails functions", () => {
   test("Testing jsend emailsest", () => {

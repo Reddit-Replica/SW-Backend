@@ -18,11 +18,8 @@ import Category from "./../../models/Category.js";
 // eslint-disable-next-line max-statements
 describe("Testing community service functions", () => {
   let normalUser = {},
-    secondNormalUser = {},
-    deletedUser = {},
     subreddit = {},
-    moderatorUser = {},
-    deletedSubreddit = {};
+    moderatorUser = {};
   beforeAll(async () => {
     await connectDatabase();
 
