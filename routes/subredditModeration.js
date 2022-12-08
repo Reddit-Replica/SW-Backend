@@ -219,4 +219,68 @@ subredditModerationsRouter.put(
   subredditModerationsController.setSubredditSettings
 );
 
+/**
+ * @swagger
+ * /r/{subreddit}/about/moderators:
+ *  get:
+ *      summary: Return a listing of moderators in that specified subreddit
+ *      tags: [Subreddit]
+ *      parameters:
+ *       - in: path
+ *         name: subreddit
+ *         description: the name of the subreddit
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: before
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: after
+ *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: limit
+ *         description: Maximum number of items desired [Maximum = 100]
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *      responses:
+ *          200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: object
+ *                        properties:
+ *                          before:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *                          after:
+ *                           type: string
+ *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *                          children:
+ *                            type: array
+ *                            description: List of [Things] to return
+ *                            items:
+ *                              $ref: '#/components/schemas/moderator'
+ *          404:
+ *              description: Page not found
+ *          401:
+ *              description: User unauthorized to view this info
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+subredditModerationsRouter.get(
+  "/r/:subreddit/about/moderators",
+  verifyAuthToken,
+  subredditDetailsMiddleware.checkSubreddit,
+  subredditModerationsController.getModerators
+);
+
 export default subredditModerationsRouter;
