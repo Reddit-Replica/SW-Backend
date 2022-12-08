@@ -431,27 +431,6 @@
  *                  description: The type of the show [full post with its comments (your post), summary of the post with its comments]
  *                data:
  *                  properties:
- *                    subreddit:
- *                      type: string
- *                      description: Name of subreddit which contain the post or the comment
- *                    postedBy:
- *                      type: string
- *                      description: The username for the publisher of the post
- *                    title:
- *                      type: string
- *                      description: Title of the post
- *                    kind:
- *                      type: string
- *                      description: Type of content of the post
- *                      enum:
- *                        - hybrid
- *                        - video
- *                        - image
- *                        - link
- *                        - post
- *                    content:
- *                      type: string
- *                      description: Content of the post
  *                    post:
  *                      type: object
  *                      description: Post data
@@ -468,7 +447,125 @@
  *                            type: string
  *                            description: The username of the comment owner
  *                          commentBody:
+ *                            type: Object
+ *                            description: The comment itself
+ *                          points:
+ *                            type: integer
+ *                            description: The points to that comment [up votes - down votes]
+ *                          publishTime:
  *                            type: string
+ *                            format: date-time
+ *                            description: Publish time for the comment
+ *                          editTime:
+ *                            type: string
+ *                            format: date-time
+ *                            description: Edit time for the comment
+ *                          parent:
+ *                            type: object
+ *                            description: Parent comment for that comment
+ *                            properties:
+ *                              commentId:
+ *                                type: string
+ *                                description: The id of the comment
+ *                              commentedBy:
+ *                                type: string
+ *                                description: The username of the comment owner
+ *                              commentBody:
+ *                                type: Object
+ *                                description: The comment itself
+ *                              points:
+ *                                type: integer
+ *                                description: The points to that comment [up votes - down votes]
+ *                              publishTime:
+ *                                type: string
+ *                                format: date-time
+ *                                description: Publish time for the comment
+ *                              editTime:
+ *                                type: string
+ *                                format: date-time
+ *                                description: Edit time for the comment
+ *                          level:
+ *                            type: integer
+ *                            description: The level of the comment [level of nesting]
+ *                          inYourSubreddit:
+ *                            type: boolean
+ *                            description: If true, then you can approve, remove, or spam that post
+ *                          moderation:
+ *                            type: object
+ *                            description: Moderate the post if you are a moderator in that subreddit
+ *                            properties:
+ *                             approve:
+ *                              type: object
+ *                              description: Approve the post
+ *                              properties:
+ *                                approvedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who approved that post
+ *                                approvedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post approved
+ *                             remove:
+ *                              type: object
+ *                              description: Remove the post
+ *                              properties:
+ *                                removedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who removed that post
+ *                                removedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post removed
+ *                             spam:
+ *                              type: object
+ *                              description: Spam the post
+ *                              properties:
+ *                                spammedBy:
+ *                                  type: string
+ *                                  description: Username for the moderator who spamed that post
+ *                                spammedDate:
+ *                                  type: string
+ *                                  format: date-time
+ *                                  description: Date when that post spamed
+ *                             lock:
+ *                              type: boolean
+ *                              description: If true, then comments are locked in this post
+ *   CommentOverview:
+ *        type: object
+ *        properties:
+ *          before:
+ *            type: string
+ *            description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *          after:
+ *            type: string
+ *            description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *          children:
+ *            type: array
+ *            description: List of [Things] to return
+ *            items:
+ *              properties:
+ *                id:
+ *                  type: string
+ *                  description: Id of the post or the post containing the comments
+ *                data:
+ *                  properties:
+ *                    post:
+ *                      type: object
+ *                      description: Post data
+ *                      $ref: '#/components/schemas/PostDetails'
+ *                    comments:
+ *                      type: array
+ *                      description: The comments writen by this user
+ *                      items:
+ *                        properties:
+ *                          commentId:
+ *                            type: string
+ *                            description: The id of the comment
+ *                          commentedBy:
+ *                            type: string
+ *                            description: The username of the comment owner
+ *                          commentBody:
+ *                            type: Object
  *                            description: The comment itself
  *                          points:
  *                            type: integer
