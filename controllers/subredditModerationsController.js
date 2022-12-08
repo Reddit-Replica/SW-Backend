@@ -70,7 +70,7 @@ const getModerators = (req, res) => {
       req.query.after,
       req.subreddit
     );
-    res.json(response);
+    res.status(200).json(response);
   } catch (err) {
     console.log(err.message);
     if (err.statusCode) {
