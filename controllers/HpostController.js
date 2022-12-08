@@ -23,7 +23,6 @@ const submit = async (req, res) => {
   try {
     user.posts.push(post.id);
     user.upvotedPosts.push(post.id);
-    user.commentedPosts.push(post.id);
     post.numberOfUpvotes = 1;
     post.numberOfVotes = 1;
     user.upVotes += 1;
