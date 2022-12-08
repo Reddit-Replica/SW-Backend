@@ -570,9 +570,6 @@
  *         username:
  *           type: string
  *           description: The username of the moderator
- *         nickname:
- *           type: string
- *           description: The nickname of the moderator
  *         dateOfModeration:
  *           type: string
  *           description: he date of being a moderator
