@@ -682,7 +682,7 @@ moderationRouter.post(
  *         description: The name of the subreddit.
  *        banPeriod:
  *         type: integer
- *         description: The period that user will be banned in days if not permanent. (default Permanent)
+ *         description: The period that user will be banned in days if not permanent. (if Permanent => banPeriod = -1)
  *        reasonForBan:
  *         type: string
  *         description: The reason for banning that user.
@@ -734,7 +734,7 @@ moderationRouter.post("/ban");
  *       properties:
  *        username:
  *         type: string
- *         description: Username of the user to be banned
+ *         description: Username of the user to be unbanned
  *        subreddit:
  *         type: string
  *         description: The name of the subreddit.
