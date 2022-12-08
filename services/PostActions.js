@@ -181,6 +181,13 @@ export async function saveComment(comment, user) {
   }
   //ADD THE comments TO USER'S SAVED comments
   user.savedComments.push(comment.id);
+
+  const index = user.savedPosts.findIndex(
+    (elem) => elem.toString() === comment.postId.toString()
+  );
+  if (index === -1) {
+    user.savedPosts.push(comment.postId);
+  }
   await user.save();
   return {
     statusCode: 200,
