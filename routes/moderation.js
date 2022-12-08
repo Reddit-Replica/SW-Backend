@@ -706,8 +706,6 @@ moderationRouter.post(
  *          description: Type of error
  *    401:
  *     description: Unauthorized access
- *    404:
- *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
@@ -740,7 +738,7 @@ moderationRouter.post("/ban");
  *         description: The name of the subreddit.
  *   responses:
  *    200:
- *     description: Accepted
+ *     description: User unbanned successfully
  *    400:
  *     description: The request was invalid. You may refer to response for details around why the request was invalid
  *     content:
@@ -752,8 +750,6 @@ moderationRouter.post("/ban");
  *          description: Type of error
  *    401:
  *     description: Unauthorized access
- *    404:
- *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
