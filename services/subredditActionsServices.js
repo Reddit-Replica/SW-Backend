@@ -29,6 +29,7 @@ export async function getSubredditService(subredditName) {
  * @param {Object} data Request body containing [banPeriod, reasonForBan, modNote, noteInclude]
  * @returns The response to that request containing [statusCode, data]
  */
+// eslint-disable-next-line max-statements
 export async function banUserService(moderator, userToBan, subreddit, data) {
   // check if user is moderator in the subreddit
   const index = subreddit.moderators.findIndex(
@@ -63,6 +64,13 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
     };
 
     subreddit.bannedUsers.push(bannedUser);
+    await subreddit.save();
+  } else {
+    // user was blocked before and need to edit his data
+    subreddit.bannedUsers[foundUser].banPeriod = data.banPeriod;
+    subreddit.bannedUsers[foundUser].reasonForBan = data.reasonForBan;
+    subreddit.bannedUsers[foundUser].modNote = data.modNote;
+    subreddit.bannedUsers[foundUser].noteInclude = data.noteInclude;
     await subreddit.save();
   }
 
