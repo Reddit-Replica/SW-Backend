@@ -36,7 +36,6 @@ export async function checkModerator(req, res, next) {
       throw error;
     }
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,

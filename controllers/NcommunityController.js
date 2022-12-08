@@ -14,6 +14,7 @@ import {
   makeSubredditFavorite,
   checkForFavoriteSubreddits,
   removeSubredditFromFavorite,
+  subredditNameAvailable,
 } from "./../services/communityServices.js";
 import { searchForUserService } from "../services/userServices.js";
 export let MainTopics = [
@@ -123,7 +124,6 @@ const createSubreddit = async (req, res) => {
     const result = await addSubreddit(req, req.payload);
     res.status(result.statusCode).json(result.message);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -157,7 +157,6 @@ const joinSubreddit = async (req, res) => {
       res.status(result.statusCode).json(result.message);
     }
   } catch (err) {
-    console.log(err.message);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -221,6 +220,23 @@ const addSubTopics = async (req, res) => {
     //SENDING RESPONSES
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const availableSubredditName = async (req, res) => {
+  try {
+    const result = await subredditNameAvailable(req.query.subredditName);
+    //SENDING RESPONSES
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -327,4 +343,5 @@ export default {
   subTopicValidator,
   addToFavorite,
   removeFromFavorite,
+  availableSubredditName,
 };
