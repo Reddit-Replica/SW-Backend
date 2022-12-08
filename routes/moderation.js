@@ -1,6 +1,8 @@
 import express from "express";
 // eslint-disable-next-line max-len
 import postModerationController from "../controllers/HpostCommentModerationController.js";
+// eslint-disable-next-line max-len
+import subredditActionsController from "../controllers/BsubbredditActionController.js";
 import postModController from "../controllers/HsubredditPostsController.js";
 import userModController from "../controllers/HuserController.js";
 import { checkThingMod } from "../middleware/postModeration.js";
@@ -714,7 +716,13 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/ban");
+moderationRouter.post(
+  "/ban",
+  verifyAuthToken,
+  subredditActionsController.banUserValidator,
+  validateRequestSchema,
+  subredditActionsController.banUser
+);
 
 /**
  * @swagger
