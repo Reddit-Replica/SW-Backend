@@ -7,7 +7,7 @@ import {
   markMessageAsSpam,
   searchForMessage,
   unreadMessage,
-} from "../services/MessageServices.js";
+} from "../services/messageServices.js";
 import { searchForUserService } from "../services/userServices.js";
 
 //CHECKING ON MESSAGE CONTENT
