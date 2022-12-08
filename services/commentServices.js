@@ -79,6 +79,12 @@ export async function checkloggedInUser(loggedInUserId) {
  */
 // eslint-disable-next-line max-statements
 export async function createCommentService(data, post) {
+  // check if the post locked the comments
+  if (post.moderation.lock) {
+    let error = new Error("Can not add a comment to locked post");
+    error.statusCode = 400;
+    throw error;
+  }
   // check the parent type and id
   if (data.parentType !== "post" && data.parentType !== "comment") {
     let error = new Error("Invalid parent type");
@@ -123,6 +129,13 @@ export async function createCommentService(data, post) {
 
   // check if the subreddit exists
   if (data.haveSubreddit) {
+    if (post.subredditName !== data.subredditName) {
+      let error = new Error(
+        "Can not add the comment to that post with different subreddit names"
+      );
+      error.statusCode = 400;
+      throw error;
+    }
     const subreddit = await Subreddit.findOne({
       title: data.subredditName,
       deletedAt: null,
@@ -138,6 +151,9 @@ export async function createCommentService(data, post) {
   const comment = new Comment(commentObject);
   await comment.save();
 
+  // add the comment to upvoted comments
+  user.upvotedComments.push(comment._id);
+
   // update commentedPosts array for that user
   if (post.ownerId.toString() !== data.userId.toString()) {
     const index = user.commentedPosts.findIndex(
@@ -145,9 +161,9 @@ export async function createCommentService(data, post) {
     );
     if (index === -1) {
       user.commentedPosts.push(post._id);
-      await user.save();
     }
   }
+  await user.save();
 
   // add the comment to children of parent comment
   if (data.parentType === "comment") {
