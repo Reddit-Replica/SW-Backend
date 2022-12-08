@@ -664,7 +664,7 @@ moderationRouter.post(
  * /ban:
  *  post:
  *   summary:
- *    Ban a user from a subreddit. Banned users can't post or comment on that subreddit.
+ *    Ban a user from a subreddit or edit a banned user in that subreddit. Banned users can't post or comment on that subreddit.
  *   tags: [Subreddit moderation]
  *   requestBody:
  *    required: true
@@ -684,7 +684,7 @@ moderationRouter.post(
  *         description: The name of the subreddit.
  *        banPeriod:
  *         type: integer
- *         description: The period that user will be banned in days if not permanent. (if Permanent => banPeriod = -1)
+ *         description: The period that user will be banned in days if not permanent. (default Permanent)
  *        reasonForBan:
  *         type: string
  *         description: The reason for banning that user.
@@ -708,6 +708,8 @@ moderationRouter.post(
  *          description: Type of error
  *    401:
  *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
@@ -740,13 +742,13 @@ moderationRouter.post(
  *       properties:
  *        username:
  *         type: string
- *         description: Username of the user to be unbanned
+ *         description: Username of the user to be banned
  *        subreddit:
  *         type: string
  *         description: The name of the subreddit.
  *   responses:
  *    200:
- *     description: User unbanned successfully
+ *     description: Accepted
  *    400:
  *     description: The request was invalid. You may refer to response for details around why the request was invalid
  *     content:
@@ -758,6 +760,8 @@ moderationRouter.post(
  *          description: Type of error
  *    401:
  *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
