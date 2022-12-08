@@ -40,11 +40,17 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
     throw error;
   }
 
+  // make sure that the moderator is not trying to ban himself
+  if (moderator._id.toString() === userToBan._id.toString()) {
+    let error = new Error("User can not ban himself");
+    error.statusCode = 400;
+    throw error;
+  }
+
   // make sure that this user has not been blocked before
-  const foundUser = subreddit.bannedUsers.findIndex((elem) => {
-    console.log(elem);
-    return elem.userId.toString() === userToBan._id.toString();
-  });
+  const foundUser = subreddit.bannedUsers.findIndex(
+    (elem) => elem.userId.toString() === userToBan._id.toString()
+  );
   if (foundUser === -1) {
     const bannedUser = {
       username: userToBan.username,
@@ -62,5 +68,39 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
   return {
     statusCode: 200,
     message: "User banned successfully",
+  };
+}
+
+/**
+ * Function used to unban a user from a certain subreddit. It checks if [moderator] is a moderator of
+ * the wanted subreddit.
+ *
+ * @param {Object} moderator Moderator object of the subreddit
+ * @param {Object} userToBan User object that we want to ban
+ * @param {Object} subreddit Subreddit object
+ * @returns The response to that request containing [statusCode, data]
+ */
+export async function unbanUserService(moderator, userToBan, subreddit) {
+  // check if user is moderator in the subreddit
+  const index = subreddit.moderators.findIndex(
+    (elem) => elem.userID.toString() === moderator._id.toString()
+  );
+  if (index === -1) {
+    let error = new Error("Unauthorized access");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const foundUserIndex = subreddit.bannedUsers.findIndex(
+    (elem) => elem.userId.toString() === userToBan._id.toString()
+  );
+  if (foundUserIndex !== -1) {
+    subreddit.bannedUsers.splice(foundUserIndex, 1);
+    await subreddit.save();
+  }
+
+  return {
+    statusCode: 200,
+    message: "User unbanned successfully",
   };
 }
