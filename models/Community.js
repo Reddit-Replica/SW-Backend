@@ -148,9 +148,29 @@ const communitySchema = mongoose.Schema({
         type: String,
         required: true,
       },
-      userID: {
+      userId: {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+      bandDate: {
+        type: Date,
+        required: true,
+        default: Date.now(),
+      },
+      banPeriod: {
+        type: Number,
+        required: true,
+        default: -1, // Permanent
+      },
+      reasonForBan: {
+        type: String,
+        required: true,
+      },
+      modNote: {
+        type: String,
+      },
+      noteInclude: {
+        type: String,
       },
     },
   ],
