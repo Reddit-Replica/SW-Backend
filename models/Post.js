@@ -160,6 +160,26 @@ const postSchema = mongoose.Schema({
   scheduleTimeZone: {
     type: String,
   },
+  hotScore: {
+    type: Number,
+    default: 0,
+  },
+  hotTimingScore: {
+    type: Number,
+    default: 0,
+  },
+  bestScore: {
+    type: Number,
+    default: 0,
+  },
+  bestTimingScore: {
+    type: Number,
+    default: 0,
+  },
+  numberOfVotes: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const Post = mongoose.model("Post", postSchema);

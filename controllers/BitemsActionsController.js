@@ -10,7 +10,7 @@ const deleteValidator = [
 
 const editComValidator = [
   body("id").not().isEmpty().withMessage("Id can not be empty"),
-  body("text").not().isEmpty().withMessage("New text can not be empty"),
+  body("content").not().isEmpty().withMessage("New content can not be empty"),
 ];
 
 // eslint-disable-next-line max-statements
@@ -57,7 +57,7 @@ const deletePoComMes = async (req, res) => {
 // eslint-disable-next-line max-statements
 const editComment = async (req, res) => {
   try {
-    const { id, text } = req.body;
+    const { id, content } = req.body;
     const comment = await Comment.findById(id);
 
     // check if the comment was deleted before or does not exist
@@ -71,7 +71,7 @@ const editComment = async (req, res) => {
       return res.status(401).json("Access Denied");
     }
 
-    comment.content = text;
+    comment.content = content;
     await comment.save();
     res.status(200).json("Item edited successfully");
   } catch (error) {

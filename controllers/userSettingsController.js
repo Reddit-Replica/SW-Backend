@@ -7,6 +7,7 @@ import {
   connectToGoogle,
   deleteFile,
   getUser,
+  setNewEmail,
   setNewPassword,
   verifyCredentials,
 } from "../services/userSettings.js";
@@ -67,6 +68,16 @@ const changePasswordValidator = [
     .withMessage("Confirm New password must not be empty")
     .isLength({ min: 8 })
     .withMessage("Confirm New password must be at least 8 chars long"),
+];
+
+const changeEmailValidator = [
+  body("currentPassword")
+    .not()
+    .isEmpty()
+    .withMessage("Current password must not be empty")
+    .isLength({ min: 8 })
+    .withMessage("Current password must be at least 8 chars long"),
+  body("newEmail").not().isEmpty().withMessage("New email must not be empty"),
 ];
 
 const connectValidator = [
@@ -247,8 +258,8 @@ const deleteSocialLink = async (req, res) => {
     checkSocialLink(user, req.body.type, req.body.displayText, req.body.link);
     user.userSettings.socialLinks = user.userSettings.socialLinks.filter(
       (socialLink) =>
-        socialLink.type !== req.body.type &&
-        socialLink.displayText !== req.body.displayText &&
+        socialLink.type !== req.body.type ||
+        socialLink.displayText !== req.body.displayText ||
         socialLink.link !== req.body.link
     );
     await user.save();
@@ -267,6 +278,7 @@ const deleteSocialLink = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
 const addProfilePicture = async (req, res) => {
   const userId = req.payload.userId;
   try {
@@ -275,6 +287,9 @@ const addProfilePicture = async (req, res) => {
       return res.status(400).json({
         error: "Profile picture is required",
       });
+    }
+    if (user.avatar) {
+      deleteFile(user.avatar);
     }
     user.avatar = req.files.avatar[0].path;
     await user.save();
@@ -320,6 +335,7 @@ const deleteProfilePicture = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
 const addBanner = async (req, res) => {
   const userId = req.payload.userId;
   try {
@@ -328,6 +344,9 @@ const addBanner = async (req, res) => {
       return res.status(400).json({
         error: "Banner is required",
       });
+    }
+    if (user.banner) {
+      deleteFile(user.banner);
     }
     user.banner = req.files.banner[0].path;
     await user.save();
@@ -426,6 +445,34 @@ const changePassword = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
+const changeEmail = async (req, res) => {
+  const userId = req.payload.userId;
+  const username = req.payload.username;
+  try {
+    const user = await getUser(userId);
+    verifyCredentials(user, username, req.body.currentPassword);
+    if (user.email === req.body.newEmail) {
+      return res.status(400).json({
+        error: "This email is already set",
+      });
+    }
+    await setNewEmail(user, userId, req.body.newEmail);
+    return res.status(200).json("Email changed successfully");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 const connect = async (req, res) => {
   const type = req.params.type;
   try {
@@ -493,6 +540,7 @@ export default {
   deleteValidator,
   socialLinkValidator,
   changePasswordValidator,
+  changeEmailValidator,
   disconnectValidator,
   connectValidator,
   getAccountSettings,
@@ -506,6 +554,7 @@ export default {
   deleteBanner,
   getBlockedUsers,
   changePassword,
+  changeEmail,
   connect,
   disconnect,
 };
