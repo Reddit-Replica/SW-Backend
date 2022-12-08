@@ -1,6 +1,6 @@
 apidoc
-# images
-# videos/*
+images
+videos
 test_output
 test_output2
 test-report.html
