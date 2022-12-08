@@ -1,6 +1,8 @@
 import express from "express";
 // eslint-disable-next-line max-len
 import postModerationController from "../controllers/HpostCommentModerationController.js";
+// eslint-disable-next-line max-len
+import subredditActionsController from "../controllers/BsubbredditActionController.js";
 import postModController from "../controllers/HsubredditPostsController.js";
 import userModController from "../controllers/HuserController.js";
 import { checkThingMod } from "../middleware/postModeration.js";
@@ -670,26 +672,21 @@ moderationRouter.post(
  *     application/json:
  *      schema:
  *       required:
- *        - userId
+ *        - username
  *        - subreddit
  *        - reasonForBan
  *       properties:
- *        userId:
+ *        username:
  *         type: string
- *         description: id of the user to ban.
+ *         description: Username of the user to be banned
  *        subreddit:
  *         type: string
  *         description: The name of the subreddit.
  *        banPeriod:
  *         type: integer
- *         description: The period that user will be banned in days if not permanent. (default Permanent)
+ *         description: The period that user will be banned in days if not permanent. (if Permanent => banPeriod = -1)
  *        reasonForBan:
  *         type: string
- *         enum:
- *          - Spam
- *          - Personal and confidential information
- *          - Threatening, harassing, or inciting violence
- *          - Other
  *         description: The reason for banning that user.
  *        modNote:
  *         type: string
@@ -699,9 +696,9 @@ moderationRouter.post(
  *         description: Note to include in ban message
  *   responses:
  *    200:
- *     description: Accepted
+ *     description: User banned successfully
  *    400:
- *     description: Bad Request
+ *     description: The request was invalid. You may refer to response for details around why the request was invalid
  *     content:
  *      application/json:
  *       schema:
@@ -711,15 +708,19 @@ moderationRouter.post(
  *          description: Type of error
  *    401:
  *     description: Unauthorized access
- *    404:
- *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/ban");
+moderationRouter.post(
+  "/ban",
+  verifyAuthToken,
+  subredditActionsController.banUserValidator,
+  validateRequestSchema,
+  subredditActionsController.banUser
+);
 
 /**
  * @swagger
@@ -734,20 +735,20 @@ moderationRouter.post("/ban");
  *     application/json:
  *      schema:
  *       required:
- *        - userId
+ *        - username
  *        - subreddit
  *       properties:
- *        userId:
+ *        username:
  *         type: string
- *         description: id of the user to remove the ban.
+ *         description: Username of the user to be unbanned
  *        subreddit:
  *         type: string
  *         description: The name of the subreddit.
  *   responses:
  *    200:
- *     description: Accepted
+ *     description: User unbanned successfully
  *    400:
- *     description: Bad Request
+ *     description: The request was invalid. You may refer to response for details around why the request was invalid
  *     content:
  *      application/json:
  *       schema:
@@ -757,15 +758,19 @@ moderationRouter.post("/ban");
  *          description: Type of error
  *    401:
  *     description: Unauthorized access
- *    404:
- *     description: Not Found
  *    500:
  *     description: Internal Server Error
  *   security:
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/unban");
+moderationRouter.post(
+  "/unban",
+  verifyAuthToken,
+  subredditActionsController.unbanUserValidator,
+  validateRequestSchema,
+  subredditActionsController.unbanUser
+);
 
 /**
  * @swagger
