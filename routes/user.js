@@ -268,7 +268,13 @@ userRouter.get(
  *       500:
  *         description: Internal server error
  */
-userRouter.get("/user/:username/overview");
+userRouter.get(
+  "/user/:username/overview",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userOverview
+);
 
 /**
  * @swagger
@@ -450,143 +456,19 @@ userRouter.get(
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 before:
- *                   type: string
- *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
- *                 after:
- *                   type: string
- *                   description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
- *                 children:
- *                   type: array
- *                   description: List of comments to return
- *                   items:
- *                     properties:
- *                       id:
- *                         type: string
- *                         description: Id of the post containing the comment
- *                       data:
- *                         type: object
- *                         properties:
- *                           subreddit:
- *                             type: string
- *                             description: Name of subreddit which contain the comment
- *                           postedBy:
- *                             type: string
- *                             description: The username for the publisher of the post
- *                           title:
- *                             type: string
- *                             description: Title of the post
- *                           type:
- *                             type: string
- *                             description: Type of content of the post
- *                             enum:
- *                               - text
- *                               - video
- *                               - image
- *                               - link
- *                           content:
- *                               type: string
- *                               description: Content of the post [text, path of the video, path of the image, link]
- *                           flair:
- *                             type: object
- *                             properties:
- *                               flairId:
- *                                 type: string
- *                                 description: The id of the flair
- *                               flairText:
- *                                 type: string
- *                                 description: Flair text
- *                               backgroundColor:
- *                                 type: string
- *                                 description: Background color of the flair
- *                               textColor:
- *                                 type: string
- *                                 description: Color of the flair text
- *                           nsfw:
- *                             type: boolean
- *                             description: If true, then this post is NSFW
- *                           spoiler:
- *                             type: boolean
- *                             description: If true, then this post is marked as spoiler
- *                           comment:
- *                             type: array
- *                             description: Comments writen by the current user
- *                             items:
- *                               properties:
- *                                 commentId:
- *                                   type: string
- *                                   description: The id of the comment
- *                                 commentBy:
- *                                   type: string
- *                                   description: The username of the comment owner
- *                                 commentBody:
- *                                   type: string
- *                                   description: The comment itself
- *                                 points:
- *                                   type: integer
- *                                   description: The points to that comment [up votes - down votes]
- *                                 editTime:
- *                                   type: string
- *                                   format: date-time
- *                                   description: Edit time for the comment (if exists)
- *                                 publishTime:
- *                                   type: string
- *                                   format: date-time
- *                                   description: Publish time for the comment
- *                                 level:
- *                                   type: integer
- *                                   description: The level of the comment [level of nesting]
- *                                 inYourSubreddit:
- *                                   type: boolean
- *                                   description: If true, then you can approve, remove, or spam that comment
- *                                 moderation:
- *                                   type: object
- *                                   description: Moderate the comment if you are a moderator in that subreddit
- *                                   properties:
- *                                     approve:
- *                                       type: object
- *                                       description: Approve the comment
- *                                       properties:
- *                                         approvedBy:
- *                                           type: string
- *                                           description: Username for the moderator who approved that comment
- *                                         approvedDate:
- *                                           type: string
- *                                           format: date-time
- *                                           description: Date when that comment approved
- *                                     remove:
- *                                       type: object
- *                                       description: Remove the comment
- *                                       properties:
- *                                         removedBy:
- *                                           type: string
- *                                           description: Username for the moderator who removed that comment
- *                                         removedDate:
- *                                           type: string
- *                                           format: date-time
- *                                           description: Date when that comment removed
- *                                     spam:
- *                                       type: object
- *                                       description: Spam the comment
- *                                       properties:
- *                                          spamedBy:
- *                                            type: string
- *                                            description: Username for the moderator who spamed that comment
- *                                          spamedDate:
- *                                            type: string
- *                                            format: date-time
- *                                            description: Date when that comment spamed
- *                                     lock:
- *                                       type: boolean
- *                                       description: If true, then comments are locked in this post
+ *               $ref: "#/components/schemas/CommentOverview"
  *       404:
  *         description: Didn't find a user with that username
  *       500:
  *         description: Internal server error
  */
-userRouter.get("/user/:username/comments");
+userRouter.get(
+  "/user/:username/comments",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userComments
+);
 
 /**
  * @swagger
@@ -752,6 +634,29 @@ userRouter.get(
  *           type: string
  *         required: true
  *       - in: query
+ *         name: sort
+ *         description: The sorting algorithm used
+ *         schema:
+ *           type: string
+ *           default: new
+ *           enum:
+ *             - new
+ *             - hot
+ *             - top
+ *       - in: query
+ *         name: time
+ *         description: The time interval for the results (used with top only)
+ *         schema:
+ *           type: string
+ *           default: all
+ *           enum:
+ *             - hour
+ *             - day
+ *             - week
+ *             - month
+ *             - year
+ *             - all
+ *       - in: query
  *         name: before
  *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
  *         schema:
@@ -782,7 +687,13 @@ userRouter.get(
  *     security:
  *       - bearerAuth: []
  */
-userRouter.get("/user/:username/saved");
+userRouter.get(
+  "/user/:username/saved",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userSavedPostsAndComments
+);
 
 /**
  * @swagger
