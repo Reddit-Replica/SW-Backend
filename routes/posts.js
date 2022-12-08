@@ -7,6 +7,7 @@ import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { verifyPostActions } from "../middleware/verifyPostActions.js";
 import { checkId } from "../middleware/checkId.js";
 import {
+  addPost,
   checkHybridPost,
   checkImagesAndVideos,
   checkPostFlair,
@@ -254,6 +255,7 @@ postRouter.post(
   checkImagesAndVideos,
   sharePost,
   postSubmission,
+  addPost,
   postController.submit
 );
 
