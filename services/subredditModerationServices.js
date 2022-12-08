@@ -1,6 +1,14 @@
 import { prepareLimit } from "../utils/prepareLimit.js";
 import { validateId } from "./subredditFlairs.js";
 
+/**
+ * A Service function used to get the subreddit moderators for the controller
+ * @param {Number} limitReq the limit identified in the request
+ * @param {ObjectID} beforeReq Before id
+ * @param {ObjectID} afterReq After id
+ * @param {Subreddit} subreddit The subreddit object
+ * @returns {preparedResponse} the prepared response for the controller
+ */
 export function getSubredditModerators(
   limitReq,
   beforeReq,
@@ -32,6 +40,12 @@ export function getSubredditModerators(
   return preparedResponse;
 }
 
+/**
+ * A Service helper function used to get the subreddit moderators for the main service function in case of first time
+ * @param {Subreddit} subreddit The subreddit object
+ * @param {Number} limit the limit identified in the request
+ * @returns {response} the prepared response for the main service function
+ */
 function getSubredditModeratorsFirstTime(subreddit, limit) {
   const response = { children: [] };
   const numberOfModerators = subreddit.moderators.length;
@@ -53,6 +67,13 @@ function getSubredditModeratorsFirstTime(subreddit, limit) {
   }
   return response;
 }
+
+/**
+ * A Service helper function used to get the subreddit moderators for the main service function in case of before
+ * @param {Subreddit} subreddit The subreddit object
+ * @param {Number} limit the limit identified in the request
+ * @returns {response} the prepared response for the main service function
+ */
 // eslint-disable-next-line max-statements
 function getSubredditModeratorsBefore(subreddit, limit, before) {
   const response = { children: [] };
@@ -89,6 +110,13 @@ function getSubredditModeratorsBefore(subreddit, limit, before) {
   }
   return response;
 }
+
+/**
+ * A Service helper function used to get the subreddit moderators for the main service function in case of after
+ * @param {Subreddit} subreddit The subreddit object
+ * @param {Number} limit the limit identified in the request
+ * @returns {response} the prepared response for the main service function
+ */
 // eslint-disable-next-line max-statements
 function getSubredditModeratorsAfter(subreddit, limit, after) {
   const response = { children: [] };
