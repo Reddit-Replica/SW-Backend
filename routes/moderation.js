@@ -764,7 +764,13 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/unban");
+moderationRouter.post(
+  "/unban",
+  verifyAuthToken,
+  subredditActionsController.unbanUserValidator,
+  validateRequestSchema,
+  subredditActionsController.unbanUser
+);
 
 /**
  * @swagger

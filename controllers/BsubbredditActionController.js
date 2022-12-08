@@ -2,6 +2,7 @@ import { body } from "express-validator";
 import {
   banUserService,
   getSubredditService,
+  unbanUserService,
 } from "../services/subredditActionsServices.js";
 import {
   getUserFromJWTService,
@@ -29,6 +30,21 @@ const banUserValidator = [
     .withMessage("Reason for ban can not be empty"),
 ];
 
+const unbanUserValidator = [
+  body("username")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Username can not be empty"),
+  body("subreddit")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Subreddit name can not be empty"),
+];
+
 const banUser = async (req, res) => {
   try {
     const moderator = await getUserFromJWTService(req.payload.userId);
@@ -52,7 +68,27 @@ const banUser = async (req, res) => {
   }
 };
 
+const unbanUser = async (req, res) => {
+  try {
+    const moderator = await getUserFromJWTService(req.payload.userId);
+    const userToBan = await searchForUserService(req.body.username);
+    const subreddit = await getSubredditService(req.body.subreddit);
+
+    const result = await unbanUserService(moderator, userToBan, subreddit);
+    res.status(result.statusCode).json(result.message);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   banUserValidator,
   banUser,
+  unbanUserValidator,
+  unbanUser,
 };
