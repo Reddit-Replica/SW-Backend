@@ -2,6 +2,7 @@
 /* eslint-disable max-statements */
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
+import User from "../models/User.js";
 import { searchForSubreddit } from "./communityServices.js";
 import { searchForUserService } from "./userServices.js";
 //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -212,6 +213,28 @@ export async function unSaveComment(comment, user) {
   user.savedComments = user.savedComments.filter((smallComment) => {
     return smallComment.toString() !== comment.id;
   });
+
+  // remove the post id of the saved comment if it was the last saved comment for that post
+  const savedPostsComments = await User.findById(user._id)
+    .populate("savedPosts savedComments")
+    .select("savedPosts savedComments");
+  let numOfComments = 0;
+
+  for (const i in savedPostsComments["savedPosts"]) {
+    for (const j in savedPostsComments["savedComments"]) {
+      if (
+        savedPostsComments["savedPosts"][i]._id.toString() ===
+        savedPostsComments["savedComments"][j].parentId.toString()
+      ) {
+        numOfComments++;
+      }
+    }
+  }
+  if (numOfComments === 1) {
+    user.savedPosts = user.savedPosts.filter((smallPost) => {
+      return smallPost.toString() !== comment.postId.toString();
+    });
+  }
   await user.save();
   return {
     statusCode: 200,
