@@ -875,6 +875,10 @@
             "type": "string",
             "description": "The username of the moderator"
           },
+          "avatar": {
+            "type": "string",
+            "description": "Path of the avatar"
+          },
           "dateOfModeration": {
             "type": "string",
             "description": "he date of being a moderator"
@@ -5792,18 +5796,18 @@
     },
     "/ban": {
       "post": {
-        "summary": "Ban a user from a subreddit. Banned users can't post or comment on that subreddit.",
+        "summary": "Ban a user from a subreddit or edit a banned user in that subreddit. Banned users can't post or comment on that subreddit.",
         "tags": ["Subreddit moderation"],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["userId", "subreddit", "reasonForBan"],
+                "required": ["username", "subreddit", "reasonForBan"],
                 "properties": {
-                  "userId": {
+                  "username": {
                     "type": "string",
-                    "description": "id of the user to ban."
+                    "description": "Username of the user to be banned"
                   },
                   "subreddit": {
                     "type": "string",
@@ -5815,12 +5819,6 @@
                   },
                   "reasonForBan": {
                     "type": "string",
-                    "enum": [
-                      "Spam",
-                      "Personal and confidential information",
-                      "Threatening, harassing, or inciting violence",
-                      "Other"
-                    ],
                     "description": "The reason for banning that user."
                   },
                   "modNote": {
@@ -5838,10 +5836,10 @@
         },
         "responses": {
           "200": {
-            "description": "Accepted"
+            "description": "User banned successfully"
           },
           "400": {
-            "description": "Bad Request",
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
             "content": {
               "application/json": {
                 "schema": {
@@ -5881,11 +5879,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["userId", "subreddit"],
+                "required": ["username", "subreddit"],
                 "properties": {
-                  "userId": {
+                  "username": {
                     "type": "string",
-                    "description": "id of the user to remove the ban."
+                    "description": "Username of the user to be banned"
                   },
                   "subreddit": {
                     "type": "string",
@@ -5901,7 +5899,7 @@
             "description": "Accepted"
           },
           "400": {
-            "description": "Bad Request",
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
             "content": {
               "application/json": {
                 "schema": {
@@ -12346,11 +12344,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["picture"],
+                "required": ["avatar"],
                 "properties": {
-                  "picture": {
-                    "type": "string",
-                    "description": "Path of the profile picture"
+                  "avatar": {
+                    "type": "object",
+                    "description": "The avatar image"
                   }
                 }
               }
@@ -12422,8 +12420,8 @@
                 "required": ["banner"],
                 "properties": {
                   "banner": {
-                    "type": "string",
-                    "description": "Path of the banner image"
+                    "type": "object",
+                    "description": "The banner image"
                   }
                 }
               }
