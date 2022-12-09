@@ -54,6 +54,13 @@ const subredditRulesRouter = express.Router();
  *   responses:
  *    201:
  *     description: Created
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         ruleId:
+ *          type: string
+ *          description: The id of the created rule
  *    400:
  *     description: Bad Request
  *     content:
@@ -87,7 +94,7 @@ subredditRulesRouter.post(
  * /r/{subreddit}/about/rules:
  *  get:
  *   summary:
- *    Get the rules for a subreddit.
+ *    Get the rules for a subreddit. (Here the token is optional if the user is logged in add a token if not don't add it)
  *   tags: [Subreddit moderation]
  *   parameters:
  *    - in: path
@@ -148,10 +155,10 @@ subredditRulesRouter.post(
 
 subredditRulesRouter.get(
   "/r/:subreddit/about/rules",
-  verifyAuthToken,
+  // verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  // verifyAuthTokenModerator,
   subredditRulesController.getSubredditRules
 );
 
@@ -346,6 +353,13 @@ subredditRulesRouter.delete(
  *    - bearerAuth: []
  */
 
-subredditRulesRouter.post("/r/:subreddit/about/rules-order");
+subredditRulesRouter.post(
+  "/r/:subreddit/about/rules-order",
+  verifyAuthToken,
+  // subredditDetailsMiddleware.createSubreddit,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditRulesController.editRulesOrder
+);
 
 export default subredditRulesRouter;

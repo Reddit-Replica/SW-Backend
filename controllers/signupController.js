@@ -95,7 +95,10 @@ const signup = async (req, res) => {
 
 const usernameAvailable = async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.query.username });
+    const user = await User.findOne({
+      username: req.query.username,
+      deletedAt: null,
+    });
     if (user) {
       return res.status(409).json("Username is already taken");
     }
@@ -110,9 +113,9 @@ const emailAvailable = async (req, res) => {
   try {
     const email = req.query.email;
     const user = await User.findOne().or([
-      { email: email },
-      { googleEmail: email },
-      { facebookEmail: email },
+      { email: email, deletedAt: null },
+      { googleEmail: email, deletedAt: null },
+      { facebookEmail: email, deletedAt: null },
     ]);
 
     if (user) {
@@ -128,7 +131,7 @@ const emailAvailable = async (req, res) => {
 const verifyEmail = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    if (!user) {
+    if (!user || user.deletedAt) {
       return res.status(400).json({
         error: "Invalid Link",
       });
@@ -166,7 +169,7 @@ const signinWithGoogleFacebook = async (req, res) => {
       const email = decodedToken.email;
 
       // check if the email was used before then login
-      const user = await User.findOne({ googleEmail: email });
+      const user = await User.findOne({ googleEmail: email, deletedAt: null });
 
       if (user) {
         const token = generateJWT(user);
@@ -205,7 +208,7 @@ const editUsername = async (req, res) => {
     const { userId } = req.payload;
 
     const user = await User.findById(userId);
-    if (!user) {
+    if (!user || user.deletedAt) {
       return res
         .status(400)
         .json({ error: "Can not find a user with that id" });
@@ -216,7 +219,10 @@ const editUsername = async (req, res) => {
         .json({ error: "Can not change the username for this user again" });
     }
 
-    const userWithUsername = await User.findOne({ username: username });
+    const userWithUsername = await User.findOne({
+      username: username,
+      deletedAt: null,
+    });
     if (userWithUsername) {
       return res.status(400).json({ error: "Username already exists" });
     }

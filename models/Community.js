@@ -6,6 +6,10 @@ const communitySchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  viewName: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
   },
@@ -33,9 +37,22 @@ const communitySchema = mongoose.Schema({
   ],
   flairs: [
     {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Flair",
     },
   ],
+  flairSettings: {
+    enablePostFlairInThisCommunity: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    allowUsersToAssignTheirOwn: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+  },
   dateOfCreation: {
     type: Date,
     required: true,
@@ -56,6 +73,16 @@ const communitySchema = mongoose.Schema({
     type: Boolean,
     required: true,
     default: false,
+  },
+  numberOfRules: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  numberOfFlairs: {
+    type: Number,
+    required: true,
+    default: 0,
   },
   rules: [
     {
@@ -92,18 +119,29 @@ const communitySchema = mongoose.Schema({
   ],
   moderators: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
       userID: {
         type: Schema.Types.ObjectId,
         ref: "User",
       },
-      nickname: {
-        type: String,
-      },
       dateOfModeration: {
+        type: Date,
+        required: true,
+        default: Date.now(),
+      },
+      permissions: [
+        {
+          type: String,
+        },
+      ],
+    },
+  ],
+  invitedModerators: [
+    {
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      dateOfInvitation: {
         type: Date,
         required: true,
         default: Date.now(),
@@ -182,6 +220,76 @@ const communitySchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  unmoderatedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  editedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  spammedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  editedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  spammedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+
+  subredditSettings: {
+    sendWelcomeMessage: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    welcomeMessage: {
+      type: String,
+    },
+    language: {
+      type: String,
+      required: true,
+      default: "English",
+    },
+    region: {
+      type: String,
+    },
+    acceptingRequestsToJoin: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    acceptingRequestsToPost: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    approvedUsersHaveTheAbilityTo: {
+      type: String,
+      required: true,
+      default: "Post only",
+    },
+  },
+
+  //NEEDS TO BE AUTO INCREMENT
+  //Is used to get random subreddit from categories
+  randomIndex: {
+    type: Number,
+  },
 });
 
 const Subreddit = mongoose.model("Subreddit", communitySchema);

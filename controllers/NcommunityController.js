@@ -1,42 +1,23 @@
+/* eslint-disable max-statements */
 /* eslint-disable max-len */
-import Subreddit from "./../models/Community.js";
-import User from "./../models/User.js";
 import { body } from "express-validator";
-//CHECKING ON SUBREDDIT DATA
-// eslint-disable-next-line max-statements
-let Categories = [
-  "Sports",
-  "Gaming",
-  "News",
-  "TV",
-  "Aww",
-  "Memes",
-  "Pics & Gifs",
-  "Travel",
-  "Tech",
-  "Music",
-  "Art & Design",
-  "Beauty",
-  "Books & Writing",
-  "Crypto",
-  "Discussion",
-  "E3",
-  "Fashion",
-  "Finance & Business",
-  "Food",
-  "Health & Fitness",
-  "Learning",
-  "Mindblowing",
-  "ourdoors",
-  "parenting",
-  "Photography",
-  "Relationships",
-  "Science",
-  "Videos",
-  "Vroom",
-  "Wholesome",
-];
-let MainTopics = [
+import {
+  searchForSubreddit,
+  addUserToWaitingList,
+  addToJoinedSubreddit,
+  addToDescription,
+  addToSubtopics,
+  addToMainTopic,
+  searchForSubredditById,
+  addSubreddit,
+  checkForPrivateSubreddits,
+  makeSubredditFavorite,
+  checkForFavoriteSubreddits,
+  removeSubredditFromFavorite,
+  subredditNameAvailable,
+} from "./../services/communityServices.js";
+import { searchForUserService } from "../services/userServices.js";
+export let MainTopics = [
   "Activism",
   "Addition Support",
   "Animals And Pets",
@@ -91,20 +72,18 @@ let MainTopics = [
   "None Of These Topics",
 ];
 const subredditValidator = [
-  body("title")
+  body("subredditName")
     .trim()
     .not()
     .isEmpty()
-    .withMessage("title can not be empty")
+    .withMessage("Subreddit name can not be empty")
     .isLength({ min: 0, max: 23 })
-    .withMessage("title must be less than 23 character"),
+    .withMessage("Subreddit name must be less than 23 character"),
   body("category")
     .trim()
     .not()
     .isEmpty()
-    .withMessage("category can not be empty")
-    .isIn(Categories)
-    .withMessage("This category is not available"),
+    .withMessage("category can not be empty"),
   body("type")
     .trim()
     .not()
@@ -136,107 +115,17 @@ const mainTopicValidator = [
 ];
 //CHECKING ON SUB TOPICS
 const subTopicValidator = [
-  body("title").not().isEmpty().withMessage("sub topic can not be empty"),
+  body("title").not().isEmpty().withMessage("subtopic can not be empty"),
 ];
 
 //CREATE SUBREDDIT
-// eslint-disable-next-line max-statements
 const createSubreddit = async (req, res) => {
-  //CHECK FOR TOKEN
-  const authPayload = req.payload;
-  //GETTING USER DATA
-  const creatorUsername = authPayload.username;
-  const creatorId = authPayload.userId;
-  const { title, category, type, nsfw } = req.body;
-  const owner = {
-    username: creatorUsername,
-    userID: creatorId,
-  };
-  const moderators = [];
-  moderators.push({
-    username: creatorUsername,
-    userID: creatorId,
-  });
   try {
-    //ADDING NEW SUBREDDIT
-    const subreddit = await new Subreddit({
-      title: title,
-      category: category,
-      type: type,
-      nsfw: nsfw,
-      owner: owner,
-      moderators: moderators,
-    }).save();
-    //MAKE THE USER OWNER OF THE SUBREDDIT
-    const moderator = await User.findById(creatorId);
-    const addedSubreddit = {
-      subredditId: subreddit.id,
-      name: title,
-    };
-    moderator.ownedSubreddits.push(addedSubreddit);
-    await moderator.save();
-    moderator.joinedSubreddits.push(addedSubreddit);
-    await moderator.save();
-    //RETURN RESPONSE
-    return res.status(201).send({
-      subreddit: subreddit,
-    });
+    const result = await addSubreddit(req, req.payload);
+    res.status(result.statusCode).json(result.message);
   } catch (err) {
-    if (err.cause) {
-      return res.status(err.cause).json({
-        error: err.message,
-      });
-    } else {
-      return res.status(500).json("Internal Server Error");
-    }
-  }
-};
-//JOINING A SUBREDDIT
-// eslint-disable-next-line max-statements
-const joinSubreddit = async (req, res) => {
-  //CHECKING FOR USER
-  const authPayload = req.payload;
-  //GETTING USER ID
-  const userId = authPayload.userId;
-  const username = authPayload.username;
-  try {
-    //GETTING USER DATA
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new Error("this user isn't found", { cause: 400 });
-    }
-    //GETTING SUBREDDIT DATA
-    const subreddit = await Subreddit.findById(req.body.subredditId);
-    if (!subreddit) {
-      throw new Error("this subreddit isn't found", { cause: 400 });
-    }
-    console.log(subreddit.deletedAt);
-    if (subreddit.deletedAt) {
-      throw new Error("this subreddit is deleted", { cause: 400 });
-    }
-    if (subreddit.type === "Private") {
-      subreddit.waitedUsers.push({
-        username: username,
-        userID: userId,
-        message: req.body.message,
-      });
-      await subreddit.save();
-      return res.status(200).json("Your request is sent successfully");
-    }
-    //ADDING THIS SUB REDDIT TO JOINED SUBREDDITS LIST
-    user.joinedSubreddits.push({
-      subredditId: subreddit.id,
-      name: subreddit.title,
-    });
-    await user.save();
-    //INCREASING NUMBER OF MEMBERS OF SUBREDDIT
-    subreddit.members += 1;
-    await subreddit.save();
-    //SENDING RESPONSES
-    return res.status(200).json("you joined the subreddit successfully");
-  } catch (err) {
-    if (err.cause) {
-      return res.status(err.cause).json({
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
         error: err.message,
       });
     } else {
@@ -245,25 +134,53 @@ const joinSubreddit = async (req, res) => {
   }
 };
 
-// eslint-disable-next-line max-statements
+const joinSubreddit = async (req, res) => {
+  const authPayload = req.payload;
+  //GETTING USER USERNAME
+  const username = authPayload.username;
+  try {
+    //GETTING USER DATA,CHECKING FOR HIS EXISTENCE
+    const user = await searchForUserService(username);
+    //GETTING SUBREDDIT DATA,CHECKING FOR ITS EXISTENCE
+    const subreddit = await searchForSubredditById(req.body.subredditId);
+    //IF THE REQUESTED SUBREDDIT IS PRIVATE,THEN THE USER WOULD BE ADDED TO THE WAITING LIST WAITING FOR MODERATOR TO APPROVE
+    if (subreddit.type === "Private") {
+      const result = await addUserToWaitingList(
+        subreddit,
+        username,
+        req.body.message
+      );
+      res.status(result.statusCode).json(result.message);
+    } else {
+      //ADDING THIS SUBREDDIT TO JOINED SUBREDDITS LIST, INCREMENTING SUBREDDIT NUMBER OF MEMBERS
+      const result = await addToJoinedSubreddit(user, subreddit);
+      res.status(result.statusCode).json(result.message);
+    }
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
 const addDescription = async (req, res) => {
   try {
     //GETTING SUBREDDIT DATA
-    const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
-    if (!subreddit) {
-      throw new Error("this subreddit isn't found", { cause: 400 });
-    }
-    if (subreddit.deletedAt) {
-      throw new Error("this subreddit is deleted", { cause: 400 });
-    }
+    await searchForSubreddit(req.params.subreddit);
     //ADDING DESCRIPTION OF THE SUBREDDIT
-    subreddit.description = req.body.description;
-    await subreddit.save();
-    //SENDING RESPONSES
-    return res.status(201).json("Subreddit settings updated successfully");
+    const result = await addToDescription(
+      req.params.subreddit,
+      req.body.description
+    );
+
+    return res.status(result.statusCode).json(result.message);
   } catch (err) {
-    if (err.cause) {
-      return res.status(err.cause).json({
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
         error: err.message,
       });
     } else {
@@ -275,21 +192,14 @@ const addDescription = async (req, res) => {
 const addMainTopic = async (req, res) => {
   try {
     //GETTING SUBREDDIT DATA
-    const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
-    if (!subreddit) {
-      throw new Error("this subreddit isn't found", { cause: 400 });
-    }
-    if (subreddit.deletedAt) {
-      throw new Error("this subreddit is deleted", { cause: 400 });
-    }
-    //ADDING DESCRIPTION OF THE SUBREDDIT
-    subreddit.mainTopic = req.body.title;
-    await subreddit.save();
-    //SENDING RESPONSES
-    return res.status(201).json("Successfully updated primary topic!");
+    await searchForSubreddit(req.params.subreddit);
+    //ADDING THE MAIN TOPIC OF THE SUBREDDIT
+    const result = await addToMainTopic(req.params.subreddit, req.body.title);
+
+    return res.status(result.statusCode).json(result.message);
   } catch (err) {
-    if (err.cause) {
-      return res.status(err.cause).json({
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
         error: err.message,
       });
     } else {
@@ -298,33 +208,37 @@ const addMainTopic = async (req, res) => {
   }
 };
 
-// eslint-disable-next-line max-statements
 const addSubTopics = async (req, res) => {
   try {
-    //GETTING SUBREDDIT DATA
-    const subreddit = await Subreddit.findOne({ title: req.params.subreddit });
-    if (!subreddit) {
-      throw new Error("this subreddit isn't found", { cause: 400 });
-    }
-    if (subreddit.deletedAt) {
-      throw new Error("this subreddit is deleted", { cause: 400 });
-    }
+    await searchForSubreddit(req.params.subreddit);
     //ADDING DESCRIPTION OF THE SUBREDDIT
-    const validateArr = req.body.title;
-    validateArr.forEach(function (subtopic) {
-      if (!MainTopics.includes(subtopic)) {
-        throw new Error(`subtopic ${subtopic} is not available`, {
-          cause: 400,
-        });
-      }
-    });
-    subreddit.subTopics = req.body.title;
-    await subreddit.save();
+    const result = await addToSubtopics(
+      req.params.subreddit,
+      req.body.title,
+      MainTopics
+    );
     //SENDING RESPONSES
-    return res.status(201).json("Community topics saved");
+    return res.status(result.statusCode).json(result.message);
   } catch (err) {
-    if (err.cause) {
-      return res.status(err.cause).json({
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const availableSubredditName = async (req, res) => {
+  try {
+    const result = await subredditNameAvailable(req.query.subredditName);
+    //SENDING RESPONSES
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
         error: err.message,
       });
     } else {
@@ -359,6 +273,63 @@ const moderate = async(req,res)=>{
   }
 };
 */
+const addToFavorite = async (req, res) => {
+  try {
+    const subreddit = await searchForSubreddit(req.params.subreddit);
+    const user = await searchForUserService(req.payload.username);
+    await checkForPrivateSubreddits(user, subreddit);
+    const isFavorite = await checkForFavoriteSubreddits(user, subreddit);
+    if (isFavorite) {
+      let error = new Error(
+        `${subreddit.title} is a favorite subreddit already`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+    const result = await makeSubredditFavorite(
+      user,
+      subreddit.title,
+      subreddit.id
+    );
+
+    //SENDING RESPONSES
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const removeFromFavorite = async (req, res) => {
+  try {
+    const subreddit = await searchForSubreddit(req.params.subreddit);
+    const user = await searchForUserService(req.payload.username);
+    await checkForPrivateSubreddits(user, subreddit);
+    const isFavorite = await checkForFavoriteSubreddits(user, subreddit);
+    if (!isFavorite) {
+      let error = new Error(`${subreddit.title} is not favorite already`);
+      error.statusCode = 400;
+      throw error;
+    }
+    const result = await removeSubredditFromFavorite(user, subreddit.title);
+
+    //SENDING RESPONSES
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
 
 export default {
   createSubreddit,
@@ -370,4 +341,7 @@ export default {
   addSubTopics,
   mainTopicValidator,
   subTopicValidator,
+  addToFavorite,
+  removeFromFavorite,
+  availableSubredditName,
 };

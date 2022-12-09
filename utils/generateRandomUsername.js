@@ -26,7 +26,7 @@ export async function generateRandomUsernameUtil() {
       }
       //CHECKING IF THERE IS NO USERNAME IN THE DATABASE AS THAT RANDOM ONE
       const user = await User.findOne({ username: RandomUsername });
-      if (!user || user.deletedAt) {
+      if (!user) {
         return RandomUsername;
       }
     }

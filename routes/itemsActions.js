@@ -63,7 +63,7 @@ itemsActionsRouter.delete(
  * @swagger
  * /edit-user-text:
  *  put:
- *      summary: Edit the body text of a comment or post
+ *      summary: Edit the body text of a comment
  *      tags: [Post-comment actions]
  *      requestBody:
  *       required: true
@@ -72,20 +72,15 @@ itemsActionsRouter.delete(
  *           schema:
  *              type: object
  *              properties:
- *                  text:
- *                      type: string
- *                      description: New text entered
+ *                  content:
+ *                      type: Object
+ *                      description: New content entered
  *                  id:
  *                      type: string
- *                      description: id of the thing being edited
- *                  type:
- *                      type: string
- *                      enum:
- *                          - post
- *                          - comment
+ *                      description: id of the comment being edited
  *      responses:
  *          200:
- *              description: Post/Comment edited successfully
+ *              description: Comment edited successfully
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -96,7 +91,7 @@ itemsActionsRouter.delete(
  *                                  type: string
  *                                  description: Type of error
  *          401:
- *              description: Unauthorized to edit this post/comment
+ *              description: Unauthorized to edit this comment
  *          404:
  *              description: Content requested for editing is unavailable
  *          500:
@@ -107,10 +102,10 @@ itemsActionsRouter.delete(
 itemsActionsRouter.put(
   "/edit-user-text",
   verifyAuthToken,
-  itemsActionController.editPoComValidator,
+  itemsActionController.editComValidator,
   validateRequestSchema,
   checkId,
-  itemsActionController.editPoCom
+  itemsActionController.editComment
 );
 
 export default itemsActionsRouter;

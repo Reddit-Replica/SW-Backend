@@ -3,6 +3,7 @@ import app from "../../app.js";
 import Post from "./../../models/Post.js";
 import User from "../../models/User.js";
 import Comment from "../../models/Comment.js";
+import Message from "./../../models/Message.js";
 import { generateJWT } from "../../utils/generateTokens.js";
 
 const request = supertest(app);
@@ -10,9 +11,8 @@ const request = supertest(app);
 // eslint-disable-next-line max-statements
 describe("Testing post, comment, and message actions endpoints", () => {
   let post = {},
-    post1 = {},
     comment = {},
-    // message = {},
+    message = {},
     user1 = {},
     user2 = {},
     token1 = "",
@@ -32,18 +32,9 @@ describe("Testing post, comment, and message actions endpoints", () => {
       ownerUsername: user1.username,
       ownerId: user1._id,
       subredditName: "subreddit",
-      kind: "text",
+      kind: "hybrid",
     });
     await post.save();
-
-    post1 = new Post({
-      title: "post title",
-      ownerUsername: user1.username,
-      ownerId: user1._id,
-      subredditName: "subreddit",
-      kind: "link",
-    });
-    await post1.save();
 
     comment = new Comment({
       parentId: post._id,
@@ -55,7 +46,14 @@ describe("Testing post, comment, and message actions endpoints", () => {
     });
     await comment.save();
 
-    // TODO add message here
+    message = new Message({
+      type: "message",
+      text: "Hello from the other side",
+      receiverId: user1._id,
+      senderUsername: "Beshoy",
+      receiverUsername: "Philip",
+    });
+    await message.save();
 
     user2 = new User({
       username: "Beshoy",
@@ -71,15 +69,6 @@ describe("Testing post, comment, and message actions endpoints", () => {
     await Comment.deleteMany({});
   });
 
-  // testing edit posts and comments
-  it("try to edit a post without jwt in the header", async () => {
-    const response = await request.put("/edit-user-text").send({
-      id: post._id,
-      type: "post",
-      text: "new text",
-    });
-    expect(response.statusCode).toEqual(401);
-  });
   it("try to edit a comment without jwt in the header", async () => {
     const response = await request.put("/edit-user-text").send({
       id: comment._id,
@@ -89,18 +78,6 @@ describe("Testing post, comment, and message actions endpoints", () => {
     expect(response.statusCode).toEqual(401);
   });
 
-  it("try to edit a post of other user", async () => {
-    const response = await request
-      .put("/edit-user-text")
-      .send({
-        id: post._id,
-        type: "post",
-        text: "new text",
-      })
-      .set("Authorization", "Bearer " + token2);
-
-    expect(response.statusCode).toEqual(401);
-  });
   it("try to edit a comment of other user", async () => {
     const response = await request
       .put("/edit-user-text")
@@ -114,31 +91,6 @@ describe("Testing post, comment, and message actions endpoints", () => {
     expect(response.statusCode).toEqual(401);
   });
 
-  it("try to edit a post that have no text", async () => {
-    const response = await request
-      .put("/edit-user-text")
-      .send({
-        id: post1._id,
-        type: "post",
-        text: "new text",
-      })
-      .set("Authorization", "Bearer " + token1);
-
-    expect(response.statusCode).toEqual(400);
-  });
-
-  it("try to edit a post with invalid id", async () => {
-    const response = await request
-      .put("/edit-user-text")
-      .send({
-        id: "invalid",
-        type: "post",
-        text: "new text",
-      })
-      .set("Authorization", "Bearer " + token1);
-
-    expect(response.statusCode).toEqual(400);
-  });
   it("try to edit a comment with invalid id", async () => {
     const response = await request
       .put("/edit-user-text")
@@ -152,17 +104,6 @@ describe("Testing post, comment, and message actions endpoints", () => {
     expect(response.statusCode).toEqual(400);
   });
 
-  it("try to edit a post without id in body", async () => {
-    const response = await request
-      .put("/edit-user-text")
-      .send({
-        type: "post",
-        text: "new text",
-      })
-      .set("Authorization", "Bearer " + token1);
-
-    expect(response.statusCode).toEqual(400);
-  });
   it("try to edit a comment without id in body", async () => {
     const response = await request
       .put("/edit-user-text")
@@ -175,65 +116,6 @@ describe("Testing post, comment, and message actions endpoints", () => {
     expect(response.statusCode).toEqual(400);
   });
 
-  it("try to edit a post without type in body", async () => {
-    const response = await request
-      .put("/edit-user-text")
-      .send({
-        id: post._id,
-        text: "new text",
-      })
-      .set("Authorization", "Bearer " + token1);
-
-    expect(response.statusCode).toEqual(400);
-  });
-  it("try to edit a comment without type in body", async () => {
-    const response = await request
-      .put("/edit-user-text")
-      .send({
-        id: comment._id,
-        text: "new text",
-      })
-      .set("Authorization", "Bearer " + token1);
-
-    expect(response.statusCode).toEqual(400);
-  });
-
-  it("try to edit a post with invalid type", async () => {
-    const response = await request
-      .put("/edit-user-text")
-      .send({
-        id: post._id,
-        type: "invalid",
-        text: "new text",
-      })
-      .set("Authorization", "Bearer " + token1);
-
-    expect(response.statusCode).toEqual(400);
-  });
-  it("try to edit a comment with invalid type", async () => {
-    const response = await request
-      .put("/edit-user-text")
-      .send({
-        id: comment._id,
-        type: "invalid",
-        text: "new text",
-      })
-      .set("Authorization", "Bearer " + token1);
-
-    expect(response.statusCode).toEqual(400);
-  });
-
-  it("try to edit a post without text in body", async () => {
-    const response = await request
-      .put("/edit-user-text")
-      .send({
-        id: post._id,
-        type: "post",
-      })
-      .set("Authorization", "Bearer " + token1);
-
-    expect(response.statusCode).toEqual(400);
-  });
   it("try to edit a comment without text in body", async () => {
     const response = await request
       .put("/edit-user-text")
@@ -246,18 +128,6 @@ describe("Testing post, comment, and message actions endpoints", () => {
     expect(response.statusCode).toEqual(400);
   });
 
-  it("try to edit a post with all valid parameters", async () => {
-    const response = await request
-      .put("/edit-user-text")
-      .send({
-        id: post._id,
-        type: "post",
-        text: "new text",
-      })
-      .set("Authorization", "Bearer " + token1);
-
-    expect(response.statusCode).toEqual(200);
-  });
   it("try to edit a comment with all valid parameters", async () => {
     const response = await request
       .put("/edit-user-text")
@@ -285,7 +155,13 @@ describe("Testing post, comment, and message actions endpoints", () => {
     });
     expect(response.statusCode).toEqual(401);
   });
-  // it("try to delete a message without jwt in the header", async () => {});
+  it("try to delete a message without jwt in the header", async () => {
+    const response = await request.delete("/delete").send({
+      id: message._id,
+      type: "message",
+    });
+    expect(response.statusCode).toEqual(401);
+  });
 
   it("try to delete a comment with different user", async () => {
     const response = await request
@@ -309,7 +185,17 @@ describe("Testing post, comment, and message actions endpoints", () => {
 
     expect(response.statusCode).toEqual(401);
   });
-  // it("try to delete a message with different user", async () => {});
+  it("try to delete a message with different user", async () => {
+    const response = await request
+      .delete("/delete")
+      .send({
+        id: message._id,
+        type: "message",
+      })
+      .set("Authorization", "Bearer " + token2);
+
+    expect(response.statusCode).toEqual(401);
+  });
 
   it("try to delete a post without id in the body", async () => {
     const response = await request
@@ -374,9 +260,37 @@ describe("Testing post, comment, and message actions endpoints", () => {
     expect(response.statusCode).toEqual(400);
   });
 
-  // it("try to delete a message without id in the body", async () => {});
-  // it("try to delete a message without type in the body", async () => {});
-  // it("try to delete a message with invalid value of the type", async () => {});
+  it("try to delete a message without id in the body", async () => {
+    const response = await request
+      .delete("/delete")
+      .send({
+        type: "message",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+  it("try to delete a message without type in the body", async () => {
+    const response = await request
+      .delete("/delete")
+      .send({
+        id: message._id,
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
+  it("try to delete a message with invalid value of the type", async () => {
+    const response = await request
+      .delete("/delete")
+      .send({
+        id: message._id,
+        type: "value",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(400);
+  });
 
   it("try to delete a post with wrong id", async () => {
     const response = await request
@@ -400,7 +314,17 @@ describe("Testing post, comment, and message actions endpoints", () => {
 
     expect(response.statusCode).toEqual(404);
   });
-  // it("try to delete a message with wrong id", async () => {});
+  it("try to delete a message with wrong id", async () => {
+    const response = await request
+      .delete("/delete")
+      .send({
+        id: "63680202b0000986dded331f",
+        type: "message",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(404);
+  });
 
   it("try to delete a post with all valid parameters", async () => {
     const response = await request
@@ -424,7 +348,17 @@ describe("Testing post, comment, and message actions endpoints", () => {
 
     expect(response.statusCode).toEqual(204);
   });
-  // it("try to delete a message with all valid parameters", async () => {});
+  it("try to delete a message with all valid parameters", async () => {
+    const response = await request
+      .delete("/delete")
+      .send({
+        id: message._id,
+        type: "message",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(204);
+  });
 
   it("try to delete the same post again", async () => {
     const response = await request
@@ -448,5 +382,15 @@ describe("Testing post, comment, and message actions endpoints", () => {
 
     expect(response.statusCode).toEqual(404);
   });
-  // it("try to delete the same message again", async () => {});
+  it("try to delete the same message again", async () => {
+    const response = await request
+      .delete("/delete")
+      .send({
+        id: message._id,
+        type: "message",
+      })
+      .set("Authorization", "Bearer " + token1);
+
+    expect(response.statusCode).toEqual(404);
+  });
 });

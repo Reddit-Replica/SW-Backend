@@ -105,8 +105,14 @@ describe("Testing Post endpoints", () => {
 
   it("Normally create a post with text content", async () => {
     const postSubmission = {
-      kind: "text",
-      content: "Text content of this post",
+      kind: "hybrid",
+      texts: [
+        { text: "Post text", index: 0 },
+        { text: "Another text", index: 1 },
+      ],
+      links: [
+        { link: { title: "facebook", url: "https://facebook.com" }, index: 2 },
+      ],
       title: "First post (Test)",
       subreddit: subreddit.title,
       inSubreddit: true,
@@ -124,8 +130,12 @@ describe("Testing Post endpoints", () => {
 
   it("Normally create a post in the user account", async () => {
     const postSubmission = {
-      kind: "text",
-      content: "Text content of this post",
+      kind: "hybrid",
+      texts: [
+        { text: "Post text", index: 0 },
+        { text: "Another text", index: 1 },
+        { text: "One more text", index: 2 },
+      ],
       title: "User post (Test)",
       inSubreddit: false,
     };
@@ -140,42 +150,42 @@ describe("Testing Post endpoints", () => {
     expect(user.posts.length).toEqual(2);
   });
 
-  // it("Normally create a post with images content", async () => {
-  //   const files = [
-  //     {
-  //       fieldname: "files",
-  //       originalname: "Coding.jpg",
-  //       encoding: "7bit",
-  //       mimetype: "image/jpeg",
-  //       destination: "images",
-  //       filename: "2022-11-08T12-11-20.703Z-Coding.jpg",
-  //       path: "images\\2022-11-08T12-11-20.703Z-Coding.jpg",
-  //       size: 553672,
-  //     },
-  //     {
-  //       fieldname: "files",
-  //       originalname: "Hacker.jpg",
-  //       encoding: "7bit",
-  //       mimetype: "image/jpeg",
-  //       destination: "images",
-  //       filename: "2022-11-08T12-11-20.709Z-Hacker.jpg",
-  //       path: "images\\2022-11-08T12-11-20.709Z-Hacker.jpg",
-  //       size: 343823,
-  //     },
-  //   ];
-  //   const formdata = new FormData();
-  //   formdata.append("title", "Post with images (Test)");
-  //   formdata.append("kind", "image");
-  //   formdata.append("subreddit", subreddit.title);
-  //   formdata.append("files[]", JSON.stringify(files[0]));
-  //   formdata.append("files[]", JSON.stringify(files[1]));
-  //   const response = await request
-  //     .post("/submit")
-  //     .attach(formdata)
-  //     .set("Authorization", "Bearer " + token);
+  it("Share a post without sharePostId", async () => {
+    await Post.findOne({
+      title: "First post (Test)",
+    });
+    const postSubmission = {
+      kind: "post",
+      title: "Second post (Test)",
+      subreddit: subreddit.title,
+      inSubreddit: true,
+    };
+    const response = await request
+      .post("/submit")
+      .send(postSubmission)
+      .set("Authorization", "Bearer " + token);
 
-  //   expect(response.status).toEqual(201);
-  // });
+    expect(response.status).toEqual(400);
+  });
+
+  it("Share a post without setting kind = post", async () => {
+    let post = await Post.findOne({
+      title: "First post (Test)",
+    });
+    const postSubmission = {
+      kind: "hybrid",
+      sharePostId: post.id.toString(),
+      title: "Second post (Test)",
+      subreddit: subreddit.title,
+      inSubreddit: true,
+    };
+    const response = await request
+      .post("/submit")
+      .send(postSubmission)
+      .set("Authorization", "Bearer " + token);
+
+    expect(response.status).toEqual(400);
+  });
 
   it("Share a post", async () => {
     let post = await Post.findOne({
@@ -254,6 +264,10 @@ describe("Testing Post endpoints", () => {
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
+    const testUser = await User.findById(user.id);
+    expect(
+      testUser.pinnedPosts.find((postId) => postId.toString() === post.id)
+    ).toBeTruthy();
   });
 
   it("Get pinned posts", async () => {
@@ -287,6 +301,10 @@ describe("Testing Post endpoints", () => {
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
+    const testUser = await User.findById(user.id);
+    expect(
+      testUser.pinnedPosts.find((postId) => postId.toString() === post.id)
+    ).toBeFalsy();
   });
 
   it("Unpin a post that has already been unpinned", async () => {
@@ -314,10 +332,7 @@ describe("Testing Post endpoints", () => {
 
   it("Get post insights of a not-found post", async () => {
     const response = await request
-      .get("/post-insights")
-      .send({
-        id: "6369bd49355a4370412a212d",
-      })
+      .get("/post-insights?id=6369bd49355a4370412a212d")
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(404);
@@ -325,10 +340,7 @@ describe("Testing Post endpoints", () => {
 
   it("Get post insights normally", async () => {
     const response = await request
-      .get("/post-insights")
-      .send({
-        id: post.id.toString(),
-      })
+      .get("/post-insights?id=" + post.id.toString())
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
@@ -337,10 +349,7 @@ describe("Testing Post endpoints", () => {
 
   it("Get post details with an optional token", async () => {
     const response = await request
-      .get("/post-details")
-      .send({
-        id: post.id.toString(),
-      })
+      .get("/post-details?id=" + post.id.toString())
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(200);
@@ -348,9 +357,9 @@ describe("Testing Post endpoints", () => {
   });
 
   it("Get post details without an optional token", async () => {
-    const response = await request.get("/post-details").send({
-      id: post.id.toString(),
-    });
+    const response = await request.get(
+      "/post-details?id=" + post.id.toString()
+    );
 
     expect(response.status).toEqual(200);
     expect(response.body).toBeDefined();
@@ -358,10 +367,7 @@ describe("Testing Post endpoints", () => {
 
   it("Get post details of an invalid post id", async () => {
     const response = await request
-      .get("/post-details")
-      .send({
-        id: "6369bd49355a4370412a212d",
-      })
+      .get("/post-details?id=6369bd49355a4370412a212d")
       .set("Authorization", "Bearer " + token);
 
     expect(response.status).toEqual(404);

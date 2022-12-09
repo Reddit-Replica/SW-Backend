@@ -166,7 +166,11 @@ subRedditRouter.post(
  *       500:
  *         description: Internal server error
  */
-subRedditRouter.get("/subreddit-name-available");
+subRedditRouter.get(
+  "/subreddit-name-available",
+  verifyAuthToken,
+  subredditController.availableSubredditName
+);
 
 /**
  * @swagger
@@ -295,7 +299,7 @@ subRedditRouter.post(
  *                type: array
  *                description: titles of the sub topics in the community
  *                items:
- *                  type: object
+ *                  type: string
  *      responses:
  *          200:
  *              description: Community topics saved

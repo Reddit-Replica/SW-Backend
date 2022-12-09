@@ -35,6 +35,16 @@ const userSchema = mongoose.Schema({
     required: true,
     default: 1,
   },
+  upVotes: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  downVotes: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   createdAt: {
     type: Date,
     required: true,
@@ -75,7 +85,7 @@ const userSchema = mongoose.Schema({
     adultContent: {
       type: Boolean,
       required: true,
-      default: true,
+      default: false,
     },
     autoplayMedia: {
       type: Boolean,
@@ -122,6 +132,19 @@ const userSchema = mongoose.Schema({
       },
     },
   ],
+  favoritesSubreddits: [
+    {
+      subredditId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
   ownedSubreddits: [
     {
       subredditId: {
@@ -149,6 +172,12 @@ const userSchema = mongoose.Schema({
     },
   ],
   posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  historyPosts: [
     {
       type: Schema.Types.ObjectId,
       ref: "Post",
@@ -190,16 +219,114 @@ const userSchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  savedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  spammedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  upvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  downvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
   spammedPosts: [
     {
       type: Schema.Types.ObjectId,
       ref: "Post",
     },
   ],
-  comments: [
+  commentedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  upvotedComments: [
     {
       type: Schema.Types.ObjectId,
       ref: "Comment",
+    },
+  ],
+  downvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  followedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  savedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  blockedUsers: [
+    {
+      blockedUserId: { type: Schema.Types.ObjectId, ref: "User" },
+      blockDate: {
+        type: Date,
+        required: true,
+      },
+    },
+  ],
+  followers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  sentMessages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  receivedMessages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  usernameMentions: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  postReplies: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  conversations: [
+    {
+      conversationId: {
+        type: Schema.Types.ObjectId,
+        ref: "Conversation",
+      },
+      with: {
+        type: String,
+      },
     },
   ],
 });

@@ -20,12 +20,12 @@ const postSchema = mongoose.Schema({
   },
   kind: {
     type: String,
-    enum: ["text", "image", "video", "post", "link"],
-    default: "text",
+    enum: ["hybrid", "image", "video", "post", "link"],
+    default: "hybrid",
     required: true,
   },
   content: {
-    type: String,
+    type: Object,
   },
   images: [
     {
@@ -41,6 +41,12 @@ const postSchema = mongoose.Schema({
       },
     },
   ],
+  video: {
+    type: String,
+  },
+  link: {
+    type: String,
+  },
   sharePostId: {
     type: String,
   },
@@ -53,14 +59,6 @@ const postSchema = mongoose.Schema({
     default: false,
   },
   spoiler: {
-    type: Boolean,
-    default: false,
-  },
-  hidden: {
-    type: Boolean,
-    default: false,
-  },
-  locked: {
     type: Boolean,
     default: false,
   },
@@ -147,6 +145,12 @@ const postSchema = mongoose.Schema({
       default: false,
     },
   },
+  usersCommented: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   scheduleDate: {
     type: Date,
   },
@@ -155,6 +159,26 @@ const postSchema = mongoose.Schema({
   },
   scheduleTimeZone: {
     type: String,
+  },
+  hotScore: {
+    type: Number,
+    default: 0,
+  },
+  hotTimingScore: {
+    type: Number,
+    default: 0,
+  },
+  bestScore: {
+    type: Number,
+    default: 0,
+  },
+  bestTimingScore: {
+    type: Number,
+    default: 0,
+  },
+  numberOfVotes: {
+    type: Number,
+    default: 0,
   },
 });
 

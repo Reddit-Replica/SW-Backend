@@ -1,10 +1,29 @@
 import express from "express";
 import postController from "../controllers/HpostController.js";
+import postActionsController from "../controllers/NpostActionsController.js";
 import { optionalToken } from "../middleware/optionalToken.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { verifyPostActions } from "../middleware/verifyPostActions.js";
 import { checkId } from "../middleware/checkId.js";
+import {
+  addPost,
+  checkHybridPost,
+  checkImagesAndVideos,
+  checkPostFlair,
+  checkPostSubreddit,
+  postSubmission,
+  sharePost,
+} from "../middleware/createPost.js";
+import {
+  checkPinnedPosts,
+  checkUnpinnedPosts,
+} from "../middleware/pinnedPosts.js";
+import {
+  checkPostExistence,
+  getPostDetails,
+  setPostActions,
+} from "../middleware/postDetails.js";
 
 // eslint-disable-next-line new-cap
 const postRouter = express.Router();
@@ -49,7 +68,13 @@ const postRouter = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/follow-post");
+postRouter.post(
+  "/follow-post",
+  verifyAuthToken,
+  postActionsController.followValidator,
+  validateRequestSchema,
+  postActionsController.followOrUnfollowPost
+);
 
 /**
  * @swagger
@@ -90,7 +115,13 @@ postRouter.post("/follow-post");
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/hide");
+postRouter.post(
+  "/hide",
+  verifyAuthToken,
+  postActionsController.hideValidator,
+  validateRequestSchema,
+  postActionsController.hidePost
+);
 
 /**
  * @swagger
@@ -177,7 +208,7 @@ postRouter.post("/clear-suggested-sort");
  * @swagger
  * /submit:
  *  post:
- *      summary: Submit or share a post to a subreddit (The request body could be json in case of text or link submissions and their content is set in the 'content' parameter but if it's an image/multiple images or a video then the body will be FormData and the image/video contents will be placed in an array called 'files'). Note ONLY In case of multiple images, there can be a caption and link attached with each image so they are set in the 'imageCaptions' and 'imageLinks' arrays and if an image doesn't include a caption or link then it's place in the array should be null and not skipped. The kind can also be 'post' in case of sharing a post because it's content will be another post basically.
+ *      summary: Submit or share a post to a subreddit. The request body could be json in case the kind is not image/video, else it has to be FormData with image files placed in an array "images" as well as imageCaptions and imageLinks and video placed in "video". The kind can also be 'post' in case of sharing a post because it's content will be another post basically and the id of the post being shared is given in the 'sharePostId' field. A hybrid kind means that it can contain text, links, images and videos.
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -188,6 +219,13 @@ postRouter.post("/clear-suggested-sort");
  *      responses:
  *          201:
  *              description: Post submitted successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              id:
+ *                                  type: string
+ *                                  description: New post ID
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -211,7 +249,14 @@ postRouter.post(
   verifyAuthToken,
   postController.submitValidator,
   validateRequestSchema,
-  postController.createPost
+  checkPostSubreddit,
+  checkPostFlair,
+  checkHybridPost,
+  checkImagesAndVideos,
+  sharePost,
+  postSubmission,
+  addPost,
+  postController.submit
 );
 
 /**
@@ -253,7 +298,13 @@ postRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/unhide");
+postRouter.post(
+  "/unhide",
+  verifyAuthToken,
+  postActionsController.hideValidator,
+  validateRequestSchema,
+  postActionsController.unhidePost
+);
 
 /**
  * @swagger
@@ -360,6 +411,9 @@ postRouter.get(
   checkId,
   postController.postIdValidator,
   validateRequestSchema,
+  checkPostExistence,
+  setPostActions,
+  getPostDetails,
   postController.postDetails
 );
 
@@ -412,6 +466,8 @@ postRouter.post(
   postController.pinPostValidator,
   validateRequestSchema,
   verifyPostActions,
+  checkPinnedPosts,
+  checkUnpinnedPosts,
   postController.pinPost
 );
 

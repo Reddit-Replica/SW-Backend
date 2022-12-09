@@ -85,11 +85,14 @@
  *         - inSubreddit
  *         - title
  *       properties:
+ *         title:
+ *            type: string
+ *            description: Post title
  *         kind:
  *           type: string
  *           enum:
  *              - link
- *              - text
+ *              - hybrid
  *              - image
  *              - video
  *              - post
@@ -99,17 +102,32 @@
  *         inSubreddit:
  *           type: boolean
  *           description: True if the post is submitted in a subreddit, False if it's in the user account (not a subreddit)
- *         title:
- *           type: string
- *           description: Title of the submission
  *         content:
- *           type: string
- *           description: Post content (text/url)
- *         files:
+ *           type: object
+ *           description: Object received directly from the WYSIWYG tool
+ *         images:
  *           type: array
- *           description: Post content (images/video)
+ *           description: image files
  *           items:
  *              type: object
+ *         imageCaptions:
+ *           type: array
+ *           description: Image captions of each image submitted and an element in it should be null if the image doesn't have a caption (Do not skip the element)
+ *           items:
+ *               type: string
+ *               description: Image caption
+ *         imageLinks:
+ *           type: array
+ *           description: Links written for the images submitted (only when kind = images)
+ *           items:
+ *              type: string
+ *              description: Image Link
+ *         video:
+ *           type: object
+ *           description: Video file in case the kind is 'video'
+ *         link:
+ *           type: string
+ *           description: Link submission in case the kind is 'link'
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
@@ -119,16 +137,6 @@
  *         flairId:
  *           type: string
  *           description: Flair ID
- *         imageCaptions:
- *           type: array
- *           description: Captions written for the images submitted (only when kind = images)
- *           items:
- *              type: string
- *         imageLinks:
- *           type: array
- *           description: Links written for the images submitted (only when kind = images)
- *           items:
- *              type: string
  *         sendReplies:
  *           type: boolean
  *           description: Allow post reply notifications
@@ -154,19 +162,22 @@
  *           type: string
  *           enum:
  *              - link
- *              - text
+ *              - hybrid
  *              - image
  *              - video
  *              - post
+ *         title:
+ *           type: string
+ *           description: Title of the submission
  *         subreddit:
  *           type: string
  *           description: Subreddit name
- *         content:
+ *         link:
  *           type: string
- *           description: Post content (text/url/video) - will contain path of a video in case (kind = video)
+ *           description: Post link (kind = link)
  *         images:
  *           type: array
- *           description: Post content (kind = images)
+ *           description: Post content (kind = image)
  *           items:
  *              type: object
  *              properties:
@@ -179,15 +190,18 @@
  *                 link:
  *                   type: string
  *                   description: Image link
+ *         video:
+ *           type: string
+ *           description: Video path (kind = video)
+ *         content:
+ *           type: object
+ *           description: Post content (kind = hybrid)
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
  *         spoiler:
  *           type: boolean
  *           description: Blur the content of the post
- *         title:
- *           type: string
- *           description: Title of the submission
  *         sharePostId:
  *           type: string
  *           description: Post id in case of containing info of a shared post (kind = post)
@@ -202,9 +216,15 @@
  *         postedAt:
  *           type: string
  *           description: The time in which this post was published
- *         deletedAt:
+ *         sendReplies:
+ *           type: boolean
+ *           description: Indicates whether replies on a post are turned on/off
+ *         markedSpam:
+ *           type: boolean
+ *           description: Indicates whether post was spammed by the owner
+ *         suggestedSort:
  *           type: string
- *           description: The time in which this post was deleted
+ *           description: Post suggested sort
  *         editedAt:
  *           type: string
  *           description: The time in which this post was edited
@@ -288,19 +308,19 @@
  *           type: string
  *           enum:
  *              - link
- *              - text
+ *              - hybrid
  *              - image
  *              - video
  *              - post
  *         subreddit:
  *           type: string
  *           description: Subreddit name
- *         content:
+ *         link:
  *           type: string
- *           description: Post content (text/url/video) - will contain path of a video in case (kind = video)
+ *           description: Post link (kind = link)
  *         images:
  *           type: array
- *           description: Post content (images)
+ *           description: Images (kind = image)
  *           items:
  *              type: object
  *              properties:
@@ -313,6 +333,12 @@
  *                 link:
  *                   type: string
  *                   description: Image link
+ *         video:
+ *           type: string
+ *           description: Video path (kind = video)
+ *         content:
+ *           type: object
+ *           description: Post content (kind = hybrid)
  *         nsfw:
  *           type: boolean
  *           description: Not Safe for Work
@@ -414,106 +440,22 @@
  *                    title:
  *                      type: string
  *                      description: Title of the post
- *                    type:
+ *                    kind:
  *                      type: string
  *                      description: Type of content of the post
  *                      enum:
- *                        - text
+ *                        - hybrid
  *                        - video
  *                        - image
  *                        - link
+ *                        - post
  *                    content:
  *                      type: string
- *                      description: Content of the post [text, path of the video, path of the image, link]
+ *                      description: Content of the post
  *                    post:
  *                      type: object
  *                      description: Post data
- *                      properties:
- *                        votes:
- *                          type: integer
- *                          description: Total number of votes to that post
- *                        publishTime:
- *                          type: string
- *                          format: date-time
- *                          description: Publish time of the post
- *                        flair:
- *                          type: object
- *                          properties:
- *                            flairId:
- *                              type: string
- *                              description: The id of the flair
- *                            flairText:
- *                              type: string
- *                              description: Flair text
- *                            backgroundColor:
- *                              type: string
- *                              description: Background color of the flair
- *                            textColor:
- *                              type: string
- *                              description: Color of the flair text
- *                        inYourSubreddit:
- *                          type: boolean
- *                          description: If true, then you can approve, remove, or spam that post
- *                        moderation:
- *                          type: object
- *                          description: Moderate the post if you are a moderator in that subreddit
- *                          properties:
- *                            approve:
- *                              type: object
- *                              description: Approve the post
- *                              properties:
- *                                approvedBy:
- *                                  type: string
- *                                  description: Username for the moderator who approved that post
- *                                approvedDate:
- *                                  type: string
- *                                  format: date-time
- *                                  description: Date when that post approved
- *                            remove:
- *                              type: object
- *                              description: Remove the post
- *                              properties:
- *                                removedBy:
- *                                  type: string
- *                                  description: Username for the moderator who removed that post
- *                                removedDate:
- *                                  type: string
- *                                  format: date-time
- *                                  description: Date when that post removed
- *                            spam:
- *                              type: object
- *                              description: Spam the post
- *                              properties:
- *                                spammedBy:
- *                                  type: string
- *                                  description: Username for the moderator who spamed that post
- *                                spammedDate:
- *                                  type: string
- *                                  format: date-time
- *                                  description: Date when that post spamed
- *                            lock:
- *                              type: boolean
- *                              description: If true, then comments are locked in this post
- *                        editTime:
- *                          type: string
- *                          format: date-time
- *                          description: Edit time of the post
- *                        nsfw:
- *                          type: boolean
- *                          description: If true, then this post is NSFW
- *                        spoiler:
- *                          type: boolean
- *                          description: If true, then this post was marked as spoiler
- *                        saved:
- *                          type: boolean
- *                          description: If true, then this post was saved before by the logged-in user
- *                        vote:
- *                          type: integer
- *                          enum:
- *                            - 1
- *                            - 0
- *                            - -1
- *                          description: Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post
+ *                      $ref: '#/components/schemas/PostDetails'
  *                    comments:
  *                      type: array
  *                      description: The comments writen by this user
@@ -628,10 +570,27 @@
  *         username:
  *           type: string
  *           description: The username of the moderator
- *         nickname:
+ *         avatar:
  *           type: string
- *           description: The nickname of the moderator
+ *           description: Path of the avatar
  *         dateOfModeration:
+ *           type: string
+ *           description: he date of being a moderator
+ *         permissions:
+ *           type: array
+ *           description: array of permissions the moderator has
+ *           items:
+ *             type: string
+ *   invitedModerator:
+ *       type: object
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: The username of the moderator
+ *         avatar:
+ *           type: string
+ *           description: Path of the avatar
+ *         dateOfInvitation:
  *           type: string
  *           description: he date of being a moderator
  *         permissions:
@@ -648,6 +607,9 @@
  *         type:
  *           type: string
  *           description: type of the community
+ *         subredditId:
+ *           type: string
+ *           description: id of the community
  *           enum:
  *             - private
  *             - public
@@ -658,41 +620,24 @@
  *         title:
  *           type: string
  *           description: Name of the community
+ *         nickname:
+ *           type: string
+ *           description: Nickname of the community
+ *         isModerator:
+ *           type: boolean
+ *           description: If that member is a moderator in that subreddit (to view mod tools button)
  *         category:
  *           type: string
  *           description: Category of the community
  *         members:
  *           type: number
  *           description: Number of members of the community
- *         online:
- *           type: number
- *           description: Number of online members of the community
  *         description:
  *           type: string
  *           description: A brief description of the community
  *         dateOfCreation:
  *           type: string
  *           description: Date of creating the community
- *         flairs:
- *           type: array
- *           description: list of available flairs to filter by
- *           items:
- *             type: string
- *         rules:
- *           type: array
- *           description: list of the rules of the subreddit
- *           items:
- *             $ref: '#/components/schemas/rules'
- *         bans:
- *           type: array
- *           description: list of the ban questions of the subreddit
- *           items:
- *             $ref: '#/components/schemas/bans'
- *         moderators:
- *           type: array
- *           description: list of the moderators of the subreddit
- *           items:
- *             $ref: '#/components/schemas/moderator'
  *         isMember:
  *           type: boolean
  *           description: True if you are a member of the community , False if you are not a member of the community
@@ -702,24 +647,17 @@
  *         picture:
  *           type: string
  *           description: Path of the picture of the community
- *         communityTheme:
- *           type: boolean
- *           description: True if community theme is on , False if community theme is off
  *         views:
  *           type: number
  *           description: number of views of he community to get the trending search
  *         mainTopic:
- *           type: object
- *           description: The main topic of the subreddit with its subtopics
- *           properties:
- *             topicTitle:
- *               type: string
- *               description: The title of the topic
- *             subtopics:
- *               type: array
- *               description: the array of subtopics of the community
- *               items:
- *                 type: object
+ *           type: string
+ *           description: The main topic of the subreddit
+ *         subtopics:
+ *           type: array
+ *           description: the array of subtopics of the community
+ *           items:
+ *             type: string
  *   ListedPost:
  *       type: object
  *       properties:
@@ -733,7 +671,12 @@
  *           type: array
  *           description: List of posts to return
  *           items:
- *             $ref: "#/components/schemas/PostDetails"
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: Id of the post
+ *               data:
+ *                 $ref: "#/components/schemas/PostDetails"
  *   CommentTree:
  *       type: object
  *       properties:
@@ -754,6 +697,9 @@
  *               commentedBy:
  *                 type: string
  *                 description: The author of the comment
+ *               userImage:
+ *                 type: string
+ *                 description: Path of the image of the user who wrote the comment
  *               editTime:
  *                 type: string
  *                 format: date-time
@@ -792,7 +738,7 @@
  *                 description: Number of replies to that comment
  *               children:
  *                  type: array
- *                  description: The replies to that comment (Will be same structure as the current comment)
+ *                  description: The replies to that comment (Will be same structure as the current comment) [maximum number of children that can be returned = 5]
  *                  items:
  *                    type: object
  *
