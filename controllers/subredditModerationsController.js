@@ -5,7 +5,10 @@ import {
 import { body } from "express-validator";
 import { MainTopics } from "./NcommunityController.js";
 // eslint-disable-next-line max-len
-import { getSubredditModerators } from "../services/subredditModerationServices.js";
+import {
+  getSubredditModerators,
+  getSubredditInvitedModerators,
+} from "../services/subredditModerationServices.js";
 const subredditSettingsValidator = [
   body("communityName")
     .trim()
@@ -81,9 +84,29 @@ const getModerators = async (req, res) => {
   }
 };
 
+const getInvitedModerators = async (req, res) => {
+  try {
+    const response = await getSubredditInvitedModerators(
+      req.query.limit,
+      req.query.before,
+      req.query.after,
+      req.subreddit
+    );
+    res.status(200).json(response);
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
 export default {
   getSubredditSettings,
   setSubredditSettings,
   getModerators,
+  getInvitedModerators,
   subredditSettingsValidator,
 };
