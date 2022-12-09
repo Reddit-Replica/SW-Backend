@@ -56,7 +56,6 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
     const bannedUser = {
       username: userToBan.username,
       userId: userToBan._id,
-      avatar: userToBan.avatar,
       banPeriod: data.banPeriod,
       reasonForBan: data.reasonForBan,
       modNote: data.modNote,
