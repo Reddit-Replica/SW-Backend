@@ -20,16 +20,20 @@ function preparePostSort(listingSort) {
   } else {
     switch (listingSort) {
       case "hot":
-        // TODO
-        result = { score: -1 };
-        sortingType = { type: "score" };
+        result = { hotScore: -1 };
+        sortingType = { type: "hotScore" };
+        break;
+      case "best":
+        result = { bestScore: -1 };
+        sortingType = { type: "bestScore" };
         break;
       case "top":
-        result = null;
+        result = { numberOfVotes: -1 };
+        sortingType = { type: "numberOfVotes" };
         break;
       case "old":
-        result.sort = { createdAt: 1 };
-        result.sortingType = { type: "createdAt" };
+        result = { createdAt: 1 };
+        sortingType = { type: "createdAt" };
         break;
       default:
         result = { createdAt: -1 };
@@ -106,9 +110,14 @@ async function preparePostBeforeAfter(before, after, sort, sortingType) {
       }
 
       if (sort) {
+        let value = { $gt: post[sortingType.type] };
+        // eslint-disable-next-line max-depth
+        if (sort.createdAt === 1) {
+          value = { $lt: post[sortingType.type] };
+        }
         result = {
           type: sortingType.type,
-          value: { $gt: post[sortingType.type] },
+          value: value,
         };
       } else {
         result = {
@@ -128,9 +137,14 @@ async function preparePostBeforeAfter(before, after, sort, sortingType) {
       }
 
       if (sort) {
+        let value = { $lt: post[sortingType.type] };
+        // eslint-disable-next-line max-depth
+        if (sort.createdAt === 1) {
+          value = { $gt: post[sortingType.type] };
+        }
         result = {
           type: sortingType.type,
-          value: { $lt: post[sortingType.type] },
+          value: value,
         };
       } else {
         result = {
