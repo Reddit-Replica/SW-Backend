@@ -687,6 +687,10 @@
  *         type:
  *           type: string
  *           description: type of the community
+ *           enum:
+ *             - private
+ *             - public
+ *             - restricted
  *         subredditId:
  *           type: string
  *           description: id of the community
