@@ -85,8 +85,8 @@ const followOrUnfollowPost = async (req, res) => {
     const post = await searchForPost(req.body.id);
     const user = await searchForUserService(req.payload.username);
     let result;
-    const follow=req.body.follow;
-    if (follow==="true") {
+    const follow = req.body.follow;
+    if (follow === "true") {
       result = await followPost(post, user);
     } else {
       result = await unfollowPost(post, user);
