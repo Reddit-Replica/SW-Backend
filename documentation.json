@@ -905,8 +905,7 @@
           },
           "subredditId": {
             "type": "string",
-            "description": "id of the community",
-            "enum": ["private", "public", "restricted"]
+            "description": "id of the community"
           },
           "isFavorite": {
             "type": "boolean",
