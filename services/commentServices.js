@@ -123,7 +123,6 @@ export async function createCommentService(data, post) {
     level: data.level,
     content: data.content,
     ownerUsername: data.username,
-    ownerAvatar: user.avatar,
     ownerId: data.userId,
   };
 
@@ -196,15 +195,16 @@ export async function createCommentService(data, post) {
  * @returns {Object} The final data that will be sent to the user
  */
 // eslint-disable-next-line max-statements
-function prepareComment(comment, user, checkChildren) {
+async function prepareComment(comment, user, checkChildren) {
   if (comment.deletedAt) {
     return null;
   }
 
+  const ownerAvatar = await User.findById(comment.ownerId).select("avatar");
   let data = {
     commentId: comment._id.toString(),
     commentedBy: comment.ownerUsername,
-    userImage: comment.ownerAvatar,
+    userImage: ownerAvatar.avatar,
     editTime: comment.editedAt,
     publishTime: comment.createdAt,
     commentBody: comment.content,
@@ -249,7 +249,7 @@ function prepareComment(comment, user, checkChildren) {
       if (i === 5) {
         break;
       }
-      const resultData = prepareComment(comment.children[i], user, false);
+      const resultData = await prepareComment(comment.children[i], user, false);
       if (resultData) {
         children.push(resultData);
       }
@@ -292,7 +292,7 @@ export async function commentTreeListingService(
   // prepare the body
   let children = [];
   for (const i in result) {
-    children.push(prepareComment(result[i], loggedInUser, true));
+    children.push(await prepareComment(result[i], loggedInUser, true));
   }
 
   let after = "",
@@ -346,7 +346,7 @@ export async function commentTreeOfCommentListingService(
   // prepare the body
   let children = [];
   for (const i in result) {
-    children.push(prepareComment(result[i], loggedInUser, true));
+    children.push(await prepareComment(result[i], loggedInUser, true));
   }
 
   let after = "",

@@ -45,9 +45,6 @@ const commentSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  ownerAvatar: {
-    type: String,
-  },
   ownerId: {
     type: Schema.Types.ObjectId,
     required: true,
