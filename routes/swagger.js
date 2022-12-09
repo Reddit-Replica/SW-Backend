@@ -690,10 +690,6 @@
  *         subredditId:
  *           type: string
  *           description: id of the community
- *           enum:
- *             - private
- *             - public
- *             - restricted
  *         isFavorite:
  *           type: boolean
  *           description: true if the subreddit is marked as favorite , false if it's not favorite
