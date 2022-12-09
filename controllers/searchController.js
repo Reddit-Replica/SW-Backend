@@ -33,11 +33,23 @@ const search = async (req, res) => {
         time,
       });
     } else if (type === "comment") {
-      searchComments(query, { after, before, limit, sort, time });
+      result = await searchComments(query, {
+        after,
+        before,
+        limit,
+        sort,
+        time,
+      });
     } else if (type === "user") {
-      searchUsers(query, { after, before, limit, sort, time });
+      result = await searchUsers(query, { after, before, limit, sort, time });
     } else {
-      searchSubreddits(query, { after, before, limit, sort, time });
+      result = await searchSubreddits(query, {
+        after,
+        before,
+        limit,
+        sort,
+        time,
+      });
     }
     res.status(result.statusCode).json(result.data);
   } catch (error) {
