@@ -3,9 +3,8 @@ import mongoose, { Schema } from "mongoose";
 // eslint-disable-next-line new-cap
 const tokenSchema = mongoose.Schema({
   userId: {
-    type: Schema.Types.ObjectId,
+    type: String,
     required: true,
-    ref: "User",
   },
   token: {
     type: String,

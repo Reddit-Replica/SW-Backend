@@ -1,4 +1,3 @@
-import User from "../models/User.js";
 import { body, param, check } from "express-validator";
 import {
   checkDuplicateSocialLink,

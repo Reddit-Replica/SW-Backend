@@ -118,12 +118,24 @@ export async function checkHybridPost(req, res, next) {
 export function checkImagesAndVideos(req, res, next) {
   const kind = req.body.kind;
   if (kind === "image") {
-    const imageCaptions = req.body.imageCaptions;
-    const imageLinks = req.body.imageLinks;
+    let imageCaptions = req.body.imageCaptions;
+    let imageLinks = req.body.imageLinks;
     let images = [];
     const imageFiles = req.files.images;
     if (!imageFiles) {
       return res.status(404).json("Images not found");
+    }
+    if (
+      imageFiles.length === 1 &&
+      typeof imageCaptions === "string" &&
+      typeof imageLinks === "string"
+    ) {
+      const caption = imageCaptions;
+      const link = imageLinks;
+      imageCaptions = [];
+      imageLinks = [];
+      imageCaptions.push(caption);
+      imageLinks.push(link);
     }
     if (
       imageFiles.length !== imageCaptions?.length ||
@@ -248,6 +260,33 @@ export async function postSubmission(req, res, next) {
       scheduleTimeZone: scheduleTimeZone,
     }).save();
     req.post = post;
+    next();
+  } catch (err) {
+    return res.status(500).json("Internal server error");
+  }
+}
+/**
+ * Middleware used to add the post in all necesssary places in the user/post/subreddit models and
+ * modify any parameters that are affected upon post creation.
+ *
+ * @param {Object} req Request object
+ * @param {Object} res Response object
+ * @param {function} next Next function
+ * @returns {void}
+ */
+export async function addPost(req, res, next) {
+  try {
+    const user = req.user;
+    const post = req.post;
+    user.posts.push(post.id);
+    user.upvotedPosts.push(post.id);
+    user.commentedPosts.push(post.id);
+    post.numberOfUpvotes = 1;
+    post.numberOfVotes = 1;
+    user.upVotes += 1;
+    user.karma += 1;
+    post.hotTimingScore = post.createdAt.getTime() / 10000;
+    post.bestTimingScore = post.createdAt.getTime() / 10000000;
     next();
   } catch (err) {
     return res.status(500).json("Internal server error");
