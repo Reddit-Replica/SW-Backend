@@ -3,7 +3,6 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import cors from "cors";
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
 import swaggerUI from "swagger-ui-express";

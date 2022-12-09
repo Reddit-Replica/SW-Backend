@@ -18,11 +18,8 @@ import Category from "./../../models/Category.js";
 // eslint-disable-next-line max-statements
 describe("Testing community service functions", () => {
   let normalUser = {},
-    secondNormalUser = {},
-    deletedUser = {},
     subreddit = {},
-    moderatorUser = {},
-    deletedSubreddit = {};
+    moderatorUser = {};
   beforeAll(async () => {
     await connectDatabase();
 
@@ -31,7 +28,7 @@ describe("Testing community service functions", () => {
       email: "Noaman@gmail.com",
     }).save();
 
-    secondNormalUser = await new User({
+    await new User({
       username: "SecondNormalUser",
       email: "Ahmed@gmail.com",
     }).save();
@@ -41,13 +38,13 @@ describe("Testing community service functions", () => {
       email: "Abelrahman@gmail.com",
     }).save();
 
-    deletedUser = await new User({
+    await new User({
       username: "DeletedUser",
       email: "Hamouda@gmail.com",
       deletedAt: "10 June 2015",
     }).save();
 
-    deletedSubreddit = await new Subreddit({
+    await new Subreddit({
       title: "DeletedSubreddit",
       viewName: "DeletedSubreddit",
       category: "Art",
