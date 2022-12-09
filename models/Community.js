@@ -135,6 +135,24 @@ const communitySchema = mongoose.Schema({
       ],
     },
   ],
+  invitedModerators: [
+    {
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      dateOfInvitation: {
+        type: Date,
+        required: true,
+        default: Date.now(),
+      },
+      permissions: [
+        {
+          type: String,
+        },
+      ],
+    },
+  ],
   bannedUsers: [
     {
       username: {
