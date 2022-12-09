@@ -1,5 +1,4 @@
-import User from "../models/User.js";
-import { body, check } from "express-validator";
+import { check } from "express-validator";
 import {
   listingSubredditPosts,
   listingSubredditComments,

@@ -667,10 +667,27 @@
  *         username:
  *           type: string
  *           description: The username of the moderator
- *         nickname:
+ *         avatar:
  *           type: string
- *           description: The nickname of the moderator
+ *           description: Path of the avatar
  *         dateOfModeration:
+ *           type: string
+ *           description: he date of being a moderator
+ *         permissions:
+ *           type: array
+ *           description: array of permissions the moderator has
+ *           items:
+ *             type: string
+ *   invitedModerator:
+ *       type: object
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: The username of the moderator
+ *         avatar:
+ *           type: string
+ *           description: Path of the avatar
+ *         dateOfInvitation:
  *           type: string
  *           description: he date of being a moderator
  *         permissions:
