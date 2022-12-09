@@ -667,6 +667,9 @@
  *         username:
  *           type: string
  *           description: The username of the moderator
+ *         avatar:
+ *           type: string
+ *           description: Path of the avatar
  *         dateOfModeration:
  *           type: string
  *           description: he date of being a moderator

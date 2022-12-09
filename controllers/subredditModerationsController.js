@@ -62,9 +62,9 @@ const setSubredditSettings = async (req, res) => {
   }
 };
 
-const getModerators = (req, res) => {
+const getModerators = async (req, res) => {
   try {
-    const response = getSubredditModerators(
+    const response = await getSubredditModerators(
       req.query.limit,
       req.query.before,
       req.query.after,
