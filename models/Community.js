@@ -119,16 +119,9 @@ const communitySchema = mongoose.Schema({
   ],
   moderators: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
       userID: {
         type: Schema.Types.ObjectId,
         ref: "User",
-      },
-      nickname: {
-        type: String,
       },
       dateOfModeration: {
         type: Date,

@@ -1,6 +1,6 @@
 import { prepareLimit } from "../utils/prepareLimit.js";
 import { validateId } from "./subredditFlairs.js";
-
+import Subreddit from "../models/Community.js";
 /**
  * A Service function used to get the subreddit moderators for the controller
  * @param {Number} limitReq the limit identified in the request
@@ -9,7 +9,7 @@ import { validateId } from "./subredditFlairs.js";
  * @param {Subreddit} subreddit The subreddit object
  * @returns {preparedResponse} the prepared response for the controller
  */
-export function getSubredditModerators(
+export async function getSubredditModerators(
   limitReq,
   beforeReq,
   afterReq,
@@ -17,9 +17,7 @@ export function getSubredditModerators(
 ) {
   let preparedResponse;
   let limit = prepareLimit(limitReq);
-  if (isNaN(limit)) {
-    limit = 25;
-  }
+  await subreddit.populate("moderators.userID");
   if (!beforeReq && !afterReq) {
     preparedResponse = getSubredditModeratorsFirstTime(subreddit, limit);
   } else if (beforeReq && afterReq) {
@@ -57,13 +55,14 @@ function getSubredditModeratorsFirstTime(subreddit, limit) {
   }
   for (let i = 0; i < myLimit; i++) {
     response.children.push({
-      username: subreddit.moderators[i].username,
+      username: subreddit.moderators[i].userID.username,
+      avatar: subreddit.moderators[i].userID.avatar,
       dateOfModeration: subreddit.moderators[i].dateOfModeration,
       permissions: subreddit.moderators[i].permissions,
     });
   }
   if (myLimit !== numberOfModerators) {
-    response.after = subreddit.moderators[myLimit - 1].userID;
+    response.after = subreddit.moderators[myLimit - 1].userID._id;
   }
   return response;
 }
@@ -80,7 +79,7 @@ function getSubredditModeratorsBefore(subreddit, limit, before) {
   let myStart;
   const numberOfModerators = subreddit.moderators.length;
   const neededIndex = subreddit.moderators.findIndex(
-    (mod) => mod.userID.toString() === before
+    (mod) => mod.userID._id.toString() === before
   );
   if (neededIndex === -1) {
     const error = new Error("invalid moderator id");
@@ -95,17 +94,18 @@ function getSubredditModeratorsBefore(subreddit, limit, before) {
   }
   for (let i = myStart; i < neededIndex; i++) {
     response.children.push({
-      username: subreddit.moderators[i].username,
+      username: subreddit.moderators[i].userID.username,
+      avatar: subreddit.moderators[i].userID.avatar,
       dateOfModeration: subreddit.moderators[i].dateOfModeration,
       permissions: subreddit.moderators[i].permissions,
     });
   }
   if (response.children.length >= 1) {
     if (myStart !== 0) {
-      response.before = subreddit.moderators[myStart].userID;
+      response.before = subreddit.moderators[myStart].userID._id;
     }
     if (neededIndex !== numberOfModerators - 1) {
-      response.after = subreddit.moderators[neededIndex - 1].userID;
+      response.after = subreddit.moderators[neededIndex - 1].userID._id;
     }
   }
   return response;
@@ -123,7 +123,7 @@ function getSubredditModeratorsAfter(subreddit, limit, after) {
   let myLimit;
   const numberOfModerators = subreddit.moderators.length;
   const neededIndex = subreddit.moderators.findIndex(
-    (mod) => mod.userID.toString() === after
+    (mod) => mod.userID._id.toString() === after
   );
   if (neededIndex === -1) {
     const error = new Error("invalid moderator id");
@@ -138,16 +138,17 @@ function getSubredditModeratorsAfter(subreddit, limit, after) {
   }
   for (let i = neededIndex + 1; i < myLimit; i++) {
     response.children.push({
-      username: subreddit.moderators[i].username,
+      username: subreddit.moderators[i].userID.username,
+      avatar: subreddit.moderators[i].userID.avatar,
       dateOfModeration: subreddit.moderators[i].dateOfModeration,
       permissions: subreddit.moderators[i].permissions,
     });
   }
   if (response.children.length >= 1) {
     if (myLimit !== numberOfModerators) {
-      response.after = subreddit.moderators[myLimit - 1].userID;
+      response.after = subreddit.moderators[myLimit - 1].userID._id;
     }
-    response.before = subreddit.moderators[neededIndex + 1].userID;
+    response.before = subreddit.moderators[neededIndex + 1].userID._id;
   }
   return response;
 }
