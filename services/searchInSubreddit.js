@@ -26,7 +26,8 @@ export async function searchForPosts(subreddit, query, listingParams) {
       data: "Subreddit not found",
     };
   }
-
+  console.log(listingResult.find);
+  console.log(listingResult.sort);
   const result = await Subreddit.findOne({ title: subreddit })
     .select("subredditPosts")
     .populate({
@@ -40,7 +41,7 @@ export async function searchForPosts(subreddit, query, listingParams) {
 
   let children = [];
 
-  for (const i in result) {
+  for (const i in result["subredditPosts"]) {
     const post = result["subredditPosts"][i];
 
     let postData = { id: result["subredditPosts"][i]._id.toString() };
@@ -104,12 +105,7 @@ export async function searchForComments(subreddit, query, listingParams) {
   const regex = new RegExp(query, "i");
   listingResult.find["subredditName"] = subreddit;
   listingResult.find["content.ops"] = {
-    $elemMatch: {
-      insert: {
-        $regex: regex,
-        $options: "i",
-      },
-    },
+    $elemMatch: { insert: { $regex: regex } },
   };
 
   const checkSubreddit = await Subreddit.findOne({ title: subreddit });
@@ -119,6 +115,7 @@ export async function searchForComments(subreddit, query, listingParams) {
       data: "Subreddit not found",
     };
   }
+  console.log(listingResult.find);
 
   const result = await Comment.find(listingResult.find)
     .limit(listingResult.limit)
