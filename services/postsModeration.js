@@ -15,6 +15,10 @@ export async function markPostAsModerated(id, subredditName, type) {
   );
   if (type === "spam") {
     subreddit.spammedPosts.push(id.toString());
+  } else if (type === "approve") {
+    subreddit.spammedPosts = subreddit.spammedPosts.filter(
+      (postId) => postId.toString() !== id.toString()
+    );
   }
   await subreddit.save();
 }
@@ -29,5 +33,20 @@ export async function markPostAsModerated(id, subredditName, type) {
 export async function addToSpammedComments(id, subredditName) {
   const subreddit = await Subreddit.findOne({ title: subredditName });
   subreddit.spammedComments.push(id.toString());
+  await subreddit.save();
+}
+
+/**
+ * This function removes a comment from the list of spammed comments in the
+ * subreddit
+ * @param {string} id Comment ID
+ * @param {string} subredditName Title of the subreddit
+ * @returns {void}
+ */
+export async function removeFromSpammedComments(id, subredditName) {
+  const subreddit = await Subreddit.findOne({ title: subredditName });
+  subreddit.spammedComments = subreddit.spammedComments.filter(
+    (commentId) => commentId.toString() !== id.toString()
+  );
   await subreddit.save();
 }

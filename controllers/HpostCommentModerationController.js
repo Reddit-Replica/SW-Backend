@@ -2,6 +2,7 @@ import { body, check } from "express-validator";
 import {
   addToSpammedComments,
   markPostAsModerated,
+  removeFromSpammedComments,
 } from "../services/postsModeration.js";
 
 const modValidator = [
@@ -43,6 +44,9 @@ const approve = async (req, res) => {
       approvedBy: username,
       approvedDate: Date.now(),
     };
+    if (comment.subredditName) {
+      removeFromSpammedComments(comment.id, comment.subredditName);
+    }
     comment.moderation.remove = undefined;
     comment.moderation.spam = undefined;
     comment.markedSpam = true;
