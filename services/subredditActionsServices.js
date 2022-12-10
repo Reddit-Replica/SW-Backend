@@ -31,11 +31,7 @@ function checkIfModerator(user, subreddit) {
   const index = subreddit.moderators.findIndex(
     (elem) => elem.userID.toString() === user._id.toString()
   );
-  if (index === -1) {
-    let error = new Error("Unauthorized access");
-    error.statusCode = 401;
-    throw error;
-  }
+  return index !== -1;
 }
 
 /**
@@ -50,7 +46,12 @@ function checkIfModerator(user, subreddit) {
  */
 // eslint-disable-next-line max-statements
 export async function banUserService(moderator, userToBan, subreddit, data) {
-  checkIfModerator(moderator, subreddit);
+  const mod = checkIfModerator(moderator, subreddit);
+  if (!mod) {
+    let error = new Error("Unauthorized access");
+    error.statusCode = 401;
+    throw error;
+  }
 
   // make sure that the moderator is not trying to ban himself
   if (moderator._id.toString() === userToBan._id.toString()) {
@@ -100,7 +101,12 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
  * @returns The response to that request containing [statusCode, data]
  */
 export async function unbanUserService(moderator, userToBan, subreddit) {
-  checkIfModerator(moderator, subreddit);
+  const mod = checkIfModerator(moderator, subreddit);
+  if (!mod) {
+    let error = new Error("Unauthorized access");
+    error.statusCode = 401;
+    throw error;
+  }
 
   const foundUserIndex = subreddit.bannedUsers.findIndex(
     (elem) => elem.userId.toString() === userToBan._id.toString()
@@ -134,13 +140,16 @@ export async function inviteToModerateService(
   subreddit,
   data
 ) {
-  checkIfModerator(moderator, subreddit);
+  const mod = checkIfModerator(moderator, subreddit);
+  if (!mod) {
+    let error = new Error("Unauthorized access");
+    error.statusCode = 401;
+    throw error;
+  }
 
   // check if user is already a moderator
-  const moderatorIndex = subreddit.moderators.findIndex(
-    (elem) => elem.userID.toString() === userToInvite._id.toString()
-  );
-  if (moderatorIndex !== -1) {
+  const userMod = checkIfModerator(userToInvite, subreddit);
+  if (userMod) {
     let error = new Error("User is already a moderator in that subreddit");
     error.statusCode = 400;
     throw error;
@@ -197,7 +206,12 @@ export async function cancelInvitationService(
   invitedUser,
   subreddit
 ) {
-  checkIfModerator(moderator, subreddit);
+  const mod = checkIfModerator(moderator, subreddit);
+  if (!mod) {
+    let error = new Error("Unauthorized access");
+    error.statusCode = 401;
+    throw error;
+  }
 
   const foundUserIndex = subreddit.invitedModerators.findIndex(
     (elem) => elem.userID.toString() === invitedUser._id.toString()
@@ -210,5 +224,49 @@ export async function cancelInvitationService(
   return {
     statusCode: 200,
     message: "Invitation canceled successfully",
+  };
+}
+
+/**
+ *
+ * It checks if [moderator] is a moderator of the wanted subreddit.
+ *
+ * @param {Object} user User object that was invited to be a moderator
+ * @param {Object} subreddit Subreddit object
+ * @returns The response to that request containing [statusCode, data]
+ */
+export async function acceptModerationInviteService(user, subreddit) {
+  // check if user is already a moderator
+  const userMod = checkIfModerator(user, subreddit);
+  if (userMod) {
+    let error = new Error("User is already a moderator in that subreddit");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // removed the user from invited moderators and add him to moderators
+  const invitedUserIndex = subreddit.invitedModerators.findIndex(
+    (elem) => elem.userID.toString() === user._id.toString()
+  );
+  if (invitedUserIndex === -1) {
+    let error = new Error(
+      "User was not invited to be a moderator in that subreddit"
+    );
+    error.statusCode = 401;
+    throw error;
+  }
+
+  subreddit.moderators.push({
+    userID: user._id,
+    permissions: subreddit.invitedModerators[invitedUserIndex].permissions,
+  });
+
+  subreddit.invitedModerators.splice(invitedUserIndex, 1);
+
+  await subreddit.save();
+
+  return {
+    statusCode: 200,
+    message: "Invitation accepted successfully",
   };
 }
