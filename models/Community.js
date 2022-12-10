@@ -159,12 +159,9 @@ const communitySchema = mongoose.Schema({
         type: String,
         required: true,
       },
-      userID: {
+      userId: {
         type: Schema.Types.ObjectId,
         ref: "User",
-      },
-      avatar: {
-        type: String,
       },
       bannedAt: {
         type: Date,
