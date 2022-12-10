@@ -875,7 +875,35 @@
             "type": "string",
             "description": "The username of the moderator"
           },
+          "avatar": {
+            "type": "string",
+            "description": "Path of the avatar"
+          },
           "dateOfModeration": {
+            "type": "string",
+            "description": "he date of being a moderator"
+          },
+          "permissions": {
+            "type": "array",
+            "description": "array of permissions the moderator has",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "invitedModerator": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "The username of the moderator"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "Path of the avatar"
+          },
+          "dateOfInvitation": {
             "type": "string",
             "description": "he date of being a moderator"
           },
@@ -897,12 +925,12 @@
           },
           "type": {
             "type": "string",
-            "description": "type of the community"
+            "description": "type of the community",
+            "enum": ["private", "public", "restricted"]
           },
           "subredditId": {
             "type": "string",
-            "description": "id of the community",
-            "enum": ["private", "public", "restricted"]
+            "description": "id of the community"
           },
           "isFavorite": {
             "type": "boolean",
@@ -5792,18 +5820,18 @@
     },
     "/ban": {
       "post": {
-        "summary": "Ban a user from a subreddit. Banned users can't post or comment on that subreddit.",
+        "summary": "Ban a user from a subreddit or edit a banned user in that subreddit. Banned users can't post or comment on that subreddit.",
         "tags": ["Subreddit moderation"],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["userId", "subreddit", "reasonForBan"],
+                "required": ["username", "subreddit", "reasonForBan"],
                 "properties": {
-                  "userId": {
+                  "username": {
                     "type": "string",
-                    "description": "id of the user to ban."
+                    "description": "Username of the user to be banned"
                   },
                   "subreddit": {
                     "type": "string",
@@ -5815,12 +5843,6 @@
                   },
                   "reasonForBan": {
                     "type": "string",
-                    "enum": [
-                      "Spam",
-                      "Personal and confidential information",
-                      "Threatening, harassing, or inciting violence",
-                      "Other"
-                    ],
                     "description": "The reason for banning that user."
                   },
                   "modNote": {
@@ -5838,10 +5860,10 @@
         },
         "responses": {
           "200": {
-            "description": "Accepted"
+            "description": "User banned successfully"
           },
           "400": {
-            "description": "Bad Request",
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
             "content": {
               "application/json": {
                 "schema": {
@@ -5881,11 +5903,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["userId", "subreddit"],
+                "required": ["username", "subreddit"],
                 "properties": {
-                  "userId": {
+                  "username": {
                     "type": "string",
-                    "description": "id of the user to remove the ban."
+                    "description": "Username of the user to be banned"
                   },
                   "subreddit": {
                     "type": "string",
@@ -5901,7 +5923,7 @@
             "description": "Accepted"
           },
           "400": {
-            "description": "Bad Request",
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
             "content": {
               "application/json": {
                 "schema": {
@@ -10469,6 +10491,90 @@
         ]
       }
     },
+    "/r/{subreddit}/about/invited-moderators": {
+      "get": {
+        "summary": "Return a listing of the invited moderators in that specified subreddit",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of items desired [Maximum = 100]",
+            "schema": {
+              "type": "integer",
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "before": {
+                      "type": "string",
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
+                    },
+                    "after": {
+                      "type": "string",
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
+                    },
+                    "children": {
+                      "type": "array",
+                      "description": "List of [Things] to return",
+                      "items": {
+                        "$ref": "#/components/schemas/invitedModerator"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to view this info"
+          },
+          "404": {
+            "description": "Page not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/r/{subreddit}/about/rules": {
       "post": {
         "summary": "Add a rule to subreddit.",
@@ -12346,11 +12452,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["picture"],
+                "required": ["avatar"],
                 "properties": {
-                  "picture": {
-                    "type": "string",
-                    "description": "Path of the profile picture"
+                  "avatar": {
+                    "type": "object",
+                    "description": "The avatar image"
                   }
                 }
               }
@@ -12422,8 +12528,8 @@
                 "required": ["banner"],
                 "properties": {
                   "banner": {
-                    "type": "string",
-                    "description": "Path of the banner image"
+                    "type": "object",
+                    "description": "The banner image"
                   }
                 }
               }

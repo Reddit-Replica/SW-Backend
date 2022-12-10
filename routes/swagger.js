@@ -667,7 +667,27 @@
  *         username:
  *           type: string
  *           description: The username of the moderator
+ *         avatar:
+ *           type: string
+ *           description: Path of the avatar
  *         dateOfModeration:
+ *           type: string
+ *           description: he date of being a moderator
+ *         permissions:
+ *           type: array
+ *           description: array of permissions the moderator has
+ *           items:
+ *             type: string
+ *   invitedModerator:
+ *       type: object
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: The username of the moderator
+ *         avatar:
+ *           type: string
+ *           description: Path of the avatar
+ *         dateOfInvitation:
  *           type: string
  *           description: he date of being a moderator
  *         permissions:
@@ -684,13 +704,13 @@
  *         type:
  *           type: string
  *           description: type of the community
- *         subredditId:
- *           type: string
- *           description: id of the community
  *           enum:
  *             - private
  *             - public
  *             - restricted
+ *         subredditId:
+ *           type: string
+ *           description: id of the community
  *         isFavorite:
  *           type: boolean
  *           description: true if the subreddit is marked as favorite , false if it's not favorite

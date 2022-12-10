@@ -10,7 +10,9 @@ export function prepareLimit(listingLimit) {
     result = 25;
   } else {
     listingLimit = parseInt(listingLimit);
-    if (listingLimit > 100) {
+    if (isNaN(listingLimit)) {
+      result = 25;
+    } else if (listingLimit > 100) {
       result = 100;
     } else if (listingLimit <= 0) {
       result = 1;
