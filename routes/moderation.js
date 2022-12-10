@@ -40,7 +40,7 @@ const moderationRouter = express.Router();
 
 /**
  * @swagger
- * /r/{subreddit}/about/spam:
+ * /r/{subreddit}/about/spam?only=posts:
  *  get:
  *   summary:
  *    Return a listing of required items relevant to moderators with things that have been marked as spam in that subreddit. (This endpoint is a listing)
@@ -91,12 +91,6 @@ const moderationRouter = express.Router();
  *        - old
  *       default: newestfirst
  *      required: false
- *    - in: query
- *      name: show
- *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
- *      schema:
- *       type: string
- *      required: false
  *   responses:
  *    200:
  *     description: Listing of required items relevant to moderators.
@@ -104,6 +98,133 @@ const moderationRouter = express.Router();
  *      application/json:
  *       schema:
  *        $ref: '#/components/schemas/ListingPost'
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+/**
+ * @swagger
+ * /r/{subreddit}/about/spam?only=comments:
+ *  get:
+ *   summary:
+ *    Return a listing of required items relevant to moderators with things that have been marked as spam in that subreddit. (This endpoint is a listing)
+ *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
+ *    - in: query
+ *      name: after
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *      schema:
+ *       type: string
+ *      required: false
+ *    - in: query
+ *      name: before
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *      schema:
+ *       type: string
+ *      required: false
+ *    - in: query
+ *      name: limit
+ *      description: the maximum number of items desired (default 25, maximum 100)
+ *      schema:
+ *       type: integer
+ *       maximum: 100
+ *       default: 25
+ *      required: false
+ *    - in: query
+ *      name: only
+ *      description: type of things to be returned
+ *      schema:
+ *       type: string
+ *       enum:
+ *        - posts
+ *        - comments
+ *      required: true
+ *    - in: query
+ *      name: sort
+ *      description: method of sorting the returned things
+ *      schema:
+ *       type: string
+ *       enum:
+ *        - new
+ *        - old
+ *       default: newestfirst
+ *      required: false
+ *   responses:
+ *    200:
+ *     description: Listing of required items relevant to moderators.
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *          before:
+ *            type: string
+ *            description: The fullname of the listing that follows before this page. null if there is no previous page.
+ *          after:
+ *            type: string
+ *            description: The fullname of the listing that follows after this page. null if there is no next page.
+ *          children:
+ *            type: array
+ *            items:
+ *              type: object
+ *              properties:
+ *                 postTitle:
+ *                   type: string
+ *                   description: Post title
+ *                 comment:
+ *                   type: object
+ *                   properties:
+ *                     subreddit:
+ *                       type: string
+ *                       description: Subreddit Name
+ *                     commentedBy:
+ *                       type: string
+ *                       description: Comment Owner username
+ *                     commentedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       description: Time where the comment was created
+ *                     editedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       description: Time where the comment was edited
+ *                     spammedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       description: Time where the comment was spammed
+ *                     votes:
+ *                       type: integer
+ *                       description: Number of votes on this comment
+ *                     saved:
+ *                       type: boolean
+ *                       description: If true, then this post or comment is saved before by that moderator.
+ *                     vote:
+ *                       type: integer
+ *                       enum:
+ *                          - 1
+ *                          - 0
+ *                          - -1
+ *                       description: Used to know if that moderator voted up [1] or down [-1] or didn't vote [0] to that comment
  *    400:
  *     description: Bad Request
  *     content:
@@ -135,7 +256,7 @@ moderationRouter.get(
 
 /**
  * @swagger
- * /r/{subreddit}/about/edited:
+ * /r/{subreddit}/about/edited?only=posts:
  *  get:
  *   summary:
  *    Return a listing of required items relevant to moderators with things that have been edited recently in that subreddit. (This endpoint is a listing)
@@ -186,12 +307,6 @@ moderationRouter.get(
  *        - old
  *       default: newestfirst
  *      required: false
- *    - in: query
- *      name: show
- *      description: optional parameter; if all is passed, filters such as "hide links that I have voted on" will be disabled.
- *      schema:
- *       type: string
- *      required: false
  *   responses:
  *    200:
  *     description: Listing of required items relevant to moderators.
@@ -217,7 +332,133 @@ moderationRouter.get(
  *   security:
  *    - bearerAuth: []
  */
-
+/**
+ * @swagger
+ * /r/{subreddit}/about/edited?only=comments:
+ *  get:
+ *   summary:
+ *    Return a listing of required items relevant to moderators with things that have been edited in that subreddit. (This endpoint is a listing)
+ *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
+ *    - in: query
+ *      name: after
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *      schema:
+ *       type: string
+ *      required: false
+ *    - in: query
+ *      name: before
+ *      description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
+ *      schema:
+ *       type: string
+ *      required: false
+ *    - in: query
+ *      name: limit
+ *      description: the maximum number of items desired (default 25, maximum 100)
+ *      schema:
+ *       type: integer
+ *       maximum: 100
+ *       default: 25
+ *      required: false
+ *    - in: query
+ *      name: only
+ *      description: type of things to be returned
+ *      schema:
+ *       type: string
+ *       enum:
+ *        - posts
+ *        - comments
+ *      required: true
+ *    - in: query
+ *      name: sort
+ *      description: method of sorting the returned things
+ *      schema:
+ *       type: string
+ *       enum:
+ *        - new
+ *        - old
+ *       default: newestfirst
+ *      required: false
+ *   responses:
+ *    200:
+ *     description: Listing of required items relevant to moderators.
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *          before:
+ *            type: string
+ *            description: The fullname of the listing that follows before this page. null if there is no previous page.
+ *          after:
+ *            type: string
+ *            description: The fullname of the listing that follows after this page. null if there is no next page.
+ *          children:
+ *            type: array
+ *            items:
+ *              type: object
+ *              properties:
+ *                 postTitle:
+ *                   type: string
+ *                   description: Post title
+ *                 comment:
+ *                   type: object
+ *                   properties:
+ *                     subreddit:
+ *                       type: string
+ *                       description: Subreddit Name
+ *                     commentedBy:
+ *                       type: string
+ *                       description: Comment Owner username
+ *                     commentedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       description: Time where the comment was created
+ *                     editedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       description: Time where the comment was edited
+ *                     spammedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       description: Time where the comment was spammed
+ *                     votes:
+ *                       type: integer
+ *                       description: Number of votes on this comment
+ *                     saved:
+ *                       type: boolean
+ *                       description: If true, then this post or comment is saved before by that moderator.
+ *                     vote:
+ *                       type: integer
+ *                       enum:
+ *                          - 1
+ *                          - 0
+ *                          - -1
+ *                       description: Used to know if that moderator voted up [1] or down [-1] or didn't vote [0] to that comment
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
 moderationRouter.get(
   "/r/:subreddit/about/edited",
   verifyAuthToken,

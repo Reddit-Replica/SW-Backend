@@ -485,7 +485,7 @@ postRouter.post(
  *                      schema:
  *                          type: object
  *                          properties:
- *                              Pinned_posts:
+ *                              pinnedPosts:
  *                                type: array
  *                                items:
  *                                    $ref: '#/components/schemas/Post'
