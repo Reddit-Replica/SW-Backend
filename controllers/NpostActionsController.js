@@ -17,6 +17,8 @@ import {
   unmarkCommentAsSpam,
   downVoteAPost,
   upVoteAPost,
+  clearSuggestedSort,
+  setSuggestedSort,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
 import {
@@ -77,6 +79,16 @@ const followValidator = [
 ];
 const hideValidator = [
   body("id").trim().not().isEmpty().withMessage("id content can not be empty"),
+];
+const suggestedSortValidator = [
+  body("id").trim().not().isEmpty().withMessage("id content can not be empty"),
+  body("sort")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("sort can not be empty")
+    .isIn(["top", "new", "random", "best", "hot"])
+    .withMessage("sort must be either top, new, random, best, hot"),
 ];
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //FOLLOW
@@ -296,6 +308,44 @@ const vote = async (req, res) => {
   }
 };
 
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//SetSuggestedSort
+const setPostSuggestSort = async (req, res) => {
+  try {
+    const user = await searchForUserService(req.payload.username);
+    const result = await setSuggestedSort(req.id, user, sort);
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Server Error");
+    }
+  }
+};
+
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//ClearSuggestedSort
+const clearPostSuggestSort = async (req, res) => {
+  try {
+    const user = await searchForUserService(req.payload.username);
+    const result = await clearSuggestedSort(req.id, user);
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Server Error");
+    }
+  }
+};
+
 export default {
   followOrUnfollowPost,
   savePostOrComment,
@@ -310,4 +360,7 @@ export default {
   hideValidator,
   followValidator,
   spamValidator,
+  suggestedSortValidator,
+  setPostSuggestSort,
+  clearPostSuggestSort,
 };

@@ -29,7 +29,7 @@ export async function generateRandomUsernameUtil() {
         username: RandomUsername,
         deletedAt: undefined,
       });
-      if (!user ) {
+      if (!user) {
         return RandomUsername;
       }
     }
