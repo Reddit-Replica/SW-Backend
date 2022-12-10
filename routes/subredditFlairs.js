@@ -394,7 +394,13 @@ subredditFlairsRouter.delete(
  *      security:
  *          - bearerAuth: []
  */
-subredditFlairsRouter.post("/r/:subreddit/about/post-flairs-order");
+subredditFlairsRouter.post(
+  "/r/:subreddit/about/post-flairs-order",
+  verifyAuthToken,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditFlairsController.editFlairsOrder
+);
 
 /**
  * @swagger

@@ -126,7 +126,7 @@ router.post(
  *       - bearerAuth: []
  */
 
-router.post("/mention");
+router.post("/mention", verifyAuthToken, messageController.createMention);
 
 /**
  * @swagger
@@ -235,7 +235,7 @@ router.post("/mention");
  *       - bearerAuth: []
  */
 
-router.get("/message/sent");
+router.get("/message/sent", verifyAuthToken, messageController.getSentMsg);
 
 /**
  * @swagger
@@ -471,7 +471,7 @@ router.get("/message/inbox");
  *       - bearerAuth: []
  */
 
-router.get("/message/unread");
+router.get("/message/unread", verifyAuthToken, messageController.getUnreadMsg);
 
 /**
  * @swagger
@@ -697,6 +697,8 @@ router.get("/message/post-reply");
 
 router.get(
   "/message/mentions",
+  verifyAuthToken,
+  messageController.getUsernameMentions
 );
 
 /**
