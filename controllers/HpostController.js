@@ -56,7 +56,9 @@ const getPinnedPosts = async (req, res) => {
   try {
     const user = await User.findById(userId).populate("pinnedPosts");
     user.pinnedPosts = user.pinnedPosts.filter((post) => !post.deletedAt);
-    return res.status(200).json(user.pinnedPosts);
+    return res.status(200).json({
+      pinnedPosts: user.pinnedPosts,
+    });
   } catch (err) {
     res.status(500).json("Internal server error");
   }
