@@ -64,8 +64,43 @@ const getPinnedPosts = async (req, res) => {
   try {
     const user = await User.findById(userId).populate("pinnedPosts");
     user.pinnedPosts = user.pinnedPosts.filter((post) => !post.deletedAt);
+    const pinnedPosts = user.pinnedPosts.map((post) => {
+      let vote = 0;
+      if (
+        user.upvotedPosts.find(
+          (postId) => postId.toString() === post.id.toString()
+        )
+      ) {
+        vote = 1;
+      } else if (
+        user.downvotedPosts.find(
+          (postId) => postId.toString() === post.id.toString()
+        )
+      ) {
+        vote = -1;
+      }
+      return {
+        id: post.id.toString(),
+        kind: post.kind,
+        subreddit: post.subredditName,
+        link: post.link,
+        images: post.images,
+        video: post.video,
+        content: post.content,
+        nsfw: post.nsfw,
+        spoiler: post.spoiler,
+        title: post.title,
+        sharePostId: post.sharePostId,
+        flair: post.flair,
+        comments: post.numberOfComments,
+        votes: post.numberOfVotes,
+        postedAt: post.createdAt,
+        postedBy: post.ownerUsername,
+        vote: vote,
+      };
+    });
     return res.status(200).json({
-      pinnedPosts: user.pinnedPosts,
+      pinnedPosts: pinnedPosts,
     });
   } catch (err) {
     res.status(500).json("Internal server error");

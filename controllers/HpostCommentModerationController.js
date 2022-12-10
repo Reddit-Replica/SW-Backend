@@ -49,7 +49,7 @@ const approve = async (req, res) => {
     }
     comment.moderation.remove = undefined;
     comment.moderation.spam = undefined;
-    comment.markedSpam = true;
+    comment.markedSpam = false;
     await comment.save();
     return res.status(200).json("Comment approved successfully!");
   }

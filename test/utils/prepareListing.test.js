@@ -22,6 +22,7 @@ describe("Testing prepare listing functions", () => {
     user = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user.save();
 
@@ -31,6 +32,7 @@ describe("Testing prepare listing functions", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post1.save();
 
@@ -42,6 +44,7 @@ describe("Testing prepare listing functions", () => {
       content: "Comment Content",
       ownerId: user._id,
       ownerUsername: user.username,
+      createdAt: Date.now(),
     });
     comment1.save();
   });

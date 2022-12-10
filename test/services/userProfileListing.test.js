@@ -17,12 +17,14 @@ describe("Testing user profile listing services functions", () => {
     user = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user.save();
 
     loggedInUser = new User({
       username: "LoggedInUser",
       email: "sad@gmail.com",
+      createdAt: Date.now(),
     });
     await loggedInUser.save();
 
@@ -32,6 +34,7 @@ describe("Testing user profile listing services functions", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post1.save();
 
@@ -41,6 +44,7 @@ describe("Testing user profile listing services functions", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post2.save();
 
@@ -50,6 +54,7 @@ describe("Testing user profile listing services functions", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post3.save();
 

@@ -33,12 +33,14 @@ describe("Testing comment services functions", () => {
     user = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user.save();
 
     loggedInUser = new User({
       username: "LoggedInUser",
       email: "sad@gmail.com",
+      createdAt: Date.now(),
     });
     await loggedInUser.save();
 
@@ -48,6 +50,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post1.save();
 
@@ -57,6 +60,7 @@ describe("Testing comment services functions", () => {
       ownerId: loggedInUser._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post2.save();
 
@@ -69,6 +73,7 @@ describe("Testing comment services functions", () => {
         username: user.username,
         userID: user._id,
       },
+      createdAt: Date.now(),
     });
     await subreddit.save();
 
@@ -81,6 +86,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 10,
+      createdAt: Date.now(),
     });
     await firstLevelComment1.save();
 
@@ -93,6 +99,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 5,
+      createdAt: Date.now(),
     });
     await firstLevelComment2.save();
 
@@ -105,6 +112,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 1,
+      createdAt: Date.now(),
     });
     await firstLevelComment3.save();
 
@@ -117,6 +125,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 10,
+      createdAt: Date.now(),
     });
     await secondLevelComment1.save();
 
@@ -129,6 +138,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 5,
+      createdAt: Date.now(),
     });
     await secondLevelComment2.save();
 
@@ -141,6 +151,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 1,
+      createdAt: Date.now(),
     });
     await secondLevelComment3.save();
   });

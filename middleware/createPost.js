@@ -258,6 +258,7 @@ export async function postSubmission(req, res, next) {
       scheduleDate: scheduleDate,
       scheduleTime: scheduleTime,
       scheduleTimeZone: scheduleTimeZone,
+      createdAt: Date.now(),
     }).save();
     req.post = post;
     next();
