@@ -5,7 +5,6 @@ import {
   verifyAuthTokenModerator,
 } from "../middleware/verifyToken.js";
 import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
-import subredditRulesMiddleware from "../middleware/subredditRules.js";
 // eslint-disable-next-line max-len
 import subredditFlairsController from "../controllers/subredditFlairsController.js";
 // eslint-disable-next-line new-cap
