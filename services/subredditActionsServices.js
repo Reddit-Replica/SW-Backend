@@ -13,7 +13,7 @@ export async function getSubredditService(subredditName) {
   });
   if (!subreddit) {
     let error = new Error("Can not find subreddit with that name");
-    error.statusCode = 400;
+    error.statusCode = 404;
     throw error;
   }
   return subreddit;
@@ -228,7 +228,9 @@ export async function cancelInvitationService(
 }
 
 /**
- *
+ * Function used to accept the invitation to be a moderator in a subreddit.
+ * It checks if user is already a moderator in that subreddit, else it removes him from
+ * invited moderators and add him to moderators arry in that subreddit
  * It checks if [moderator] is a moderator of the wanted subreddit.
  *
  * @param {Object} user User object that was invited to be a moderator
@@ -268,5 +270,35 @@ export async function acceptModerationInviteService(user, subreddit) {
   return {
     statusCode: 200,
     message: "Invitation accepted successfully",
+  };
+}
+
+export async function leaveModerationService(user, subreddit) {
+  // check if user is the owner
+  if (subreddit.owner.userID.toString() === user._id.toString()) {
+    let error = new Error(
+      "Owner can not leave the moderation of the subreddit"
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+  // check if user is already a moderator
+  const modUserIndex = subreddit.moderators.findIndex(
+    (elem) => elem.userID.toString() === user._id.toString()
+  );
+
+  if (modUserIndex === -1) {
+    let error = new Error("User is not a moderator in that subreddit");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  // removed the user from moderators
+  subreddit.moderators.splice(modUserIndex, 1);
+  await subreddit.save();
+
+  return {
+    statusCode: 200,
+    message: "Moderation has been successfully left",
   };
 }
