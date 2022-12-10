@@ -25,7 +25,7 @@ async function prepareMessageBeforeAfter(before, after) {
       }
       result = {
         type: "createdAt",
-        value: { $gte: message["createdAt"] },
+        value: { $gt: message["createdAt"] },
       };
     }
   } else if (after && !before) {
@@ -37,7 +37,7 @@ async function prepareMessageBeforeAfter(before, after) {
       }
       result = {
         type: "createdAt",
-        value: { $lte: message["createdAt"] },
+        value: { $lt: message["createdAt"] },
       };
     } else {
       return null;
@@ -70,7 +70,7 @@ async function prepareMentionBeforeAfter(before, after) {
       }
       result = {
         type: "createdAt",
-        value: { $gte: mention["createdAt"] },
+        value: { $gt: mention["createdAt"] },
       };
     }
   } else if (after && !before) {
@@ -82,7 +82,7 @@ async function prepareMentionBeforeAfter(before, after) {
       }
       result = {
         type: "createdAt",
-        value: { $lte: mention["createdAt"] },
+        value: { $lt: mention["createdAt"] },
       };
     } else {
       return null;
@@ -106,7 +106,7 @@ async function prepareConversationsBeforeAfter(before, after) {
       }
       result = {
         type: "latestDate",
-        value: { $gte: conversation["latestDate"] },
+        value: { $gt: conversation["latestDate"] },
       };
     }
   } else if (after && !before) {
@@ -118,7 +118,7 @@ async function prepareConversationsBeforeAfter(before, after) {
       }
       result = {
         type: "latestDate",
-        value: { $lte: conversation["latestDate"] },
+        value: { $lt: conversation["latestDate"] },
       };
     } else {
       return null;
