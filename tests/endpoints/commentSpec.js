@@ -42,6 +42,7 @@ describe("Testing comment endpoints", () => {
         username: user.username,
         userID: user._id,
       },
+      createdAt: Date.now(),
     });
     await subreddit.save();
   });

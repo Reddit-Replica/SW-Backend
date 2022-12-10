@@ -33,6 +33,7 @@ describe("Testing Post Moderation endpoints", () => {
       category: "Software",
       type: "private",
       owner: owner,
+      createdAt: Date.now(),
     }).save();
     subreddit.moderators = [
       {

@@ -216,6 +216,7 @@ export async function addSubreddit(req, authPayload) {
     type: type,
     nsfw: nsfw,
     owner: owner,
+    createdAt: Date.now(),
   }).save();
   const addedSubreddit = {
     subredditId: subreddit.id,

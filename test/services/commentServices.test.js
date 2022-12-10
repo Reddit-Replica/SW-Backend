@@ -69,6 +69,7 @@ describe("Testing comment services functions", () => {
         username: user.username,
         userID: user._id,
       },
+      createdAt: Date.now(),
     });
     await subreddit.save();
 
