@@ -231,18 +231,6 @@ const userSchema = mongoose.Schema({
       ref: "Comment",
     },
   ],
-  upvotedComments: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Comment",
-    },
-  ],
-  downvotedComments: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Comment",
-    },
-  ],
   spammedPosts: [
     {
       type: Schema.Types.ObjectId,
@@ -268,12 +256,6 @@ const userSchema = mongoose.Schema({
     },
   ],
   followedComments: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Comment",
-    },
-  ],
-  savedComments: [
     {
       type: Schema.Types.ObjectId,
       ref: "Comment",
@@ -309,13 +291,13 @@ const userSchema = mongoose.Schema({
   usernameMentions: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Message",
+      ref: "Mention",
     },
   ],
   postReplies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Message",
+      ref: "Comments",
     },
   ],
   conversations: [
@@ -323,9 +305,6 @@ const userSchema = mongoose.Schema({
       conversationId: {
         type: Schema.Types.ObjectId,
         ref: "Conversation",
-      },
-      with: {
-        type: String,
       },
     },
   ],

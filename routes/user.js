@@ -268,7 +268,13 @@ userRouter.get(
  *       500:
  *         description: Internal server error
  */
-userRouter.get("/user/:username/overview");
+userRouter.get(
+  "/user/:username/overview",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userOverview
+);
 
 /**
  * @swagger
@@ -395,6 +401,46 @@ userRouter.get(
 
 /**
  * @swagger
+ * /clear-history:
+ *   post:
+ *     summary: Clear the history of the user
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - username
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Username of the user to clear his history
+ *     responses:
+ *       200:
+ *         description: History cleared successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       401:
+ *         description: Access Denied
+ *       404:
+ *         description: Didn't find a user with that username
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+userRouter.post("/clear-history");
+
+/**
+ * @swagger
  * /user/{username}/comments:
  *   get:
  *     summary: Return a list of user's comments
@@ -456,7 +502,13 @@ userRouter.get(
  *       500:
  *         description: Internal server error
  */
-userRouter.get("/user/:username/comments");
+userRouter.get(
+  "/user/:username/comments",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userComments
+);
 
 /**
  * @swagger
@@ -675,7 +727,13 @@ userRouter.get(
  *     security:
  *       - bearerAuth: []
  */
-userRouter.get("/user/:username/saved");
+userRouter.get(
+  "/user/:username/saved",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userSavedPostsAndComments
+);
 
 /**
  * @swagger

@@ -1,7 +1,9 @@
 import express from "express";
+import searchController from "../controllers/searchController.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
 
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const searchRouter = express.Router();
 
 /**
  * @swagger
@@ -474,7 +476,12 @@ const router = express.Router();
  *          500:
  *              description: Server Error
  */
-router.get("/search");
+searchRouter.get(
+  "/search",
+  searchController.searchValidator,
+  validateRequestSchema,
+  searchController.search
+);
 
 /**
  * @swagger
@@ -719,6 +726,11 @@ router.get("/search");
  *          500:
  *              description: Server Error
  */
-router.get("/r/:subreddit/search");
+searchRouter.get(
+  "/r/:subreddit/search",
+  searchController.searchSubredditValidator,
+  validateRequestSchema,
+  searchController.searchSubreddit
+);
 
-export default router;
+export default searchRouter;
