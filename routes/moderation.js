@@ -961,6 +961,114 @@ moderationRouter.post(
 
 /**
  * @swagger
+ * /mod-spam:
+ *  post:
+ *   summary:
+ *    Mark post or comment as spam for moderators
+ *   tags: [Posts and comments moderation]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - id
+ *        - type
+ *       properties:
+ *        id:
+ *         type: string
+ *         description: id of a thing.
+ *        type:
+ *         type: string
+ *         description: type of that thing (post, comment)
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post(
+  "/mod-spam",
+  verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.unlock
+);
+
+/**
+ * @swagger
+ * /mod-unspam:
+ *  post:
+ *   summary:
+ *    Unmark a post or comment as spam for moderators only
+ *   tags: [Posts and comments moderation]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - id
+ *        - type
+ *       properties:
+ *        id:
+ *         type: string
+ *         description: id of a thing.
+ *        type:
+ *         type: string
+ *         description: type of that thing (post, comment,..).
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post(
+  "/mod-unspam",
+  verifyAuthToken,
+  postModerationController.modValidator,
+  validateRequestSchema,
+  checkId,
+  checkThingMod,
+  postModerationController.unlock
+);
+
+/**
+ * @swagger
  * /ban:
  *  post:
  *   summary:
