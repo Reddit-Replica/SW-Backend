@@ -740,6 +740,11 @@ searchRouter.get(
  *          500:
  *              description: Server Error
  */
-searchRouter.get("/r/:subreddit/search");
+searchRouter.get(
+  "/r/:subreddit/search",
+  searchController.searchSubredditValidator,
+  validateRequestSchema,
+  searchController.searchSubreddit
+);
 
 export default searchRouter;
