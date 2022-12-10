@@ -64,11 +64,6 @@ const searchRouter = express.Router();
  *            schema:
  *                  type: string
  *          - in: query
- *            name: restrictedSubreddits
- *            description: Search in restricted subreddits only
- *            schema:
- *                  type: boolean
- *          - in: query
  *            name: time
  *            description: Search within a time frame
  *            schema:
@@ -172,11 +167,6 @@ const searchRouter = express.Router();
  *            schema:
  *                  type: string
  *          - in: query
- *            name: restrictedSubreddits
- *            description: Search in restricted subreddits only
- *            schema:
- *                  type: boolean
- *          - in: query
  *            name: time
  *            description: Search within a time frame
  *            schema:
@@ -216,9 +206,9 @@ const searchRouter = express.Router();
  *                                              id:
  *                                                  type: string
  *                                                  description: Comment ID
- *                                              text:
- *                                                  type: string
- *                                                  description: Comment content (text)
+ *                                              content:
+ *                                                  type: object
+ *                                                  description: Comment content
  *                                              parentId:
  *                                                  type: string
  *                                                  description: id of the post being replied to (parent)
@@ -232,7 +222,7 @@ const searchRouter = express.Router();
  *                                                  type: string
  *                                                  format: time
  *                                                  description: How long ago the comment was written
- *                                              upvotes:
+ *                                              votes:
  *                                                  type: number
  *                                                  description: Total number of upvotes on the comment
  *          400:
@@ -344,12 +334,18 @@ const searchRouter = express.Router();
  *                              items:
  *                                  type: object
  *                                  properties:
+ *                                      id:
+ *                                          type: string
+ *                                          description: subreddit Id
  *                                      subredditName:
  *                                          type: string
  *                                          description: Name of the subreddit
  *                                      numberOfMembers:
  *                                          type: number
  *                                          description: Total number of members in the subreddit
+ *                                      description:
+ *                                          type: string
+ *                                          description: Subreddit description
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -423,11 +419,6 @@ const searchRouter = express.Router();
  *            schema:
  *                  type: string
  *          - in: query
- *            name: restrictedSubreddits
- *            description: Search in restricted subreddits only
- *            schema:
- *                  type: boolean
- *          - in: query
  *            name: time
  *            description: Search within a time frame
  *            schema:
@@ -459,13 +450,18 @@ const searchRouter = express.Router();
  *                              items:
  *                                  type: object
  *                                  properties:
+ *                                      id:
+ *                                          type: string
+ *                                          description: User ID
  *                                      username:
  *                                          type: string
  *                                          description: Username to be displayed
  *                                      karma:
  *                                          type: number
  *                                          description: Karma of this account
- *
+ *                                      avatar:
+ *                                          type: string
+ *                                          description: Avatar path of the user
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -549,11 +545,6 @@ searchRouter.get(
  *            description: Search in a specific category
  *            schema:
  *                  type: string
- *          - in: query
- *            name: restrictedSubreddits
- *            description: Search in restricted subreddits only
- *            schema:
- *                  type: boolean
  *          - in: query
  *            name: time
  *            description: Search within a time frame
@@ -663,11 +654,6 @@ searchRouter.get(
  *            schema:
  *                  type: string
  *          - in: query
- *            name: restrictedSubreddits
- *            description: Search in restricted subreddits only
- *            schema:
- *                  type: boolean
- *          - in: query
  *            name: time
  *            description: Search within a time frame
  *            schema:
@@ -707,9 +693,9 @@ searchRouter.get(
  *                                              id:
  *                                                  type: string
  *                                                  description: Comment ID
- *                                              text:
+ *                                              content:
  *                                                  type: string
- *                                                  description: Comment content (text)
+ *                                                  description: Comment content
  *                                              parentId:
  *                                                  type: string
  *                                                  description: id of the post being replied to (parent)
@@ -723,7 +709,7 @@ searchRouter.get(
  *                                                  type: string
  *                                                  format: time
  *                                                  description: How long ago the comment was written
- *                                              upvotes:
+ *                                              votes:
  *                                                  type: number
  *                                                  description: Total number of upvotes on the comment
  *          400:

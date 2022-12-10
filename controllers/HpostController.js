@@ -21,15 +21,6 @@ const submit = async (req, res) => {
   const user = req.user;
   const post = req.post;
   try {
-    user.posts.push(post.id);
-    user.upvotedPosts.push(post.id);
-    user.commentedPosts.push(post.id);
-    post.numberOfUpvotes = 1;
-    post.numberOfVotes = 1;
-    user.upVotes += 1;
-    user.karma += 1;
-    post.hotTimingScore = post.createdAt.getTime() / 10000;
-    post.bestTimingScore = post.createdAt.getTime() / 10000000;
     await post.save();
     await user.save();
     res.status(201).json({

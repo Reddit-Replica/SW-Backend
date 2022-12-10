@@ -151,7 +151,7 @@ describe("Testing Post endpoints", () => {
   });
 
   it("Share a post without sharePostId", async () => {
-    let post = await Post.findOne({
+    await Post.findOne({
       title: "First post (Test)",
     });
     const postSubmission = {

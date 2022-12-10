@@ -662,7 +662,7 @@ moderationRouter.post(
  * /ban:
  *  post:
  *   summary:
- *    Ban a user from a subreddit. Banned users can't post or comment on that subreddit.
+ *    Ban a user from a subreddit or edit a banned user in that subreddit. Banned users can't post or comment on that subreddit.
  *   tags: [Subreddit moderation]
  *   requestBody:
  *    required: true
@@ -670,13 +670,13 @@ moderationRouter.post(
  *     application/json:
  *      schema:
  *       required:
- *        - userId
+ *        - username
  *        - subreddit
  *        - reasonForBan
  *       properties:
- *        userId:
+ *        username:
  *         type: string
- *         description: id of the user to ban.
+ *         description: Username of the user to be banned
  *        subreddit:
  *         type: string
  *         description: The name of the subreddit.
@@ -685,11 +685,6 @@ moderationRouter.post(
  *         description: The period that user will be banned in days if not permanent. (default Permanent)
  *        reasonForBan:
  *         type: string
- *         enum:
- *          - Spam
- *          - Personal and confidential information
- *          - Threatening, harassing, or inciting violence
- *          - Other
  *         description: The reason for banning that user.
  *        modNote:
  *         type: string
@@ -699,9 +694,9 @@ moderationRouter.post(
  *         description: Note to include in ban message
  *   responses:
  *    200:
- *     description: Accepted
+ *     description: User banned successfully
  *    400:
- *     description: Bad Request
+ *     description: The request was invalid. You may refer to response for details around why the request was invalid
  *     content:
  *      application/json:
  *       schema:
@@ -734,12 +729,12 @@ moderationRouter.post("/ban");
  *     application/json:
  *      schema:
  *       required:
- *        - userId
+ *        - username
  *        - subreddit
  *       properties:
- *        userId:
+ *        username:
  *         type: string
- *         description: id of the user to remove the ban.
+ *         description: Username of the user to be banned
  *        subreddit:
  *         type: string
  *         description: The name of the subreddit.
@@ -747,7 +742,7 @@ moderationRouter.post("/ban");
  *    200:
  *     description: Accepted
  *    400:
- *     description: Bad Request
+ *     description: The request was invalid. You may refer to response for details around why the request was invalid
  *     content:
  *      application/json:
  *       schema:
