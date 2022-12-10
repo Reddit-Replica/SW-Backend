@@ -243,7 +243,7 @@ export async function postSubmission(req, res, next) {
       kind: kind,
       ownerUsername: username,
       ownerId: userId,
-      subredditName: subreddit,
+      subredditName: req.subreddit,
       title: title,
       sharePostId: sharePostId,
       link: link,
