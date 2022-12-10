@@ -464,7 +464,13 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/cancel-invitation");
+moderationRouter.post(
+  "/cancel-invitation",
+  verifyAuthToken,
+  subredditActionsController.unbanUserValidator,
+  validateRequestSchema,
+  subredditActionsController.cancelInvitation
+);
 
 /**
  * @swagger
