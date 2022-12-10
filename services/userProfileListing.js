@@ -114,7 +114,17 @@ export async function listingUserProfileService(
         postData.data.inYourSubreddit = true;
         postData.data.moderation = post.moderation;
       } else {
-        postData.data.inYourSubreddit = false;
+        // check if post is created by logged in user [post have no subreddit]
+        const found = loggedInUser.posts.find(
+          (ele) => ele._id.toString() === post._id.toString()
+        );
+
+        if (found) {
+          postData.data.inYourSubreddit = true;
+          postData.data.moderation = post.moderation;
+        } else {
+          postData.data.inYourSubreddit = false;
+        }
       }
     }
 
@@ -353,7 +363,17 @@ export async function listingUserOverview(
         postData.data.post.inYourSubreddit = true;
         postData.data.post.moderation = post.moderation;
       } else {
-        postData.data.post.inYourSubreddit = false;
+        // check if post is created by logged in user [post have no subreddit]
+        const found = loggedInUser.posts.find(
+          (ele) => ele._id.toString() === post._id.toString()
+        );
+
+        if (found) {
+          postData.data.post.inYourSubreddit = true;
+          postData.data.post.moderation = post.moderation;
+        } else {
+          postData.data.post.inYourSubreddit = false;
+        }
       }
     }
 

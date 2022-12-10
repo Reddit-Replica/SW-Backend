@@ -62,7 +62,7 @@ describe("Testing comment services functions", () => {
 
     subreddit = new Subreddit({
       type: "public",
-      title: "funny",
+      title: "subreddit",
       category: "fun",
       viewName: "LOL",
       owner: {
@@ -328,7 +328,7 @@ describe("Testing comment services functions", () => {
         parentType: "post",
         level: 1,
         haveSubreddit: true,
-        subredditName: "funny",
+        subredditName: "subreddit",
         username: user.username,
         userId: user._id,
       },
@@ -348,26 +348,6 @@ describe("Testing comment services functions", () => {
         parentType: "post",
         level: 1,
         haveSubreddit: false,
-        username: user.username,
-        userId: user._id,
-      },
-      post2
-    );
-    expect(result.statusCode).toEqual(201);
-    await Comment.deleteOne({ content: { text: "Comment for testing" } });
-  });
-
-  // eslint-disable-next-line max-len
-  it("try to create comment with all valid parameters and with subreddit", async () => {
-    const result = await createCommentService(
-      {
-        content: { text: "Comment for testing" },
-        parentId: post2._id,
-        postId: post2._id,
-        parentType: "post",
-        level: 1,
-        haveSubreddit: true,
-        subredditName: "funny",
         username: user.username,
         userId: user._id,
       },

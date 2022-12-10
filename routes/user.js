@@ -437,7 +437,13 @@ userRouter.get(
  *     security:
  *       - bearerAuth: []
  */
-userRouter.post("/clear-history");
+userRouter.post(
+  "/clear-history",
+  verifyAuthToken,
+  userController.usernameBodyValidator,
+  validateRequestSchema,
+  userController.clearHistoy
+);
 
 /**
  * @swagger

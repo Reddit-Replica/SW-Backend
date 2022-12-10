@@ -13,10 +13,25 @@ export async function getSubredditService(subredditName) {
   });
   if (!subreddit) {
     let error = new Error("Can not find subreddit with that name");
-    error.statusCode = 400;
+    error.statusCode = 404;
     throw error;
   }
   return subreddit;
+}
+
+/**
+ * Function used to check if the user is a moderator to that subreddit.
+ * It throw an error if he was not a moderator.
+ *
+ * @param {Object} user User to check if he is a moderator to the subreddit
+ * @param {Object} subreddit Subreddit object
+ */
+function checkIfModerator(user, subreddit) {
+  // check if user is moderator in the subreddit
+  const index = subreddit.moderators.findIndex(
+    (elem) => elem.userID.toString() === user._id.toString()
+  );
+  return index;
 }
 
 /**
@@ -29,12 +44,10 @@ export async function getSubredditService(subredditName) {
  * @param {Object} data Request body containing [banPeriod, reasonForBan, modNote, noteInclude]
  * @returns The response to that request containing [statusCode, data]
  */
+// eslint-disable-next-line max-statements
 export async function banUserService(moderator, userToBan, subreddit, data) {
-  // check if user is moderator in the subreddit
-  const index = subreddit.moderators.findIndex(
-    (elem) => elem.userID.toString() === moderator._id.toString()
-  );
-  if (index === -1) {
+  const mod = checkIfModerator(moderator, subreddit);
+  if (mod === -1) {
     let error = new Error("Unauthorized access");
     error.statusCode = 401;
     throw error;
@@ -55,7 +68,6 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
     const bannedUser = {
       username: userToBan.username,
       userId: userToBan._id,
-      avatar: userToBan.avatar,
       banPeriod: data.banPeriod,
       reasonForBan: data.reasonForBan,
       modNote: data.modNote,
@@ -63,6 +75,13 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
     };
 
     subreddit.bannedUsers.push(bannedUser);
+    await subreddit.save();
+  } else {
+    // user was blocked before and need to edit his data
+    subreddit.bannedUsers[foundUser].banPeriod = data.banPeriod;
+    subreddit.bannedUsers[foundUser].reasonForBan = data.reasonForBan;
+    subreddit.bannedUsers[foundUser].modNote = data.modNote;
+    subreddit.bannedUsers[foundUser].noteInclude = data.noteInclude;
     await subreddit.save();
   }
 
@@ -82,11 +101,8 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
  * @returns The response to that request containing [statusCode, data]
  */
 export async function unbanUserService(moderator, userToBan, subreddit) {
-  // check if user is moderator in the subreddit
-  const index = subreddit.moderators.findIndex(
-    (elem) => elem.userID.toString() === moderator._id.toString()
-  );
-  if (index === -1) {
+  const mod = checkIfModerator(moderator, subreddit);
+  if (mod === -1) {
     let error = new Error("Unauthorized access");
     error.statusCode = 401;
     throw error;
@@ -103,5 +119,211 @@ export async function unbanUserService(moderator, userToBan, subreddit) {
   return {
     statusCode: 200,
     message: "User unbanned successfully",
+  };
+}
+
+/**
+ * Function used to map the permissions object into array of string permissions
+ *
+ * @param {Object} data Permissions that was sent in the request body
+ * @returns {Array} Array of permissions
+ */
+function extractPermissions(data) {
+  let permissions = [];
+  if (data.permissionToEverything) {
+    permissions.push("Everything");
+  } else {
+    if (data.permissionToManageUsers) {
+      permissions.push("Manage Users");
+    }
+    if (data.permissionToManageSettings) {
+      permissions.push("Manage Settings");
+    }
+    if (data.permissionToManageFlair) {
+      permissions.push("Manage Flair");
+    }
+    if (data.permissionToManagePostsComments) {
+      permissions.push("Manage Posts & Comments");
+    }
+  }
+  return permissions;
+}
+
+/**
+ * Function used to invite a user to be a moderator to that subreddit by adding that user
+ * to invitedModerators array of the subreddit object and prepare the permissions array.
+ * It checks if [moderator] is a moderator of the wanted subreddit.
+ *
+ * @param {Object} moderator Moderator object of the subreddit
+ * @param {Object} userToInvite User object that we want to invite
+ * @param {Object} subreddit Subreddit object
+ * @param {Object} data Request body containing all permissions
+ * @returns The response to that request containing [statusCode, data]
+ */
+// eslint-disable-next-line max-statements
+export async function inviteToModerateService(
+  moderator,
+  userToInvite,
+  subreddit,
+  data
+) {
+  const mod = checkIfModerator(moderator, subreddit);
+  if (mod === -1) {
+    let error = new Error("Unauthorized access");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  // check if user is already a moderator
+  const userMod = checkIfModerator(userToInvite, subreddit);
+  if (userMod !== -1) {
+    // edit his permissions
+    const permissions = extractPermissions(data);
+    subreddit.moderators[userMod].permissions = permissions;
+    await subreddit.save();
+
+    return {
+      statusCode: 200,
+      message: "Moderator's permissions edited successfully",
+    };
+  }
+
+  // check if user was invited before
+  const foundUserIndex = subreddit.invitedModerators.findIndex(
+    (elem) => elem.userID.toString() === userToInvite._id.toString()
+  );
+  if (foundUserIndex === -1) {
+    const permissions = extractPermissions(data);
+
+    subreddit.invitedModerators.push({
+      userID: userToInvite._id,
+      permissions: permissions,
+    });
+    await subreddit.save();
+  }
+
+  return {
+    statusCode: 200,
+    message: "Invitation sent successfully",
+  };
+}
+
+/**
+ * Function used to cancel the moderation invitation to a user for a certain subreddit by removing him
+ * from the invitedModerators array of that subreddit.
+ * It checks if [moderator] is a moderator of the wanted subreddit.
+ *
+ * @param {Object} moderator Moderator object of the subreddit
+ * @param {Object} invitedUser User object that we want to cancel his invitation
+ * @param {Object} subreddit Subreddit object
+ * @returns The response to that request containing [statusCode, data]
+ */
+export async function cancelInvitationService(
+  moderator,
+  invitedUser,
+  subreddit
+) {
+  const mod = checkIfModerator(moderator, subreddit);
+  if (mod === -1) {
+    let error = new Error("Unauthorized access");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const foundUserIndex = subreddit.invitedModerators.findIndex(
+    (elem) => elem.userID.toString() === invitedUser._id.toString()
+  );
+  if (foundUserIndex !== -1) {
+    subreddit.invitedModerators.splice(foundUserIndex, 1);
+    await subreddit.save();
+  }
+
+  return {
+    statusCode: 200,
+    message: "Invitation canceled successfully",
+  };
+}
+
+/**
+ * Function used to accept the invitation to be a moderator in a subreddit.
+ * It checks if user is already a moderator in that subreddit, else it removes him from
+ * invited moderators and add him to moderators arry in that subreddit
+ * It checks if [moderator] is a moderator of the wanted subreddit.
+ *
+ * @param {Object} user User object that was invited to be a moderator
+ * @param {Object} subreddit Subreddit object
+ * @returns The response to that request containing [statusCode, data]
+ */
+export async function acceptModerationInviteService(user, subreddit) {
+  // check if user is already a moderator
+  const userMod = checkIfModerator(user, subreddit);
+  if (userMod !== -1) {
+    let error = new Error("User is already a moderator in that subreddit");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // removed the user from invited moderators and add him to moderators
+  const invitedUserIndex = subreddit.invitedModerators.findIndex(
+    (elem) => elem.userID.toString() === user._id.toString()
+  );
+  if (invitedUserIndex === -1) {
+    let error = new Error(
+      "User was not invited to be a moderator in that subreddit"
+    );
+    error.statusCode = 401;
+    throw error;
+  }
+
+  subreddit.moderators.push({
+    userID: user._id,
+    permissions: subreddit.invitedModerators[invitedUserIndex].permissions,
+  });
+
+  subreddit.invitedModerators.splice(invitedUserIndex, 1);
+
+  await subreddit.save();
+
+  return {
+    statusCode: 200,
+    message: "Invitation accepted successfully",
+  };
+}
+
+/**
+ * Function used to remove a user from the moderators array of a subreddit and also
+ * check if the user was not a moderator at first place.
+ *
+ * @param {Object} user User that want to leave the moderation
+ * @param {Object} subreddit Subreddit object
+ * @returns The response to that request containing [statusCode, data]
+ */
+export async function leaveModerationService(user, subreddit) {
+  // check if user is the owner
+  if (subreddit.owner.userID.toString() === user._id.toString()) {
+    let error = new Error(
+      "Owner can not leave the moderation of the subreddit"
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+  // check if user is already a moderator
+  const modUserIndex = subreddit.moderators.findIndex(
+    (elem) => elem.userID.toString() === user._id.toString()
+  );
+
+  if (modUserIndex === -1) {
+    let error = new Error("User is not a moderator in that subreddit");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  // removed the user from moderators
+  subreddit.moderators.splice(modUserIndex, 1);
+  await subreddit.save();
+
+  return {
+    statusCode: 200,
+    message: "Moderation has been successfully left",
   };
 }
