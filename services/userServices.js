@@ -211,3 +211,19 @@ export async function getUserAboutDataService(username, loggedInUserId) {
     },
   };
 }
+
+/**
+ * Function used to clear user's history posts
+ *
+ * @param {Object} user User object that we want to clear his history
+ * @returns {Object} Response to the request containing [statusCode, message]
+ */
+export async function clearHistoyService(user) {
+  user.historyPosts = [];
+  await user.save();
+
+  return {
+    statusCode: 200,
+    message: "History cleared successfully",
+  };
+}

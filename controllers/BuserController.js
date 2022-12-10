@@ -9,6 +9,7 @@ import {
   blockUserService,
   followUserService,
   getUserAboutDataService,
+  clearHistoyService,
 } from "../services/userServices.js";
 
 const blockUserValidator = [
@@ -33,6 +34,15 @@ const followUserValidator = [
 
 const usernameValidator = [
   param("username")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Username can not be empty"),
+];
+
+const usernameBodyValidator = [
+  body("username")
     .trim()
     .escape()
     .not()
@@ -239,6 +249,25 @@ const userHistoryPosts = async (req, res) => {
   }
 };
 
+const clearHistoy = async (req, res) => {
+  try {
+    if (req.body.username !== req.payload.username) {
+      return res.status(401).json("Access Denied");
+    }
+    const user = await searchForUserService(req.body.username);
+
+    const result = await clearHistoyService(user);
+    res.status(result.statusCode).json(result.message);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 const userOverview = async (req, res) => {
   try {
     const { sort, time, before, after, limit } = req.query;
@@ -357,6 +386,8 @@ export default {
   userDownvotedPosts,
   userHiddenPosts,
   userHistoryPosts,
+  usernameBodyValidator,
+  clearHistoy,
   userOverview,
   userSavedPostsAndComments,
   userComments,
