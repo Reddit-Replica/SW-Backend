@@ -363,7 +363,7 @@ moderationRouter.post(
  * /moderator-invite:
  *  post:
  *   summary:
- *    Send a moderation invite to a user.
+ *    Send a moderation invite to a user. Or edit the permissions of a moderator of a subreddit.
  *   tags: [General moderation]
  *   requestBody:
  *    required: true

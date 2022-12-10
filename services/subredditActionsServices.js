@@ -31,7 +31,7 @@ function checkIfModerator(user, subreddit) {
   const index = subreddit.moderators.findIndex(
     (elem) => elem.userID.toString() === user._id.toString()
   );
-  return index !== -1;
+  return index;
 }
 
 /**
@@ -47,7 +47,7 @@ function checkIfModerator(user, subreddit) {
 // eslint-disable-next-line max-statements
 export async function banUserService(moderator, userToBan, subreddit, data) {
   const mod = checkIfModerator(moderator, subreddit);
-  if (!mod) {
+  if (mod === -1) {
     let error = new Error("Unauthorized access");
     error.statusCode = 401;
     throw error;
@@ -102,7 +102,7 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
  */
 export async function unbanUserService(moderator, userToBan, subreddit) {
   const mod = checkIfModerator(moderator, subreddit);
-  if (!mod) {
+  if (mod === -1) {
     let error = new Error("Unauthorized access");
     error.statusCode = 401;
     throw error;
@@ -120,6 +120,33 @@ export async function unbanUserService(moderator, userToBan, subreddit) {
     statusCode: 200,
     message: "User unbanned successfully",
   };
+}
+
+/**
+ * Function used to map the permissions object into array of string permissions
+ *
+ * @param {Object} data Permissions that was sent in the request body
+ * @returns {Array} Array of permissions
+ */
+function extractPermissions(data) {
+  let permissions = [];
+  if (data.permissionToEverything) {
+    permissions.push("Everything");
+  } else {
+    if (data.permissionToManageUsers) {
+      permissions.push("Manage Users");
+    }
+    if (data.permissionToManageSettings) {
+      permissions.push("Manage Settings");
+    }
+    if (data.permissionToManageFlair) {
+      permissions.push("Manage Flair");
+    }
+    if (data.permissionToManagePostsComments) {
+      permissions.push("Manage Posts & Comments");
+    }
+  }
+  return permissions;
 }
 
 /**
@@ -141,7 +168,7 @@ export async function inviteToModerateService(
   data
 ) {
   const mod = checkIfModerator(moderator, subreddit);
-  if (!mod) {
+  if (mod === -1) {
     let error = new Error("Unauthorized access");
     error.statusCode = 401;
     throw error;
@@ -149,10 +176,16 @@ export async function inviteToModerateService(
 
   // check if user is already a moderator
   const userMod = checkIfModerator(userToInvite, subreddit);
-  if (userMod) {
-    let error = new Error("User is already a moderator in that subreddit");
-    error.statusCode = 400;
-    throw error;
+  if (userMod !== -1) {
+    // edit his permissions
+    const permissions = extractPermissions(data);
+    subreddit.moderators[userMod].permissions = permissions;
+    await subreddit.save();
+
+    return {
+      statusCode: 200,
+      message: "Moderator's permissions edited successfully",
+    };
   }
 
   // check if user was invited before
@@ -160,23 +193,7 @@ export async function inviteToModerateService(
     (elem) => elem.userID.toString() === userToInvite._id.toString()
   );
   if (foundUserIndex === -1) {
-    let permissions = [];
-    if (data.permissionToEverything) {
-      permissions.push("Everything");
-    } else {
-      if (data.permissionToManageUsers) {
-        permissions.push("Manage Users");
-      }
-      if (data.permissionToManageSettings) {
-        permissions.push("Manage Settings");
-      }
-      if (data.permissionToManageFlair) {
-        permissions.push("Manage Flair");
-      }
-      if (data.permissionToManagePostsComments) {
-        permissions.push("Manage Posts & Comments");
-      }
-    }
+    const permissions = extractPermissions(data);
 
     subreddit.invitedModerators.push({
       userID: userToInvite._id,
@@ -207,7 +224,7 @@ export async function cancelInvitationService(
   subreddit
 ) {
   const mod = checkIfModerator(moderator, subreddit);
-  if (!mod) {
+  if (mod === -1) {
     let error = new Error("Unauthorized access");
     error.statusCode = 401;
     throw error;
@@ -240,7 +257,7 @@ export async function cancelInvitationService(
 export async function acceptModerationInviteService(user, subreddit) {
   // check if user is already a moderator
   const userMod = checkIfModerator(user, subreddit);
-  if (userMod) {
+  if (userMod !== -1) {
     let error = new Error("User is already a moderator in that subreddit");
     error.statusCode = 400;
     throw error;
