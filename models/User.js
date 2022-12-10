@@ -309,13 +309,13 @@ const userSchema = mongoose.Schema({
   usernameMentions: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Message",
+      ref: "Mention",
     },
   ],
   postReplies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Message",
+      ref: "Comments",
     },
   ],
   conversations: [
@@ -323,9 +323,6 @@ const userSchema = mongoose.Schema({
       conversationId: {
         type: Schema.Types.ObjectId,
         ref: "Conversation",
-      },
-      with: {
-        type: String,
       },
     },
   ],

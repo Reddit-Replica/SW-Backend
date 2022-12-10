@@ -14,11 +14,7 @@ import { searchForUserService } from "./userServices.js";
  * @returns {Object} Object contains the post or maybe the error that happened
  */
 export async function searchForPost(postId) {
-  if (!postId.match(/^[0-9a-fA-F]{24}$/)) {
-    let error = new Error("This is not a valid post id");
-    error.statusCode = 400;
-    throw error;
-  }
+  //NEED TO ADD A CHECK ON THE ID
   const post = await Post.findById(postId);
   if (!post || post.deletedAt) {
     let error = new Error("This Post isn't found");
@@ -53,11 +49,8 @@ export async function isUserMod(post, user) {
  * @returns {Object} Object contains the post or maybe the error that happened
  */
 export async function searchForComment(commentId) {
-  if (!commentId.match(/^[0-9a-fA-F]{24}$/)) {
-    let error = new Error("This is not a valid comment id");
-    error.statusCode = 400;
-    throw error;
-  }
+  //NEED TO ADD A CHECK ON THE ID
+  console.log(commentId);
   const comment = await Comment.findById(commentId);
   if (!comment || comment.deletedAt) {
     let error = new Error("This comment isn't found");
