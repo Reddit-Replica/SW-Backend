@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 import Subreddit from "../models/Community.js";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
@@ -278,6 +279,12 @@ export async function addPost(req, res, next) {
   try {
     const user = req.user;
     const post = req.post;
+    if (post.subredditName) {
+      const subreddit = await Subreddit.findOne({ title: post.subredditName });
+      subreddit.unmoderatedPosts.push(post.id.toString());
+      subreddit.subredditPosts.push(post.id.toString());
+      await subreddit.save();
+    }
     user.posts.push(post.id);
     user.upvotedPosts.push(post.id);
     user.commentedPosts.push(post.id);
