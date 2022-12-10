@@ -62,13 +62,12 @@ const search = async (req, res) => {
         time,
       });
     } else if (type === "user") {
-      result = await searchUsers(query, { after, before, limit, sort, time });
+      result = await searchUsers(query, { after, before, limit, time });
     } else {
       result = await searchSubreddits(query, {
         after,
         before,
         limit,
-        sort,
         time,
       });
     }
