@@ -894,12 +894,6 @@
  *      id:
  *       type: string
  *       description: this item's identifier.
- *      type:
- *       type: string
- *       enum:
- *        - Post
- *        - Comment
- *       description: the type of this item whether it is a comment or a post.
  *      data:
  *       type: object
  *       description: A custom data structure used to hold valuable information.
@@ -910,48 +904,57 @@
  *         postedBy:
  *           type: string
  *           description: The username for the publisher of the post
- *         commentedBy:
- *           type: string
- *           description: The username for the user made the comment (in case that item has a type comment).
  *         title:
  *           type: string
  *           description: Title of the post
+ *         link:
+ *           type: string
+ *           description: Post link (kind = link)
+ *         images:
+ *           type: array
+ *           description: Post content (kind = image)
+ *           items:
+ *              type: object
+ *              properties:
+ *                 path:
+ *                   type: string
+ *                   description: Image path
+ *                 caption:
+ *                   type: string
+ *                   description: Image caption
+ *                 link:
+ *                   type: string
+ *                   description: Image link
+ *         video:
+ *           type: string
+ *           description: Video path (kind = video)
  *         content:
- *           type: string
- *           description: Content of the post [text, video, image, link] (in case that item has a type post).
- *         commentContent:
- *           type: string
- *           description: Content of the comment (in case that item has a type comment).
- *         postUpVotes:
+ *           type: object
+ *           description: Post content (kind = hybrid)
+ *         nsfw:
+ *           type: boolean
+ *           description: Not Safe for Work
+ *         spoiler:
+ *           type: boolean
+ *           description: Blur the content of the post
+ *         votes:
  *           type: integer
- *           description: Number of Up votes to that post (in case that item has a type post).
- *         postDownVotes:
- *               type: integer
- *               description: Number of Down votes to that post (in case that item has a type post).
- *         commentUpVotes:
- *           type: integer
- *           description: Number of Up votes to that comment (in case that item has a type comment).
- *         commentDownVotes:
- *               type: integer
- *               description: Number of Down votes to that comment (in case that item has a type comment).
+ *           description: Number of votes for the post
  *         numberOfComments:
  *               type: integer
  *               description: Total number of comments (in case that item has a type post).
- *         edited:
- *           type: boolean
- *           description: If true, then this post or comment is edited
- *         editTime:
+ *         editedAt:
  *           type: string
  *           format: date-time
  *           description: Edit time of the post or comment
- *         publishTime:
+ *         postedAt:
  *           type: string
  *           format: date-time
  *           description: Publish time of the post
- *         commentPublishTime:
+ *         spammedAt:
  *           type: string
  *           format: date-time
- *           description: Publish time of the Comment (in case that item has a type comment).
+ *           description: Time the post was spammed at
  *         saved:
  *               type: boolean
  *               description: If true, then this post or comment is saved before by that moderator.
@@ -961,7 +964,7 @@
  *             - 1
  *             - 0
  *             - -1
- *           description: Used to know if that moderator voted up [1] or down [-1] or didn't vote [0] to that post or comment
+ *           description: Used to know if that moderator voted up [1] or down [-1] or didn't vote [0] to that post
  *   ListingPost:
  *     type: object
  *     properties:
