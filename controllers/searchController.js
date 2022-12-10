@@ -13,23 +13,17 @@ import {
 const searchValidator = [
   query("q").not().isEmpty().withMessage("Query must be given").trim().escape(),
   query("type")
-    .not()
-    .isEmpty()
-    .withMessage("Type must be given")
-    .trim()
-    .escape(),
-  check("type").isIn(["post", "comment", "user", "subreddit"]),
+    .optional()
+    .isIn(["post", "comment", "user", "subreddit"])
+    .withMessage("Invalid value for type"),
 ];
 
 const searchSubredditValidator = [
   query("q").not().isEmpty().withMessage("Query must be given").trim().escape(),
   query("type")
-    .not()
-    .isEmpty()
-    .withMessage("Type must be given")
-    .trim()
-    .escape(),
-  check("type").isIn(["post", "comment"]),
+    .optional()
+    .isIn(["post", "comment", "user", "subreddit"])
+    .withMessage("Invalid value for type"),
   param("subreddit")
     .not()
     .isEmpty()
@@ -40,11 +34,14 @@ const searchSubredditValidator = [
 
 // eslint-disable-next-line max-statements
 const search = async (req, res) => {
-  const type = req.query.type;
+  let type = req.query.type;
   const query = req.query.q;
   const { after, before, limit, sort, time } = req.query;
   try {
     let result;
+    if (!type) {
+      type = "post";
+    }
     if (type === "post") {
       result = await searchPosts(query, {
         after,
@@ -94,6 +91,9 @@ const searchSubreddit = async (req, res) => {
   const { after, before, limit, sort, time } = req.query;
   try {
     let result;
+    if (!type) {
+      type = "post";
+    }
     if (type === "post") {
       result = await searchForPosts(subreddit, query, {
         after,
