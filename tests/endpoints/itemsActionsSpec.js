@@ -43,6 +43,7 @@ describe("Testing post, comment, and message actions endpoints", () => {
       content: "comment content",
       ownerUsername: user1.username,
       ownerId: user1._id,
+      createdAt: Date.now(),
     });
     await comment.save();
 

@@ -42,6 +42,7 @@ describe("Testing prepare listing functions", () => {
       content: "Comment Content",
       ownerId: user._id,
       ownerUsername: user.username,
+      createdAt: Date.now(),
     });
     comment1.save();
   });

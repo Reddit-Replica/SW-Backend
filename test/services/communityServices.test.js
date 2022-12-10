@@ -55,6 +55,7 @@ describe("Testing community service functions", () => {
         username: "Noaman",
         userID: normalUser.Id,
       },
+      createdAt: Date.now(),
     }).save();
   });
 

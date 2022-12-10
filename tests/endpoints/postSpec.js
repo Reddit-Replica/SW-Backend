@@ -31,6 +31,7 @@ describe("Testing Post endpoints", () => {
       category: "Software",
       type: "private",
       owner: owner,
+      createdAt: Date.now(),
     }).save();
     user.joinedSubreddits.push({
       subredditId: subreddit.id,

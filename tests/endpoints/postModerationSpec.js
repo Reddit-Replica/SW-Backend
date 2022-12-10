@@ -33,6 +33,7 @@ describe("Testing Post Moderation endpoints", () => {
       category: "Software",
       type: "private",
       owner: owner,
+      createdAt: Date.now(),
     }).save();
     subreddit.moderators = [
       {
@@ -55,6 +56,7 @@ describe("Testing Post Moderation endpoints", () => {
       ownerId: user.id,
       ownerUsername: user.username,
       level: 1,
+      createdAt: Date.now(),
     }).save();
     token = generateJWT(user);
   });
@@ -160,6 +162,7 @@ describe("Testing Post Moderation endpoints", () => {
       ownerId: user.id,
       ownerUsername: user.username,
       level: 2,
+      createdAt: Date.now(),
     }).save();
     const approveSubmission = {
       id: subredditComment.id.toString(),
