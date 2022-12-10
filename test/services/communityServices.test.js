@@ -26,22 +26,26 @@ describe("Testing community service functions", () => {
     normalUser = await new User({
       username: "NormalUser",
       email: "Noaman@gmail.com",
+      createdAt: Date.now(),
     }).save();
 
     await new User({
       username: "SecondNormalUser",
       email: "Ahmed@gmail.com",
+      createdAt: Date.now(),
     }).save();
 
     moderatorUser = await new User({
       username: "Moderator",
       email: "Abelrahman@gmail.com",
+      createdAt: Date.now(),
     }).save();
 
     await new User({
       username: "DeletedUser",
       email: "Hamouda@gmail.com",
       deletedAt: "10 June 2015",
+      createdAt: Date.now(),
     }).save();
 
     await new Subreddit({

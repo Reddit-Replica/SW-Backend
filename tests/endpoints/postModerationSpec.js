@@ -23,6 +23,7 @@ describe("Testing Post Moderation endpoints", () => {
       username: "Hamdy",
       email: "abdelrahmanhamdy49@gmail.com",
       password: hashPassword("12345678"),
+      createdAt: Date.now(),
     }).save();
     const owner = {
       username: user.username,
@@ -93,6 +94,7 @@ describe("Testing Post Moderation endpoints", () => {
   it("Approve a post from a user who isn't a mod", async () => {
     const testUser = await new User({
       username: "Ahmed",
+      createdAt: Date.now(),
     }).save();
     const testToken = generateJWT(testUser);
     const approveSubmission = {

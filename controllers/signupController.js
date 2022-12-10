@@ -80,6 +80,7 @@ const signup = async (req, res) => {
       username: username,
       email: email,
       password: hashPassword(password),
+      createdAt: Date.now(),
     });
     await user.save();
 
@@ -187,6 +188,7 @@ const signinWithGoogleFacebook = async (req, res) => {
         username: randomUsername,
         email: email,
         googleEmail: email,
+        createdAt: Date.now(),
       });
       await newUser.save();
 

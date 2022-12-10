@@ -18,6 +18,7 @@ describe("Testing post actions endpoints", () => {
     user1 = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user1.save();
     token1 = generateJWT(user1);
@@ -35,6 +36,7 @@ describe("Testing post actions endpoints", () => {
     user2 = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user2.save();
     token2 = generateJWT(user2);

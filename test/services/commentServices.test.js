@@ -33,12 +33,14 @@ describe("Testing comment services functions", () => {
     user = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user.save();
 
     loggedInUser = new User({
       username: "LoggedInUser",
       email: "sad@gmail.com",
+      createdAt: Date.now(),
     });
     await loggedInUser.save();
 

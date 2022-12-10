@@ -19,6 +19,7 @@ describe("Testing comment endpoints", () => {
     user = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user.save();
 
