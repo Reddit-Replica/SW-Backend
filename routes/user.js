@@ -268,7 +268,13 @@ userRouter.get(
  *       500:
  *         description: Internal server error
  */
-userRouter.get("/user/:username/overview");
+userRouter.get(
+  "/user/:username/overview",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userOverview
+);
 
 /**
  * @swagger
@@ -456,7 +462,13 @@ userRouter.get(
  *       500:
  *         description: Internal server error
  */
-userRouter.get("/user/:username/comments");
+userRouter.get(
+  "/user/:username/comments",
+  optionalToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userComments
+);
 
 /**
  * @swagger
@@ -675,7 +687,13 @@ userRouter.get(
  *     security:
  *       - bearerAuth: []
  */
-userRouter.get("/user/:username/saved");
+userRouter.get(
+  "/user/:username/saved",
+  verifyAuthToken,
+  userController.usernameValidator,
+  validateRequestSchema,
+  userController.userSavedPostsAndComments
+);
 
 /**
  * @swagger

@@ -1,5 +1,8 @@
 import { body, param } from "express-validator";
-import { listingUserProfileService } from "../services/userProfileListing.js";
+import {
+  listingUserProfileService,
+  listingUserOverview,
+} from "../services/userProfileListing.js";
 import {
   getUserFromJWTService,
   searchForUserService,
@@ -102,7 +105,12 @@ const userPosts = async (req, res) => {
     const { sort, time, before, after, limit } = req.query;
 
     const userToShow = await searchForUserService(req.params.username);
-    const user = await getUserFromJWTService(req.userId);
+    let user = null;
+    try {
+      user = await getUserFromJWTService(req.userId);
+    } catch (error) {
+      console.log(error.message);
+    }
 
     const result = await listingUserProfileService(userToShow, user, "posts", {
       sort,
@@ -231,6 +239,112 @@ const userHistoryPosts = async (req, res) => {
   }
 };
 
+const userOverview = async (req, res) => {
+  try {
+    const { sort, time, before, after, limit } = req.query;
+    const userToShow = await searchForUserService(req.params.username);
+    let user = null;
+    try {
+      user = await getUserFromJWTService(req.userId);
+    } catch (error) {
+      console.log(error.message);
+    }
+
+    const result = await listingUserOverview(
+      userToShow,
+      user,
+      "commentedPosts",
+      false,
+      {
+        sort,
+        time,
+        before,
+        after,
+        limit,
+      }
+    );
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const userSavedPostsAndComments = async (req, res) => {
+  try {
+    if (req.params.username !== req.payload.username) {
+      return res.status(401).json("Access Denied");
+    }
+    const { sort, time, before, after, limit } = req.query;
+    const userToShow = await searchForUserService(req.params.username);
+    const user = await getUserFromJWTService(req.payload.userId);
+
+    const result = await listingUserOverview(
+      userToShow,
+      user,
+      "savedPosts",
+      false,
+      {
+        sort,
+        time,
+        before,
+        after,
+        limit,
+      }
+    );
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const userComments = async (req, res) => {
+  try {
+    const { sort, time, before, after, limit } = req.query;
+    const userToShow = await searchForUserService(req.params.username);
+    let user = null;
+    try {
+      user = await getUserFromJWTService(req.userId);
+    } catch (error) {
+      console.log(error.message);
+    }
+
+    const result = await listingUserOverview(
+      userToShow,
+      user,
+      "commentedPosts",
+      true,
+      {
+        sort,
+        time,
+        before,
+        after,
+        limit,
+      }
+    );
+
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   blockUserValidator,
   blockUser,
@@ -243,4 +357,7 @@ export default {
   userDownvotedPosts,
   userHiddenPosts,
   userHistoryPosts,
+  userOverview,
+  userSavedPostsAndComments,
+  userComments,
 };
