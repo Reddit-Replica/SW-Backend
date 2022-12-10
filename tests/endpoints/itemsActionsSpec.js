@@ -33,6 +33,7 @@ describe("Testing post, comment, and message actions endpoints", () => {
       ownerId: user1._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post.save();
 

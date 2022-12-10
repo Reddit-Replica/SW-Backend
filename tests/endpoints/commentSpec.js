@@ -30,6 +30,7 @@ describe("Testing comment endpoints", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post.save();
 

@@ -31,6 +31,7 @@ describe("Testing prepare listing functions", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post1.save();
 

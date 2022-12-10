@@ -48,6 +48,7 @@ describe("Testing Post Moderation endpoints", () => {
       subredditName: subreddit.title,
       ownerId: user.id,
       ownerUsername: user.username,
+      createdAt: Date.now(),
     }).save();
     comment = await new Comment({
       parentId: post.id,
@@ -186,6 +187,7 @@ describe("Testing Post Moderation endpoints", () => {
       title: "User Post Title",
       ownerId: user.id,
       ownerUsername: user.username,
+      createdAt: Date.now(),
     }).save();
     const approveSubmission = {
       id: userPost.id.toString(),

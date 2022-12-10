@@ -48,6 +48,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post1.save();
 
@@ -57,6 +58,7 @@ describe("Testing comment services functions", () => {
       ownerId: loggedInUser._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post2.save();
 

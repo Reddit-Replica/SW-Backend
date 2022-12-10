@@ -28,6 +28,7 @@ describe("Testing post actions endpoints", () => {
       ownerId: user1._id,
       subredditName: "subreddit",
       kind: "text",
+      createdAt: Date.now(),
     });
     await post.save();
 
