@@ -438,7 +438,7 @@ moderationRouter.post("/moderator-invite");
  *         description: The name of the subreddit.
  *   responses:
  *    200:
- *     description: Invitation sent successfully
+ *     description: Invitation canceled successfully
  *    400:
  *     description: The request was invalid. You may refer to response for details around why the request was invalid
  *     content:
