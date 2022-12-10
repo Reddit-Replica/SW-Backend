@@ -22,7 +22,7 @@ export async function listingBannedUsers(
   const result = await Subreddit.findOne({ title: subredditName })
     .select(typeOfListing)
     .populate({
-      path: typeOfListing,
+      path: "typeOfListing" + ".userID",
       match: listingResult.find,
       limit: listingResult.limit,
     });
@@ -35,7 +35,7 @@ export async function listingBannedUsers(
     let userData = { id: result[typeOfListing][i].userID.toString() };
     userData.data = {
       username: user.username,
-      userPhoto: user.avatar,
+      userPhoto: user.userID.avatar,
       bannedAt: user.bannedAt,
       banPeriod: user.banPeriod,
       modNote: user.modNote,
