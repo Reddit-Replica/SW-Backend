@@ -20,6 +20,25 @@ export async function getSubredditService(subredditName) {
 }
 
 /**
+ * Function used to check if the user is a moderator to that subreddit.
+ * It throw an error if he was not a moderator.
+ *
+ * @param {Object} user User to check if he is a moderator to the subreddit
+ * @param {Object} subreddit Subreddit object
+ */
+function checkIfModerator(user, subreddit) {
+  // check if user is moderator in the subreddit
+  const index = subreddit.moderators.findIndex(
+    (elem) => elem.userID.toString() === user._id.toString()
+  );
+  if (index === -1) {
+    let error = new Error("Unauthorized access");
+    error.statusCode = 401;
+    throw error;
+  }
+}
+
+/**
  * Function used to ban a user from a certain subreddit. It checks if [moderator] is a moderator of
  * the wanted subreddit. It also checks if the user was banned before in the same subreddit.
  *
@@ -31,15 +50,7 @@ export async function getSubredditService(subredditName) {
  */
 // eslint-disable-next-line max-statements
 export async function banUserService(moderator, userToBan, subreddit, data) {
-  // check if user is moderator in the subreddit
-  const index = subreddit.moderators.findIndex(
-    (elem) => elem.userID.toString() === moderator._id.toString()
-  );
-  if (index === -1) {
-    let error = new Error("Unauthorized access");
-    error.statusCode = 401;
-    throw error;
-  }
+  checkIfModerator(moderator, subreddit);
 
   // make sure that the moderator is not trying to ban himself
   if (moderator._id.toString() === userToBan._id.toString()) {
@@ -89,15 +100,7 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
  * @returns The response to that request containing [statusCode, data]
  */
 export async function unbanUserService(moderator, userToBan, subreddit) {
-  // check if user is moderator in the subreddit
-  const index = subreddit.moderators.findIndex(
-    (elem) => elem.userID.toString() === moderator._id.toString()
-  );
-  if (index === -1) {
-    let error = new Error("Unauthorized access");
-    error.statusCode = 401;
-    throw error;
-  }
+  checkIfModerator(moderator, subreddit);
 
   const foundUserIndex = subreddit.bannedUsers.findIndex(
     (elem) => elem.userId.toString() === userToBan._id.toString()
@@ -110,5 +113,60 @@ export async function unbanUserService(moderator, userToBan, subreddit) {
   return {
     statusCode: 200,
     message: "User unbanned successfully",
+  };
+}
+
+/**
+ * Function used to invite a user to be a moderator to that subreddit.
+ * It checks if [moderator] is a moderator of the wanted subreddit.
+ *
+ * @param {Object} moderator Moderator object of the subreddit
+ * @param {Object} userToInvite User object that we want to invite
+ * @param {Object} subreddit Subreddit object
+ * @param {Object} data Request body containing all permissions
+ * @returns The response to that request containing [statusCode, data]
+ */
+// eslint-disable-next-line max-statements
+export async function inviteToModerate(
+  moderator,
+  userToInvite,
+  subreddit,
+  data
+) {
+  checkIfModerator(moderator, subreddit);
+
+  // check if user was invited before
+  const foundUserIndex = subreddit.invitedModerators.findIndex(
+    (elem) => elem.userID.toString() === userToInvite._id.toString()
+  );
+  if (foundUserIndex === -1) {
+    let permissions = [];
+    if (data.permissionToEverything) {
+      permissions.push("Everything");
+    } else {
+      if (data.permissionToManageUsers) {
+        permissions.push("Manage Users");
+      }
+      if (data.permissionToManageSettings) {
+        permissions.push("Manage Settings");
+      }
+      if (data.permissionToManageFlair) {
+        permissions.push("Manage Flair");
+      }
+      if (data.permissionToManagePostsComments) {
+        permissions.push("Manage Posts & Comments");
+      }
+    }
+
+    subreddit.invitedModerators.push({
+      userID: userToInvite._id,
+      permissions: permissions,
+    });
+    await subreddit.save();
+  }
+
+  return {
+    statusCode: 200,
+    message: "Invitation sent successfully",
   };
 }
