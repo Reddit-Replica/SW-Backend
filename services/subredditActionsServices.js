@@ -273,6 +273,14 @@ export async function acceptModerationInviteService(user, subreddit) {
   };
 }
 
+/**
+ * Function used to remove a user from the moderators array of a subreddit and also
+ * check if the user was not a moderator at first place.
+ *
+ * @param {Object} user User that want to leave the moderation
+ * @param {Object} subreddit Subreddit object
+ * @returns The response to that request containing [statusCode, data]
+ */
 export async function leaveModerationService(user, subreddit) {
   // check if user is the owner
   if (subreddit.owner.userID.toString() === user._id.toString()) {
