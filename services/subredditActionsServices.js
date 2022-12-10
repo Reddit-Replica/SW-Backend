@@ -136,6 +136,16 @@ export async function inviteToModerateService(
 ) {
   checkIfModerator(moderator, subreddit);
 
+  // check if user is already a moderator
+  const moderatorIndex = subreddit.moderators.findIndex(
+    (elem) => elem.userID.toString() === userToInvite._id.toString()
+  );
+  if (moderatorIndex !== -1) {
+    let error = new Error("User is already a moderator in that subreddit");
+    error.statusCode = 400;
+    throw error;
+  }
+
   // check if user was invited before
   const foundUserIndex = subreddit.invitedModerators.findIndex(
     (elem) => elem.userID.toString() === userToInvite._id.toString()
