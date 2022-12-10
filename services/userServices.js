@@ -140,9 +140,10 @@ export async function followUserService(user, userToFollow, follow) {
  */
 // eslint-disable-next-line max-statements
 export async function getUserAboutDataService(username, loggedInUserId) {
-  const user = await User.findOne({ username: username }).populate(
-    "moderatedSubreddits.subredditId"
-  );
+  const user = await User.findOne({
+    username: username,
+    deletedAt: null,
+  }).populate("moderatedSubreddits.subredditId");
   if (!user) {
     return {
       statusCode: 404,
@@ -164,20 +165,22 @@ export async function getUserAboutDataService(username, loggedInUserId) {
 
   let moderatorOf = [];
   for (let i = 0; i < user.moderatedSubreddits.length; i++) {
-    // check if the logged in user follows that subreddit
-    let followed = false;
-    if (loggedInUser) {
-      followed = loggedInUser.joinedSubreddits.includes(
-        user.moderatedSubreddits[i].subredditId._id.toString()
-      );
-    }
+    if (!user.moderatedSubreddits[i].subredditId.deletedAt) {
+      // check if the logged in user follows that subreddit
+      let followed = false;
+      if (loggedInUser) {
+        followed = loggedInUser.joinedSubreddits.includes(
+          user.moderatedSubreddits[i].subredditId._id.toString()
+        );
+      }
 
-    moderatorOf.push({
-      subredditName: user.moderatedSubreddits[i].subredditId.title,
-      numOfMembers: user.moderatedSubreddits[i].subredditId.members,
-      nsfw: user.moderatedSubreddits[i].subredditId.nsfw,
-      followed: followed,
-    });
+      moderatorOf.push({
+        subredditName: user.moderatedSubreddits[i].subredditId.title,
+        numOfMembers: user.moderatedSubreddits[i].subredditId.members,
+        nsfw: user.moderatedSubreddits[i].subredditId.nsfw,
+        followed: followed,
+      });
+    }
   }
 
   // check if the user was blocked by the logged in user
