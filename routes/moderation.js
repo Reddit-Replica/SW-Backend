@@ -933,7 +933,7 @@ moderationRouter.get(
  *        properties:
  *         communityTopics:
  *          type: array
- *          description: The topics of the community. (maximum 25 topic)
+ *          description: The topics of the community
  *          items:
  *           type: object
  *           properties:
