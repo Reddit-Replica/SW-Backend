@@ -176,8 +176,9 @@ export async function createCommentService(data, post) {
   );
   if (index === -1) {
     post.usersCommented.push(user._id);
-    await post.save();
   }
+  post.numberOfComments = post.numberOfComments + 1;
+  await post.save();
 
   return {
     statusCode: 201,
