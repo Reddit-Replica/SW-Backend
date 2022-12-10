@@ -119,18 +119,29 @@ const communitySchema = mongoose.Schema({
   ],
   moderators: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
       userID: {
         type: Schema.Types.ObjectId,
         ref: "User",
       },
-      nickname: {
-        type: String,
-      },
       dateOfModeration: {
+        type: Date,
+        required: true,
+        default: Date.now(),
+      },
+      permissions: [
+        {
+          type: String,
+        },
+      ],
+    },
+  ],
+  invitedModerators: [
+    {
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      dateOfInvitation: {
         type: Date,
         required: true,
         default: Date.now(),
@@ -148,9 +159,24 @@ const communitySchema = mongoose.Schema({
         type: String,
         required: true,
       },
-      userID: {
+      userId: {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+      bannedAt: {
+        type: Date,
+      },
+      banPeriod: {
+        type: Number,
+      },
+      modNote: {
+        type: String,
+      },
+      noteInclude: {
+        type: String,
+      },
+      reasonForBan: {
+        type: String,
       },
     },
   ],

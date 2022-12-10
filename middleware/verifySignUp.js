@@ -14,7 +14,10 @@ import User from "../models/User.js";
 export async function checkDuplicateUsernameOrEmail(req, res, next) {
   try {
     // Username
-    const username = await User.findOne({ username: req.body.username.trim() });
+    const username = await User.findOne({
+      username: req.body.username.trim(),
+      deletedAt: null,
+    });
     if (username) {
       return res.status(400).json({ error: "Username is already in use" });
     }
@@ -22,9 +25,9 @@ export async function checkDuplicateUsernameOrEmail(req, res, next) {
     //Email
     const email = req.body.email.trim();
     const emailUser = await User.findOne().or([
-      { email: email },
-      { googleEmail: email },
-      { facebookEmail: email },
+      { email: email, deletedAt: null },
+      { googleEmail: email, deletedAt: null },
+      { facebookEmail: email, deletedAt: null },
     ]);
     if (emailUser) {
       return res.status(400).json({ error: "Email is already in use" });

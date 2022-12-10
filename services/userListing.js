@@ -19,10 +19,14 @@ export async function listingBannedUsers(
     };
   }
 
+  listingResult.find = {
+    deletedAt: null,
+    "userId._id": listingResult.find._id,
+  };
   const result = await Subreddit.findOne({ title: subredditName })
     .select(typeOfListing)
     .populate({
-      path: typeOfListing,
+      path: typeOfListing + ".userId",
       match: listingResult.find,
       limit: listingResult.limit,
     });
@@ -31,16 +35,15 @@ export async function listingBannedUsers(
 
   for (const i in result[typeOfListing]) {
     const user = result[typeOfListing][i];
-
-    let userData = { id: result[typeOfListing][i]._id.toString() };
+    let userData = { id: result[typeOfListing][i].userId._id.toString() };
     userData.data = {
       username: user.username,
-      userPhoto: user.userPhoto,
-      bannedAt: user.ban.bannedAt,
-      banPeriod: user.ban.banPeriod,
-      modNote: user.ban.modNote,
-      noteInclude: user.ban.noteInclude,
-      reasonForBan: user.ban.reasonForBan,
+      userPhoto: user.userId.avatar,
+      bannedAt: user.bannedAt,
+      banPeriod: user.banPeriod,
+      modNote: user.modNote,
+      noteInclude: user.noteInclude,
+      reasonForBan: user.reasonForBan,
     };
 
     children.push(userData);
@@ -50,8 +53,10 @@ export async function listingBannedUsers(
     before = "";
   if (result[typeOfListing].length) {
     after =
-      result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
-    before = result[typeOfListing][0]._id.toString();
+      result[typeOfListing][
+        result[typeOfListing].length - 1
+      ].userId._id.toString();
+    before = result[typeOfListing][0].userId._id.toString();
   }
   return {
     statusCode: 200,

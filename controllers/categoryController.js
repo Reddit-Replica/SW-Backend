@@ -1,10 +1,9 @@
-import Category from "../models/Category.js";
 import {
   getSortedCategories,
   insertCategoriesIfNotExists,
 } from "../services/categories.js";
 
-const getAllCategories = async (req, res, next) => {
+const getAllCategories = async (_req, res) => {
   try {
     await insertCategoriesIfNotExists();
     const categories = await getSortedCategories();
