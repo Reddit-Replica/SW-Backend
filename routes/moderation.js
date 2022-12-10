@@ -314,76 +314,27 @@ moderationRouter.get(
 
 /**
  * @swagger
- * /r/{subreddit}/accept-moderator-invite:
+ * /accept-moderator-invite:
  *  post:
  *   summary:
  *    Accept an invite to moderate the specified subreddit. The authenticated user must have been invited to moderate the subreddit by one of its current moderators or the admin.
  *   tags: [General moderation]
- *   parameters:
- *    - in: path
- *      name: subreddit
- *      description: name of the subreddit.
- *      schema:
- *       type: string
- *      required: true
- *   responses:
- *    200:
- *     description: Accepted
- *    400:
- *     description: Bad Request
- *     content:
- *      application/json:
- *       schema:
- *        properties:
- *         error:
- *          type: string
- *          description: Type of error
- *    401:
- *     description: Unauthorized access
- *    500:
- *     description: Internal Server Error
- *   security:
- *    - bearerAuth: []
- */
-
-moderationRouter.post("/r/:subreddit/accept-moderator-invite");
-
-/**
- * @swagger
- * /r/{subreddit}/moderator-invite:
- *  post:
- *   summary:
- *    Send a moderation invite to a user.
- *   tags: [General moderation]
- *   parameters:
- *    - in: path
- *      name: subreddit
- *      description: name of the subreddit.
- *      schema:
- *       type: string
- *      required: true
  *   requestBody:
  *    required: true
  *    content:
  *     application/json:
  *      schema:
  *       required:
- *        - accessTo
+ *        - subreddit
  *       properties:
- *        accessTo:
+ *        subreddit:
  *         type: string
- *         description: Give the moderator access to do what.
- *         enum:
- *          - Every thing
- *          - Manage users
- *          - Manage settings
- *          - Manage flair
- *          - Manage posts and comments
+ *         description: The name of the subreddit.
  *   responses:
  *    200:
- *     description: Accepted
+ *     description: Invitation accepted successfully
  *    400:
- *     description: Bad Request
+ *     description: The request was invalid. You may refer to response for details around why the request was invalid
  *     content:
  *      application/json:
  *       schema:
@@ -399,7 +350,133 @@ moderationRouter.post("/r/:subreddit/accept-moderator-invite");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/r/:subreddit/moderator-invite");
+moderationRouter.post(
+  "/accept-moderator-invite",
+  verifyAuthToken,
+  subredditActionsController.acceptModerationInviteValidator,
+  validateRequestSchema,
+  subredditActionsController.acceptModerationInvite
+);
+
+/**
+ * @swagger
+ * /moderator-invite:
+ *  post:
+ *   summary:
+ *    Send a moderation invite to a user.
+ *   tags: [General moderation]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - username
+ *        - subreddit
+ *        - permissionToEverything
+ *        - permissionToManageUsers
+ *        - permissionToManageSettings
+ *        - permissionToManageFlair
+ *        - permissionToManagePostsComments
+ *       properties:
+ *        username:
+ *         type: string
+ *         description: Username of the user to send the invitation to.
+ *        subreddit:
+ *         type: string
+ *         description: The name of the subreddit.
+ *        permissionToEverything:
+ *         type: boolean
+ *         description: True if user can have full access in that subreddit
+ *        permissionToManageUsers:
+ *         type: boolean
+ *         description: True if user can access mod notes, ban and mute users, and approve submitters
+ *        permissionToManageSettings:
+ *         type: boolean
+ *         description: True if user can manage community settings, appearance, emojis, rules, and AutoMod
+ *        permissionToManageFlair:
+ *         type: boolean
+ *         description: True if user can create and manage user and post flair
+ *        permissionToManagePostsComments:
+ *         type: boolean
+ *         description: True if user can access queues, take action on content, and manage collections and events
+ *   responses:
+ *    200:
+ *     description: Invitation sent successfully
+ *    400:
+ *     description: The request was invalid. You may refer to response for details around why the request was invalid
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post(
+  "/moderator-invite",
+  verifyAuthToken,
+  subredditActionsController.inviteModeratorValidator,
+  validateRequestSchema,
+  subredditActionsController.inviteModerators
+);
+
+/**
+ * @swagger
+ * /cancel-invitation:
+ *  post:
+ *   summary:
+ *    Cancel the invitation that was sent to a user
+ *   tags: [General moderation]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - username
+ *        - subreddit
+ *       properties:
+ *        username:
+ *         type: string
+ *         description: Username of the user to send the invitation to.
+ *        subreddit:
+ *         type: string
+ *         description: The name of the subreddit.
+ *   responses:
+ *    200:
+ *     description: Invitation canceled successfully
+ *    400:
+ *     description: The request was invalid. You may refer to response for details around why the request was invalid
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post(
+  "/cancel-invitation",
+  verifyAuthToken,
+  subredditActionsController.unbanUserValidator,
+  validateRequestSchema,
+  subredditActionsController.cancelInvitation
+);
 
 /**
  * @swagger
@@ -421,9 +498,9 @@ moderationRouter.post("/r/:subreddit/moderator-invite");
  *         description: name of the subreddit to leave it's moderation.
  *   responses:
  *    200:
- *     description: Accepted
+ *     description: Moderation has been successfully left
  *    400:
- *     description: Bad Request
+ *     description: The request was invalid. You may refer to response for details around why the request was invalid
  *     content:
  *      application/json:
  *       schema:
@@ -441,7 +518,13 @@ moderationRouter.post("/r/:subreddit/moderator-invite");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/leave-moderator");
+moderationRouter.post(
+  "/leave-moderator",
+  verifyAuthToken,
+  subredditActionsController.acceptModerationInviteValidator,
+  validateRequestSchema,
+  subredditActionsController.leaveModeration
+);
 
 /**
  * @swagger
@@ -874,7 +957,7 @@ moderationRouter.get(
  *        properties:
  *         communityTopics:
  *          type: array
- *          description: The topics of the community. (maximum 25 topic)
+ *          description: The topics of the community
  *          items:
  *           type: object
  *           properties:
@@ -891,6 +974,12 @@ moderationRouter.get(
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/suggested-topics");
+moderationRouter.get(
+  "/r/:subreddit/suggested-topics",
+  verifyAuthToken,
+  subredditActionsController.getSuggestedTopicsValidator,
+  validateRequestSchema,
+  subredditActionsController.getSuggestedTopics
+);
 
 export default moderationRouter;
