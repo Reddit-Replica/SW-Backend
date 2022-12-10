@@ -539,7 +539,75 @@ postRouter.post(
  *                              pinnedPosts:
  *                                type: array
  *                                items:
- *                                    $ref: '#/components/schemas/Post'
+ *                                    type: object
+ *                                    properties:
+ *                                      id:
+ *                                        type: string
+ *                                        description: id of a post
+ *                                      kind:
+ *                                        type: string
+ *                                        enum:
+ *                                            - link
+ *                                            - hybrid
+ *                                            - image
+ *                                            - video
+ *                                            - post
+ *                                      subreddit:
+ *                                        type: string
+ *                                        description: Subreddit name
+ *                                      link:
+ *                                        type: string
+ *                                        description: Post link (kind = link)
+ *                                      images:
+ *                                        type: array
+ *                                        description: Images (kind = image)
+ *                                        items:
+ *                                            type: object
+ *                                            properties:
+ *                                              path:
+ *                                                type: string
+ *                                                description: Image path
+ *                                              caption:
+ *                                                type: string
+ *                                                description: Image caption
+ *                                              link:
+ *                                                type: string
+ *                                                description: Image link
+ *                                      video:
+ *                                        type: string
+ *                                        description: Video path (kind = video)
+ *                                      content:
+ *                                        type: object
+ *                                        description: Post content (kind = hybrid)
+ *                                      nsfw:
+ *                                        type: boolean
+ *                                        description: Not Safe for Work
+ *                                      spoiler:
+ *                                        type: boolean
+ *                                        description: Blur the content of the post
+ *                                      title:
+ *                                        type: string
+ *                                        description: Title of the submission
+ *                                      sharePostId:
+ *                                        type: string
+ *                                        description: Post id in case of containing info of a shared post (kind = post)
+ *                                      flair:
+ *                                        $ref: '#/components/schemas/Flair'
+ *                                      comments:
+ *                                        type: number
+ *                                        description: Total number of comments on a post
+ *                                      votes:
+ *                                        type: number
+ *                                        description: Total number of votes on a post
+ *                                      postedAt:
+ *                                        type: string
+ *                                        description: The time in which this post was published
+ *                                      postedBy:
+ *                                        type: string
+ *                                        description: Name of the user associated with the post
+ *                                      vote:
+ *                                        type: integer
+ *                                        description: 1 if the user upvoted this post, -1 for downvoted and 0 otherwise
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
