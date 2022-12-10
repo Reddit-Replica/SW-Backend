@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import {
   banUserService,
   getSubredditService,
@@ -8,6 +8,10 @@ import {
   acceptModerationInviteService,
   leaveModerationService,
 } from "../services/subredditActionsServices.js";
+import {
+  insertTopicsIfNotExists,
+  getSuggestedTopicsService,
+} from "../services/topics.js";
 import {
   getUserFromJWTService,
   searchForUserService,
@@ -86,6 +90,15 @@ const inviteModeratorValidator = [
 
 const acceptModerationInviteValidator = [
   body("subreddit")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Subreddit name can not be empty"),
+];
+
+const getSuggestedTopicsValidator = [
+  param("subreddit")
     .trim()
     .escape()
     .not()
@@ -220,6 +233,23 @@ const leaveModeration = async (req, res) => {
   }
 };
 
+const getSuggestedTopics = async (req, res) => {
+  try {
+    const subreddit = await getSubredditService(req.params.subreddit);
+
+    await insertTopicsIfNotExists();
+    const result = await getSuggestedTopicsService(subreddit);
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   banUserValidator,
   banUser,
@@ -231,4 +261,6 @@ export default {
   acceptModerationInviteValidator,
   acceptModerationInvite,
   leaveModeration,
+  getSuggestedTopicsValidator,
+  getSuggestedTopics,
 };

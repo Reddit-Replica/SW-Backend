@@ -974,6 +974,12 @@ moderationRouter.get(
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/suggested-topics");
+moderationRouter.get(
+  "/r/:subreddit/suggested-topics",
+  verifyAuthToken,
+  subredditActionsController.getSuggestedTopicsValidator,
+  validateRequestSchema,
+  subredditActionsController.getSuggestedTopics
+);
 
 export default moderationRouter;
