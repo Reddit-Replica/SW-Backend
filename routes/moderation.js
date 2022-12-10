@@ -414,7 +414,13 @@ moderationRouter.post("/accept-moderator-invite");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/moderator-invite");
+moderationRouter.post(
+  "/moderator-invite",
+  verifyAuthToken,
+  subredditActionsController.inviteModeratorValidator,
+  validateRequestSchema,
+  subredditActionsController.inviteModerators
+);
 
 /**
  * @swagger
