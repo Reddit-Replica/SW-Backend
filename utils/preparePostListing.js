@@ -28,8 +28,8 @@ function preparePostSort(listingSort) {
         result = null;
         break;
       case "old":
-        result.sort = { createdAt: 1 };
-        result.sortingType = { type: "createdAt" };
+        result = { createdAt: 1 };
+        sortingType = { type: "createdAt" };
         break;
       default:
         result = { createdAt: -1 };
@@ -106,9 +106,14 @@ async function preparePostBeforeAfter(before, after, sort, sortingType) {
       }
 
       if (sort) {
+        let value = { $gt: post[sortingType.type] };
+        // eslint-disable-next-line max-depth
+        if (sort.createdAt === 1) {
+          value = { $lt: post[sortingType.type] };
+        }
         result = {
           type: sortingType.type,
-          value: { $gt: post[sortingType.type] },
+          value: value,
         };
       } else {
         result = {
@@ -128,9 +133,14 @@ async function preparePostBeforeAfter(before, after, sort, sortingType) {
       }
 
       if (sort) {
+        let value = { $lt: post[sortingType.type] };
+        // eslint-disable-next-line max-depth
+        if (sort.createdAt === 1) {
+          value = { $gt: post[sortingType.type] };
+        }
         result = {
           type: sortingType.type,
-          value: { $lt: post[sortingType.type] },
+          value: value,
         };
       } else {
         result = {

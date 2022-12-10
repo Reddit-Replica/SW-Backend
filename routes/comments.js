@@ -107,6 +107,17 @@ commentsRouter.post(
  *         schema:
  *           type: integer
  *           default: 25
+ *       - in: query
+ *         name: sort
+ *         description: Comments sorting algorithm
+ *         schema:
+ *           type: string
+ *           default: best
+ *           enum:
+ *             - best
+ *             - top
+ *             - new
+ *             - old
  *     responses:
  *       200:
  *         content:

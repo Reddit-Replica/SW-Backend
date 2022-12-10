@@ -60,6 +60,7 @@ export function prepareCreateFlairBody(req) {
     flairSettings: {},
     subreddit: req.subreddit._id,
     flairOrder: req.subreddit.numberOfFlairs,
+    createdAt: Date.now(),
   };
   if (req.body.backgroundColor) {
     flairObject.backgroundColor = req.body.backgroundColor;
@@ -263,4 +264,73 @@ export async function editFlairsSettingsService(subreddit, flairsSettings) {
     flairsSettings.allowUsersToAssignTheirOwn;
   console.log(subreddit);
   await subreddit.save();
+}
+
+/**
+ * A function used to validate the request body, if the number of flairs doesn't match it throws an error
+ * @param {Object} req Request object
+ * @returns {void}
+ */
+
+export function checkEditFlairsOrderService(req) {
+  if (req.body.flairsOrder.length !== req.subreddit.numberOfFlairs) {
+    const error = new Error("Number of flairs doesn't match");
+    error.statusCode = 400;
+    throw error;
+  }
+}
+
+/**
+ * A function used to validate the request body, if the flair order or the flair id is dublicated it throws an error
+ * @param {Object} req Request object
+ * @returns {void}
+ */
+
+export function checkDublicateFlairOrderService(req) {
+  const flairOrders = new Map();
+  const flairIds = new Map();
+  req.body.flairsOrder.forEach((element) => {
+    if (flairOrders.has(element.flairOrder)) {
+      const error = new Error("dublicate flair order");
+      error.statusCode = 400;
+      throw error;
+    } else if (flairIds.has(element.flairId)) {
+      const error = new Error("dublicate flair id");
+      error.statusCode = 400;
+      throw error;
+    } else {
+      flairOrders.set(element.flairOrder, 1);
+      flairIds.set(element.flairId, 1);
+    }
+  });
+}
+
+/**
+ * A function used to update the flairs orders of the subreddit
+ * @param {Object} req Request object
+ * @returns {void}
+ */
+
+export async function editFlairsOrderService(req) {
+  // loop through the subreddit flairs and the request body flairs
+  for (let i = 0; i < req.subreddit.flairs.length; i++) {
+    for (let j = 0; j < req.body.flairsOrder.length; j++) {
+      if (
+        req.subreddit.flairs[i]._id.toString() ===
+          req.body.flairsOrder[j].flairId &&
+        req.subreddit.flairs[i].deletedAt
+      ) {
+        const error = new Error("Flair not found");
+        error.statusCode = 400;
+        throw error;
+      } else if (
+        req.subreddit.flairs[i]._id.toString() ===
+        req.body.flairsOrder[j].flairId
+      ) {
+        req.subreddit.flairs[i].flairOrder = req.body.flairsOrder[j].flairOrder;
+        await req.subreddit.flairs[i].save();
+      }
+    }
+  }
+  await req.subreddit.save();
 }

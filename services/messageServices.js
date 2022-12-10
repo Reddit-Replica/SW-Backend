@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 /* eslint-disable max-len */
 import User from "../models/User.js";
 import Message from "../models/Message.js";
@@ -9,6 +10,8 @@ import {
 } from "../utils/messagesUtils.js";
 import { searchForUserService } from "./userServices.js";
 import { searchForSubreddit } from "./communityServices.js";
+import Mention from "../models/Mention.js";
+import { searchForComment } from "./PostActions.js";
 /**
  * This function is used to add a message
  * it add the msg to sender's sent messages and to the receiver's received messages
@@ -37,9 +40,7 @@ export async function addMessage(req) {
   //CREATING A NEW CONVERSATIONS USING THE MESSAGE SENT
   const conversationId = await createNewConversation(message);
   //GETTING THE CONVERSATION SO WE WOULD BE ABLE TO ADD THE MSG TO IT
-  const conversation = await Conversation.findById(conversationId);
-  conversation.messages.push({ messageID: message.id });
-  await conversation.save();
+  await addToConversation(message, conversationId);
   //ADDING THIS CONVERSATION TO THE USERS IF IT EXISTS THERE
   await addConversationToUsers(message, conversationId);
 }
@@ -50,9 +51,24 @@ export async function addMessage(req) {
  * @returns {String} indicates if the message was sent successfully or not
  */
 export async function addMention(req) {
-  const mention = await new Message(req.msg).save();
-  const receiver = await User.findOne({ username: mention.receiverUsername });
-  addUserMention(receiver.id, mention);
+  const existingMention = await Mention.findOne({
+    commentId: req.mention.commentId,
+    receiverUsername: req.mention.receiverUsername,
+  });
+  if (existingMention) {
+    let error = new Error("This mention already exists");
+    error.statusCode = 400;
+    throw error;
+  }
+  const comment = await searchForComment(req.mention.commentId);
+  if (comment.ownerUsername !== req.payload.username) {
+    let error = new Error("The user sent the request isn't the comment owner");
+    error.statusCode = 400;
+    throw error;
+  }
+  const mention = await new Mention(req.mention).save();
+  const receiver = await searchForUserService(mention.receiverUsername);
+  await addUserMention(receiver.id, mention);
 }
 /**
  * This function is used to create a new conversation
@@ -106,6 +122,7 @@ export async function addToConversation(msg, conversationId) {
     throw err;
   }
   conversation.messages.push({ messageID: msg.id });
+  conversation.latestDate = Date.now();
   conversation.save();
 }
 /**
@@ -116,15 +133,12 @@ export async function addToConversation(msg, conversationId) {
  */
 async function checkExistingConversation(user, conversationId) {
   //CHECKING IF THE USER HAVE ALREADY THAT CONVERSATION OR WE NEED TO ADD IT
-  await user.populate("conversations.conversationId");
-  const conversations = user.conversations;
-  let valid = false;
-  conversations.forEach((conversation) => {
-    if (conversation.conversationId.id === conversationId) {
-      valid = true;
+  for (const conversation of user.conversations) {
+    if (conversation.id === conversationId) {
+      return true;
     }
-  });
-  return valid;
+  }
+  return false;
 }
 /**
  * This function is used to add the conversation to the users in case that they don't have it
@@ -136,27 +150,25 @@ async function checkExistingConversation(user, conversationId) {
 async function addConversationToUsers(message, convId) {
   // WE SEARCH FOR THE SENDER TO CHECK IF HE HAS THE CONVERSATION OR NOT
   if (message.isSenderUser) {
-    const userOne = await User.findOne({ username: message.senderUsername });
-    const userOneConv = await checkExistingConversation(userOne, convId);
-    if (!userOneConv) {
-      userOne.conversations.push({
+    const sender = await User.findOne({ username: message.senderUsername });
+    const senderConversation = checkExistingConversation(sender, convId);
+    if (!senderConversation) {
+      sender.conversations.push({
         conversationId: convId,
-        with: message.receiverUsername,
       });
-      await userOne.save();
+      await sender.save();
     }
   }
   if (message.isReceiverUser) {
-    const userTwo = await User.findOne({
+    const receiver = await User.findOne({
       username: message.receiverUsername,
     });
-    const userTwoConv = await checkExistingConversation(userTwo, convId);
-    if (!userTwoConv) {
-      userTwo.conversations.push({
+    const receiverConversation = checkExistingConversation(receiver, convId);
+    if (!receiverConversation) {
+      receiver.conversations.push({
         conversationId: convId,
-        with: message.senderUsername,
       });
-      await userTwo.save();
+      await receiver.save();
     }
   }
 }
@@ -169,29 +181,27 @@ async function addConversationToUsers(message, convId) {
  */
 // eslint-disable-next-line max-statements
 export async function validateMessage(req) {
-  //MESSAGE TYPE MUST BE MENTIONS OR MESSAGES ONLY
-  if (req.body.type !== "Mentions" && req.body.type !== "Messages") {
-    let err = new Error("Message type should be either Mentions or Messages");
+  if (!req.body.subject) {
+    let err = new Error("Subject is needed");
     err.statusCode = 400;
     throw err;
   }
-  //IF THE TYPE IS MENTION THEN POST ID MUST BE ADDED
-  // => WE NEED TO ADD COMMENT ID ALSO
-  if (req.body.type === "Mentions") {
-    if (!req.body.postId) {
-      let err = new Error("Post Id is needed when type is Mentions");
-      err.statusCode = 400;
-      throw err;
-    }
+  if (!req.body.senderUsername) {
+    let err = new Error("senderUsername is needed");
+    err.statusCode = 400;
+    throw err;
   }
-  //IF THE TYPE IS COMMENT THEN SUBJECT MUST BE ADDED
-  if (req.body.type === "Messages") {
-    if (!req.body.subject) {
-      let err = new Error("Subject is needed when type is Messages");
-      err.statusCode = 400;
-      throw err;
-    }
+  if (!req.body.receiverUsername) {
+    let err = new Error("receiverUsername is needed");
+    err.statusCode = 400;
+    throw err;
   }
+  if (!req.body.text) {
+    let err = new Error("text is needed");
+    err.statusCode = 400;
+    throw err;
+  }
+
   //SENDER AND RECEIVER USERNAME MUST BE IN THE FORM /U/USERNAME OR /R/SUBREDDITNAME
   if (
     !req.body.senderUsername.includes("/") ||
@@ -210,10 +220,10 @@ export async function validateMessage(req) {
     text: req.body.text,
     senderUsername: senderArr[senderArr.length - 1],
     receiverUsername: receiverArr[receiverArr.length - 1],
-    type: req.body.type,
+    subject: req.body.subject,
   };
   //CHECKING IF THE SENDER IS SUBREDDIT OR NORMAL USER
-  if (senderArr[senderArr.length - 2] === "r" && msg.type !== "Mentions") {
+  if (senderArr[senderArr.length - 2] === "r") {
     msg.isSenderUser = false;
   } else if (senderArr[senderArr.length - 2] === "u") {
     msg.isSenderUser = true;
@@ -223,7 +233,7 @@ export async function validateMessage(req) {
     throw err;
   }
   //CHECKING IF THE RECEIVER IS A SUBREDDIT OR A NORMAL USER
-  if (receiverArr[receiverArr.length - 2] === "r" && msg.type !== "Mentions") {
+  if (receiverArr[receiverArr.length - 2] === "r") {
     msg.isReceiverUser = false;
   } else if (receiverArr[receiverArr.length - 2] === "u") {
     msg.isReceiverUser = true;
@@ -239,18 +249,12 @@ export async function validateMessage(req) {
     throw err;
   }
   //ADDING EXTRA PARTS OF THE MESSAGE IF IT'S IN THE BODY
-  if (req.body.postId) {
-    msg.postId = req.body.postId;
-  }
+
   if (req.body.subredditName) {
     msg.subredditName = req.body.subredditName;
   }
-
   if (req.body.repliedMsgId) {
     msg.repliedMsgId = req.body.repliedMsgId;
-  }
-  if (req.body.subject) {
-    msg.subject = req.body.subject;
   }
   //CHECKING IF THE RECEIVER IS AVAILABLE OR NOT
   if (msg.isReceiverUser) {
@@ -262,17 +266,45 @@ export async function validateMessage(req) {
   //CHECKING IF THE SENDER IS AVAILABLE OR NOT
   if (msg.isSenderUser) {
     await searchForUserService(msg.senderUsername);
+    if (msg.senderUsername !== req.payload.username) {
+      let err = new Error("This isn't the token of the sender");
+      err.statusCode = 400;
+      throw err;
+    }
   } else {
     await searchForSubreddit(msg.senderUsername);
   }
+  msg.createdAt = Date.now();
   req.msg = msg;
+}
+
+/**
+ * This function is used to validate the data of the req that we wil add to the mention
+ * and it injects the mention content to the req body so we will be able to use it later
+ * @param {Object} req req object from which we get our data
+ * @returns {boolean} defines if the data is valid or not
+ */
+export async function validateMention(req) {
+  if (!req.body.postId || !req.body.commentId) {
+    let err = new Error("Post Id and Comment Id is needed");
+    err.statusCode = 400;
+    throw err;
+  }
+  //CREATING THE MAIN STRUCTURE OF THE MENTION
+  const mention = {
+    commentId: req.body.commentId,
+    postId: req.body.postId,
+    receiverUsername: req.body.receiverUsername,
+  };
+  mention.createdAt = Date.now();
+  req.mention = mention;
 }
 
 export async function searchForMessage(messageId) {
   const msg = await Message.findById(messageId);
   if (!msg || msg.deletedAt) {
     let error = new Error("Couldn't find a message with that Id");
-    error.statusCode = 404;
+    error.statusCode = 400;
     throw error;
   }
   return msg;

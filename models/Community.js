@@ -165,22 +165,17 @@ const communitySchema = mongoose.Schema({
       },
       bannedAt: {
         type: Date,
-        required: true,
-        default: Date.now(),
       },
       banPeriod: {
         type: Number,
-        required: true,
-        default: -1, // Permanent
-      },
-      reasonForBan: {
-        type: String,
-        required: true,
       },
       modNote: {
         type: String,
       },
       noteInclude: {
+        type: String,
+      },
+      reasonForBan: {
         type: String,
       },
     },
