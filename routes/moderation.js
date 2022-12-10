@@ -350,7 +350,13 @@ moderationRouter.get(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/accept-moderator-invite");
+moderationRouter.post(
+  "/accept-moderator-invite",
+  verifyAuthToken,
+  subredditActionsController.acceptModerationInviteValidator,
+  validateRequestSchema,
+  subredditActionsController.acceptModerationInvite
+);
 
 /**
  * @swagger
@@ -414,7 +420,13 @@ moderationRouter.post("/accept-moderator-invite");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/moderator-invite");
+moderationRouter.post(
+  "/moderator-invite",
+  verifyAuthToken,
+  subredditActionsController.inviteModeratorValidator,
+  validateRequestSchema,
+  subredditActionsController.inviteModerators
+);
 
 /**
  * @swagger
@@ -458,7 +470,13 @@ moderationRouter.post("/moderator-invite");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/cancel-invitation");
+moderationRouter.post(
+  "/cancel-invitation",
+  verifyAuthToken,
+  subredditActionsController.unbanUserValidator,
+  validateRequestSchema,
+  subredditActionsController.cancelInvitation
+);
 
 /**
  * @swagger
@@ -500,7 +518,13 @@ moderationRouter.post("/cancel-invitation");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/leave-moderator");
+moderationRouter.post(
+  "/leave-moderator",
+  verifyAuthToken,
+  subredditActionsController.acceptModerationInviteValidator,
+  validateRequestSchema,
+  subredditActionsController.leaveModeration
+);
 
 /**
  * @swagger
@@ -950,6 +974,12 @@ moderationRouter.get(
  *    - bearerAuth: []
  */
 
-moderationRouter.get("/r/:subreddit/suggested-topics");
+moderationRouter.get(
+  "/r/:subreddit/suggested-topics",
+  verifyAuthToken,
+  subredditActionsController.getSuggestedTopicsValidator,
+  validateRequestSchema,
+  subredditActionsController.getSuggestedTopics
+);
 
 export default moderationRouter;
