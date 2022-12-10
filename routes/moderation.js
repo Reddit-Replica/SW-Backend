@@ -1034,7 +1034,7 @@ moderationRouter.post(
   validateRequestSchema,
   checkId,
   checkThingMod,
-  postModerationController.unlock
+  postModerationController.modSpam
 );
 
 /**
