@@ -225,7 +225,6 @@ export async function sharePost(req, res, next) {
 export async function postSubmission(req, res, next) {
   const {
     kind,
-    subreddit,
     title,
     link,
     nsfw,
