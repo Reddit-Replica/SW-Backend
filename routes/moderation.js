@@ -518,7 +518,13 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/leave-moderator");
+moderationRouter.post(
+  "/leave-moderator",
+  verifyAuthToken,
+  subredditActionsController.acceptModerationInviteValidator,
+  validateRequestSchema,
+  subredditActionsController.leaveModeration
+);
 
 /**
  * @swagger

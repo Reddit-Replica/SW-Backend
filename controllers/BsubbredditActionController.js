@@ -6,6 +6,7 @@ import {
   cancelInvitationService,
   unbanUserService,
   acceptModerationInviteService,
+  leaveModerationService,
 } from "../services/subredditActionsServices.js";
 import {
   getUserFromJWTService,
@@ -202,6 +203,23 @@ const acceptModerationInvite = async (req, res) => {
   }
 };
 
+const leaveModeration = async (req, res) => {
+  try {
+    const user = await getUserFromJWTService(req.payload.userId);
+    const subreddit = await getSubredditService(req.body.subreddit);
+
+    const result = await leaveModerationService(user, subreddit);
+    res.status(result.statusCode).json(result.message);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   banUserValidator,
   banUser,
@@ -212,4 +230,5 @@ export default {
   cancelInvitation,
   acceptModerationInviteValidator,
   acceptModerationInvite,
+  leaveModeration,
 };
