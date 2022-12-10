@@ -2,7 +2,8 @@ import { body } from "express-validator";
 import {
   banUserService,
   getSubredditService,
-  inviteToModerate,
+  inviteToModerateService,
+  cancelInvitationService,
   unbanUserService,
 } from "../services/subredditActionsServices.js";
 import {
@@ -128,13 +129,41 @@ const inviteModerators = async (req, res) => {
     const userToInvite = await searchForUserService(req.body.username);
     const subreddit = await getSubredditService(req.body.subreddit);
 
-    const result = await inviteToModerate(moderator, userToInvite, subreddit, {
-      permissionToEverything: req.body.permissionToEverything,
-      permissionToManageUsers: req.body.permissionToManageUsers,
-      permissionToManageSettings: req.body.permissionToManageSettings,
-      permissionToManageFlair: req.body.permissionToManageFlair,
-      permissionToManagePostsComments: req.body.permissionToManagePostsComments,
-    });
+    const result = await inviteToModerateService(
+      moderator,
+      userToInvite,
+      subreddit,
+      {
+        permissionToEverything: req.body.permissionToEverything,
+        permissionToManageUsers: req.body.permissionToManageUsers,
+        permissionToManageSettings: req.body.permissionToManageSettings,
+        permissionToManageFlair: req.body.permissionToManageFlair,
+        permissionToManagePostsComments:
+          req.body.permissionToManagePostsComments,
+      }
+    );
+    res.status(result.statusCode).json(result.message);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const cancelInvitation = async (req, res) => {
+  try {
+    const moderator = await getUserFromJWTService(req.payload.userId);
+    const invitedUser = await searchForUserService(req.body.username);
+    const subreddit = await getSubredditService(req.body.subreddit);
+
+    const result = await cancelInvitationService(
+      moderator,
+      invitedUser,
+      subreddit
+    );
     res.status(result.statusCode).json(result.message);
   } catch (error) {
     console.log(error.message);
@@ -153,4 +182,5 @@ export default {
   unbanUser,
   inviteModeratorValidator,
   inviteModerators,
+  cancelInvitation,
 };

@@ -117,7 +117,8 @@ export async function unbanUserService(moderator, userToBan, subreddit) {
 }
 
 /**
- * Function used to invite a user to be a moderator to that subreddit.
+ * Function used to invite a user to be a moderator to that subreddit by adding that user
+ * to invitedModerators array of the subreddit object and prepare the permissions array.
  * It checks if [moderator] is a moderator of the wanted subreddit.
  *
  * @param {Object} moderator Moderator object of the subreddit
@@ -127,7 +128,7 @@ export async function unbanUserService(moderator, userToBan, subreddit) {
  * @returns The response to that request containing [statusCode, data]
  */
 // eslint-disable-next-line max-statements
-export async function inviteToModerate(
+export async function inviteToModerateService(
   moderator,
   userToInvite,
   subreddit,
@@ -168,5 +169,36 @@ export async function inviteToModerate(
   return {
     statusCode: 200,
     message: "Invitation sent successfully",
+  };
+}
+
+/**
+ * Function used to cancel the moderation invitation to a user for a certain subreddit by removing him
+ * from the invitedModerators array of that subreddit.
+ * It checks if [moderator] is a moderator of the wanted subreddit.
+ *
+ * @param {Object} moderator Moderator object of the subreddit
+ * @param {Object} invitedUser User object that we want to cancel his invitation
+ * @param {Object} subreddit Subreddit object
+ * @returns The response to that request containing [statusCode, data]
+ */
+export async function cancelInvitationService(
+  moderator,
+  invitedUser,
+  subreddit
+) {
+  checkIfModerator(moderator, subreddit);
+
+  const foundUserIndex = subreddit.invitedModerators.findIndex(
+    (elem) => elem.userID.toString() === invitedUser._id.toString()
+  );
+  if (foundUserIndex !== -1) {
+    subreddit.invitedModerators.splice(foundUserIndex, 1);
+    await subreddit.save();
+  }
+
+  return {
+    statusCode: 200,
+    message: "Invitation canceled successfully",
   };
 }
