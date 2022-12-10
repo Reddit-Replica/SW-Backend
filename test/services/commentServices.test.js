@@ -81,6 +81,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 10,
+      createdAt: Date.now(),
     });
     await firstLevelComment1.save();
 
@@ -93,6 +94,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 5,
+      createdAt: Date.now(),
     });
     await firstLevelComment2.save();
 
@@ -105,6 +107,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 1,
+      createdAt: Date.now(),
     });
     await firstLevelComment3.save();
 
@@ -117,6 +120,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 10,
+      createdAt: Date.now(),
     });
     await secondLevelComment1.save();
 
@@ -129,6 +133,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 5,
+      createdAt: Date.now(),
     });
     await secondLevelComment2.save();
 
@@ -141,6 +146,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 1,
+      createdAt: Date.now(),
     });
     await secondLevelComment3.save();
   });

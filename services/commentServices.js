@@ -124,6 +124,7 @@ export async function createCommentService(data, post) {
     content: data.content,
     ownerUsername: data.username,
     ownerId: data.userId,
+    createdAt: Date.now(),
   };
 
   // check if the subreddit exists

@@ -33,7 +33,6 @@ const commentSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     required: true,
-    default: Date.now(),
   },
   editedAt: {
     type: Date,
