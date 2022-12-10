@@ -25,6 +25,7 @@ describe("Testing login endpoints", () => {
     const user = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user.save();
 
@@ -40,6 +41,7 @@ describe("Testing login endpoints", () => {
       username: "Hamdy",
       email: "abdelrahman@gmail.com",
       password: hashPassword("12345678"),
+      createdAt: Date.now(),
     });
     await user.save();
 
