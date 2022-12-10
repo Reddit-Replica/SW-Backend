@@ -5,6 +5,7 @@ import {
   inviteToModerateService,
   cancelInvitationService,
   unbanUserService,
+  acceptModerationInviteService,
 } from "../services/subredditActionsServices.js";
 import {
   getUserFromJWTService,
@@ -80,6 +81,15 @@ const inviteModeratorValidator = [
     .not()
     .isEmpty()
     .withMessage("permissionToManagePostsComments can not be empty"),
+];
+
+const acceptModerationInviteValidator = [
+  body("subreddit")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Subreddit name can not be empty"),
 ];
 
 const banUser = async (req, res) => {
@@ -175,6 +185,23 @@ const cancelInvitation = async (req, res) => {
   }
 };
 
+const acceptModerationInvite = async (req, res) => {
+  try {
+    const user = await getUserFromJWTService(req.payload.userId);
+    const subreddit = await getSubredditService(req.body.subreddit);
+
+    const result = await acceptModerationInviteService(user, subreddit);
+    res.status(result.statusCode).json(result.message);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   banUserValidator,
   banUser,
@@ -183,4 +210,6 @@ export default {
   inviteModeratorValidator,
   inviteModerators,
   cancelInvitation,
+  acceptModerationInviteValidator,
+  acceptModerationInvite,
 };
