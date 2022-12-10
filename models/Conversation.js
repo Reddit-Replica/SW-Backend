@@ -4,7 +4,6 @@ import mongoose, { Schema } from "mongoose";
 const conversationSchema = mongoose.Schema({
   latestDate: {
     type: Date,
-    required: true,
   },
   subject: {
     type: String,

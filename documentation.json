@@ -1645,6 +1645,16 @@
               "type": "integer",
               "default": 25
             }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "description": "Comments sorting algorithm",
+            "schema": {
+              "type": "string",
+              "default": "best",
+              "enum": ["best", "top", "new", "old"]
+            }
           }
         ],
         "responses": {
@@ -3760,7 +3770,7 @@
                   "text",
                   "senderUsername",
                   "receiverUsername",
-                  "type"
+                  "subject"
                 ],
                 "properties": {
                   "text": {
@@ -3779,22 +3789,9 @@
                     "type": "string",
                     "description": "Subject of the message"
                   },
-                  "type": {
-                    "type": "string",
-                    "description": "describes the type of message",
-                    "enum": ["Post replies", "Mentions", "Messages"]
-                  },
-                  "postId": {
-                    "type": "string",
-                    "description": "id of the post that the mention or the reply happens in"
-                  },
                   "subredditName": {
                     "type": "string",
                     "description": "name of the subreddit that you send or received the msg via"
-                  },
-                  "repliedMsgId": {
-                    "type": "string",
-                    "description": "id of the msg that it's a reply from"
                   }
                 }
               }
@@ -3804,6 +3801,76 @@
         "responses": {
           "201": {
             "description": "Your message is sent successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/mention": {
+      "post": {
+        "summary": "Send a mention to a user",
+        "tags": ["Messages"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["postId", "commentId", "receiverUsername"],
+                "properties": {
+                  "postId": {
+                    "type": "string",
+                    "description": "Id of the post that the mention is in"
+                  },
+                  "commentId": {
+                    "type": "string",
+                    "description": "Id of the comment that the mention is in"
+                  },
+                  "receiverUsername": {
+                    "type": "string",
+                    "description": "Username of the user that was mentioned"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Your mention is sent successfully"
           },
           "400": {
             "description": "The request was invalid. You may refer to response for details around why the request was invalid",
@@ -4580,11 +4647,6 @@
                                 "type": "string",
                                 "format": "date-time",
                                 "description": "Time of sending the message"
-                              },
-                              "type": {
-                                "type": "string",
-                                "description": "describes the type of message",
-                                "enum": ["Mentions", "Messages"]
                               },
                               "subredditName": {
                                 "type": "string",
@@ -5403,27 +5465,32 @@
         ]
       }
     },
-    "/r/{subreddit}/accept-moderator-invite": {
+    "/accept-moderator-invite": {
       "post": {
         "summary": "Accept an invite to moderate the specified subreddit. The authenticated user must have been invited to moderate the subreddit by one of its current moderators or the admin.",
         "tags": ["General moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "name of the subreddit.",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["subreddit"],
+                "properties": {
+                  "subreddit": {
+                    "type": "string",
+                    "description": "The name of the subreddit."
+                  }
+                }
+              }
+            }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Accepted"
+            "description": "Invitation accepted successfully"
           },
           "400": {
-            "description": "Bad Request",
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
             "content": {
               "application/json": {
                 "schema": {
@@ -5451,38 +5518,52 @@
         ]
       }
     },
-    "/r/{subreddit}/moderator-invite": {
+    "/moderator-invite": {
       "post": {
         "summary": "Send a moderation invite to a user.",
         "tags": ["General moderation"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "name of the subreddit.",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["accessTo"],
+                "required": [
+                  "username",
+                  "subreddit",
+                  "permissionToEverything",
+                  "permissionToManageUsers",
+                  "permissionToManageSettings",
+                  "permissionToManageFlair",
+                  "permissionToManagePostsComments"
+                ],
                 "properties": {
-                  "accessTo": {
+                  "username": {
                     "type": "string",
-                    "description": "Give the moderator access to do what.",
-                    "enum": [
-                      "Every thing",
-                      "Manage users",
-                      "Manage settings",
-                      "Manage flair",
-                      "Manage posts and comments"
-                    ]
+                    "description": "Username of the user to send the invitation to."
+                  },
+                  "subreddit": {
+                    "type": "string",
+                    "description": "The name of the subreddit."
+                  },
+                  "permissionToEverything": {
+                    "type": "boolean",
+                    "description": "True if user can have full access in that subreddit"
+                  },
+                  "permissionToManageUsers": {
+                    "type": "boolean",
+                    "description": "True if user can access mod notes, ban and mute users, and approve submitters"
+                  },
+                  "permissionToManageSettings": {
+                    "type": "boolean",
+                    "description": "True if user can manage community settings, appearance, emojis, rules, and AutoMod"
+                  },
+                  "permissionToManageFlair": {
+                    "type": "boolean",
+                    "description": "True if user can create and manage user and post flair"
+                  },
+                  "permissionToManagePostsComments": {
+                    "type": "boolean",
+                    "description": "True if user can access queues, take action on content, and manage collections and events"
                   }
                 }
               }
@@ -5491,10 +5572,67 @@
         },
         "responses": {
           "200": {
-            "description": "Accepted"
+            "description": "Invitation sent successfully"
           },
           "400": {
-            "description": "Bad Request",
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/cancel-invitation": {
+      "post": {
+        "summary": "Cancel the invitation that was sent to a user",
+        "tags": ["General moderation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["username", "subreddit"],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Username of the user to send the invitation to."
+                  },
+                  "subreddit": {
+                    "type": "string",
+                    "description": "The name of the subreddit."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invitation canceled successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
             "content": {
               "application/json": {
                 "schema": {
@@ -5544,10 +5682,10 @@
         },
         "responses": {
           "200": {
-            "description": "Accepted"
+            "description": "Moderation has been successfully left"
           },
           "400": {
-            "description": "Bad Request",
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
             "content": {
               "application/json": {
                 "schema": {
@@ -7909,14 +8047,6 @@
           },
           {
             "in": "query",
-            "name": "restrictedSubreddits",
-            "description": "Search in restricted subreddits only",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "in": "query",
             "name": "time",
             "description": "Search within a time frame",
             "schema": {
@@ -8046,14 +8176,6 @@
           },
           {
             "in": "query",
-            "name": "restrictedSubreddits",
-            "description": "Search in restricted subreddits only",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "in": "query",
             "name": "time",
             "description": "Search within a time frame",
             "schema": {
@@ -8094,9 +8216,9 @@
                                 "type": "string",
                                 "description": "Comment ID"
                               },
-                              "text": {
-                                "type": "string",
-                                "description": "Comment content (text)"
+                              "content": {
+                                "type": "object",
+                                "description": "Comment content"
                               },
                               "parentId": {
                                 "type": "string",
@@ -8115,7 +8237,7 @@
                                 "format": "time",
                                 "description": "How long ago the comment was written"
                               },
-                              "upvotes": {
+                              "votes": {
                                 "type": "number",
                                 "description": "Total number of upvotes on the comment"
                               }
@@ -8260,6 +8382,10 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "subreddit Id"
+                          },
                           "subredditName": {
                             "type": "string",
                             "description": "Name of the subreddit"
@@ -8267,6 +8393,10 @@
                           "numberOfMembers": {
                             "type": "number",
                             "description": "Total number of members in the subreddit"
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "Subreddit description"
                           }
                         }
                       }
@@ -8369,14 +8499,6 @@
           },
           {
             "in": "query",
-            "name": "restrictedSubreddits",
-            "description": "Search in restricted subreddits only",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "in": "query",
             "name": "time",
             "description": "Search within a time frame",
             "schema": {
@@ -8407,6 +8529,10 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "User ID"
+                          },
                           "username": {
                             "type": "string",
                             "description": "Username to be displayed"
@@ -8414,6 +8540,10 @@
                           "karma": {
                             "type": "number",
                             "description": "Karma of this account"
+                          },
+                          "avatar": {
+                            "type": "string",
+                            "description": "Avatar path of the user"
                           }
                         }
                       }
@@ -8521,14 +8651,6 @@
             "description": "Search in a specific category",
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "restrictedSubreddits",
-            "description": "Search in restricted subreddits only",
-            "schema": {
-              "type": "boolean"
             }
           },
           {
@@ -8671,14 +8793,6 @@
           },
           {
             "in": "query",
-            "name": "restrictedSubreddits",
-            "description": "Search in restricted subreddits only",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "in": "query",
             "name": "time",
             "description": "Search within a time frame",
             "schema": {
@@ -8719,9 +8833,9 @@
                                 "type": "string",
                                 "description": "Comment ID"
                               },
-                              "text": {
+                              "content": {
                                 "type": "string",
-                                "description": "Comment content (text)"
+                                "description": "Comment content"
                               },
                               "parentId": {
                                 "type": "string",
@@ -8740,7 +8854,7 @@
                                 "format": "time",
                                 "description": "How long ago the comment was written"
                               },
-                              "upvotes": {
+                              "votes": {
                                 "type": "number",
                                 "description": "Total number of upvotes on the comment"
                               }

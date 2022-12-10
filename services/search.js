@@ -159,7 +159,10 @@ export async function searchUsers(query, listingParams) {
   const listingResult = await userListing(listingParams);
 
   const regex = new RegExp(query, "i");
-  listingResult.find["username"] = { $regex: regex };
+  listingResult.find["$or"] = [
+    { username: { $regex: regex } },
+    { displayName: { $regex: regex } },
+  ];
 
   const result = await User.find(listingResult.find)
     .limit(listingResult.limit)
