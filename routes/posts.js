@@ -261,6 +261,57 @@ postRouter.post(
 
 /**
  * @swagger
+ * /edit-post:
+ *  post:
+ *      summary: Edit a post (available only for the posts of hyprid type and only edit the content)
+ *      tags: [Posts]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - content
+ *               - postId
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 description: Object received directly from the WYSIWYG tool
+ *               postId:
+ *                 type: string
+ *                 description: the id of the post
+ *      responses:
+ *          200:
+ *              description: Post edited successfully
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why this happened.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: Type of error
+ *          404:
+ *              description: Post not found
+ *          401:
+ *              description: User not allowed to edit this post
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+postRouter.post(
+  "/edit-post",
+  verifyAuthToken,
+  postController.editValidator,
+  validateRequestSchema,
+  postController.editPost
+);
+
+/**
+ * @swagger
  * /unhide:
  *  post:
  *      summary: Unhide a post
