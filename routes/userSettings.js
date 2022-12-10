@@ -512,11 +512,11 @@ router.delete(
  *         application/json:
  *           schema:
  *             required:
- *               - picture
+ *               - avatar
  *             properties:
- *               picture:
- *                 type: string
- *                 description: Path of the profile picture
+ *               avatar:
+ *                 type: object
+ *                 description: The avatar image
  *     responses:
  *       200:
  *         description: Profile picture has been added successfully
@@ -579,8 +579,8 @@ router.delete(
  *               - banner
  *             properties:
  *               banner:
- *                 type: string
- *                 description: Path of the banner image
+ *                 type: object
+ *                 description: The banner image
  *     responses:
  *       200:
  *         description: Banner image has been added successfully

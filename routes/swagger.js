@@ -704,13 +704,13 @@
  *         type:
  *           type: string
  *           description: type of the community
- *         subredditId:
- *           type: string
- *           description: id of the community
  *           enum:
  *             - private
  *             - public
  *             - restricted
+ *         subredditId:
+ *           type: string
+ *           description: id of the community
  *         isFavorite:
  *           type: boolean
  *           description: true if the subreddit is marked as favorite , false if it's not favorite
