@@ -87,13 +87,9 @@ export async function searchComments(query, listingParams) {
 
   const regex = new RegExp(query, "i");
   listingResult.find["content.ops"] = {
-    $elemMatch: {
-      insert: {
-        $regex: regex,
-        $options: "i",
-      },
-    },
+    $elemMatch: { insert: { $regex: regex } },
   };
+  console.log(listingResult.find);
 
   const result = await Comment.find(listingResult.find)
     .limit(listingResult.limit)
@@ -210,10 +206,10 @@ export async function searchSubreddits(query, listingParams) {
   const listingResult = await subredditListing(listingParams);
 
   const regex = new RegExp(query, "i");
-  listingResult.find["$or"] = {
-    title: { $regex: regex },
-    viewName: { $regex: regex },
-  };
+  listingResult.find["$or"] = [
+    { title: { $regex: regex } },
+    { viewName: { $regex: regex } },
+  ];
 
   const result = await Subreddit.find(listingResult.find)
     .limit(listingResult.limit)
