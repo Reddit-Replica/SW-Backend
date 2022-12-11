@@ -335,7 +335,7 @@ export async function getModeratedSubredditsService(userId) {
 }
 
 /**
- * A Service function used to get the moderated subreddits for the controller
+ * A Service function used to get the joined subreddits for the controller
  * @param {ObjectID} userId the user id
  * @returns {response} the prepared response for the controller
  */
