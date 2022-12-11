@@ -62,6 +62,7 @@ export async function listingSubredditPosts(
     }
     let postData = { id: result[typeOfListing][i]._id.toString() };
     postData.data = {
+      id: post.id.toString(),
       subreddit: post.subredditName,
       postedBy: post.ownerUsername,
       title: post.title,
@@ -165,9 +166,11 @@ export async function listingSubredditComments(
     }
     let commentData = { id: result[typeOfListing][i]._id.toString() };
     commentData.data = {
+      postId: post.id.toString(),
       postTitle: post.title,
       comment: {
-        subreddit: post.subredditName,
+        id: comment.id.toString(),
+        subreddit: comment.subredditName,
         commentedBy: comment.ownerUsername,
         commentedAt: comment.createdAt,
         editedAt: comment.editedAt,
