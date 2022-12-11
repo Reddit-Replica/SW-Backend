@@ -158,6 +158,9 @@
  *   PostDetails:
  *       type: object
  *       properties:
+ *         id:
+ *           type: string
+ *           description: Post ID
  *         kind:
  *           type: string
  *           enum:
