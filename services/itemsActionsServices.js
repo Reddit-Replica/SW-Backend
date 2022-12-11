@@ -1,6 +1,6 @@
-// import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
-// import Message from "../models/Message.js";
+import Message from "../models/Message.js";
+import mongoose from "mongoose";
 import { checkPostId, checkCommentId } from "./commentServices.js";
 
 /**
@@ -79,9 +79,34 @@ async function deleteComment(userId, commentId) {
   await comment.save();
 }
 
-// TODO
+/**
+ * Function used to delete a message for the receiver user.
+ * It also check if the user trying to delete the message is not the receiver of the message
+ *
+ * @param {String} userId User id (owner of the message)
+ * @param {String} messageId Message id that we want to delete
+ */
 async function deleteMessage(userId, messageId) {
-  console.log(userId, messageId);
+  if (!mongoose.Types.ObjectId.isValid(messageId)) {
+    let error = new Error("Invalid message id");
+    error.statusCode = 400;
+    throw error;
+  }
+  const message = await Message.findById(messageId);
+  if (!message || message.deletedAt) {
+    let error = new Error("Can not find a message with that id");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (message.receiverId.toString() !== userId.toString()) {
+    let error = new Error("Unauthorized to delete this message");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  message.deletedAt = Date.now();
+  await message.save();
 }
 
 /**
