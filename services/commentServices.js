@@ -20,7 +20,7 @@ export async function checkPostId(postId) {
   const post = await Post.findById(postId);
   if (!post || post.deletedAt) {
     let error = new Error("Can not find a post with that id");
-    error.statusCode = 400;
+    error.statusCode = 404;
     throw error;
   }
   return post;
@@ -41,7 +41,7 @@ export async function checkCommentId(commentId) {
   const comment = await Comment.findById(commentId);
   if (!comment || comment.deletedAt) {
     let error = new Error("Can not find a comment with that id");
-    error.statusCode = 400;
+    error.statusCode = 404;
     throw error;
   }
   return comment;
