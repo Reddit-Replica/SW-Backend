@@ -188,12 +188,18 @@ const moderationRouter = express.Router();
  *            items:
  *              type: object
  *              properties:
+ *                 postId:
+ *                   type: string
+ *                   description: Post ID
  *                 postTitle:
  *                   type: string
  *                   description: Post title
  *                 comment:
  *                   type: object
  *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: Comment ID
  *                     subreddit:
  *                       type: string
  *                       description: Subreddit Name
@@ -404,12 +410,18 @@ moderationRouter.get(
  *            items:
  *              type: object
  *              properties:
+ *                 postId:
+ *                   type: string
+ *                   description: Post ID
  *                 postTitle:
  *                   type: string
  *                   description: Post title
  *                 comment:
  *                   type: object
  *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: Comment ID
  *                     subreddit:
  *                       type: string
  *                       description: Subreddit Name

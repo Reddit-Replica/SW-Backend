@@ -898,6 +898,9 @@
  *       type: object
  *       description: A custom data structure used to hold valuable information.
  *       properties:
+ *         id:
+ *           type: string
+ *           description: Post ID
  *         subreddit:
  *           type: string
  *           description: Name of subreddit which contain the post
