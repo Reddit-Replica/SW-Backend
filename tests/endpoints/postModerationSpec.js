@@ -23,6 +23,7 @@ describe("Testing Post Moderation endpoints", () => {
       username: "Hamdy",
       email: "abdelrahmanhamdy49@gmail.com",
       password: hashPassword("12345678"),
+      createdAt: Date.now(),
     }).save();
     const owner = {
       username: user.username,
@@ -33,6 +34,7 @@ describe("Testing Post Moderation endpoints", () => {
       category: "Software",
       type: "private",
       owner: owner,
+      createdAt: Date.now(),
     }).save();
     subreddit.moderators = [
       {
@@ -47,6 +49,7 @@ describe("Testing Post Moderation endpoints", () => {
       subredditName: subreddit.title,
       ownerId: user.id,
       ownerUsername: user.username,
+      createdAt: Date.now(),
     }).save();
     comment = await new Comment({
       parentId: post.id,
@@ -55,6 +58,7 @@ describe("Testing Post Moderation endpoints", () => {
       ownerId: user.id,
       ownerUsername: user.username,
       level: 1,
+      createdAt: Date.now(),
     }).save();
     token = generateJWT(user);
   });
@@ -90,6 +94,7 @@ describe("Testing Post Moderation endpoints", () => {
   it("Approve a post from a user who isn't a mod", async () => {
     const testUser = await new User({
       username: "Ahmed",
+      createdAt: Date.now(),
     }).save();
     const testToken = generateJWT(testUser);
     const approveSubmission = {
@@ -160,6 +165,7 @@ describe("Testing Post Moderation endpoints", () => {
       ownerId: user.id,
       ownerUsername: user.username,
       level: 2,
+      createdAt: Date.now(),
     }).save();
     const approveSubmission = {
       id: subredditComment.id.toString(),
@@ -183,6 +189,7 @@ describe("Testing Post Moderation endpoints", () => {
       title: "User Post Title",
       ownerId: user.id,
       ownerUsername: user.username,
+      createdAt: Date.now(),
     }).save();
     const approveSubmission = {
       id: userPost.id.toString(),

@@ -4,7 +4,7 @@ const getBannedUsers = async (req, res) => {
   try {
     const { before, after, limit } = req.query;
     let result;
-    result = await listingBannedUsers(req.params.subreddit, "spammedPosts", {
+    result = await listingBannedUsers(req.params.subreddit, "bannedUsers", {
       before,
       after,
       limit,

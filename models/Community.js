@@ -100,7 +100,7 @@ const communitySchema = mongoose.Schema({
       createdAt: {
         type: Date,
         required: true,
-        default: Date.now(),
+        // default: Date.now(),
       },
       updatedAt: {
         type: Date,
@@ -135,15 +135,48 @@ const communitySchema = mongoose.Schema({
       ],
     },
   ],
+  invitedModerators: [
+    {
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      dateOfInvitation: {
+        type: Date,
+        required: true,
+        default: Date.now(),
+      },
+      permissions: [
+        {
+          type: String,
+        },
+      ],
+    },
+  ],
   bannedUsers: [
     {
       username: {
         type: String,
         required: true,
       },
-      userID: {
+      userId: {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+      bannedAt: {
+        type: Date,
+      },
+      banPeriod: {
+        type: Number,
+      },
+      modNote: {
+        type: String,
+      },
+      noteInclude: {
+        type: String,
+      },
+      reasonForBan: {
+        type: String,
       },
     },
   ],

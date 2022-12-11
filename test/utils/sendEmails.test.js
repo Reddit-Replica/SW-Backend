@@ -20,7 +20,7 @@ describe("Testing send emails functions", () => {
 
   //     user = new User({
   //       username: "Beshoy",
-  //       email: "beshoy@gmail.com",
+  //       email: "beshoy@gmail.com",createdAt: Date.now(),
   //     });
   //     await user.save();
 

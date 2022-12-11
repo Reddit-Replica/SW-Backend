@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 import Subreddit from "../models/Community.js";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
@@ -121,7 +122,7 @@ export function checkImagesAndVideos(req, res, next) {
     let imageCaptions = req.body.imageCaptions;
     let imageLinks = req.body.imageLinks;
     let images = [];
-    const imageFiles = req.files.images;
+    const imageFiles = req.files?.images;
     if (!imageFiles) {
       return res.status(404).json("Images not found");
     }
@@ -159,7 +160,7 @@ export function checkImagesAndVideos(req, res, next) {
     });
     req.images = images;
   } else if (kind === "video") {
-    const videoFile = req.files.video;
+    const videoFile = req.files?.video;
     if (!videoFile) {
       return res.status(404).json("Video not found");
     }
@@ -224,7 +225,6 @@ export async function sharePost(req, res, next) {
 export async function postSubmission(req, res, next) {
   const {
     kind,
-    subreddit,
     title,
     link,
     nsfw,
@@ -243,7 +243,7 @@ export async function postSubmission(req, res, next) {
       kind: kind,
       ownerUsername: username,
       ownerId: userId,
-      subredditName: subreddit,
+      subredditName: req.subreddit,
       title: title,
       sharePostId: sharePostId,
       link: link,
@@ -258,6 +258,7 @@ export async function postSubmission(req, res, next) {
       scheduleDate: scheduleDate,
       scheduleTime: scheduleTime,
       scheduleTimeZone: scheduleTimeZone,
+      createdAt: Date.now(),
     }).save();
     req.post = post;
     next();
@@ -278,6 +279,12 @@ export async function addPost(req, res, next) {
   try {
     const user = req.user;
     const post = req.post;
+    if (post.subredditName) {
+      const subreddit = await Subreddit.findOne({ title: post.subredditName });
+      subreddit.unmoderatedPosts.push(post.id.toString());
+      subreddit.subredditPosts.push(post.id.toString());
+      await subreddit.save();
+    }
     user.posts.push(post.id);
     user.upvotedPosts.push(post.id);
     user.commentedPosts.push(post.id);

@@ -18,10 +18,6 @@ const commentSchema = mongoose.Schema({
   subredditName: {
     type: String,
   },
-  postId: {
-    type: Schema.Types.ObjectId,
-    ref: "Post",
-  },
   level: {
     type: Number,
     required: true,
@@ -32,12 +28,11 @@ const commentSchema = mongoose.Schema({
   numberOfVotes: {
     type: Number,
     required: true,
-    default: 0,
+    default: 1,
   },
   createdAt: {
     type: Date,
     required: true,
-    default: Date.now(),
   },
   editedAt: {
     type: Date,
@@ -48,9 +43,6 @@ const commentSchema = mongoose.Schema({
   ownerUsername: {
     type: String,
     required: true,
-  },
-  ownerAvatar: {
-    type: String,
   },
   ownerId: {
     type: Schema.Types.ObjectId,
