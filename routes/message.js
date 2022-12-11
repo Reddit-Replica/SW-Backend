@@ -943,40 +943,5 @@ router.patch("/spam-message", verifyAuthToken, messageController.markMsgAsSpam);
  */
 
 router.patch("/read-all-msgs");
-/**
- * @swagger
- * /moderated-subreddits:
- *  get:
- *      summary: Return all subreddits that you can send message from ( the ones you are moderator in )
- *      tags: [Messages]
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: object
- *                        properties:
- *                          children:
- *                            type: array
- *                            description: List of the subreddits that your are moderator in and their pictures
- *                            items:
- *                              properties:
- *                               title:
- *                                 type: string
- *                                 description: the title of the subreddits that the user can send messages from and his own username
- *                               picture:
- *                                 type: string
- *                                 description: Path of the picture of the subreddit
- *          404:
- *              description: Page not found
- *          401:
- *              description: User unauthorized to view this info
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-router.get("/moderated-subreddits");
 
 export default router;

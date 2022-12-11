@@ -1,6 +1,6 @@
 import { prepareLimit } from "../utils/prepareLimit.js";
 import { validateId } from "./subredditFlairs.js";
-import Subreddit from "../models/Community.js";
+import User from "../models/User.js";
 /**
  * A Service function used to get the subreddit moderators for the controller
  * @param {Number} limitReq the limit identified in the request
@@ -305,6 +305,56 @@ function getSubredditInvitedModeratorsAfter(subreddit, limit, after) {
       response.after = subreddit.invitedModerators[myLimit - 1].userID._id;
     }
     response.before = subreddit.invitedModerators[neededIndex + 1].userID._id;
+  }
+  return response;
+}
+
+/**
+ * A Service function used to get the moderated subreddits for the controller
+ * @param {ObjectID} userId the user id
+ * @returns {response} the prepared response for the controller
+ */
+export async function getModeratedSubredditsService(userId) {
+  const response = [];
+  const user = await User.findById(userId);
+  if (!user || user.deletedAt) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  await user.populate("moderatedSubreddits.subredditId");
+  for (let i = 0; i < user.moderatedSubreddits.length; i++) {
+    if (!user.moderatedSubreddits[i].subredditId.deletedAt) {
+      response.push({
+        title: user.moderatedSubreddits[i].subredditId.title,
+        picture: user.moderatedSubreddits[i].subredditId.picture,
+      });
+    }
+  }
+  return response;
+}
+
+/**
+ * A Service function used to get the joined subreddits for the controller
+ * @param {ObjectID} userId the user id
+ * @returns {response} the prepared response for the controller
+ */
+export async function getJoinedSubredditsService(userId) {
+  const response = [];
+  const user = await User.findById(userId);
+  if (!user || user.deletedAt) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  await user.populate("joinedSubreddits.subredditId");
+  for (let i = 0; i < user.joinedSubreddits.length; i++) {
+    if (!user.joinedSubreddits[i].subredditId.deletedAt) {
+      response.push({
+        title: user.joinedSubreddits[i].subredditId.title,
+        picture: user.joinedSubreddits[i].subredditId.picture,
+      });
+    }
   }
   return response;
 }
