@@ -207,6 +207,7 @@ export async function searchUsers(query, listingParams) {
  * @param {object} listingParams Listing parameters for listing
  * @returns {void}
  */
+// eslint-disable-next-line max-statements
 export async function searchSubreddits(query, listingParams) {
   // Prepare Listing Parameters
   const listingResult = await subredditListing(listingParams);
@@ -216,6 +217,9 @@ export async function searchSubreddits(query, listingParams) {
     { title: { $regex: regex } },
     { viewName: { $regex: regex } },
   ];
+  listingResult.find["type"] = {
+    $not: { $regex: "(?i)\\bprivate\\b" },
+  };
 
   const result = await Subreddit.find(listingResult.find)
     .limit(listingResult.limit)
