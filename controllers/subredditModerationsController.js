@@ -4,10 +4,11 @@ import {
 } from "../services/subredditSettings.js";
 import { body } from "express-validator";
 import { MainTopics } from "./NcommunityController.js";
-// eslint-disable-next-line max-len
 import {
   getSubredditModerators,
   getSubredditInvitedModerators,
+  getModeratedSubredditsService,
+  getJoinedSubredditsService,
 } from "../services/subredditModerationServices.js";
 const subredditSettingsValidator = [
   body("communityName")
@@ -103,10 +104,40 @@ const getInvitedModerators = async (req, res) => {
   }
 };
 
+const getModeratedSubreddits = async (req, res) => {
+  try {
+    const moderators = await getModeratedSubredditsService(req.payload.userId);
+    res.status(200).json({ children: moderators });
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const getJoinedSubreddits = async (req, res) => {
+  try {
+    const moderators = await getJoinedSubredditsService(req.payload.userId);
+    res.status(200).json({ children: moderators });
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
 export default {
   getSubredditSettings,
   setSubredditSettings,
   getModerators,
   getInvitedModerators,
   subredditSettingsValidator,
+  getModeratedSubreddits,
+  getJoinedSubreddits,
 };
