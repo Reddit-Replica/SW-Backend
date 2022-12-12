@@ -141,7 +141,7 @@ postRouter.post(
  *                    description: id of a post
  *                  sort:
  *                    type: string
- *                    description: one of (top, new, random, best, hot)
+ *                    description: one of (top, new, best, old)
  *      responses:
  *          200:
  *              description: Suggested sort successfully set
