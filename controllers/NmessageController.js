@@ -10,7 +10,7 @@ import {
   searchForMessage,
   unreadMessage,
   validateMention,
-} from "../services/MessageServices.js";
+} from "../services/messageServices.js";
 import {
   userMessageListing,
   userMentionsListing,
