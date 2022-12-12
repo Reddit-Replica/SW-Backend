@@ -92,7 +92,6 @@ export async function addToJoinedSubreddit(user, subreddit) {
     subredditId: subreddit.id,
     name: subreddit.title,
   });
-  console.log(user);
   await user.save();
   subreddit.members += 1;
   await subreddit.save();
