@@ -1333,10 +1333,12 @@ moderationRouter.get(
  *     security:
  *       - bearerAuth: []
  */
-router.post(
+moderationRouter.post(
   "/r/:subreddit/profile-picture",
   verifyAuthToken,
-  userSettingsController.addProfilePicture
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.addProfilePicture
 );
 
 /**
@@ -1362,10 +1364,12 @@ router.post(
  *     security:
  *       - bearerAuth: []
  */
-router.delete(
+moderationRouter.delete(
   "/r/:subreddit/profile-picture",
   verifyAuthToken,
-  userSettingsController.deleteProfilePicture
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.deleteProfilePicture
 );
 
 /**
@@ -1411,10 +1415,12 @@ router.delete(
  *     security:
  *       - bearerAuth: []
  */
-router.post(
+moderationRouter.post(
   "/r/:subreddit/banner-image",
   verifyAuthToken,
-  userSettingsController.addBanner
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.addBanner
 );
 
 /**
@@ -1440,10 +1446,12 @@ router.post(
  *     security:
  *       - bearerAuth: []
  */
-router.delete(
+moderationRouter.delete(
   "/r/:subreddit/banner-image",
   verifyAuthToken,
-  userSettingsController.deleteBanner
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.deleteBanner
 );
 
 /**
@@ -1466,15 +1474,11 @@ router.delete(
  *     application/json:
  *      schema:
  *       required:
- *        - id
- *        - type
+ *        - username
  *       properties:
- *        id:
+ *        username:
  *         type: string
- *         description: id of a thing.
- *        type:
- *         type: string
- *         description: type of that thing (post, comment,..).
+ *         description: Username of the user to be approved
  *   responses:
  *    200:
  *     description: Accepted
@@ -1500,11 +1504,11 @@ router.delete(
 moderationRouter.post(
   "/r/:subreddit/approve-user",
   verifyAuthToken,
-  postModerationController.modValidator,
+  postModController.usernameValidator,
   validateRequestSchema,
-  checkId,
-  checkThingMod,
-  postModerationController.approve
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.approveUser
 );
 
 /**
@@ -1527,15 +1531,14 @@ moderationRouter.post(
  *     application/json:
  *      schema:
  *       required:
- *        - id
- *        - type
+ *        - username
  *       properties:
- *        id:
+ *        username:
  *         type: string
- *         description: id of a thing.
- *        type:
+ *         description: Username of the user to be muted
+ *        muteReason:
  *         type: string
- *         description: type of that thing (post, comment,..).
+ *         description: Reason to why this user was muted
  *   responses:
  *    200:
  *     description: Accepted
@@ -1561,11 +1564,11 @@ moderationRouter.post(
 moderationRouter.post(
   "/r/:subreddit/mute-user",
   verifyAuthToken,
-  postModerationController.modValidator,
+  postModController.usernameValidator,
   validateRequestSchema,
-  checkId,
-  checkThingMod,
-  postModerationController.approve
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.muteUser
 );
 
 export default moderationRouter;

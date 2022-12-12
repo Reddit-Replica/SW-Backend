@@ -292,7 +292,9 @@ const addProfilePicture = async (req, res) => {
     }
     user.avatar = req.files.avatar[0].path;
     await user.save();
-    return res.status(200).json("Profile picture added successfully");
+    return res.status(200).json({
+      path: user.avatar,
+    });
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
@@ -348,9 +350,10 @@ const addBanner = async (req, res) => {
       deleteFile(user.banner);
     }
     user.banner = req.files.banner[0].path;
-    //user.banner = user.banner.replace("\\", "/");
     await user.save();
-    return res.status(200).json("Banner added successfully");
+    return res.status(200).json({
+      path: user.banner,
+    });
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {

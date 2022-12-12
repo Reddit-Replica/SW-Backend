@@ -21,6 +21,23 @@ export async function getUser(userId) {
 }
 
 /**
+ * A function used to check if a user of a given username exists.
+ * @param {string} username Username of the user
+ * @returns {object} User object
+ */
+export async function getUserByUsername(username) {
+  const user = await User.findOne({
+    username: username,
+  });
+  if (!user || user.deletedAt) {
+    const error = new Error("User not found");
+    error.statusCode = 401;
+    throw error;
+  }
+  return user;
+}
+
+/**
  * A function used to verify the user's given username and password
  * @param {object} user User object
  * @param {string} username Username
@@ -149,9 +166,7 @@ export function deleteFile(pathToFile) {
     fs.unlinkSync(pathToFile);
     console.log("Successfully deleted the file.");
   } catch (err) {
-    const error = new Error("Invalid path");
-    error.statusCode = 400;
-    throw error;
+    console.log("File was not found");
   }
 }
 

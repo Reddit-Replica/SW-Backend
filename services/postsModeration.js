@@ -50,3 +50,35 @@ export async function removeFromSpammedComments(id, subredditName) {
   );
   await subreddit.save();
 }
+
+/**
+ * This function checks if a user already exists in the subreddit's
+ * list of approved users and adds it if not
+ * @param {object} subreddit Subreddit object
+ * @param {object} user User object
+ * @returns {void}
+ */
+export async function addToApprovedUsers(subreddit, user) {
+  if (
+    subreddit.approvedUsers.find(
+      (approvedUser) => approvedUser.userId.toString() === user.id.toString()
+    )
+  ) {
+    const error = new Error("This user is already approved");
+    error.statusCode = 400;
+    throw error;
+  }
+  subreddit.approvedUsers.push({
+    username: user.username,
+    userId: user.id,
+    approveDate: Date.now(),
+  });
+  await subreddit.save();
+  if (!user.joinedSubreddits.find((sr) => sr.name === subreddit.title)) {
+    user.joinedSubreddits.push({
+      subredditId: subreddit.id,
+      name: subreddit.title,
+    });
+    await user.save();
+  }
+}
