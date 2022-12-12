@@ -1,6 +1,7 @@
 import express from "express";
 import searchController from "../controllers/searchController.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
+import { optionalToken } from "./../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
 const searchRouter = express.Router();
@@ -478,6 +479,7 @@ const searchRouter = express.Router();
  */
 searchRouter.get(
   "/search",
+  optionalToken,
   searchController.searchValidator,
   validateRequestSchema,
   searchController.search
