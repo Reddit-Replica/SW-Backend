@@ -11226,6 +11226,10 @@
                           "picture": {
                             "type": "string",
                             "description": "Path of the picture of the subreddit"
+                          },
+                          "members": {
+                            "type": "number",
+                            "description": "the number of members in that subreddit"
                           }
                         }
                       }
@@ -11273,6 +11277,10 @@
                           "picture": {
                             "type": "string",
                             "description": "Path of the picture of the subreddit"
+                          },
+                          "members": {
+                            "type": "number",
+                            "description": "the number of members in that subreddit"
                           }
                         }
                       }
