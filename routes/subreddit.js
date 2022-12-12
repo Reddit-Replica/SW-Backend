@@ -170,7 +170,13 @@ subRedditRouter.post(
  *     security:
  *       - bearerAuth: []
  */
-subRedditRouter.post("/leave-subreddit");
+subRedditRouter.post(
+  "/leave-subreddit",
+  verifyAuthToken,
+  subredditController.subredditNameValidator,
+  validateRequestSchema,
+  subredditController.leaveSubreddit
+);
 
 /**
  * @swagger

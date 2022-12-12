@@ -119,6 +119,57 @@ export async function addToJoinedSubreddit(user, subreddit) {
     message: "you joined the subreddit successfully",
   };
 }
+
+/**
+ * Function used to remove the subreddit from the joinedSubreddit list of the user,
+ * then decrement the number of members of the subreddit.
+ * @param {object} user User object that contains the data of the user
+ * @param {object} subreddit Subreddit object that user want to leave
+ */
+export async function leaveSubredditService(user, subreddit) {
+  // check if the user is not a member in that subreddit
+  const joinedIndex = user.joinedSubreddits.findIndex(
+    (ele) => ele.subredditId.toString() === subreddit._id.toString()
+  );
+  const waitedIndex = subreddit.waitedUsers.findIndex(
+    (ele) => ele.userID.toString() === user._id.toString()
+  );
+
+  if (joinedIndex === -1 && waitedIndex === -1) {
+    let error = new Error("Can not leave a subreddit that you did not join");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // if the user was a member in that subreddit
+  if (joinedIndex !== -1) {
+    // check if the user is the owner of the subreddit
+    if (subreddit.owner.userID.toString() === user._id.toString()) {
+      let error = new Error(
+        "Owner of the subreddit can not leave the subreddit"
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+
+    user.joinedSubreddits.splice(joinedIndex, 1);
+    subreddit.members -= 1;
+  }
+
+  // if the user was in the waiting list for that subreddit
+  if (waitedIndex !== -1) {
+    subreddit.waitedIndex.splice(waitedIndex, 1);
+  }
+
+  await user.save();
+  await subreddit.save();
+
+  return {
+    statusCode: 200,
+    message: "You left the subreddit successfully",
+  };
+}
+
 /**
  * This function is used to add a description to a subreddit using one of the moderators
  * @param {String} subredditName subreddit Name
