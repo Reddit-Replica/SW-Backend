@@ -4,6 +4,10 @@ import User from "../models/User.js";
 import Post from "../models/Post.js";
 import Flair from "../models/Flair.js";
 import { deleteFile } from "../services/userSettings.js";
+import {
+  checkIfBanned,
+  checkIfMuted,
+} from "../services/subredditActionsServices.js";
 
 /**
  * Middleware used to check the post is being submitted in a subreddit
@@ -41,6 +45,16 @@ export async function checkPostSubreddit(req, res, next) {
         return res
           .status(401)
           .json("User is not a member/mod of this subreddit");
+      }
+      if (checkIfBanned(userId, subreddit)) {
+        return res.status(400).json({
+          error: "User is banned from this subreddit",
+        });
+      }
+      if (checkIfMuted(userId, subreddit)) {
+        return res.status(400).json({
+          error: "User is muted from this subreddit",
+        });
       }
       req.subreddit = subreddit;
     }
