@@ -7921,7 +7921,8 @@
                   },
                   "sort": {
                     "type": "string",
-                    "description": "one of (top, new, random, best, hot)"
+                    "description": "sort kind",
+                    "enum": ["top", "new", "best", "old"]
                   }
                 }
               }
