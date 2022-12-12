@@ -302,6 +302,24 @@ const communitySchema = mongoose.Schema({
       default: "Post only",
     },
   },
+  subredditPostSettings: {
+    enableSpoiler: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    suggestedSort: {
+      type: String,
+      required: true,
+      default: "none",
+      enum: ["none", "best", "top", "new", "old"],
+    },
+    allowImagesInComment: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
 
   //NEEDS TO BE AUTO INCREMENT
   //Is used to get random subreddit from categories
