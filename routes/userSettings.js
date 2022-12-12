@@ -679,12 +679,6 @@ router.delete(
  *                   description: List of users to return
  *                   items:
  *                     properties:
- *                       id:
- *                         type: string
- *                         description: Id of the users
- *                       data:
- *                         type: object
- *                         properties:
  *                           username:
  *                             type: string
  *                             description: Username of the blocked user

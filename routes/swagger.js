@@ -1015,13 +1015,6 @@
  *   ListingUserItem:
  *     type: object
  *     properties:
- *      id:
- *       type: string
- *       description: this item's identifier.
- *      data:
- *       type: object
- *       description: A custom data structure used to hold valuable information.
- *       properties:
  *         username:
  *           type: string
  *           description: Username of the banned user

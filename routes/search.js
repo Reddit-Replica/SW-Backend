@@ -256,7 +256,7 @@ const searchRouter = express.Router();
  * @swagger
  * /search?type=subreddit:
  *  get:
- *      summary: General search for a subreddit
+ *      summary: General search for a subreddit (An OPTIONAL TOKEN is sent in case there is a logged in user & this is for all search endpoints)
  *      tags: [Search]
  *      parameters:
  *          - in: query
