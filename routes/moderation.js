@@ -1332,11 +1332,7 @@ moderationRouter.get(
  *     security:
  *       - bearerAuth: []
  */
-router.post(
-  "/r/:subreddit/profile-picture",
-  verifyAuthToken,
-  userSettingsController.addProfilePicture
-);
+moderationRouter.post("/r/:subreddit/profile-picture");
 
 /**
  * @swagger
@@ -1361,11 +1357,7 @@ router.post(
  *     security:
  *       - bearerAuth: []
  */
-router.delete(
-  "/r/:subreddit/profile-picture",
-  verifyAuthToken,
-  userSettingsController.deleteProfilePicture
-);
+moderationRouter.delete("/r/:subreddit/profile-picture");
 
 /**
  * @swagger
@@ -1410,11 +1402,7 @@ router.delete(
  *     security:
  *       - bearerAuth: []
  */
-router.post(
-  "/r/:subreddit/banner-image",
-  verifyAuthToken,
-  userSettingsController.addBanner
-);
+moderationRouter.post("/r/:subreddit/banner-image");
 
 /**
  * @swagger
@@ -1439,11 +1427,7 @@ router.post(
  *     security:
  *       - bearerAuth: []
  */
-router.delete(
-  "/r/:subreddit/banner-image",
-  verifyAuthToken,
-  userSettingsController.deleteBanner
-);
+moderationRouter.delete("/r/:subreddit/banner-image");
 
 /**
  * @swagger
