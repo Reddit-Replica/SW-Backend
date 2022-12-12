@@ -251,6 +251,7 @@ export async function moderateSubreddit(username, subredditName) {
   const addedUser = {
     username: username,
     userID: user.id,
+    dateOfModeration: Date.now(),
   };
   for (const moderator of subreddit.moderators) {
     if (moderator.username === user.username) {
