@@ -675,27 +675,54 @@
  *           description: Path of the avatar
  *         dateOfModeration:
  *           type: string
- *           description: he date of being a moderator
+ *           description: the date of being a moderator
  *         permissions:
  *           type: array
  *           description: array of permissions the moderator has
  *           items:
  *             type: string
+ *   approvedUser:
+ *       type: object
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: The username of the user
+ *         avatar:
+ *           type: string
+ *           description: Path of the avatar
+ *         dateOfApprove:
+ *           type: string
+ *           description: the date of being approved
+ *   mutedUser:
+ *       type: object
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: The username of the user
+ *         avatar:
+ *           type: string
+ *           description: Path of the avatar
+ *         dateOfMute:
+ *           type: string
+ *           description: the date of being muted
+ *         muteReason:
+ *           type: string
+ *           description: the reason of being muted
  *   invitedModerator:
  *       type: object
  *       properties:
  *         username:
  *           type: string
- *           description: The username of the moderator
+ *           description: The username of the invited moderator
  *         avatar:
  *           type: string
  *           description: Path of the avatar
  *         dateOfInvitation:
  *           type: string
- *           description: he date of being a moderator
+ *           description: the date of invitation
  *         permissions:
  *           type: array
- *           description: array of permissions the moderator has
+ *           description: array of permissions the moderator will has
  *           items:
  *             type: string
  *   community:

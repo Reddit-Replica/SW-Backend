@@ -9,6 +9,8 @@ import {
   getSubredditInvitedModerators,
   getModeratedSubredditsService,
   getJoinedSubredditsService,
+  getSubredditApproved,
+  getSubredditMuted,
 } from "../services/subredditModerationServices.js";
 const subredditSettingsValidator = [
   body("communityName")
@@ -132,6 +134,44 @@ const getJoinedSubreddits = async (req, res) => {
   }
 };
 
+const getApprovedUsers = async (req, res) => {
+  try {
+    const response = await getSubredditApproved(
+      req.query.limit,
+      req.query.before,
+      req.query.after,
+      req.subreddit
+    );
+    res.status(200).json(response);
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const getMutedUsers = async (req, res) => {
+  try {
+    const response = await getSubredditMuted(
+      req.query.limit,
+      req.query.before,
+      req.query.after,
+      req.subreddit
+    );
+    res.status(200).json(response);
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
 export default {
   getSubredditSettings,
   setSubredditSettings,
@@ -140,4 +180,6 @@ export default {
   subredditSettingsValidator,
   getModeratedSubreddits,
   getJoinedSubreddits,
+  getApprovedUsers,
+  getMutedUsers,
 };

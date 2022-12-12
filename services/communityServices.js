@@ -108,7 +108,6 @@ export async function addToJoinedSubreddit(user, subreddit) {
     subredditId: subreddit.id,
     name: subreddit.title,
   });
-  console.log(user);
   await user.save();
   subreddit.members += 1;
   await subreddit.save();
@@ -252,6 +251,7 @@ export async function moderateSubreddit(username, subredditName) {
   const addedUser = {
     username: username,
     userID: user.id,
+    dateOfModeration: Date.now(),
   };
   for (const moderator of subreddit.moderators) {
     if (moderator.username === user.username) {
@@ -277,7 +277,7 @@ export async function moderateSubreddit(username, subredditName) {
  * @param {String} category username of the user
  * @returns {Object} error object that contains the msg describing what happened and its status code
  */
-async function checkOnCategory(category) {
+export async function checkOnCategory(category) {
   await insertCategoriesIfNotExists();
   const categories = await getSortedCategories();
   let includes = false;
