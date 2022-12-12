@@ -1328,54 +1328,44 @@
       "ListingUserItem": {
         "type": "object",
         "properties": {
-          "id": {
+          "username": {
             "type": "string",
-            "description": "this item's identifier."
+            "description": "Username of the banned user"
           },
-          "data": {
-            "type": "object",
-            "description": "A custom data structure used to hold valuable information.",
-            "properties": {
-              "username": {
-                "type": "string",
-                "description": "Username of the banned user"
-              },
-              "userId": {
-                "type": "string",
-                "description": "ID of the banned user"
-              },
-              "avatar": {
-                "type": "string",
-                "description": "The link of the user profile picture"
-              },
-              "bannedAt": {
-                "type": "string",
-                "format": "date-time",
-                "description": "The time at which the user is banned"
-              },
-              "banPeriod": {
-                "type": "integer",
-                "description": "The period that user will be banned in days if not permanent."
-              },
-              "modNote": {
-                "type": "string",
-                "description": "Note on that ban"
-              },
-              "noteInclude": {
-                "type": "string",
-                "description": "Note to include in ban message"
-              },
-              "reasonForBan": {
-                "type": "string",
-                "description": "The reason for banning that user.",
-                "enum": [
-                  "Spam",
-                  "Personal and confidential information",
-                  "Threatening, harassing, or inciting violence",
-                  "Other"
-                ]
-              }
-            }
+          "userId": {
+            "type": "string",
+            "description": "ID of the banned user"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "The link of the user profile picture"
+          },
+          "bannedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The time at which the user is banned"
+          },
+          "banPeriod": {
+            "type": "integer",
+            "description": "The period that user will be banned in days if not permanent."
+          },
+          "modNote": {
+            "type": "string",
+            "description": "Note on that ban"
+          },
+          "noteInclude": {
+            "type": "string",
+            "description": "Note to include in ban message"
+          },
+          "reasonForBan": {
+            "type": "string",
+            "description": "The reason for banning that user.",
+            "enum": [
+              "Spam",
+              "Personal and confidential information",
+              "Threatening, harassing, or inciting violence",
+              "Other"
+            ]
           }
         }
       },
@@ -2546,108 +2536,6 @@
         ]
       }
     },
-    "/r/{subreddit}/wiki/rules": {
-      "get": {
-        "summary": "Return all the rules of the subreddit in details (canceled feature)",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "children": {
-                      "type": "array",
-                      "description": "List of [Things] to return",
-                      "items": {
-                        "$ref": "#/components/schemas/rules"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to view this info"
-          },
-          "404": {
-            "description": "Page not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/wiki/bans": {
-      "get": {
-        "summary": "Return all the ban questions of the subbreddit in details (canceled feature)",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "children": {
-                      "type": "array",
-                      "description": "List of [Things] to return",
-                      "items": {
-                        "$ref": "#/components/schemas/bans"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to view this info"
-          },
-          "404": {
-            "description": "Page not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/r/{subreddit}/make-favorite": {
       "patch": {
         "summary": "add a subreddit to the users favorite subreddits",
@@ -2781,38 +2669,6 @@
                 }
               }
             }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/r/{subreddit}/toggle-community-theme": {
-      "patch": {
-        "summary": "toggle community theme option of the community (canceled feature)",
-        "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "subreddit",
-            "description": "the name of the subreddit",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "toggling is done successfully"
-          },
-          "401": {
-            "description": "Unauthorized to toggle community theme"
-          },
-          "500": {
-            "description": "Server Error"
           }
         },
         "security": [
@@ -6657,7 +6513,7 @@
     "/r/{subreddit}/profile-picture": {
       "post": {
         "summary": "Add profile picture for a subreddit",
-        "tags": ["User settings"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -6687,7 +6543,19 @@
         },
         "responses": {
           "200": {
-            "description": "Profile picture has been added successfully"
+            "description": "Profile picture has been added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "description": "Profile picture path"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "The request was invalid. You may refer to response for details around why the request was invalid",
@@ -6719,7 +6587,7 @@
       },
       "delete": {
         "summary": "Delete the profile picture in a subreddit",
-        "tags": ["User settings"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -6752,7 +6620,7 @@
     "/r/{subreddit}/banner-image": {
       "post": {
         "summary": "Add a banner to a subreddit",
-        "tags": ["User settings"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -6782,7 +6650,19 @@
         },
         "responses": {
           "200": {
-            "description": "Banner image has been added successfully"
+            "description": "Banner image has been added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "description": "Profile picture path"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "The request was invalid. You may refer to response for details around why the request was invalid",
@@ -6814,7 +6694,7 @@
       },
       "delete": {
         "summary": "Delete the banner image in a subreddit",
-        "tags": ["User settings"],
+        "tags": ["Subreddit"],
         "parameters": [
           {
             "in": "path",
@@ -6847,7 +6727,7 @@
     "/r/{subreddit}/approve-user": {
       "post": {
         "summary": "Approve a user in a subreddit",
-        "tags": ["Posts and comments moderation"],
+        "tags": ["Subreddit moderation"],
         "parameters": [
           {
             "in": "path",
@@ -6864,15 +6744,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["id", "type"],
+                "required": ["username"],
                 "properties": {
-                  "id": {
+                  "username": {
                     "type": "string",
-                    "description": "id of a thing."
-                  },
-                  "type": {
-                    "type": "string",
-                    "description": "type of that thing (post, comment,..)."
+                    "description": "Username of the user to be approved"
                   }
                 }
               }
@@ -6918,7 +6794,7 @@
     "/r/{subreddit}/mute-user": {
       "post": {
         "summary": "Mute a user in the subreddit",
-        "tags": ["Posts and comments moderation"],
+        "tags": ["Subreddit moderation"],
         "parameters": [
           {
             "in": "path",
@@ -6935,15 +6811,15 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": ["id", "type"],
+                "required": ["username"],
                 "properties": {
-                  "id": {
+                  "username": {
                     "type": "string",
-                    "description": "id of a thing."
+                    "description": "Username of the user to be muted"
                   },
-                  "type": {
+                  "muteReason": {
                     "type": "string",
-                    "description": "type of that thing (post, comment,..)."
+                    "description": "Reason to why this user was muted"
                   }
                 }
               }
@@ -7143,281 +7019,6 @@
           },
           "401": {
             "description": "Unauthorized to Read the notifications"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/live/thread": {
-      "get": {
-        "summary": "Get a list of updates posted in this thread. (canceled feature)",
-        "tags": ["Threads"],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "before",
-            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "after",
-            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "description": "Maximum number of items desired [Maximum = 100]",
-            "schema": {
-              "type": "integer",
-              "default": 25
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Threads"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to get this thread"
-          },
-          "404": {
-            "description": "thread not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "patch": {
-        "summary": "editing a thread (canceled feature)",
-        "tags": ["Threads"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Full name of the thread that you want to edit"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "thread has just been edited"
-          },
-          "401": {
-            "description": "Unauthorized to spam this thread"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "put": {
-        "summary": "updating a thread (canceled feature)",
-        "tags": ["Threads"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Full name of the thread"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Thread has ben updated successfully"
-          },
-          "401": {
-            "description": "Unauthorized to update this thread"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "summary": "closes a thread (canceled feature)",
-        "tags": ["Threads"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Full name of the thread that you want to close"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "thread has just been closed successfully"
-          },
-          "401": {
-            "description": "Unauthorized to close this thread"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/live/by-id/names": {
-      "get": {
-        "summary": "Get a list all the live events (canceled feature)",
-        "tags": ["Threads"],
-        "responses": {
-          "200": {
-            "description": "Returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Threads"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to get this thread"
-          },
-          "404": {
-            "description": "thread not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/live/create": {
-      "post": {
-        "summary": "Create a new live thread. Once created, the initial settings can be modified with /live/thread/edit and new updates can be posted with /live/thread/update. (canceled feature)",
-        "tags": ["Threads"],
-        "responses": {
-          "200": {
-            "description": "Returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Threads"
-                  }
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Created successfully"
-          },
-          "401": {
-            "description": "Unauthorized to create this thread"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/live/thread/about": {
-      "get": {
-        "summary": "get a some basic info about the live thread (canceled feature)",
-        "tags": ["Threads"],
-        "responses": {
-          "200": {
-            "description": "Returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Threads"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to get the threads"
-          },
-          "404": {
-            "description": "threads not found"
           },
           "500": {
             "description": "Server Error"
@@ -8805,66 +8406,6 @@
         ]
       }
     },
-    "/edit-post-flair": {
-      "put": {
-        "summary": "Change the flair on a post",
-        "tags": ["Posts"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "id of the post being edited"
-                  },
-                  "flairId": {
-                    "type": "string",
-                    "description": "id of the new flair selected"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Post flair edited successfully"
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why this happened.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized to edit this post"
-          },
-          "404": {
-            "description": "Post not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/search?type=post": {
       "get": {
         "summary": "General search in the posts tab",
@@ -8962,7 +8503,16 @@
                     "children": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/Post"
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "List item ID"
+                          },
+                          "data": {
+                            "$ref": "#/components/schemas/Post"
+                          }
+                        }
                       }
                     }
                   }
@@ -9093,40 +8643,49 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "post": {
-                            "$ref": "#/components/schemas/Post"
+                          "id": {
+                            "type": "string",
+                            "description": "List item ID"
                           },
-                          "comment": {
+                          "data": {
                             "type": "object",
                             "properties": {
-                              "id": {
-                                "type": "string",
-                                "description": "Comment ID"
+                              "post": {
+                                "$ref": "#/components/schemas/Post"
                               },
-                              "content": {
+                              "comment": {
                                 "type": "object",
-                                "description": "Comment content"
-                              },
-                              "parentId": {
-                                "type": "string",
-                                "description": "id of the post being replied to (parent)"
-                              },
-                              "level": {
-                                "type": "number",
-                                "description": "Level of the comment (How deep is it in the comment tree)"
-                              },
-                              "username": {
-                                "type": "string",
-                                "description": "Name of the author of the comment"
-                              },
-                              "createdAt": {
-                                "type": "string",
-                                "format": "time",
-                                "description": "How long ago the comment was written"
-                              },
-                              "votes": {
-                                "type": "number",
-                                "description": "Total number of upvotes on the comment"
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "description": "Comment ID"
+                                  },
+                                  "content": {
+                                    "type": "object",
+                                    "description": "Comment content"
+                                  },
+                                  "parentId": {
+                                    "type": "string",
+                                    "description": "id of the post being replied to (parent)"
+                                  },
+                                  "level": {
+                                    "type": "number",
+                                    "description": "Level of the comment (How deep is it in the comment tree)"
+                                  },
+                                  "username": {
+                                    "type": "string",
+                                    "description": "Name of the author of the comment"
+                                  },
+                                  "createdAt": {
+                                    "type": "string",
+                                    "format": "time",
+                                    "description": "How long ago the comment was written"
+                                  },
+                                  "votes": {
+                                    "type": "number",
+                                    "description": "Total number of upvotes on the comment"
+                                  }
+                                }
                               }
                             }
                           }
@@ -9164,7 +8723,7 @@
     },
     "/search?type=subreddit": {
       "get": {
-        "summary": "General search for a subreddit",
+        "summary": "General search for a subreddit (An OPTIONAL TOKEN is sent in case there is a logged in user & this is for all search endpoints)",
         "tags": ["Search"],
         "parameters": [
           {
@@ -9271,19 +8830,40 @@
                         "properties": {
                           "id": {
                             "type": "string",
-                            "description": "subreddit Id"
+                            "description": "List item ID"
                           },
-                          "subredditName": {
-                            "type": "string",
-                            "description": "Name of the subreddit"
-                          },
-                          "numberOfMembers": {
-                            "type": "number",
-                            "description": "Total number of members in the subreddit"
-                          },
-                          "description": {
-                            "type": "string",
-                            "description": "Subreddit description"
+                          "data": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "subreddit Id"
+                              },
+                              "subredditName": {
+                                "type": "string",
+                                "description": "Name of the subreddit"
+                              },
+                              "numberOfMembers": {
+                                "type": "number",
+                                "description": "Total number of members in the subreddit"
+                              },
+                              "nsfw": {
+                                "type": "boolean",
+                                "description": "If the subreddit is nsfw or not"
+                              },
+                              "picture": {
+                                "type": "number",
+                                "description": "Subreddit displayed picture"
+                              },
+                              "description": {
+                                "type": "string",
+                                "description": "Subreddit description"
+                              },
+                              "joined": {
+                                "type": "boolean",
+                                "description": "A flag to know if the user joined this subreddit"
+                              }
+                            }
                           }
                         }
                       }
@@ -9418,19 +8998,41 @@
                         "properties": {
                           "id": {
                             "type": "string",
-                            "description": "User ID"
+                            "description": "List item ID"
                           },
-                          "username": {
-                            "type": "string",
-                            "description": "Username to be displayed"
-                          },
-                          "karma": {
-                            "type": "number",
-                            "description": "Karma of this account"
-                          },
-                          "avatar": {
-                            "type": "string",
-                            "description": "Avatar path of the user"
+                          "data": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "User ID"
+                              },
+                              "username": {
+                                "type": "string",
+                                "description": "Username to be displayed"
+                              },
+                              "karma": {
+                                "type": "number",
+                                "description": "Karma of this account"
+                              },
+                              "nsfw": {
+                                "type": "boolean",
+                                "description": "if this user profile is nsfw"
+                              },
+                              "joinDate": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "Join date of this user"
+                              },
+                              "following": {
+                                "type": "boolean",
+                                "description": "A flag to know if the logged in user follows this user"
+                              },
+                              "avatar": {
+                                "type": "string",
+                                "description": "Avatar path of the user"
+                              }
+                            }
                           }
                         }
                       }
@@ -9570,7 +9172,16 @@
                     "children": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/Post"
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "ID of list item"
+                          },
+                          "data": {
+                            "$ref": "#/components/schemas/Post"
+                          }
+                        }
                       }
                     }
                   }
@@ -9710,40 +9321,49 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "post": {
-                            "$ref": "#/components/schemas/Post"
+                          "id": {
+                            "type": "string",
+                            "description": "List item ID"
                           },
-                          "comment": {
+                          "data": {
                             "type": "object",
                             "properties": {
-                              "id": {
-                                "type": "string",
-                                "description": "Comment ID"
+                              "post": {
+                                "$ref": "#/components/schemas/Post"
                               },
-                              "content": {
-                                "type": "string",
-                                "description": "Comment content"
-                              },
-                              "parentId": {
-                                "type": "string",
-                                "description": "id of the post being replied to (parent)"
-                              },
-                              "level": {
-                                "type": "number",
-                                "description": "Level of the comment (How deep is it in the comment tree)"
-                              },
-                              "username": {
-                                "type": "string",
-                                "description": "Name of the author of the comment"
-                              },
-                              "createdAt": {
-                                "type": "string",
-                                "format": "time",
-                                "description": "How long ago the comment was written"
-                              },
-                              "votes": {
-                                "type": "number",
-                                "description": "Total number of upvotes on the comment"
+                              "comment": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "description": "Comment ID"
+                                  },
+                                  "content": {
+                                    "type": "string",
+                                    "description": "Comment content"
+                                  },
+                                  "parentId": {
+                                    "type": "string",
+                                    "description": "id of the post being replied to (parent)"
+                                  },
+                                  "level": {
+                                    "type": "number",
+                                    "description": "Level of the comment (How deep is it in the comment tree)"
+                                  },
+                                  "username": {
+                                    "type": "string",
+                                    "description": "Name of the author of the comment"
+                                  },
+                                  "createdAt": {
+                                    "type": "string",
+                                    "format": "time",
+                                    "description": "How long ago the comment was written"
+                                  },
+                                  "votes": {
+                                    "type": "number",
+                                    "description": "Total number of upvotes on the comment"
+                                  }
+                                }
                               }
                             }
                           }
@@ -13792,7 +13412,19 @@
         },
         "responses": {
           "200": {
-            "description": "Profile picture has been added successfully"
+            "description": "Profile picture has been added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "description": "Profile picture path"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "The request was invalid. You may refer to response for details around why the request was invalid",
@@ -13865,7 +13497,19 @@
         },
         "responses": {
           "200": {
-            "description": "Banner image has been added successfully"
+            "description": "Banner image has been added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "description": "Banner image path"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "The request was invalid. You may refer to response for details around why the request was invalid",
@@ -13967,27 +13611,18 @@
                       "description": "List of users to return",
                       "items": {
                         "properties": {
-                          "id": {
+                          "username": {
                             "type": "string",
-                            "description": "Id of the users"
+                            "description": "Username of the blocked user"
                           },
-                          "data": {
-                            "type": "object",
-                            "properties": {
-                              "username": {
-                                "type": "string",
-                                "description": "Username of the blocked user"
-                              },
-                              "avatar": {
-                                "type": "string",
-                                "description": "Path of the image of the blocked user"
-                              },
-                              "blockDate": {
-                                "type": "string",
-                                "format": "date-time",
-                                "description": "The date on which this user has been blocked"
-                              }
-                            }
+                          "avatar": {
+                            "type": "string",
+                            "description": "Path of the image of the blocked user"
+                          },
+                          "blockDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The date on which this user has been blocked"
                           }
                         }
                       }
