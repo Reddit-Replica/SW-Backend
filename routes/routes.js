@@ -17,6 +17,7 @@ import subredditModerationsRouter from "./subredditModeration.js";
 import userSettingsRouter from "./userSettings.js";
 import postAndCommentActionsRouter from "./post-and-comment-actions.js";
 import commentActionsRouter from "./comment-action.js";
+import searchRouter from "./search.js";
 // eslint-disable-next-line new-cap
 const mainRouter = express.Router();
 
@@ -38,6 +39,7 @@ mainRouter.use(messageRouter);
 mainRouter.use(subredditModerationsRouter);
 mainRouter.use(postAndCommentActionsRouter);
 mainRouter.use(commentActionsRouter);
+mainRouter.use(searchRouter);
 
 // ! should add your router before this middleware
 mainRouter.use((req, res) => {

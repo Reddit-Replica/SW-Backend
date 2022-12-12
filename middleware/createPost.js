@@ -1,8 +1,13 @@
+/* eslint-disable max-statements */
 import Subreddit from "../models/Community.js";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import Flair from "../models/Flair.js";
 import { deleteFile } from "../services/userSettings.js";
+import {
+  checkIfBanned,
+  checkIfMuted,
+} from "../services/subredditActionsServices.js";
 
 /**
  * Middleware used to check the post is being submitted in a subreddit
@@ -40,6 +45,16 @@ export async function checkPostSubreddit(req, res, next) {
         return res
           .status(401)
           .json("User is not a member/mod of this subreddit");
+      }
+      if (checkIfBanned(userId, subreddit)) {
+        return res.status(400).json({
+          error: "User is banned from this subreddit",
+        });
+      }
+      if (checkIfMuted(userId, subreddit)) {
+        return res.status(400).json({
+          error: "User is muted from this subreddit",
+        });
       }
       req.subreddit = subreddit;
     }
@@ -118,12 +133,24 @@ export async function checkHybridPost(req, res, next) {
 export function checkImagesAndVideos(req, res, next) {
   const kind = req.body.kind;
   if (kind === "image") {
-    const imageCaptions = req.body.imageCaptions;
-    const imageLinks = req.body.imageLinks;
+    let imageCaptions = req.body.imageCaptions;
+    let imageLinks = req.body.imageLinks;
     let images = [];
-    const imageFiles = req.files.images;
+    const imageFiles = req.files?.images;
     if (!imageFiles) {
       return res.status(404).json("Images not found");
+    }
+    if (
+      imageFiles.length === 1 &&
+      typeof imageCaptions === "string" &&
+      typeof imageLinks === "string"
+    ) {
+      const caption = imageCaptions;
+      const link = imageLinks;
+      imageCaptions = [];
+      imageLinks = [];
+      imageCaptions.push(caption);
+      imageLinks.push(link);
     }
     if (
       imageFiles.length !== imageCaptions?.length ||
@@ -147,7 +174,7 @@ export function checkImagesAndVideos(req, res, next) {
     });
     req.images = images;
   } else if (kind === "video") {
-    const videoFile = req.files.video;
+    const videoFile = req.files?.video;
     if (!videoFile) {
       return res.status(404).json("Video not found");
     }
@@ -212,7 +239,6 @@ export async function sharePost(req, res, next) {
 export async function postSubmission(req, res, next) {
   const {
     kind,
-    subreddit,
     title,
     link,
     nsfw,
@@ -231,7 +257,7 @@ export async function postSubmission(req, res, next) {
       kind: kind,
       ownerUsername: username,
       ownerId: userId,
-      subredditName: subreddit,
+      subredditName: req.subreddit,
       title: title,
       sharePostId: sharePostId,
       link: link,
@@ -246,8 +272,42 @@ export async function postSubmission(req, res, next) {
       scheduleDate: scheduleDate,
       scheduleTime: scheduleTime,
       scheduleTimeZone: scheduleTimeZone,
+      createdAt: Date.now(),
     }).save();
     req.post = post;
+    next();
+  } catch (err) {
+    return res.status(500).json("Internal server error");
+  }
+}
+/**
+ * Middleware used to add the post in all necesssary places in the user/post/subreddit models and
+ * modify any parameters that are affected upon post creation.
+ *
+ * @param {Object} req Request object
+ * @param {Object} res Response object
+ * @param {function} next Next function
+ * @returns {void}
+ */
+export async function addPost(req, res, next) {
+  try {
+    const user = req.user;
+    const post = req.post;
+    if (post.subredditName) {
+      const subreddit = await Subreddit.findOne({ title: post.subredditName });
+      subreddit.unmoderatedPosts.push(post.id.toString());
+      subreddit.subredditPosts.push(post.id.toString());
+      await subreddit.save();
+    }
+    user.posts.push(post.id);
+    user.upvotedPosts.push(post.id);
+    user.commentedPosts.push(post.id);
+    post.numberOfUpvotes = 1;
+    post.numberOfVotes = 1;
+    user.upVotes += 1;
+    user.karma += 1;
+    post.hotTimingScore = post.createdAt.getTime() / 10000;
+    post.bestTimingScore = post.createdAt.getTime() / 10000000;
     next();
   } catch (err) {
     return res.status(500).json("Internal server error");

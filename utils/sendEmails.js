@@ -1,10 +1,14 @@
-import nodemailer from "nodemailer";
-import sendgridTransport from "nodemailer-sendgrid-transport";
 import dotenv from "dotenv";
+import mailgun from "mailgun-js";
+
 dotenv.config();
 const FRONT_BASE = process.env.FRONT_BASE.trim();
-const API_KEY = process.env.SENDGRID_API_KEY.trim();
+
+const API_KEY = process.env.MAILGUN_API_KEY.trim();
 const SENDER_EMAIL = process.env.SENDER_EMAIL.trim();
+const DOMAIN = process.env.DOMAIN.trim();
+
+const mg = mailgun({ apiKey: API_KEY, domain: DOMAIN });
 
 /**
  * This function is responsible for sending a reset password
@@ -21,16 +25,7 @@ const SENDER_EMAIL = process.env.SENDER_EMAIL.trim();
 // eslint-disable-next-line max-len
 export async function sendResetPasswordEmail(toEmail, username, userId, token) {
   try {
-    const transporter = nodemailer.createTransport(
-      sendgridTransport({
-        auth: {
-          // eslint-disable-next-line camelcase
-          api_key: API_KEY,
-        },
-      })
-    );
-
-    transporter.sendMail({
+    mg.messages().send({
       from: SENDER_EMAIL,
       to: toEmail,
       subject: "Read-it Password Reset",
@@ -65,16 +60,7 @@ export async function sendResetPasswordEmail(toEmail, username, userId, token) {
  */
 export function sendVerifyEmail(toEmail, userId, token) {
   try {
-    const transporter = nodemailer.createTransport(
-      sendgridTransport({
-        auth: {
-          // eslint-disable-next-line camelcase
-          api_key: API_KEY,
-        },
-      })
-    );
-
-    transporter.sendMail({
+    mg.messages().send({
       from: SENDER_EMAIL,
       to: toEmail,
       subject: "Read-it Verify Email",
@@ -107,16 +93,7 @@ export function sendVerifyEmail(toEmail, userId, token) {
  */
 export function sendUsernameEmail(toEmail, username) {
   try {
-    const transporter = nodemailer.createTransport(
-      sendgridTransport({
-        auth: {
-          // eslint-disable-next-line camelcase
-          api_key: API_KEY,
-        },
-      })
-    );
-
-    transporter.sendMail({
+    mg.messages().send({
       from: SENDER_EMAIL,
       to: toEmail,
       subject: "Read-it Forget Username",

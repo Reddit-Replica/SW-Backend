@@ -4,6 +4,7 @@ import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
+import { checkIfBanned, checkIfMuted } from "./subredditActionsServices.js";
 
 /**
  * Function used to check if the id of the post is valid and if the post exists in the database
@@ -20,7 +21,7 @@ export async function checkPostId(postId) {
   const post = await Post.findById(postId);
   if (!post || post.deletedAt) {
     let error = new Error("Can not find a post with that id");
-    error.statusCode = 400;
+    error.statusCode = 404;
     throw error;
   }
   return post;
@@ -41,7 +42,7 @@ export async function checkCommentId(commentId) {
   const comment = await Comment.findById(commentId);
   if (!comment || comment.deletedAt) {
     let error = new Error("Can not find a comment with that id");
-    error.statusCode = 400;
+    error.statusCode = 404;
     throw error;
   }
   return comment;
@@ -79,6 +80,12 @@ export async function checkloggedInUser(loggedInUserId) {
  */
 // eslint-disable-next-line max-statements
 export async function createCommentService(data, post) {
+  // check if the post locked the comments
+  if (post.moderation.lock) {
+    let error = new Error("Can not add a comment to locked post");
+    error.statusCode = 400;
+    throw error;
+  }
   // check the parent type and id
   if (data.parentType !== "post" && data.parentType !== "comment") {
     let error = new Error("Invalid parent type");
@@ -100,7 +107,7 @@ export async function createCommentService(data, post) {
   const user = await User.findById(data.userId);
   if (!user || user.deletedAt) {
     let error = new Error("Can not find a user with that id");
-    error.statusCode = 400;
+    error.statusCode = 404;
     throw error;
   }
 
@@ -117,12 +124,19 @@ export async function createCommentService(data, post) {
     level: data.level,
     content: data.content,
     ownerUsername: data.username,
-    ownerAvatar: user.avatar,
     ownerId: data.userId,
+    createdAt: Date.now(),
   };
 
   // check if the subreddit exists
   if (data.haveSubreddit) {
+    if (post.subredditName !== data.subredditName) {
+      let error = new Error(
+        "Can not add the comment to that post with different subreddit names"
+      );
+      error.statusCode = 400;
+      throw error;
+    }
     const subreddit = await Subreddit.findOne({
       title: data.subredditName,
       deletedAt: null,
@@ -132,11 +146,28 @@ export async function createCommentService(data, post) {
       error.statusCode = 400;
       throw error;
     }
+
+    // check if user was banned or mutted
+    if (await checkIfBanned(user, subreddit)) {
+      let error = new Error("User is banned from this subreddit");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (checkIfMuted(user, subreddit)) {
+      let error = new Error("User is muted at this subreddit");
+      error.statusCode = 400;
+      throw error;
+    }
+
     commentObject.subredditName = data.subredditName;
   }
 
   const comment = new Comment(commentObject);
   await comment.save();
+
+  // add the comment to upvoted comments
+  user.upvotedComments.push(comment._id);
 
   // update commentedPosts array for that user
   if (post.ownerId.toString() !== data.userId.toString()) {
@@ -145,9 +176,9 @@ export async function createCommentService(data, post) {
     );
     if (index === -1) {
       user.commentedPosts.push(post._id);
-      await user.save();
     }
   }
+  await user.save();
 
   // add the comment to children of parent comment
   if (data.parentType === "comment") {
@@ -161,8 +192,9 @@ export async function createCommentService(data, post) {
   );
   if (index === -1) {
     post.usersCommented.push(user._id);
-    await post.save();
   }
+  post.numberOfComments = post.numberOfComments + 1;
+  await post.save();
 
   return {
     statusCode: 201,
@@ -180,15 +212,16 @@ export async function createCommentService(data, post) {
  * @returns {Object} The final data that will be sent to the user
  */
 // eslint-disable-next-line max-statements
-function prepareComment(comment, user, checkChildren) {
+async function prepareComment(comment, user, checkChildren) {
   if (comment.deletedAt) {
     return null;
   }
 
+  const ownerAvatar = await User.findById(comment.ownerId).select("avatar");
   let data = {
     commentId: comment._id.toString(),
     commentedBy: comment.ownerUsername,
-    userImage: comment.ownerAvatar,
+    userImage: ownerAvatar.avatar,
     editTime: comment.editedAt,
     publishTime: comment.createdAt,
     commentBody: comment.content,
@@ -233,7 +266,7 @@ function prepareComment(comment, user, checkChildren) {
       if (i === 5) {
         break;
       }
-      const resultData = prepareComment(comment.children[i], user, false);
+      const resultData = await prepareComment(comment.children[i], user, false);
       if (resultData) {
         children.push(resultData);
       }
@@ -276,7 +309,7 @@ export async function commentTreeListingService(
   // prepare the body
   let children = [];
   for (const i in result) {
-    children.push(prepareComment(result[i], loggedInUser, true));
+    children.push(await prepareComment(result[i], loggedInUser, true));
   }
 
   let after = "",
@@ -330,7 +363,7 @@ export async function commentTreeOfCommentListingService(
   // prepare the body
   let children = [];
   for (const i in result) {
-    children.push(prepareComment(result[i], loggedInUser, true));
+    children.push(await prepareComment(result[i], loggedInUser, true));
   }
 
   let after = "",

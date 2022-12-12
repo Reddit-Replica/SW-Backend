@@ -55,7 +55,7 @@ const saveValidator = [
     .isEmpty()
     .withMessage("type can not be empty")
     .isIn(["post", "comment"])
-    .withMessage("vote type must be either post or comment"),
+    .withMessage("Save type must be either post or comment"),
 ];
 const spamValidator = [
   body("id").trim().not().isEmpty().withMessage("id content can not be empty"),
@@ -65,7 +65,7 @@ const spamValidator = [
     .isEmpty()
     .withMessage("type can not be empty")
     .isIn(["post", "comment", "message"])
-    .withMessage("vote type must be either post or comment or message"),
+    .withMessage("Spam type must be either post or comment or message"),
 ];
 const followValidator = [
   body("id").trim().not().isEmpty().withMessage("id content can not be empty"),
@@ -127,7 +127,7 @@ const savePostOrComment = async (req, res) => {
     }
     if (type === "comment") {
       const comment = await searchForComment(req.body.id);
-      result = saveComment(comment, user);
+      result = await saveComment(comment, user);
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {

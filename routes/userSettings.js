@@ -304,7 +304,13 @@ router.post(
  *     security:
  *       - bearerAuth: []
  */
-router.put("/change-email");
+router.put(
+  "/change-email",
+  verifyAuthToken,
+  userSettingsController.changeEmailValidator,
+  validateRequestSchema,
+  userSettingsController.changeEmail
+);
 
 /**
  * @swagger
@@ -506,14 +512,21 @@ router.delete(
  *         application/json:
  *           schema:
  *             required:
- *               - picture
+ *               - avatar
  *             properties:
- *               picture:
- *                 type: string
- *                 description: Path of the profile picture
+ *               avatar:
+ *                 type: object
+ *                 description: The avatar image
  *     responses:
  *       200:
  *         description: Profile picture has been added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 path:
+ *                   type: string
+ *                   description: Profile picture path
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -573,11 +586,18 @@ router.delete(
  *               - banner
  *             properties:
  *               banner:
- *                 type: string
- *                 description: Path of the banner image
+ *                 type: object
+ *                 description: The banner image
  *     responses:
  *       200:
  *         description: Banner image has been added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 path:
+ *                   type: string
+ *                   description: Banner image path
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -659,16 +679,10 @@ router.delete(
  *                   description: List of users to return
  *                   items:
  *                     properties:
- *                       id:
- *                         type: string
- *                         description: Id of the users
- *                       data:
- *                         type: object
- *                         properties:
  *                           username:
  *                             type: string
  *                             description: Username of the blocked user
- *                           userImage:
+ *                           avatar:
  *                             type: string
  *                             description: Path of the image of the blocked user
  *                           blockDate:

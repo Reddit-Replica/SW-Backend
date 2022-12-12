@@ -7,14 +7,17 @@ import User from "../models/User.js";
  */
 
 export async function addSentMessages(userId, message) {
-  try {
-    const user = await User.findById(userId);
-    user.sentMessages.push(message.id);
-    user.save();
-    return true;
-  } catch (err) {
-    return "Couldn't Add the message";
+  const user = await User.findById(userId);
+  for (const msg of user.sentMessages) {
+    if (msg === message.id) {
+      let err = new Error("This msg already exists");
+      err.statusCode = 400;
+      throw err;
+    }
   }
+  user.sentMessages.push(message.id);
+  await user.save();
+  return true;
 }
 /**
  * This function is used to add a msg to the user's received message list
@@ -23,14 +26,17 @@ export async function addSentMessages(userId, message) {
  * @returns {boolean} indicates if the message was received successfully or not
  */
 export async function addReceivedMessages(userId, message) {
-  try {
-    const user = await User.findById(userId);
-    user.receivedMessages.push(message.id);
-    user.save();
-    return true;
-  } catch (err) {
-    return false;
+  const user = await User.findById(userId);
+  for (const msg of user.receivedMessages) {
+    if (msg === message.id) {
+      let err = new Error("This msg already exists");
+      err.statusCode = 400;
+      throw err;
+    }
   }
+  user.receivedMessages.push(message.id);
+  await user.save();
+  return true;
 }
 /**
  * This function is used to add a msg to the user's mention list
@@ -39,16 +45,17 @@ export async function addReceivedMessages(userId, message) {
  * @returns {boolean} indicates if the mention was made successfully or not
  */
 export async function addUserMention(userId, message) {
-  try {
-    const user = await User.findById(userId);
-    user.userMentions.push({
-      messageID: message.id,
-    });
-    user.save();
-    return true;
-  } catch (err) {
-    return "Couldn't Add the message";
+  const user = await User.findById(userId);
+  for (const mention of user.usernameMentions) {
+    if (mention === message.id) {
+      let err = new Error("This mention already exists");
+      err.statusCode = 400;
+      throw err;
+    }
   }
+  user.usernameMentions.push(message.id);
+  await user.save();
+  return true;
 }
 /**
  * This function is used to add a msg to the user's post reply list
@@ -59,10 +66,15 @@ export async function addUserMention(userId, message) {
 export async function addPostReply(userId, message) {
   try {
     const user = await User.findById(userId);
-    user.postReplies.push({
-      messageID: message.id,
-    });
-    user.save();
+    for (const postReply of user.usernameMentions) {
+      if (postReply === message.id) {
+        let err = new Error("This postReply already exists");
+        err.statusCode = 400;
+        throw err;
+      }
+    }
+    user.postReplies.push(message.id);
+    await user.save();
     return true;
   } catch (err) {
     return "Couldn't Add the message";

@@ -100,7 +100,7 @@ const communitySchema = mongoose.Schema({
       createdAt: {
         type: Date,
         required: true,
-        default: Date.now(),
+        // default: Date.now(),
       },
       updatedAt: {
         type: Date,
@@ -119,21 +119,32 @@ const communitySchema = mongoose.Schema({
   ],
   moderators: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
       userID: {
         type: Schema.Types.ObjectId,
         ref: "User",
       },
-      nickname: {
-        type: String,
-      },
       dateOfModeration: {
         type: Date,
         required: true,
-        default: Date.now(),
+        // default: Date.now(),
+      },
+      permissions: [
+        {
+          type: String,
+        },
+      ],
+    },
+  ],
+  invitedModerators: [
+    {
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      dateOfInvitation: {
+        type: Date,
+        required: true,
+        // default: Date.now(),
       },
       permissions: [
         {
@@ -148,33 +159,51 @@ const communitySchema = mongoose.Schema({
         type: String,
         required: true,
       },
-      userID: {
+      userId: {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+      bannedAt: {
+        type: Date,
+      },
+      banPeriod: {
+        type: Number,
+      },
+      modNote: {
+        type: String,
+      },
+      noteInclude: {
+        type: String,
+      },
+      reasonForBan: {
+        type: String,
       },
     },
   ],
   mutedUsers: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
       userID: {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+      dateOfMute: {
+        type: Date,
+        required: true,
+      },
+      muteReason: {
+        type: String,
       },
     },
   ],
   approvedUsers: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
       userID: {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+      dateOfApprove: {
+        type: Date,
+        required: true,
       },
     },
   ],

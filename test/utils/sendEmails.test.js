@@ -1,11 +1,11 @@
-import {
-  sendResetPasswordEmail,
-  sendVerifyEmail,
-  sendUsernameEmail,
-} from "../../utils/sendEmails.js";
-import User from "../../models/User.js";
-import Token from "./../../models/VerifyToken.js";
-import { connectDatabase, closeDatabaseConnection } from "./../database.js";
+// import {
+//   sendResetPasswordEmail,
+//   sendVerifyEmail,
+//   sendUsernameEmail,
+// } from "../../utils/sendEmails.js";
+// import User from "../../models/User.js";
+// import Token from "./../../models/VerifyToken.js";
+// import { connectDatabase, closeDatabaseConnection } from "./../database.js";
 
 describe("Testing send emails functions", () => {
   test("Testing jsend emailsest", () => {
@@ -20,7 +20,7 @@ describe("Testing send emails functions", () => {
 
   //     user = new User({
   //       username: "Beshoy",
-  //       email: "beshoy@gmail.com",
+  //       email: "beshoy@gmail.com",createdAt: Date.now(),
   //     });
   //     await user.save();
 

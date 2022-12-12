@@ -28,7 +28,7 @@ const router = express.Router();
  *             - text
  *             - senderUsername
  *             - receiverUsername
- *             - type
+ *             - subject
  *            properties:
  *             text:
  *               type: string
@@ -42,22 +42,9 @@ const router = express.Router();
  *             subject:
  *               type: string
  *               description: Subject of the message
- *             type:
- *               type: string
- *               description: describes the type of message
- *               enum:
- *                 - Post replies
- *                 - Mentions
- *                 - Messages
- *             postId:
- *               type: string
- *               description: id of the post that the mention or the reply happens in
  *             subredditName:
  *               type: string
  *               description: name of the subreddit that you send or received the msg via
- *             repliedMsgId:
- *               type: string
- *               description: id of the msg that it's a reply from
  *      responses:
  *          201:
  *              description: Your message is sent successfully
@@ -86,9 +73,60 @@ const router = express.Router();
 router.post(
   "/message/compose",
   verifyAuthToken,
-  messageController.messageValidator,
   messageController.createMessage
 );
+
+/**
+ * @swagger
+ * /mention:
+ *  post:
+ *      summary: Send a mention to a user
+ *      tags: [Messages]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *            required:
+ *             - postId
+ *             - commentId
+ *             - receiverUsername
+ *            properties:
+ *             postId:
+ *               type: string
+ *               description: Id of the post that the mention is in
+ *             commentId:
+ *               type: string
+ *               description: Id of the comment that the mention is in
+ *             receiverUsername:
+ *               type: string
+ *               description: Username of the user that was mentioned
+ *      responses:
+ *          201:
+ *              description: Your mention is sent successfully
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          500:
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.post("/mention", verifyAuthToken, messageController.createMention);
 
 /**
  * @swagger
@@ -197,7 +235,7 @@ router.post(
  *       - bearerAuth: []
  */
 
-router.get("/message/sent");
+router.get("/message/sent", verifyAuthToken, messageController.getSentMsg);
 
 /**
  * @swagger
@@ -433,7 +471,7 @@ router.get("/message/inbox");
  *       - bearerAuth: []
  */
 
-router.get("/message/unread");
+router.get("/message/unread", verifyAuthToken, messageController.getUnreadMsg);
 
 /**
  * @swagger
@@ -611,12 +649,6 @@ router.get("/message/post-reply");
  *                                    type: string
  *                                    format: date-time
  *                                    description: Time of sending the message
- *                                   type:
- *                                    type: string
- *                                    description: describes the type of message
- *                                    enum:
- *                                     - Mentions
- *                                     - Messages
  *                                   subredditName:
  *                                    type: string
  *                                    description: subreddit name that the reply was in
@@ -663,7 +695,11 @@ router.get("/message/post-reply");
  *       - bearerAuth: []
  */
 
-router.get("/message/mentions");
+router.get(
+  "/message/mentions",
+  verifyAuthToken,
+  messageController.getUsernameMentions
+);
 
 /**
  * @swagger
@@ -907,40 +943,5 @@ router.patch("/spam-message", verifyAuthToken, messageController.markMsgAsSpam);
  */
 
 router.patch("/read-all-msgs");
-/**
- * @swagger
- * /moderated-subreddits:
- *  get:
- *      summary: Return all subreddits that you can send message from ( the ones you are moderator in )
- *      tags: [Messages]
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: object
- *                        properties:
- *                          children:
- *                            type: array
- *                            description: List of the subreddits that your are moderator in and their pictures
- *                            items:
- *                              properties:
- *                               title:
- *                                 type: string
- *                                 description: the title of the subreddits that the user can send messages from and his own username
- *                               picture:
- *                                 type: string
- *                                 description: Path of the picture of the subreddit
- *          404:
- *              description: Page not found
- *          401:
- *              description: User unauthorized to view this info
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-router.get("/moderated-subreddits");
 
 export default router;

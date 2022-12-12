@@ -73,7 +73,7 @@ const postSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     required: true,
-    default: Date.now(),
+    // default: Date.now(),
   },
   editedAt: {
     type: Date,
@@ -160,11 +160,19 @@ const postSchema = mongoose.Schema({
   scheduleTimeZone: {
     type: String,
   },
-  score: {
+  hotScore: {
     type: Number,
     default: 0,
   },
-  timingScore: {
+  hotTimingScore: {
+    type: Number,
+    default: 0,
+  },
+  bestScore: {
+    type: Number,
+    default: 0,
+  },
+  bestTimingScore: {
     type: Number,
     default: 0,
   },

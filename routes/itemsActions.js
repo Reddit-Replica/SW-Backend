@@ -55,7 +55,6 @@ itemsActionsRouter.delete(
   verifyAuthToken,
   itemsActionController.deleteValidator,
   validateRequestSchema,
-  checkId,
   itemsActionController.deletePoComMes
 );
 
@@ -72,9 +71,9 @@ itemsActionsRouter.delete(
  *           schema:
  *              type: object
  *              properties:
- *                  text:
- *                      type: string
- *                      description: New text entered
+ *                  content:
+ *                      type: Object
+ *                      description: New content entered
  *                  id:
  *                      type: string
  *                      description: id of the comment being edited
