@@ -1,4 +1,5 @@
 import Subreddit from "../models/Community.js";
+import Message from "../models/Message.js";
 
 /**
  * Function used to check that a subreddit with that name exists and return its object
@@ -201,6 +202,25 @@ export async function inviteToModerateService(
       dateOfInvitation: Date.now(),
     });
     await subreddit.save();
+
+    // Send a message to the invited user from the subreddit
+    const message = new Message({
+      subredditName: subreddit.title,
+      subject: `invitation to moderate /r/${subreddit.title}`,
+      // eslint-disable-next-line quotes
+      text: `gadzooks! you are invited to become a moderator of\
+			/r/${subreddit.title}! to accept,\
+			visit the moderators page for /r/${subreddit.title} and click "accept".\
+			otherwise, if you did not expect to receive this,\
+			you can simply ignore this invitation or report it.`,
+      createdAt: Date.now(),
+      isSenderUser: true,
+      senderUsername: moderator.username,
+      isReceiverUser: true,
+      receiverId: userToInvite._id,
+      receiverUsername: userToInvite.username,
+    });
+    await message.save();
   }
 
   return {
