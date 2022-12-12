@@ -1237,6 +1237,7 @@ moderationRouter.get(
   verifyAuthToken,
   subredditDetails.checkSubreddit,
   verifyAuthTokenModerator,
+  subredditDetails.checkSubreddit,
   userModController.getBannedUsers
 );
 
@@ -1332,7 +1333,13 @@ moderationRouter.get(
  *     security:
  *       - bearerAuth: []
  */
-moderationRouter.post("/r/:subreddit/profile-picture");
+moderationRouter.post(
+  "/r/:subreddit/profile-picture",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.addProfilePicture
+);
 
 /**
  * @swagger
@@ -1357,7 +1364,13 @@ moderationRouter.post("/r/:subreddit/profile-picture");
  *     security:
  *       - bearerAuth: []
  */
-moderationRouter.delete("/r/:subreddit/profile-picture");
+moderationRouter.delete(
+  "/r/:subreddit/profile-picture",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.deleteProfilePicture
+);
 
 /**
  * @swagger
@@ -1402,7 +1415,13 @@ moderationRouter.delete("/r/:subreddit/profile-picture");
  *     security:
  *       - bearerAuth: []
  */
-moderationRouter.post("/r/:subreddit/banner-image");
+moderationRouter.post(
+  "/r/:subreddit/banner-image",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.addBanner
+);
 
 /**
  * @swagger
@@ -1427,7 +1446,13 @@ moderationRouter.post("/r/:subreddit/banner-image");
  *     security:
  *       - bearerAuth: []
  */
-moderationRouter.delete("/r/:subreddit/banner-image");
+moderationRouter.delete(
+  "/r/:subreddit/banner-image",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.deleteBanner
+);
 
 /**
  * @swagger
@@ -1449,15 +1474,11 @@ moderationRouter.delete("/r/:subreddit/banner-image");
  *     application/json:
  *      schema:
  *       required:
- *        - id
- *        - type
+ *        - username
  *       properties:
- *        id:
+ *        username:
  *         type: string
- *         description: id of a thing.
- *        type:
- *         type: string
- *         description: type of that thing (post, comment,..).
+ *         description: Username of the user to be approved
  *   responses:
  *    200:
  *     description: Accepted
@@ -1483,11 +1504,11 @@ moderationRouter.delete("/r/:subreddit/banner-image");
 moderationRouter.post(
   "/r/:subreddit/approve-user",
   verifyAuthToken,
-  postModerationController.modValidator,
+  postModController.usernameValidator,
   validateRequestSchema,
-  checkId,
-  checkThingMod,
-  postModerationController.approve
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.approveUser
 );
 
 /**
@@ -1510,15 +1531,14 @@ moderationRouter.post(
  *     application/json:
  *      schema:
  *       required:
- *        - id
- *        - type
+ *        - username
  *       properties:
- *        id:
+ *        username:
  *         type: string
- *         description: id of a thing.
- *        type:
+ *         description: Username of the user to be muted
+ *        muteReason:
  *         type: string
- *         description: type of that thing (post, comment,..).
+ *         description: Reason to why this user was muted
  *   responses:
  *    200:
  *     description: Accepted
@@ -1544,11 +1564,11 @@ moderationRouter.post(
 moderationRouter.post(
   "/r/:subreddit/mute-user",
   verifyAuthToken,
-  postModerationController.modValidator,
+  postModController.usernameValidator,
   validateRequestSchema,
-  checkId,
-  checkThingMod,
-  postModerationController.approve
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.muteUser
 );
 
 export default moderationRouter;
