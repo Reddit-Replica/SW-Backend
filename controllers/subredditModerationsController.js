@@ -11,6 +11,7 @@ import {
   getJoinedSubredditsService,
   getSubredditApproved,
   getSubredditMuted,
+  getSubredditPostSettingsService,
 } from "../services/subredditModerationServices.js";
 const subredditSettingsValidator = [
   body("communityName")
@@ -42,6 +43,30 @@ const subredditSettingsValidator = [
     .optional()
     .isIn(["Post only", "Comment only", "Post & Comment"])
     .withMessage("invalid value for approvedUsersHaveTheAbilityTo"),
+];
+const subredditPostSettingsValidator = [
+  body("enableSpoiler")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("enableSpoiler is required")
+    .isBoolean()
+    .withMessage("enableSpoiler must be boolean"),
+  body("allowImagesInComment")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("allowImagesInComment is required")
+    .isBoolean()
+    .withMessage("allowImagesInComment must be boolean"),
+  body("suggestedSort")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("suggestedSort is required"),
+  body("suggestedSort")
+    .isIn(["none", "best", "top", "new", "old"])
+    .withMessage("Invalid suggestedSort"),
 ];
 
 const getSubredditSettings = (req, res) => {
@@ -172,6 +197,20 @@ const getMutedUsers = async (req, res) => {
   }
 };
 
+const getSubredditPostSettings = async (req, res) => {
+  try {
+    const settings = getSubredditPostSettingsService(req.subreddit);
+    res.status(200).json(settings);
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
 export default {
   getSubredditSettings,
   setSubredditSettings,
@@ -182,4 +221,6 @@ export default {
   getJoinedSubreddits,
   getApprovedUsers,
   getMutedUsers,
+  subredditPostSettingsValidator,
+  getSubredditPostSettings,
 };

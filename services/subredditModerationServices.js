@@ -658,3 +658,11 @@ function getSubredditMutedAfter(subreddit, limit, after) {
   }
   return response;
 }
+
+export function getSubredditPostSettingsService(subreddit) {
+  return {
+    enableSpoiler: subreddit.subredditPostSettings.enableSpoiler,
+    suggestedSort: subreddit.subredditPostSettings.suggestedSort,
+    allowImagesInComment: subreddit.subredditPostSettings.allowImagesInComment,
+  };
+}
