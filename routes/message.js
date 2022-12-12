@@ -362,7 +362,7 @@ router.get("/message/sent", verifyAuthToken, messageController.getSentMsg);
  *       - bearerAuth: []
  */
 
-router.get("/message/inbox");
+router.get("/message/inbox", verifyAuthToken, messageController.getInbox);
 
 /**
  * @swagger
@@ -813,7 +813,11 @@ router.get(
  *       - bearerAuth: []
  */
 
-router.get("/message/messages");
+router.get(
+  "/message/messages",
+  verifyAuthToken,
+  messageController.getConversations
+);
 
 /**
  * @swagger

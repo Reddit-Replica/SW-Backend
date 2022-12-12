@@ -52,6 +52,11 @@ const messageSchema = mongoose.Schema({
     default: false,
     required: true,
   },
+  type: {
+    type: String,
+    required: true,
+    default: "Message",
+  },
 });
 
 const Message = mongoose.model("Message", messageSchema);

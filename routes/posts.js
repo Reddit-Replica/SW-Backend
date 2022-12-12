@@ -141,7 +141,12 @@ postRouter.post(
  *                    description: id of a post
  *                  sort:
  *                    type: string
- *                    description: one of (top, new, random, best, hot)
+ *                    description: sort kind
+ *                    enum:
+ *                    - top
+ *                    - new
+ *                    - best
+ *                    - old
  *      responses:
  *          200:
  *              description: Suggested sort successfully set
@@ -163,7 +168,13 @@ postRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/set-suggested-sort");
+postRouter.post(
+  "/set-suggested-sort",
+  verifyAuthToken,
+  postActionsController.suggestedSortValidator,
+  validateRequestSchema,
+  postActionsController.setPostSuggestSort
+);
 
 /**
  * @swagger
@@ -202,7 +213,11 @@ postRouter.post("/set-suggested-sort");
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/clear-suggested-sort");
+postRouter.post(
+  "/clear-suggested-sort",
+  verifyAuthToken,
+  postActionsController.clearPostSuggestSort
+);
 
 /**
  * @swagger
