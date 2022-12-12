@@ -6862,6 +6862,140 @@
         ]
       }
     },
+    "/r/{subreddit}/remove-user": {
+      "post": {
+        "summary": "Remove a user from the list of approved users in a subreddit",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["username"],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Username of the user to be removed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/unmute-user": {
+      "post": {
+        "summary": "Remove a user from the list of muted users in the subreddit",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["username"],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Username of the user to be unmuted"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/notifications": {
       "get": {
         "summary": "get all the notifications sent to the user",
@@ -7787,7 +7921,8 @@
                   },
                   "sort": {
                     "type": "string",
-                    "description": "one of (top, new, random, best, hot)"
+                    "description": "sort kind",
+                    "enum": ["top", "new", "best", "old"]
                   }
                 }
               }
@@ -9927,6 +10062,56 @@
         ]
       }
     },
+    "/leave-subreddit": {
+      "post": {
+        "summary": "Leave a subreddit",
+        "tags": ["Subreddit"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["subredditName"],
+                "properties": {
+                  "subredditName": {
+                    "type": "string",
+                    "description": "Subreddit name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "You left the subreddit successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/subreddit-name-available": {
       "get": {
         "summary": "Check if the username is used before",
@@ -10796,7 +10981,7 @@
     },
     "/r/{subreddit}/about/edit": {
       "get": {
-        "summary": "Get the current settings of a subreddit.",
+        "summary": "Get the current community settings of a subreddit.",
         "tags": ["Subreddit moderation"],
         "parameters": [
           {
@@ -10896,7 +11081,7 @@
         ]
       },
       "put": {
-        "summary": "ٍSet the settings of a subreddit.",
+        "summary": "Set the community settings of a subreddit.",
         "tags": ["Subreddit moderation"],
         "parameters": [
           {
@@ -10986,6 +11171,152 @@
                     "type": "string",
                     "description": "Approved users have the ability to (if the type is restricted only)",
                     "enum": ["Post only", "Comment only", "Post & Comment"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/about/edit-post-settings": {
+      "get": {
+        "summary": "Get the posts and comments settings of a subreddit.",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "enableSpoiler": {
+                      "type": "boolean",
+                      "description": "Enable spoiler tag in posts or not"
+                    },
+                    "allowImagesInComment": {
+                      "type": "boolean",
+                      "description": "Allow images on comment or not"
+                    },
+                    "suggestedSort": {
+                      "type": "string",
+                      "description": "The sugggested sort for comment in that community",
+                      "enum": ["none", "best", "top", "new", "old"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Set the posts and comments settings of a subreddit.",
+        "tags": ["Subreddit moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "enableSpoiler",
+                  "suggestedSort",
+                  "allowImagesInComment"
+                ],
+                "properties": {
+                  "enableSpoiler": {
+                    "type": "boolean",
+                    "description": "Enable spoiler tag in posts or not"
+                  },
+                  "allowImagesInComment": {
+                    "type": "boolean",
+                    "description": "Allow images on comment or not"
+                  },
+                  "suggestedSort": {
+                    "type": "string",
+                    "description": "The sugggested sort for comment in that community",
+                    "enum": ["none", "best", "top", "new", "old"]
                   }
                 }
               }

@@ -100,6 +100,8 @@ export async function createNewConversation(msg) {
       messages: [],
       firstUsername: msg.senderUsername,
       secondUsername: msg.receiverUsername,
+      isFirstNameUser: msg.isSenderUser,
+      isSecondNameUser: msg.isReceiverUser,
     }).save();
     return createdConversation.id;
   } else {
@@ -121,9 +123,9 @@ export async function addToConversation(msg, conversationId) {
     err.statusCode = 400;
     throw err;
   }
-  conversation.messages.push({ messageID: msg.id });
+  conversation.messages.push(msg.id);
   conversation.latestDate = Date.now();
-  conversation.save();
+  await conversation.save();
 }
 /**
  * This function is used to check if the user has already that conversation or we will need to add a new one for him
@@ -134,7 +136,7 @@ export async function addToConversation(msg, conversationId) {
 async function checkExistingConversation(user, conversationId) {
   //CHECKING IF THE USER HAVE ALREADY THAT CONVERSATION OR WE NEED TO ADD IT
   for (const conversation of user.conversations) {
-    if (conversation.id === conversationId) {
+    if (conversation.toString() === conversationId) {
       return true;
     }
   }
@@ -151,23 +153,24 @@ async function addConversationToUsers(message, convId) {
   // WE SEARCH FOR THE SENDER TO CHECK IF HE HAS THE CONVERSATION OR NOT
   if (message.isSenderUser) {
     const sender = await User.findOne({ username: message.senderUsername });
-    const senderConversation = checkExistingConversation(sender, convId);
+    const senderConversation = await checkExistingConversation(sender, convId);
     if (!senderConversation) {
-      sender.conversations.push({
-        conversationId: convId,
-      });
+      sender.conversations.push(convId);
       await sender.save();
     }
   }
+
   if (message.isReceiverUser) {
     const receiver = await User.findOne({
       username: message.receiverUsername,
+      deletedAt: undefined,
     });
-    const receiverConversation = checkExistingConversation(receiver, convId);
+    const receiverConversation = await checkExistingConversation(
+      receiver,
+      convId
+    );
     if (!receiverConversation) {
-      receiver.conversations.push({
-        conversationId: convId,
-      });
+      receiver.conversations.push(convId);
       await receiver.save();
     }
   }
@@ -252,9 +255,6 @@ export async function validateMessage(req) {
 
   if (req.body.subredditName) {
     msg.subredditName = req.body.subredditName;
-  }
-  if (req.body.repliedMsgId) {
-    msg.repliedMsgId = req.body.repliedMsgId;
   }
   //CHECKING IF THE RECEIVER IS AVAILABLE OR NOT
   if (msg.isReceiverUser) {

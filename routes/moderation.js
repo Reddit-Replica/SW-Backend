@@ -1585,4 +1585,102 @@ moderationRouter.post(
   postModController.muteUser
 );
 
+/**
+ * @swagger
+ * /r/{subreddit}/remove-user:
+ *  post:
+ *   summary:
+ *    Remove a user from the list of approved users in a subreddit
+ *   tags: [Subreddit moderation]
+ *   parameters:
+ *      - in: path
+ *        name: subreddit
+ *        description: name of the subreddit.
+ *        schema:
+ *          type: string
+ *        required: true
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - username
+ *       properties:
+ *        username:
+ *         type: string
+ *         description: Username of the user to be removed
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post("/r/:subreddit/remove-user");
+
+/**
+ * @swagger
+ * /r/{subreddit}/unmute-user:
+ *  post:
+ *   summary:
+ *    Remove a user from the list of muted users in the subreddit
+ *   tags: [Subreddit moderation]
+ *   parameters:
+ *      - in: path
+ *        name: subreddit
+ *        description: name of the subreddit.
+ *        schema:
+ *          type: string
+ *        required: true
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - username
+ *       properties:
+ *        username:
+ *         type: string
+ *         description: Username of the user to be unmuted
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post("/r/:subreddit/unmute-user");
+
 export default moderationRouter;

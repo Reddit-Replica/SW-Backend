@@ -20,7 +20,7 @@ const subredditModerationsRouter = express.Router();
  * /r/{subreddit}/about/edit:
  *  get:
  *   summary:
- *    Get the current settings of a subreddit.
+ *    Get the current community settings of a subreddit.
  *   tags: [Subreddit moderation]
  *   parameters:
  *    - in: path
@@ -109,7 +109,7 @@ subredditModerationsRouter.get(
  * /r/{subreddit}/about/edit:
  *  put:
  *   summary:
- *    ٍSet the settings of a subreddit.
+ *    Set the community settings of a subreddit.
  *   tags: [Subreddit moderation]
  *   parameters:
  *    - in: path
@@ -217,6 +217,137 @@ subredditModerationsRouter.put(
   subredditModerationsController.subredditSettingsValidator,
   validateRequestSchema,
   subredditModerationsController.setSubredditSettings
+);
+
+/**
+ * @swagger
+ * /r/{subreddit}/about/edit-post-settings:
+ *  get:
+ *   summary:
+ *    Get the posts and comments settings of a subreddit.
+ *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
+ *   responses:
+ *    200:
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         enableSpoiler:
+ *          type: boolean
+ *          description: Enable spoiler tag in posts or not
+ *         allowImagesInComment:
+ *          type: boolean
+ *          description: Allow images on comment or not
+ *         suggestedSort:
+ *          type: string
+ *          description: The sugggested sort for comment in that community
+ *          enum:
+ *           - none
+ *           - best
+ *           - top
+ *           - new
+ *           - old
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+subredditModerationsRouter.get(
+  "/r/:subreddit/about/edit-post-settings",
+  verifyAuthToken,
+  subredditDetailsMiddleware.checkSubreddit,
+  // verifyAuthTokenModerator,
+  subredditModerationsController.getSubredditPostSettings
+);
+
+/**
+ * @swagger
+ * /r/{subreddit}/about/edit-post-settings:
+ *  put:
+ *   summary:
+ *    Set the posts and comments settings of a subreddit.
+ *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - enableSpoiler
+ *        - suggestedSort
+ *        - allowImagesInComment
+ *       properties:
+ *         enableSpoiler:
+ *          type: boolean
+ *          description: Enable spoiler tag in posts or not
+ *         allowImagesInComment:
+ *          type: boolean
+ *          description: Allow images on comment or not
+ *         suggestedSort:
+ *          type: string
+ *          description: The sugggested sort for comment in that community
+ *          enum:
+ *           - none
+ *           - best
+ *           - top
+ *           - new
+ *           - old
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+subredditModerationsRouter.put(
+  "/r/:subreddit/about/edit-post-settings",
+  verifyAuthToken,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditModerationsController.subredditPostSettingsValidator,
+  validateRequestSchema,
+  subredditModerationsController.setSubredditPostSettings
 );
 
 /**

@@ -15,7 +15,10 @@ import {
  */
 export async function searchForSubreddit(subredditName) {
   //GETTING SUBREDDIT DATA
-  const subreddit = await Subreddit.findOne({ title: subredditName });
+  const subreddit = await Subreddit.findOne({
+    title: subredditName,
+    deletedAt: undefined,
+  });
   if (!subreddit) {
     let error = new Error("This subreddit isn't found");
     error.statusCode = 400;
