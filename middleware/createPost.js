@@ -36,7 +36,7 @@ export async function checkPostSubreddit(req, res, next) {
         title: subreddit,
       });
       if (!postSubreddit || postSubreddit.deletedAt) {
-        return res.status(404).json("Subreddit not found");
+        return res.status(404).json("Subreddit not found or deleted");
       }
       if (
         !user.joinedSubreddits.find((sr) => sr.name === subreddit) &&
@@ -46,12 +46,12 @@ export async function checkPostSubreddit(req, res, next) {
           .status(401)
           .json("User is not a member/mod of this subreddit");
       }
-      if (checkIfBanned(userId, subreddit)) {
+      if (checkIfBanned(userId, postSubreddit)) {
         return res.status(400).json({
           error: "User is banned from this subreddit",
         });
       }
-      if (checkIfMuted(userId, subreddit)) {
+      if (checkIfMuted(userId, postSubreddit)) {
         return res.status(400).json({
           error: "User is muted from this subreddit",
         });
