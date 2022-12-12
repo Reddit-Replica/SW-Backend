@@ -163,7 +163,13 @@ postRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/set-suggested-sort");
+postRouter.post(
+  "/set-suggested-sort",
+  verifyAuthToken,
+  postActionsController.suggestedSortValidator,
+  validateRequestSchema,
+  postActionsController.setPostSuggestSort
+);
 
 /**
  * @swagger
@@ -202,7 +208,11 @@ postRouter.post("/set-suggested-sort");
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/clear-suggested-sort");
+postRouter.post(
+  "/clear-suggested-sort",
+  verifyAuthToken,
+  postActionsController.clearPostSuggestSort
+);
 
 /**
  * @swagger
