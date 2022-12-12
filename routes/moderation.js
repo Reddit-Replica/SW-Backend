@@ -1295,7 +1295,7 @@ moderationRouter.get(
  * /r/{subreddit}/profile-picture:
  *   post:
  *     summary: Add profile picture for a subreddit
- *     tags: [User settings]
+ *     tags: [Subreddit]
  *     parameters:
  *      - in: path
  *        name: subreddit
@@ -1353,7 +1353,7 @@ moderationRouter.post(
  * /r/{subreddit}/profile-picture:
  *   delete:
  *     summary: Delete the profile picture in a subreddit
- *     tags: [User settings]
+ *     tags: [Subreddit]
  *     parameters:
  *      - in: path
  *        name: subreddit
@@ -1384,7 +1384,7 @@ moderationRouter.delete(
  * /r/{subreddit}/banner-image:
  *   post:
  *     summary: Add a banner to a subreddit
- *     tags: [User settings]
+ *     tags: [Subreddit]
  *     parameters:
  *      - in: path
  *        name: subreddit
@@ -1442,7 +1442,7 @@ moderationRouter.post(
  * /r/{subreddit}/banner-image:
  *   delete:
  *     summary: Delete the banner image in a subreddit
- *     tags: [User settings]
+ *     tags: [Subreddit]
  *     parameters:
  *      - in: path
  *        name: subreddit
@@ -1474,7 +1474,7 @@ moderationRouter.delete(
  *  post:
  *   summary:
  *    Approve a user in a subreddit
- *   tags: [Posts and comments moderation]
+ *   tags: [Subreddit moderation]
  *   parameters:
  *      - in: path
  *        name: subreddit
@@ -1531,7 +1531,7 @@ moderationRouter.post(
  *  post:
  *   summary:
  *    Mute a user in the subreddit
- *   tags: [Posts and comments moderation]
+ *   tags: [Subreddit moderation]
  *   parameters:
  *      - in: path
  *        name: subreddit
