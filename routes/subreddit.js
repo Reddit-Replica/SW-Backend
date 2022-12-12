@@ -138,6 +138,42 @@ subRedditRouter.post(
 
 /**
  * @swagger
+ * /leave-subreddit:
+ *   post:
+ *     summary: Leave a subreddit
+ *     tags: [Subreddit]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - subredditName
+ *             properties:
+ *               subredditName:
+ *                 type: string
+ *                 description: Subreddit name
+ *     responses:
+ *       200:
+ *         description: You left the subreddit successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+subRedditRouter.post("/leave-subreddit");
+
+/**
+ * @swagger
  * /subreddit-name-available:
  *   get:
  *     summary: Check if the username is used before
