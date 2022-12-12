@@ -241,13 +241,13 @@ subredditModerationsRouter.put(
  *        properties:
  *         enableSpoiler:
  *          type: boolean
- *          description: If that community send a welcome message to the new members or not.
+ *          description: Enable spoiler tag in posts or not
  *         allowImagesInComment:
  *          type: boolean
- *          description: If that community send a welcome message to the new members or not.
+ *          description: Allow images on comment or not
  *         suggestedSort:
  *          type: string
- *          description: The type of the community.
+ *          description: The sugggested sort for comment in that community
  *          enum:
  *           - none
  *           - best
@@ -305,13 +305,13 @@ subredditModerationsRouter.get(
  *       properties:
  *         enableSpoiler:
  *          type: boolean
- *          description: If that community send a welcome message to the new members or not.
+ *          description: Enable spoiler tag in posts or not
  *         allowImagesInComment:
  *          type: boolean
- *          description: If that community send a welcome message to the new members or not.
+ *          description: Allow images on comment or not
  *         suggestedSort:
  *          type: string
- *          description: The type of the community.
+ *          description: The sugggested sort for comment in that community
  *          enum:
  *           - none
  *           - best
