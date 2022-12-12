@@ -3,6 +3,7 @@ import mailgun from "mailgun-js";
 
 dotenv.config();
 const FRONT_BASE = process.env.FRONT_BASE.trim();
+
 const API_KEY = process.env.MAILGUN_API_KEY.trim();
 const SENDER_EMAIL = process.env.SENDER_EMAIL.trim();
 const DOMAIN = process.env.DOMAIN.trim();

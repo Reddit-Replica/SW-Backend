@@ -17,6 +17,7 @@ import {
   subredditNameAvailable,
 } from "./../services/communityServices.js";
 import { searchForUserService } from "../services/userServices.js";
+import { subredditCategoryListing } from "../services/subredditListing.js";
 export let MainTopics = [
   "Activism",
   "Addition Support",
@@ -236,7 +237,6 @@ const availableSubredditName = async (req, res) => {
     //SENDING RESPONSES
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -331,6 +331,54 @@ const removeFromFavorite = async (req, res) => {
   }
 };
 
+const subredditLeaderboardWithCategory = async (req, res) => {
+  try {
+    let { before, after, limit } = req.query;
+    const user = await searchForUserService(req.payload.username);
+    const result = await subredditCategoryListing(
+      user,
+      req.params.categoryName,
+      before,
+      after,
+      limit,
+      true
+    );
+    return res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const subredditLeaderboard = async (req, res) => {
+  try {
+    let { before, after, limit } = req.query;
+    const user = await searchForUserService(req.payload.username);
+    const result = await subredditCategoryListing(
+      user,
+      "",
+      before,
+      after,
+      limit,
+      false
+    );
+    return res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
 export default {
   createSubreddit,
   joinSubreddit,
@@ -344,4 +392,6 @@ export default {
   addToFavorite,
   removeFromFavorite,
   availableSubredditName,
+  subredditLeaderboard,
+  subredditLeaderboardWithCategory,
 };
