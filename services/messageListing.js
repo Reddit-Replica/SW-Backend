@@ -168,7 +168,7 @@ export async function userConversationListing(
   listingParams
 ) {
   // GETTING FIND LIMIT SORT THAT WE NEED TO RETURN VALUES
-  const listingResult = await conversationListing(listingParams, user);
+  const listingResult = await conversationListing(listingParams);
   // GETTING THE DESIRED FIELD THAT WE WOULD GET DATA FROM
   const result = await User.findOne({ username: user.username })
     .select(typeOfListing)
@@ -266,7 +266,7 @@ export async function userInboxListing(user, listingParams) {
   ];
   //SORTING ALL OF THE MESSAGES THAT WE HAD BASED ON SENT TIME
   totalInbox.sort(compareMsgs2);
-let isBefore=false;
+  let isBefore=false;
   //FILTERING THE TOTAL INBOX ARRAY THAT WE MADE WITH BEFORE W AFTER LIMITS
   //IN CASE OF BEFORE WE NEED TO GET THE LIMIT ELEMENTS BEFORE THE SELECTED ITEM
   //THEN WE NEED TO CHANGE THE VALUES OF STARTING AND ENDING INDICES OF THE TOTAL INBOX ARRAY

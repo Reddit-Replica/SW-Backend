@@ -174,7 +174,7 @@ export async function mentionListing(listingParams) {
  * @param {Object} listingParams Listing parameters sent in the request query [sort, time, before, after, limit]
  * @returns {Object} The final results that will be used by mongoose to list posts
  */
-export async function conversationListing(listingParams, user) {
+export async function conversationListing(listingParams) {
   let result = {};
   result.query = {};
   //PREPARING LIMIT OF NUMBER OF CONVERSATIONS
@@ -191,18 +191,7 @@ export async function conversationListing(listingParams, user) {
   } else if (!listingParams.before && listingParams.after) {
     splitterConversation = await Conversation.findById(listingParams.after);
     result.query.latestDate = { $lt: splitterConversation.latestDate };
-  } else {
-    //IF THERE IS NO BEFORE OR AFTER THEN I WILL GET THE FIRST ELEMENTS IN USER DATA
-    if (user.conversations.length !== 0) {
-      splitterConversation = await Conversation.findById(user.conversations[0]);
-      result.query.latestDate = { $lte: splitterConversation.latestDate };
-    } else {
-      let error = new Error("User Has no conversations");
-      error.statusCode = 400;
-      throw error;
-    }
   }
-
   return result;
 }
 
