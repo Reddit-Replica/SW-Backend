@@ -408,7 +408,7 @@ subredditModerationsRouter.get(
   "/r/:subreddit/about/muted",
   verifyAuthToken,
   subredditDetailsMiddleware.checkSubreddit,
-  subredditModerationsController.getApprovedUsers
+  subredditModerationsController.getMutedUsers
 );
 
 /**

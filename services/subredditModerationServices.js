@@ -413,7 +413,7 @@ function getSubredditApprovedFirstTime(subreddit, limit) {
     response.children.push({
       username: subreddit.approvedUsers[i].userID.username,
       avatar: subreddit.approvedUsers[i].userID.avatar,
-      dateOfApprove: subreddit.approvedUsers[i].dateOfModeration,
+      dateOfApprove: subreddit.approvedUsers[i].dateOfApprove,
     });
   }
   if (myLimit !== numberOfApproved) {
@@ -451,7 +451,7 @@ function getSubredditApprovedBefore(subreddit, limit, before) {
     response.children.push({
       username: subreddit.approvedUsers[i].userID.username,
       avatar: subreddit.approvedUsers[i].userID.avatar,
-      dateOfApprove: subreddit.approvedUsers[i].dateOfModeration,
+      dateOfApprove: subreddit.approvedUsers[i].dateOfApprove,
     });
   }
   if (response.children.length >= 1) {
@@ -494,7 +494,7 @@ function getSubredditApprovedAfter(subreddit, limit, after) {
     response.children.push({
       username: subreddit.approvedUsers[i].userID.username,
       avatar: subreddit.approvedUsers[i].userID.avatar,
-      dateOfApprove: subreddit.approvedUsers[i].dateOfModeration,
+      dateOfApprove: subreddit.approvedUsers[i].dateOfApprove,
     });
   }
   if (response.children.length >= 1) {
@@ -502,6 +502,159 @@ function getSubredditApprovedAfter(subreddit, limit, after) {
       response.after = subreddit.approvedUsers[myLimit - 1].userID._id;
     }
     response.before = subreddit.approvedUsers[neededIndex + 1].userID._id;
+  }
+  return response;
+}
+
+/**
+ * A Service function used to get the subreddit muted users for the controller
+ * @param {Number} limitReq the limit identified in the request
+ * @param {ObjectID} beforeReq Before id
+ * @param {ObjectID} afterReq After id
+ * @param {Subreddit} subreddit The subreddit object
+ * @returns {preparedResponse} the prepared response for the controller
+ */
+export async function getSubredditMuted(
+  limitReq,
+  beforeReq,
+  afterReq,
+  subreddit
+) {
+  let preparedResponse;
+  let limit = prepareLimit(limitReq);
+  await subreddit.populate("mutedUsers.userID");
+  // subreddit.mutedUsers.push({
+  //   userID: "63972839aea1062bb18835d4",
+  //   dateOfMute: Date.now(),
+  // });
+  // await subreddit.save();
+  if (!beforeReq && !afterReq) {
+    preparedResponse = getSubredditMutedFirstTime(subreddit, limit);
+  } else if (beforeReq && afterReq) {
+    const error = new Error("Can't set before and after");
+    error.statusCode = 400;
+    throw error;
+  } else if (beforeReq) {
+    validateId(beforeReq);
+    preparedResponse = getSubredditMutedBefore(subreddit, limit, beforeReq);
+  } else {
+    preparedResponse = getSubredditMutedAfter(subreddit, limit, afterReq);
+  }
+
+  return preparedResponse;
+}
+
+/**
+ * A Service helper function used to get the subreddit muted for the main service function in case of first time
+ * @param {Subreddit} subreddit The subreddit object
+ * @param {Number} limit the limit identified in the request
+ * @returns {response} the prepared response for the main service function
+ */
+function getSubredditMutedFirstTime(subreddit, limit) {
+  const response = { children: [] };
+  const numberOfMuted = subreddit.mutedUsers.length;
+  let myLimit;
+  if (numberOfMuted > limit) {
+    myLimit = limit;
+  } else {
+    myLimit = numberOfMuted;
+  }
+  for (let i = 0; i < myLimit; i++) {
+    response.children.push({
+      username: subreddit.mutedUsers[i].userID.username,
+      avatar: subreddit.mutedUsers[i].userID.avatar,
+      dateOfMute: subreddit.mutedUsers[i].dateOfMute,
+      muteReason: subreddit.mutedUsers[i].muteReason,
+    });
+  }
+  if (myLimit !== numberOfMuted) {
+    response.after = subreddit.mutedUsers[myLimit - 1].userID._id;
+  }
+  return response;
+}
+
+/**
+ * A Service helper function used to get the subreddit muted users for the main service function in case of before
+ * @param {Subreddit} subreddit The subreddit object
+ * @param {Number} limit the limit identified in the request
+ * @returns {response} the prepared response for the main service function
+ */
+// eslint-disable-next-line max-statements
+function getSubredditMutedBefore(subreddit, limit, before) {
+  const response = { children: [] };
+  let myStart;
+  const numberOfMuted = subreddit.mutedUsers.length;
+  const neededIndex = subreddit.mutedUsers.findIndex(
+    (mod) => mod.userID._id.toString() === before
+  );
+  if (neededIndex === -1) {
+    const error = new Error("invalid moderator id");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (neededIndex - limit < 0) {
+    myStart = 0;
+  } else {
+    myStart = neededIndex - limit;
+  }
+  for (let i = myStart; i < neededIndex; i++) {
+    response.children.push({
+      username: subreddit.mutedUsers[i].userID.username,
+      avatar: subreddit.mutedUsers[i].userID.avatar,
+      dateOfMute: subreddit.mutedUsers[i].dateOfMute,
+      muteReason: subreddit.mutedUsers[i].muteReason,
+    });
+  }
+  if (response.children.length >= 1) {
+    if (myStart !== 0) {
+      response.before = subreddit.mutedUsers[myStart].userID._id;
+    }
+    if (neededIndex !== numberOfMuted - 1) {
+      response.after = subreddit.mutedUsers[neededIndex - 1].userID._id;
+    }
+  }
+  return response;
+}
+
+/**
+ * A Service helper function used to get the subreddit muted users for the main service function in case of after
+ * @param {Subreddit} subreddit The subreddit object
+ * @param {Number} limit the limit identified in the request
+ * @returns {response} the prepared response for the main service function
+ */
+// eslint-disable-next-line max-statements
+function getSubredditMutedAfter(subreddit, limit, after) {
+  const response = { children: [] };
+  let myLimit;
+  const numberOfMuted = subreddit.mutedUsers.length;
+  const neededIndex = subreddit.mutedUsers.findIndex(
+    (mod) => mod.userID._id.toString() === after
+  );
+  if (neededIndex === -1) {
+    const error = new Error("invalid moderator id");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (neededIndex + limit + 1 >= numberOfMuted) {
+    myLimit = numberOfMuted;
+  } else {
+    myLimit = neededIndex + limit + 1;
+  }
+  for (let i = neededIndex + 1; i < myLimit; i++) {
+    response.children.push({
+      username: subreddit.mutedUsers[i].userID.username,
+      avatar: subreddit.mutedUsers[i].userID.avatar,
+      dateOfMute: subreddit.mutedUsers[i].dateOfMute,
+      muteReason: subreddit.mutedUsers[i].muteReason,
+    });
+  }
+  if (response.children.length >= 1) {
+    if (myLimit !== numberOfMuted) {
+      response.after = subreddit.mutedUsers[myLimit - 1].userID._id;
+    }
+    response.before = subreddit.mutedUsers[neededIndex + 1].userID._id;
   }
   return response;
 }
