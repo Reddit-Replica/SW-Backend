@@ -33,12 +33,14 @@ describe("Testing comment services functions", () => {
     user = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user.save();
 
     loggedInUser = new User({
       username: "LoggedInUser",
       email: "sad@gmail.com",
+      createdAt: Date.now(),
     });
     await loggedInUser.save();
 
@@ -48,6 +50,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post1.save();
 
@@ -57,18 +60,20 @@ describe("Testing comment services functions", () => {
       ownerId: loggedInUser._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post2.save();
 
     subreddit = new Subreddit({
       type: "public",
-      title: "funny",
+      title: "subreddit",
       category: "fun",
       viewName: "LOL",
       owner: {
         username: user.username,
         userID: user._id,
       },
+      createdAt: Date.now(),
     });
     await subreddit.save();
 
@@ -81,6 +86,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 10,
+      createdAt: Date.now(),
     });
     await firstLevelComment1.save();
 
@@ -93,6 +99,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 5,
+      createdAt: Date.now(),
     });
     await firstLevelComment2.save();
 
@@ -105,6 +112,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 1,
+      createdAt: Date.now(),
     });
     await firstLevelComment3.save();
 
@@ -117,6 +125,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 10,
+      createdAt: Date.now(),
     });
     await secondLevelComment1.save();
 
@@ -129,6 +138,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 5,
+      createdAt: Date.now(),
     });
     await secondLevelComment2.save();
 
@@ -141,6 +151,7 @@ describe("Testing comment services functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 1,
+      createdAt: Date.now(),
     });
     await secondLevelComment3.save();
   });
@@ -328,7 +339,7 @@ describe("Testing comment services functions", () => {
         parentType: "post",
         level: 1,
         haveSubreddit: true,
-        subredditName: "funny",
+        subredditName: "subreddit",
         username: user.username,
         userId: user._id,
       },
@@ -348,26 +359,6 @@ describe("Testing comment services functions", () => {
         parentType: "post",
         level: 1,
         haveSubreddit: false,
-        username: user.username,
-        userId: user._id,
-      },
-      post2
-    );
-    expect(result.statusCode).toEqual(201);
-    await Comment.deleteOne({ content: { text: "Comment for testing" } });
-  });
-
-  // eslint-disable-next-line max-len
-  it("try to create comment with all valid parameters and with subreddit", async () => {
-    const result = await createCommentService(
-      {
-        content: { text: "Comment for testing" },
-        parentId: post2._id,
-        postId: post2._id,
-        parentType: "post",
-        level: 1,
-        haveSubreddit: true,
-        subredditName: "funny",
         username: user.username,
         userId: user._id,
       },

@@ -10,7 +10,7 @@ import {
   searchForMessage,
   unreadMessage,
   validateMention,
-} from "../services/MessageServices.js";
+} from "../services/messageServices.js";
 import {
   userMessageListing,
   userMentionsListing,
@@ -54,7 +54,6 @@ const createMessage = async (req, res) => {
     await addMessage(req);
     return res.status(201).json("Your message is sent successfully");
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -72,7 +71,6 @@ const createMention = async (req, res) => {
     await addMention(req);
     return res.status(201).json("Your mention is sent successfully");
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -146,7 +144,6 @@ const getSentMsg = async (req, res) => {
       res.status(result.statusCode).json(result.data);
     }
   } catch (error) {
-    console.log(error.message);
     if (error.statusCode) {
       res.status(error.statusCode).json({ error: error.message });
     } else {
@@ -184,7 +181,6 @@ const getUnreadMsg = async (req, res) => {
       res.status(result.statusCode).json(result.data);
     }
   } catch (error) {
-    console.log(error.message);
     if (error.statusCode) {
       res.status(error.statusCode).json({ error: error.message });
     } else {
@@ -217,7 +213,6 @@ const getUsernameMentions = async (req, res) => {
       res.status(result.statusCode).json(result.data);
     }
   } catch (error) {
-    console.log(error.message);
     if (error.statusCode) {
       res.status(error.statusCode).json({ error: error.message });
     } else {
@@ -237,7 +232,6 @@ const getpostReplies = async (req, res) => {
     });
     res.status(result.statusCode).json(result.data);
   } catch (error) {
-    console.log(error.message);
     if (error.statusCode) {
       res.status(error.statusCode).json({ error: error.message });
     } else {

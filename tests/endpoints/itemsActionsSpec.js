@@ -23,6 +23,7 @@ describe("Testing post, comment, and message actions endpoints", () => {
     user1 = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user1.save();
     token1 = generateJWT(user1);
@@ -33,6 +34,7 @@ describe("Testing post, comment, and message actions endpoints", () => {
       ownerId: user1._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post.save();
 
@@ -43,6 +45,7 @@ describe("Testing post, comment, and message actions endpoints", () => {
       content: "comment content",
       ownerUsername: user1.username,
       ownerId: user1._id,
+      createdAt: Date.now(),
     });
     await comment.save();
 
@@ -58,6 +61,7 @@ describe("Testing post, comment, and message actions endpoints", () => {
     user2 = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user2.save();
     token2 = generateJWT(user2);

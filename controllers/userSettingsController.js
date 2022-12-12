@@ -292,7 +292,9 @@ const addProfilePicture = async (req, res) => {
     }
     user.avatar = req.files.avatar[0].path;
     await user.save();
-    return res.status(200).json("Profile picture added successfully");
+    return res.status(200).json({
+      path: user.avatar,
+    });
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
@@ -349,7 +351,9 @@ const addBanner = async (req, res) => {
     }
     user.banner = req.files.banner[0].path;
     await user.save();
-    return res.status(200).json("Banner added successfully");
+    return res.status(200).json({
+      path: user.banner,
+    });
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
@@ -394,16 +398,12 @@ const deleteBanner = async (req, res) => {
 const getBlockedUsers = async (req, res) => {
   const userId = req.payload.userId;
   try {
-    await getUser(userId);
+    const user = await getUser(userId);
     const { before, after, limit } = req.query;
 
-    let result = await listingBlockedUsers(userId, {
-      before,
-      after,
-      limit,
-    });
+    let result = await listingBlockedUsers(limit, before, after, user);
 
-    res.status(result.statusCode).json(result.data);
+    res.status(200).json(result);
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {

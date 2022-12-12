@@ -119,7 +119,6 @@ const savePostOrComment = async (req, res) => {
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -243,7 +242,6 @@ const unmarkAsSpam = async (req, res) => {
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -264,7 +262,6 @@ const vote = async (req, res) => {
 
     let result;
     if (direction === 1) {
-      console.log("haaa");
       if (type === "post") {
         const post = await searchForPost(req.body.id);
         result = await upVoteAPost(post, user);
@@ -285,7 +282,6 @@ const vote = async (req, res) => {
     }
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,

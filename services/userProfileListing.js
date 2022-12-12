@@ -114,7 +114,17 @@ export async function listingUserProfileService(
         postData.data.inYourSubreddit = true;
         postData.data.moderation = post.moderation;
       } else {
-        postData.data.inYourSubreddit = false;
+        // check if post is created by logged in user [post have no subreddit]
+        const found = loggedInUser.posts.find(
+          (ele) => ele._id.toString() === post._id.toString()
+        );
+
+        if (found) {
+          postData.data.inYourSubreddit = true;
+          postData.data.moderation = post.moderation;
+        } else {
+          postData.data.inYourSubreddit = false;
+        }
       }
     }
 
@@ -161,8 +171,23 @@ async function getPostComments(
   const comments = await Comment.find({ postId: postId, ownerId: user._id });
   let readyComments = [];
 
-  for (const i in comments) {
-    const comment = comments[i];
+  // resort comments so that children come after parent comment
+  let preprocessedList = [];
+  for (let i = 0; i < comments.length; i++) {
+    if (!preprocessedList.includes(comments[i])) {
+      preprocessedList.push(comments[i]);
+    }
+
+    for (let j = i + 1; j < comments.length; j++) {
+      // eslint-disable-next-line max-depth
+      if (comments[i].children.includes(comments[j]._id)) {
+        preprocessedList.push(comments[j]);
+      }
+    }
+  }
+
+  for (const i in preprocessedList) {
+    const comment = preprocessedList[i];
 
     // check if the comment is saved if the listing is savedPosts
     if (typeOfListing === "savedPosts") {
@@ -184,16 +209,21 @@ async function getPostComments(
     };
 
     // add parent data
-    if (comment.parentType === "comment" && !requestComments) {
-      const parent = await Comment.findById(comment.parentId);
-      data.parent = {
-        commentId: parent._id,
-        commentedBy: parent.ownerUsername,
-        commentBody: parent.content,
-        points: parent.numberOfVotes,
-        publishTime: parent.createdAt,
-        editTime: parent.editedAt,
-      };
+    if (!requestComments && comment.parentType === "comment") {
+      const index = preprocessedList.findIndex(
+        (ele) => ele._id.toString() === comment.parentId.toString()
+      );
+      if (index === -1) {
+        const parent = await Comment.findById(comment.parentId);
+        data.parent = {
+          commentId: parent._id,
+          commentedBy: parent.ownerUsername,
+          commentBody: parent.content,
+          points: parent.numberOfVotes,
+          publishTime: parent.createdAt,
+          editTime: parent.editedAt,
+        };
+      }
     }
 
     if (loggedInUser) {
@@ -353,7 +383,17 @@ export async function listingUserOverview(
         postData.data.post.inYourSubreddit = true;
         postData.data.post.moderation = post.moderation;
       } else {
-        postData.data.post.inYourSubreddit = false;
+        // check if post is created by logged in user [post have no subreddit]
+        const found = loggedInUser.posts.find(
+          (ele) => ele._id.toString() === post._id.toString()
+        );
+
+        if (found) {
+          postData.data.post.inYourSubreddit = true;
+          postData.data.post.moderation = post.moderation;
+        } else {
+          postData.data.post.inYourSubreddit = false;
+        }
       }
     }
 

@@ -154,7 +154,8 @@ export async function searchComments(query, listingParams) {
  * @param {object} listingParams Listing parameters for listing
  * @returns {void}
  */
-export async function searchUsers(query, listingParams) {
+// eslint-disable-next-line max-statements
+export async function searchUsers(query, listingParams, loggedInUser) {
   // Prepare Listing Parameters
   const listingResult = await userListing(listingParams);
 
@@ -163,6 +164,11 @@ export async function searchUsers(query, listingParams) {
     { username: { $regex: regex } },
     { displayName: { $regex: regex } },
   ];
+  if (loggedInUser) {
+    listingResult.find["username"] = {
+      $not: { $regex: loggedInUser.username },
+    };
+  }
 
   const result = await User.find(listingResult.find)
     .limit(listingResult.limit)
@@ -172,13 +178,27 @@ export async function searchUsers(query, listingParams) {
 
   for (const i in result) {
     const user = result[i];
-
+    let following = undefined;
+    if (loggedInUser) {
+      if (
+        user.followers.find(
+          (userId) => userId.toString() === loggedInUser.id.toString()
+        )
+      ) {
+        following = true;
+      } else {
+        following = false;
+      }
+    }
     let userData = { id: result[i]._id.toString() };
     userData.data = {
       id: user.id.toString(),
       karma: user.karma,
       username: user.username,
+      nsfw: user.userSettings.nsfw,
+      joinDate: user.createdAt,
       avatar: user.avatar,
+      following: following,
     };
 
     children.push(userData);
@@ -207,7 +227,8 @@ export async function searchUsers(query, listingParams) {
  * @param {object} listingParams Listing parameters for listing
  * @returns {void}
  */
-export async function searchSubreddits(query, listingParams) {
+// eslint-disable-next-line max-statements
+export async function searchSubreddits(query, listingParams, loggedInUser) {
   // Prepare Listing Parameters
   const listingResult = await subredditListing(listingParams);
 
@@ -216,6 +237,9 @@ export async function searchSubreddits(query, listingParams) {
     { title: { $regex: regex } },
     { viewName: { $regex: regex } },
   ];
+  listingResult.find["type"] = {
+    $not: { $regex: "(?i)\\bprivate\\b" },
+  };
 
   const result = await Subreddit.find(listingResult.find)
     .limit(listingResult.limit)
@@ -225,6 +249,16 @@ export async function searchSubreddits(query, listingParams) {
 
   for (const i in result) {
     const subreddit = result[i];
+    let joined = undefined;
+    if (loggedInUser) {
+      if (
+        loggedInUser.joinedSubreddits.find((sr) => sr.name === subreddit.title)
+      ) {
+        joined = true;
+      } else {
+        joined = false;
+      }
+    }
 
     let subredditData = { id: result[i]._id.toString() };
     subredditData.data = {
@@ -232,6 +266,9 @@ export async function searchSubreddits(query, listingParams) {
       subredditName: subreddit.title,
       numberOfMembers: subreddit.members,
       description: subreddit.description,
+      picture: subreddit.picture,
+      nsfw: subreddit.nsfw,
+      joined: joined,
     };
 
     children.push(subredditData);
@@ -251,4 +288,19 @@ export async function searchSubreddits(query, listingParams) {
       children: children,
     },
   };
+}
+
+/**
+ * This service function return the logged in user if there is a token
+ * sent with the request.
+ *
+ * @param {string} userId User ID
+ * @returns {object} The user object
+ */
+export async function getLoggedInUser(userId) {
+  const user = await User.findById(userId);
+  if (!user || user.deletedAt) {
+    return false;
+  }
+  return user;
 }

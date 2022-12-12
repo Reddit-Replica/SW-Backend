@@ -1,9 +1,17 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import {
   banUserService,
   getSubredditService,
+  inviteToModerateService,
+  cancelInvitationService,
   unbanUserService,
+  acceptModerationInviteService,
+  leaveModerationService,
 } from "../services/subredditActionsServices.js";
+import {
+  insertTopicsIfNotExists,
+  getSuggestedTopicsService,
+} from "../services/topics.js";
 import {
   getUserFromJWTService,
   searchForUserService,
@@ -38,6 +46,59 @@ const unbanUserValidator = [
     .isEmpty()
     .withMessage("Username can not be empty"),
   body("subreddit")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Subreddit name can not be empty"),
+];
+
+const inviteModeratorValidator = [
+  body("username")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Username can not be empty"),
+  body("subreddit")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Subreddit name can not be empty"),
+  body("permissionToEverything")
+    .not()
+    .isEmpty()
+    .withMessage("permissionToEverything can not be empty"),
+  body("permissionToManageUsers")
+    .not()
+    .isEmpty()
+    .withMessage("permissionToManageUsers can not be empty"),
+  body("permissionToManageSettings")
+    .not()
+    .isEmpty()
+    .withMessage("permissionToManageSettings can not be empty"),
+  body("permissionToManageFlair")
+    .not()
+    .isEmpty()
+    .withMessage("permissionToManageFlair can not be empty"),
+  body("permissionToManagePostsComments")
+    .not()
+    .isEmpty()
+    .withMessage("permissionToManagePostsComments can not be empty"),
+];
+
+const acceptModerationInviteValidator = [
+  body("subreddit")
+    .trim()
+    .escape()
+    .not()
+    .isEmpty()
+    .withMessage("Subreddit name can not be empty"),
+];
+
+const getSuggestedTopicsValidator = [
+  param("subreddit")
     .trim()
     .escape()
     .not()
@@ -86,9 +147,120 @@ const unbanUser = async (req, res) => {
   }
 };
 
+const inviteModerators = async (req, res) => {
+  try {
+    const moderator = await getUserFromJWTService(req.payload.userId);
+    const userToInvite = await searchForUserService(req.body.username);
+    const subreddit = await getSubredditService(req.body.subreddit);
+
+    const result = await inviteToModerateService(
+      moderator,
+      userToInvite,
+      subreddit,
+      {
+        permissionToEverything: req.body.permissionToEverything,
+        permissionToManageUsers: req.body.permissionToManageUsers,
+        permissionToManageSettings: req.body.permissionToManageSettings,
+        permissionToManageFlair: req.body.permissionToManageFlair,
+        permissionToManagePostsComments:
+          req.body.permissionToManagePostsComments,
+      }
+    );
+    res.status(result.statusCode).json(result.message);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const cancelInvitation = async (req, res) => {
+  try {
+    const moderator = await getUserFromJWTService(req.payload.userId);
+    const invitedUser = await searchForUserService(req.body.username);
+    const subreddit = await getSubredditService(req.body.subreddit);
+
+    const result = await cancelInvitationService(
+      moderator,
+      invitedUser,
+      subreddit
+    );
+    res.status(result.statusCode).json(result.message);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const acceptModerationInvite = async (req, res) => {
+  try {
+    const user = await getUserFromJWTService(req.payload.userId);
+    const subreddit = await getSubredditService(req.body.subreddit);
+
+    const result = await acceptModerationInviteService(user, subreddit);
+    res.status(result.statusCode).json(result.message);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const leaveModeration = async (req, res) => {
+  try {
+    const user = await getUserFromJWTService(req.payload.userId);
+    const subreddit = await getSubredditService(req.body.subreddit);
+
+    const result = await leaveModerationService(user, subreddit);
+    res.status(result.statusCode).json(result.message);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getSuggestedTopics = async (req, res) => {
+  try {
+    const subreddit = await getSubredditService(req.params.subreddit);
+
+    await insertTopicsIfNotExists();
+    const result = await getSuggestedTopicsService(subreddit);
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   banUserValidator,
   banUser,
   unbanUserValidator,
   unbanUser,
+  inviteModeratorValidator,
+  inviteModerators,
+  cancelInvitation,
+  acceptModerationInviteValidator,
+  acceptModerationInvite,
+  leaveModeration,
+  getSuggestedTopicsValidator,
+  getSuggestedTopics,
 };

@@ -4,6 +4,7 @@ import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
+import { checkIfBanned, checkIfMuted } from "./subredditActionsServices.js";
 
 /**
  * Function used to check if the id of the post is valid and if the post exists in the database
@@ -106,7 +107,7 @@ export async function createCommentService(data, post) {
   const user = await User.findById(data.userId);
   if (!user || user.deletedAt) {
     let error = new Error("Can not find a user with that id");
-    error.statusCode = 400;
+    error.statusCode = 404;
     throw error;
   }
 
@@ -124,6 +125,7 @@ export async function createCommentService(data, post) {
     content: data.content,
     ownerUsername: data.username,
     ownerId: data.userId,
+    createdAt: Date.now(),
   };
 
   // check if the subreddit exists
@@ -144,6 +146,20 @@ export async function createCommentService(data, post) {
       error.statusCode = 400;
       throw error;
     }
+
+    // check if user was banned or mutted
+    if (await checkIfBanned(user, subreddit)) {
+      let error = new Error("User is banned from this subreddit");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (checkIfMuted(user, subreddit)) {
+      let error = new Error("User is muted at this subreddit");
+      error.statusCode = 400;
+      throw error;
+    }
+
     commentObject.subredditName = data.subredditName;
   }
 
@@ -176,8 +192,9 @@ export async function createCommentService(data, post) {
   );
   if (index === -1) {
     post.usersCommented.push(user._id);
-    await post.save();
   }
+  post.numberOfComments = post.numberOfComments + 1;
+  await post.save();
 
   return {
     statusCode: 201,
