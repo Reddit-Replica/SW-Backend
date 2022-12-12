@@ -2,6 +2,7 @@
 /* eslint-disable max-statements */
 import Subreddit from "../models/Community.js";
 import { subredditListing } from "../utils/prepareSubreddit.js";
+import { checkOnCategory } from "./communityServices.js";
 /**
  * Function that get the subreddit that we want to list
  * then sort, match, and limit them, then finally save the last id so that it can
@@ -24,6 +25,7 @@ export async function subredditCategoryListing(
   limit,
   withCategory
 ) {
+  await checkOnCategory(category);
   const listingResult = await subredditListing(
     category,
     before,

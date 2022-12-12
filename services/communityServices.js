@@ -275,7 +275,7 @@ export async function moderateSubreddit(username, subredditName) {
  * @param {String} category username of the user
  * @returns {Object} error object that contains the msg describing what happened and its status code
  */
-async function checkOnCategory(category) {
+export async function checkOnCategory(category) {
   await insertCategoriesIfNotExists();
   const categories = await getSortedCategories();
   let includes = false;
