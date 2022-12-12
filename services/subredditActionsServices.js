@@ -198,6 +198,7 @@ export async function inviteToModerateService(
     subreddit.invitedModerators.push({
       userID: userToInvite._id,
       permissions: permissions,
+      dateOfInvitation: Date.now(),
     });
     await subreddit.save();
   }
@@ -278,6 +279,7 @@ export async function acceptModerationInviteService(user, subreddit) {
   subreddit.moderators.push({
     userID: user._id,
     permissions: subreddit.invitedModerators[invitedUserIndex].permissions,
+    dateOfModeration: Date.now(),
   });
 
   subreddit.invitedModerators.splice(invitedUserIndex, 1);

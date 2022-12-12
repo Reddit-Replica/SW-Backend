@@ -126,7 +126,7 @@ const communitySchema = mongoose.Schema({
       dateOfModeration: {
         type: Date,
         required: true,
-        default: Date.now(),
+        // default: Date.now(),
       },
       permissions: [
         {
@@ -144,7 +144,7 @@ const communitySchema = mongoose.Schema({
       dateOfInvitation: {
         type: Date,
         required: true,
-        default: Date.now(),
+        // default: Date.now(),
       },
       permissions: [
         {
@@ -182,25 +182,28 @@ const communitySchema = mongoose.Schema({
   ],
   mutedUsers: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
       userID: {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+      dateOfMute: {
+        type: Date,
+        required: true,
+      },
+      muteReason: {
+        type: String,
       },
     },
   ],
   approvedUsers: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
       userID: {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+      dateOfApprove: {
+        type: Date,
+        required: true,
       },
     },
   ],
