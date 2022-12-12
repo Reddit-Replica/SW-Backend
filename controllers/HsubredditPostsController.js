@@ -1,5 +1,8 @@
 import { body, query } from "express-validator";
-import { addToApprovedUsers } from "../services/postsModeration.js";
+import {
+  addToApprovedUsers,
+  addToMutedUsers,
+} from "../services/postsModeration.js";
 import {
   listingSubredditPosts,
   listingSubredditComments,
@@ -244,19 +247,9 @@ const approveUser = async (req, res) => {
 const muteUser = async (req, res) => {
   try {
     const subreddit = req.subreddit;
-    if (!req.files || !req.files.banner) {
-      return res.status(400).json({
-        error: "Banner is required",
-      });
-    }
-    if (subreddit.banner) {
-      deleteFile(subreddit.banner);
-    }
-    subreddit.banner = req.files.banner[0].path;
-    await subreddit.save();
-    return res.status(200).json({
-      path: subreddit.banner,
-    });
+    const user = await getUserByUsername(req.body.username);
+    await addToMutedUsers(subreddit, user, req.body.muteReason);
+    return res.status(200).json("User successfully muted");
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {

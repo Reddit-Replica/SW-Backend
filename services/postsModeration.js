@@ -53,7 +53,8 @@ export async function removeFromSpammedComments(id, subredditName) {
 
 /**
  * This function checks if a user already exists in the subreddit's
- * list of approved users and adds it if not
+ * list of approved users and adds it if not. It also adds the subreddit
+ * to the user's list of joined subreddits
  * @param {object} subreddit Subreddit object
  * @param {object} user User object
  * @returns {void}
@@ -61,7 +62,7 @@ export async function removeFromSpammedComments(id, subredditName) {
 export async function addToApprovedUsers(subreddit, user) {
   if (
     subreddit.approvedUsers.find(
-      (approvedUser) => approvedUser.userId.toString() === user.id.toString()
+      (approvedUser) => approvedUser.userID.toString() === user.id.toString()
     )
   ) {
     const error = new Error("This user is already approved");
@@ -69,9 +70,8 @@ export async function addToApprovedUsers(subreddit, user) {
     throw error;
   }
   subreddit.approvedUsers.push({
-    username: user.username,
-    userId: user.id,
-    approveDate: Date.now(),
+    userID: user.id,
+    dateOfApprove: Date.now(),
   });
   await subreddit.save();
   if (!user.joinedSubreddits.find((sr) => sr.name === subreddit.title)) {
@@ -81,4 +81,29 @@ export async function addToApprovedUsers(subreddit, user) {
     });
     await user.save();
   }
+}
+
+/**
+ * This function checks if a user already exists in the subreddit's
+ * list of muted users and adds it if not.
+ * @param {object} subreddit Subreddit object
+ * @param {object} user User object
+ * @returns {void}
+ */
+export async function addToMutedUsers(subreddit, user, muteReason) {
+  if (
+    subreddit.mutedUsers.find(
+      (mutedUser) => mutedUser.userID.toString() === user.id.toString()
+    )
+  ) {
+    const error = new Error("This user is already muted");
+    error.statusCode = 400;
+    throw error;
+  }
+  subreddit.mutedUsers.push({
+    userID: user.id,
+    dateOfMute: Date.now(),
+    muteReason: muteReason,
+  });
+  await subreddit.save();
 }
