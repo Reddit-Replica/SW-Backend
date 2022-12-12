@@ -77,7 +77,9 @@ const communitiesRouter = express.Router();
  *       - bearerAuth: []
  */
 
-communitiesRouter.get("/subreddits/leaderboard");
+communitiesRouter.get("/subreddits/leaderboard",
+verifyAuthToken,
+subredditController.subredditLeaderboard);
 
 /**
  * @swagger
@@ -154,7 +156,11 @@ communitiesRouter.get("/subreddits/leaderboard");
  *       - bearerAuth: []
  */
 
-communitiesRouter.get("/subreddits/leaderboard/:categoryName");
+communitiesRouter.get(
+  "/subreddits/leaderboard/:categoryName",
+  verifyAuthToken,
+  subredditController.subredditLeaderboardWithCategory
+);
 
 /**
  * @swagger
