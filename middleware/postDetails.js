@@ -93,6 +93,7 @@ export async function setPostActions(req, res, next) {
 export async function getPostDetails(req, res, next) {
   const post = req.post;
   const postObj = {
+    id: post.id.toString(),
     kind: post.kind,
     subreddit: post.subredditName,
     link: post.link,
