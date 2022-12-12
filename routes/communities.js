@@ -77,9 +77,11 @@ const communitiesRouter = express.Router();
  *       - bearerAuth: []
  */
 
-communitiesRouter.get("/subreddits/leaderboard",
-verifyAuthToken,
-subredditController.subredditLeaderboard);
+communitiesRouter.get(
+  "/subreddits/leaderboard",
+  verifyAuthToken,
+  subredditController.subredditLeaderboard
+);
 
 /**
  * @swagger

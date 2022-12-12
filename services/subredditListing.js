@@ -16,19 +16,33 @@ import { subredditListing } from "../utils/prepareSubreddit.js";
  * @returns {Object} The response to that request containing [statusCode, data]
  */
 // eslint-disable-next-line max-statements
-export async function subredditCategoryListing(user,category, before, after, limit,withCategory) {
-  const listingResult=await subredditListing(category,before,after,limit,withCategory);
-  const result = await Subreddit.find(listingResult.query).limit(listingResult.limit).sort(listingResult.sort);
+export async function subredditCategoryListing(
+  user,
+  category,
+  before,
+  after,
+  limit,
+  withCategory
+) {
+  const listingResult = await subredditListing(
+    category,
+    before,
+    after,
+    limit,
+    withCategory
+  );
+  const result = await Subreddit.find(listingResult.query)
+    .limit(listingResult.limit)
+    .sort(listingResult.sort);
   let children = [];
-  console.log(user.joinedSubreddits);
   for (const i in result) {
     const subreddit = result[i];
     // lOOPING OVER EACH SUBREDDIT THAT WE RETURNED
-    let isMember=false;
+    let isMember = false;
 
-    for (const smallSubreddit of user.joinedSubreddits){
-      if (subreddit.id===smallSubreddit.subredditId.toString()){
-        isMember=true;
+    for (const smallSubreddit of user.joinedSubreddits) {
+      if (subreddit.id === smallSubreddit.subredditId.toString()) {
+        isMember = true;
         break;
       }
     }
@@ -38,7 +52,7 @@ export async function subredditCategoryListing(user,category, before, after, lim
       title: subreddit.title,
       members: subreddit.members,
       description: subreddit.description,
-      isMember:isMember,
+      isMember: isMember,
     };
     children.push(subredditData);
   }

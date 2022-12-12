@@ -58,7 +58,6 @@ async function prepareMessageBeforeAfter(before, after) {
 // eslint-disable-next-line max-statements
 async function prepareMentionBeforeAfter(before, after) {
   let result = null;
-  console.log(before);
   if (!after && !before) {
     return null;
   } else if (!after && before) {
@@ -169,7 +168,6 @@ export async function prepareListingMentions(listingParams) {
     listingParams.before,
     listingParams.after
   );
-  console.log(result);
   return result;
 }
 

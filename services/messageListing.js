@@ -83,7 +83,6 @@ export async function userMessageListing(
 export async function userMentionsListing(user, typeOfListing, listingParams) {
   // GETTING FIND LIMIT SORT THAT WE NEED TO RETURN VALUES
   const listingResult = await mentionListing(listingParams);
-  console.log(listingResult);
   // GETTING THE DESIRED FIELD THAT WE WOULD GET DATA FROM
   const result = await User.findOne({ username: user.username })
     .select(typeOfListing)
