@@ -20,6 +20,7 @@ export async function checkThingMod(req, res, next) {
   const id = req.body.id;
   const type = req.body.type;
   const username = req.payload.username;
+  const userId = req.payload.userId;
   if (type === "post") {
     try {
       const post = await Post.findById(id);
@@ -36,7 +37,11 @@ export async function checkThingMod(req, res, next) {
           return res.status(404).json("Subreddit not found");
         }
 
-        if (!subreddit.moderators.find((mod) => mod.username === username)) {
+        if (
+          !subreddit.moderators.find(
+            (mod) => mod.userID.toString() === userId.toString()
+          )
+        ) {
           return res.status(401).json("User is not a mod in this subreddit");
         }
       } else {
@@ -65,7 +70,11 @@ export async function checkThingMod(req, res, next) {
         if (!subreddit) {
           return res.status(404).json("Subreddit not found");
         }
-        if (!subreddit.moderators.find((mod) => mod.username === username)) {
+        if (
+          !subreddit.moderators.find(
+            (mod) => mod.userID.toString() === userId.toString()
+          )
+        ) {
           return res.status(401).json("User is not a mod in this subreddit");
         }
       } else {

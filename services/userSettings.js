@@ -2,6 +2,8 @@ import jwtDecode from "jwt-decode";
 import User from "../models/User.js";
 import fs from "fs";
 import { comparePasswords, hashPassword } from "../utils/passwordUtils.js";
+import { sendVerifyEmail } from "../utils/sendEmails.js";
+import { generateVerifyToken } from "../utils/generateTokens.js";
 
 /**
  * A function used to check if a user of a given id exists.
@@ -10,7 +12,24 @@ import { comparePasswords, hashPassword } from "../utils/passwordUtils.js";
  */
 export async function getUser(userId) {
   const user = await User.findById(userId);
-  if (!user) {
+  if (!user || user.deletedAt) {
+    const error = new Error("User not found");
+    error.statusCode = 401;
+    throw error;
+  }
+  return user;
+}
+
+/**
+ * A function used to check if a user of a given username exists.
+ * @param {string} username Username of the user
+ * @returns {object} User object
+ */
+export async function getUserByUsername(username) {
+  const user = await User.findOne({
+    username: username,
+  });
+  if (!user || user.deletedAt) {
     const error = new Error("User not found");
     error.statusCode = 401;
     throw error;
@@ -53,7 +72,34 @@ export async function setNewPassword(user, newPassword, confirmNewPassword) {
     error.statusCode = 400;
     throw error;
   }
+  if (comparePasswords(newPassword, user.password)) {
+    const error = new Error("New password is the same as the old password");
+    error.statusCode = 400;
+    throw error;
+  }
   user.password = hashPassword(newPassword);
+  await user.save();
+}
+
+/**
+ * This function sets a new email for the user but first sends
+ * a verification email
+ * @param {object} user User object
+ * @param {string} userId user ID
+ * @param {string} toEmail New email to be verified
+ * @returns {void}
+ */
+export async function setNewEmail(user, userId, toEmail) {
+  const verifyToken = await generateVerifyToken(userId, "verifyEmail");
+  const sentEmail = sendVerifyEmail(toEmail, userId, verifyToken);
+
+  if (!sentEmail) {
+    const error = new Error("Email was not sent due to an error.");
+    error.statusCode = 400;
+    throw error;
+  }
+  user.email = toEmail;
+  user.userSettings.verifiedEmail = false;
   await user.save();
 }
 
@@ -120,9 +166,7 @@ export function deleteFile(pathToFile) {
     fs.unlinkSync(pathToFile);
     console.log("Successfully deleted the file.");
   } catch (err) {
-    const error = new Error("Invalid path");
-    error.statusCode = 400;
-    throw error;
+    console.log("File was not found");
   }
 }
 

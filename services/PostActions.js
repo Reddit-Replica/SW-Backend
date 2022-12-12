@@ -2,6 +2,7 @@
 /* eslint-disable max-statements */
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
+import User from "../models/User.js";
 import { searchForSubreddit } from "./communityServices.js";
 import { searchForUserService } from "./userServices.js";
 //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -14,11 +15,7 @@ import { searchForUserService } from "./userServices.js";
  * @returns {Object} Object contains the post or maybe the error that happened
  */
 export async function searchForPost(postId) {
-  if (!postId.match(/^[0-9a-fA-F]{24}$/)) {
-    let error = new Error("This is not a valid post id");
-    error.statusCode = 400;
-    throw error;
-  }
+  //NEED TO ADD A CHECK ON THE ID
   const post = await Post.findById(postId);
   if (!post || post.deletedAt) {
     let error = new Error("This Post isn't found");
@@ -53,11 +50,8 @@ export async function isUserMod(post, user) {
  * @returns {Object} Object contains the post or maybe the error that happened
  */
 export async function searchForComment(commentId) {
-  if (!commentId.match(/^[0-9a-fA-F]{24}$/)) {
-    let error = new Error("This is not a valid comment id");
-    error.statusCode = 400;
-    throw error;
-  }
+  //NEED TO ADD A CHECK ON THE ID
+  console.log(commentId);
   const comment = await Comment.findById(commentId);
   if (!comment || comment.deletedAt) {
     let error = new Error("This comment isn't found");
@@ -181,6 +175,13 @@ export async function saveComment(comment, user) {
   }
   //ADD THE comments TO USER'S SAVED comments
   user.savedComments.push(comment.id);
+
+  const index = user.savedPosts.findIndex(
+    (elem) => elem.toString() === comment.postId.toString()
+  );
+  if (index === -1) {
+    user.savedPosts.push(comment.postId);
+  }
   await user.save();
   return {
     statusCode: 200,
@@ -205,6 +206,28 @@ export async function unSaveComment(comment, user) {
   user.savedComments = user.savedComments.filter((smallComment) => {
     return smallComment.toString() !== comment.id;
   });
+
+  // remove the post id of the saved comment if it was the last saved comment for that post
+  const savedPostsComments = await User.findById(user._id)
+    .populate("savedPosts savedComments")
+    .select("savedPosts savedComments");
+  let numOfComments = 0;
+
+  for (const i in savedPostsComments["savedPosts"]) {
+    for (const j in savedPostsComments["savedComments"]) {
+      if (
+        savedPostsComments["savedPosts"][i]._id.toString() ===
+        savedPostsComments["savedComments"][j].parentId.toString()
+      ) {
+        numOfComments++;
+      }
+    }
+  }
+  if (numOfComments === 1) {
+    user.savedPosts = user.savedPosts.filter((smallPost) => {
+      return smallPost.toString() !== comment.postId.toString();
+    });
+  }
   await user.save();
   return {
     statusCode: 200,

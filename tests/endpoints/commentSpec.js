@@ -19,6 +19,7 @@ describe("Testing comment endpoints", () => {
     user = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user.save();
 
@@ -30,6 +31,7 @@ describe("Testing comment endpoints", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      createdAt: Date.now(),
     });
     await post.save();
 
@@ -42,6 +44,7 @@ describe("Testing comment endpoints", () => {
         username: user.username,
         userID: user._id,
       },
+      createdAt: Date.now(),
     });
     await subreddit.save();
   });

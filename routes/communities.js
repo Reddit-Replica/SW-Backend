@@ -77,7 +77,11 @@ const communitiesRouter = express.Router();
  *       - bearerAuth: []
  */
 
-communitiesRouter.get("/subreddits/leaderboard");
+communitiesRouter.get(
+  "/subreddits/leaderboard",
+  verifyAuthToken,
+  subredditController.subredditLeaderboard
+);
 
 /**
  * @swagger
@@ -154,7 +158,11 @@ communitiesRouter.get("/subreddits/leaderboard");
  *       - bearerAuth: []
  */
 
-communitiesRouter.get("/subreddits/leaderboard/:categoryName");
+communitiesRouter.get(
+  "/subreddits/leaderboard/:categoryName",
+  verifyAuthToken,
+  subredditController.subredditLeaderboardWithCategory
+);
 
 /**
  * @swagger
@@ -423,139 +431,6 @@ communitiesRouter.get(
 
 /**
  * @swagger
- * /r/{subreddit}/about/moderators:
- *  get:
- *      summary: Return a listing of moderators in that specified subreddit
- *      tags: [Subreddit]
- *      parameters:
- *       - in: path
- *         name: subreddit
- *         description: the name of the subreddit
- *         schema:
- *           type: string
- *       - in: query
- *         name: before
- *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
- *         schema:
- *           type: string
- *       - in: query
- *         name: after
- *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
- *         schema:
- *           type: string
- *       - in: query
- *         name: limit
- *         description: Maximum number of items desired [Maximum = 100]
- *         schema:
- *           type: integer
- *           default: 25
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: object
- *                        properties:
- *                          before:
- *                           type: string
- *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
- *                          after:
- *                           type: string
- *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
- *                          children:
- *                            type: array
- *                            description: List of [Things] to return
- *                            items:
- *                              $ref: '#/components/schemas/moderator'
- *          404:
- *              description: Page not found
- *          401:
- *              description: User unauthorized to view this info
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-communitiesRouter.get("/r/:subreddit/about/moderators");
-
-/**
- * @swagger
- * /r/{subreddit}/wiki/rules:
- *  get:
- *      summary: Return all the rules of the subreddit in details (canceled feature)
- *      tags: [Subreddit]
- *      parameters:
- *       - in: path
- *         name: subreddit
- *         description: the name of the subreddit
- *         schema:
- *           type: string
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: object
- *                        properties:
- *                          children:
- *                            type: array
- *                            description: List of [Things] to return
- *                            items:
- *                              $ref: '#/components/schemas/rules'
- *          404:
- *              description: Page not found
- *          401:
- *              description: User unauthorized to view this info
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-communitiesRouter.get("/r/:subreddit/wiki/rules");
-
-/**
- * @swagger
- * /r/{subreddit}/wiki/bans:
- *  get:
- *      summary: Return all the ban questions of the subbreddit in details (canceled feature)
- *      tags: [Subreddit]
- *      parameters:
- *       - in: path
- *         name: subreddit
- *         description: the name of the subreddit
- *         schema:
- *           type: string
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: object
- *                        properties:
- *                          children:
- *                            type: array
- *                            description: List of [Things] to return
- *                            items:
- *                              $ref: '#/components/schemas/bans'
- *          404:
- *              description: Page not found
- *          401:
- *              description: User unauthorized to view this info
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-communitiesRouter.get("/r/:subreddit/wiki/bans");
-
-/**
- * @swagger
  * /r/{subreddit}/make-favorite:
  *  patch:
  *      summary: add a subreddit to the users favorite subreddits
@@ -655,30 +530,5 @@ communitiesRouter.patch(
   verifyAuthToken,
   subredditController.removeFromFavorite
 );
-
-/**
- * @swagger
- * /r/{subreddit}/toggle-community-theme:
- *  patch:
- *      summary: toggle community theme option of the community (canceled feature)
- *      tags: [Subreddit]
- *      parameters:
- *       - in: path
- *         name: subreddit
- *         description: the name of the subreddit
- *         schema:
- *           type: string
- *      responses:
- *          200:
- *              description: toggling is done successfully
- *          401:
- *              description: Unauthorized to toggle community theme
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-communitiesRouter.patch("/r/:subreddit/toggle-community-theme");
 
 export default communitiesRouter;

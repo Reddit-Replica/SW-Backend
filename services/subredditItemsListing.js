@@ -1,10 +1,12 @@
 import Subreddit from "../models/Community.js";
 import Post from "../models/Post.js";
+import User from "../models/User.js";
 import { commentListing } from "../utils/prepareCommentListing.js";
 import { postListing } from "../utils/preparePostListing.js";
 
 // eslint-disable-next-line max-statements
 export async function listingSubredditPosts(
+  modId,
   subredditName,
   typeOfListing,
   listingParams
@@ -30,25 +32,57 @@ export async function listingSubredditPosts(
         sort: listingResult.sort,
       },
     });
+  const mod = await User.findById(modId);
 
   let children = [];
 
   for (const i in result[typeOfListing]) {
     const post = result[typeOfListing][i];
-
+    let saved = false,
+      vote;
+    if (
+      mod.upvotedPosts.find(
+        (postId) => post.id.toString() === postId.toString()
+      )
+    ) {
+      vote = 1;
+    } else if (
+      mod.downvotedPosts.find(
+        (postId) => post.id.toString() === postId.toString()
+      )
+    ) {
+      vote = -1;
+    } else {
+      vote = 0;
+    }
+    if (
+      mod.savedPosts.find((postId) => postId.toString() === post.id.toString())
+    ) {
+      saved = true;
+    }
     let postData = { id: result[typeOfListing][i]._id.toString() };
     postData.data = {
-      kind: post.kind,
+      id: post.id.toString(),
       subreddit: post.subredditName,
+      postedBy: post.ownerUsername,
+      title: post.title,
+      link: post.link,
+      content: typeOfListing === "unmoderatedPosts" ? post.content : undefined,
+      images: typeOfListing === "unmoderatedPosts" ? post.images : undefined,
+      video: typeOfListing === "unmoderatedPosts" ? post.video : undefined,
       nsfw: post.nsfw,
       spoiler: post.spoiler,
-      title: post.title,
+      votes: post.numberOfVotes,
+      numberOfComments: post.numberOfComments,
       flair: post.flair,
-      comments: post.numberOfComments,
-      votes: post.numberOfUpvotes - post.numberOfDownvotes,
       postedAt: post.createdAt,
       editedAt: post.editedAt,
-      postedBy: post.ownerUsername,
+      spammedAt:
+        typeOfListing === "spammedPosts"
+          ? post.moderation.spam.spammedDate
+          : undefined,
+      saved: saved,
+      vote: vote,
     };
 
     children.push(postData);
@@ -73,6 +107,7 @@ export async function listingSubredditPosts(
 
 // eslint-disable-next-line max-statements
 export async function listingSubredditComments(
+  modId,
   subredditName,
   typeOfListing,
   listingParams
@@ -99,28 +134,54 @@ export async function listingSubredditComments(
       },
     });
 
+  const mod = await User.findById(modId);
+
   let children = [];
   for (const i in result[typeOfListing]) {
     const comment = result[typeOfListing][i];
     const post = await Post.findById(comment.postId);
-
+    let saved = false,
+      vote;
+    if (
+      mod.upvotedComments.find(
+        (commentId) => comment.id.toString() === commentId.toString()
+      )
+    ) {
+      vote = 1;
+    } else if (
+      mod.downvotedComments.find(
+        (commentId) => comment.id.toString() === commentId.toString()
+      )
+    ) {
+      vote = -1;
+    } else {
+      vote = 0;
+    }
+    if (
+      mod.savedComments.find(
+        (commentId) => commentId.toString() === comment.id.toString()
+      )
+    ) {
+      saved = true;
+    }
     let commentData = { id: result[typeOfListing][i]._id.toString() };
     commentData.data = {
-      kind: post.kind,
-      subreddit: post.subredditName,
-      nsfw: post.nsfw,
-      spoiler: post.spoiler,
-      title: post.title,
-      flair: post.flair,
-      comments: post.numberOfComments,
-      votes: post.numberOfUpvotes - post.numberOfDownvotes,
-      postedAt: post.createdAt,
-      editedAt: post.editedAt,
-      postedBy: post.ownerUsername,
-      ownerUsername: comment.ownerUsername,
-      votes: comment.numberOfVotes,
-      content: comment.content,
-      commentedAt: comment.createdAt,
+      postId: post.id.toString(),
+      postTitle: post.title,
+      comment: {
+        id: comment.id.toString(),
+        subreddit: comment.subredditName,
+        commentedBy: comment.ownerUsername,
+        commentedAt: comment.createdAt,
+        editedAt: comment.editedAt,
+        spammedAt:
+          typeOfListing === "spammedComments"
+            ? comment.moderation.spam.spammedDate
+            : undefined,
+        votes: comment.numberOfVotes,
+        saved: saved,
+        vote: vote,
+      },
     };
 
     children.push(commentData);

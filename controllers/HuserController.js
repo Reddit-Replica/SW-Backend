@@ -3,14 +3,14 @@ import { listingBannedUsers } from "../services/userListing.js";
 const getBannedUsers = async (req, res) => {
   try {
     const { before, after, limit } = req.query;
-    let result;
-    result = await listingBannedUsers(req.params.subreddit, "spammedPosts", {
+    const result = await listingBannedUsers(
+      limit,
       before,
       after,
-      limit,
-    });
+      req.subreddit
+    );
 
-    res.status(result.statusCode).json(result.data);
+    res.status(200).json(result);
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
