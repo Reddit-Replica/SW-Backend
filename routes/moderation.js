@@ -1237,6 +1237,7 @@ moderationRouter.get(
   verifyAuthToken,
   subredditDetails.checkSubreddit,
   verifyAuthTokenModerator,
+  subredditDetails.checkSubreddit,
   userModController.getBannedUsers
 );
 
@@ -1294,7 +1295,7 @@ moderationRouter.get(
  * /r/{subreddit}/profile-picture:
  *   post:
  *     summary: Add profile picture for a subreddit
- *     tags: [User settings]
+ *     tags: [Subreddit]
  *     parameters:
  *      - in: path
  *        name: subreddit
@@ -1316,6 +1317,13 @@ moderationRouter.get(
  *     responses:
  *       200:
  *         description: Profile picture has been added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 path:
+ *                   type: string
+ *                   description: Profile picture path
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -1332,14 +1340,20 @@ moderationRouter.get(
  *     security:
  *       - bearerAuth: []
  */
-moderationRouter.post("/r/:subreddit/profile-picture");
+moderationRouter.post(
+  "/r/:subreddit/profile-picture",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.addProfilePicture
+);
 
 /**
  * @swagger
  * /r/{subreddit}/profile-picture:
  *   delete:
  *     summary: Delete the profile picture in a subreddit
- *     tags: [User settings]
+ *     tags: [Subreddit]
  *     parameters:
  *      - in: path
  *        name: subreddit
@@ -1357,14 +1371,20 @@ moderationRouter.post("/r/:subreddit/profile-picture");
  *     security:
  *       - bearerAuth: []
  */
-moderationRouter.delete("/r/:subreddit/profile-picture");
+moderationRouter.delete(
+  "/r/:subreddit/profile-picture",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.deleteProfilePicture
+);
 
 /**
  * @swagger
  * /r/{subreddit}/banner-image:
  *   post:
  *     summary: Add a banner to a subreddit
- *     tags: [User settings]
+ *     tags: [Subreddit]
  *     parameters:
  *      - in: path
  *        name: subreddit
@@ -1386,6 +1406,13 @@ moderationRouter.delete("/r/:subreddit/profile-picture");
  *     responses:
  *       200:
  *         description: Banner image has been added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 path:
+ *                   type: string
+ *                   description: Profile picture path
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -1402,14 +1429,20 @@ moderationRouter.delete("/r/:subreddit/profile-picture");
  *     security:
  *       - bearerAuth: []
  */
-moderationRouter.post("/r/:subreddit/banner-image");
+moderationRouter.post(
+  "/r/:subreddit/banner-image",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.addBanner
+);
 
 /**
  * @swagger
  * /r/{subreddit}/banner-image:
  *   delete:
  *     summary: Delete the banner image in a subreddit
- *     tags: [User settings]
+ *     tags: [Subreddit]
  *     parameters:
  *      - in: path
  *        name: subreddit
@@ -1427,7 +1460,13 @@ moderationRouter.post("/r/:subreddit/banner-image");
  *     security:
  *       - bearerAuth: []
  */
-moderationRouter.delete("/r/:subreddit/banner-image");
+moderationRouter.delete(
+  "/r/:subreddit/banner-image",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.deleteBanner
+);
 
 /**
  * @swagger
@@ -1435,7 +1474,7 @@ moderationRouter.delete("/r/:subreddit/banner-image");
  *  post:
  *   summary:
  *    Approve a user in a subreddit
- *   tags: [Posts and comments moderation]
+ *   tags: [Subreddit moderation]
  *   parameters:
  *      - in: path
  *        name: subreddit
@@ -1449,15 +1488,11 @@ moderationRouter.delete("/r/:subreddit/banner-image");
  *     application/json:
  *      schema:
  *       required:
- *        - id
- *        - type
+ *        - username
  *       properties:
- *        id:
+ *        username:
  *         type: string
- *         description: id of a thing.
- *        type:
- *         type: string
- *         description: type of that thing (post, comment,..).
+ *         description: Username of the user to be approved
  *   responses:
  *    200:
  *     description: Accepted
@@ -1483,11 +1518,11 @@ moderationRouter.delete("/r/:subreddit/banner-image");
 moderationRouter.post(
   "/r/:subreddit/approve-user",
   verifyAuthToken,
-  postModerationController.modValidator,
+  postModController.usernameValidator,
   validateRequestSchema,
-  checkId,
-  checkThingMod,
-  postModerationController.approve
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.approveUser
 );
 
 /**
@@ -1496,7 +1531,7 @@ moderationRouter.post(
  *  post:
  *   summary:
  *    Mute a user in the subreddit
- *   tags: [Posts and comments moderation]
+ *   tags: [Subreddit moderation]
  *   parameters:
  *      - in: path
  *        name: subreddit
@@ -1510,15 +1545,14 @@ moderationRouter.post(
  *     application/json:
  *      schema:
  *       required:
- *        - id
- *        - type
+ *        - username
  *       properties:
- *        id:
+ *        username:
  *         type: string
- *         description: id of a thing.
- *        type:
+ *         description: Username of the user to be muted
+ *        muteReason:
  *         type: string
- *         description: type of that thing (post, comment,..).
+ *         description: Reason to why this user was muted
  *   responses:
  *    200:
  *     description: Accepted
@@ -1544,11 +1578,11 @@ moderationRouter.post(
 moderationRouter.post(
   "/r/:subreddit/mute-user",
   verifyAuthToken,
-  postModerationController.modValidator,
+  postModController.usernameValidator,
   validateRequestSchema,
-  checkId,
-  checkThingMod,
-  postModerationController.approve
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.muteUser
 );
 
 export default moderationRouter;

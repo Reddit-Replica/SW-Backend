@@ -520,6 +520,13 @@ router.delete(
  *     responses:
  *       200:
  *         description: Profile picture has been added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 path:
+ *                   type: string
+ *                   description: Profile picture path
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -584,6 +591,13 @@ router.delete(
  *     responses:
  *       200:
  *         description: Banner image has been added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 path:
+ *                   type: string
+ *                   description: Banner image path
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -665,12 +679,6 @@ router.delete(
  *                   description: List of users to return
  *                   items:
  *                     properties:
- *                       id:
- *                         type: string
- *                         description: Id of the users
- *                       data:
- *                         type: object
- *                         properties:
  *                           username:
  *                             type: string
  *                             description: Username of the blocked user
