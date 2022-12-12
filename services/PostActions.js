@@ -780,7 +780,8 @@ export async function downVoteAComment(comment, user) {
  */
 export async function setSuggestedSort(postId, user, sort) {
   const post = await searchForPost(postId);
-  const postOwner = post.ownerId;
+  const postOwner = post.ownerId.toString();
+  console.log(user.id,post.ownerId);
   if (user.id !== postOwner) {
     let error = new Error("You don't have the right to do this action");
     error.statusCode = 401;
@@ -790,7 +791,7 @@ export async function setSuggestedSort(postId, user, sort) {
   await post.save();
   return {
     statusCode: 200,
-    message: "Post is Downvoted successfully",
+    message: `post-suggested sort is ${sort} now`,
   };
 }
 
@@ -802,7 +803,7 @@ export async function setSuggestedSort(postId, user, sort) {
  */
 export async function clearSuggestedSort(postId, user) {
   const post = await searchForPost(postId);
-  const postOwner = post.ownerId;
+  const postOwner = post.ownerId.toString();
   if (user.id !== postOwner) {
     let error = new Error("You don't have the right to do this action");
     error.statusCode = 401;
@@ -810,4 +811,8 @@ export async function clearSuggestedSort(postId, user) {
   }
   post.suggestedSort = "best";
   await post.save();
+  return {
+    statusCode: 200,
+    message: "post-suggested sort is best now",
+  };
 }

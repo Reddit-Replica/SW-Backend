@@ -87,8 +87,8 @@ const suggestedSortValidator = [
     .not()
     .isEmpty()
     .withMessage("sort can not be empty")
-    .isIn(["top", "new", "random", "best", "hot"])
-    .withMessage("sort must be either top, new, random, best, hot"),
+    .isIn(["top", "new", "old", "best"])
+    .withMessage("sort must be either top, new, old, best"),
 ];
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //FOLLOW
@@ -313,7 +313,7 @@ const vote = async (req, res) => {
 const setPostSuggestSort = async (req, res) => {
   try {
     const user = await searchForUserService(req.payload.username);
-    const result = await setSuggestedSort(req.id, user, sort);
+    const result = await setSuggestedSort(req.body.id, user, req.body.sort);
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
     console.log(err);
@@ -332,7 +332,7 @@ const setPostSuggestSort = async (req, res) => {
 const clearPostSuggestSort = async (req, res) => {
   try {
     const user = await searchForUserService(req.payload.username);
-    const result = await clearSuggestedSort(req.id, user);
+    const result = await clearSuggestedSort(req.body.id, user);
     return res.status(result.statusCode).json(result.message);
   } catch (err) {
     console.log(err);
