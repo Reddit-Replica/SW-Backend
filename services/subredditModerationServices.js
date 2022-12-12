@@ -360,3 +360,148 @@ export async function getJoinedSubredditsService(userId) {
   }
   return response;
 }
+
+/**
+ * A Service function used to get the subreddit approved users for the controller
+ * @param {Number} limitReq the limit identified in the request
+ * @param {ObjectID} beforeReq Before id
+ * @param {ObjectID} afterReq After id
+ * @param {Subreddit} subreddit The subreddit object
+ * @returns {preparedResponse} the prepared response for the controller
+ */
+export async function getSubredditApproved(
+  limitReq,
+  beforeReq,
+  afterReq,
+  subreddit
+) {
+  let preparedResponse;
+  let limit = prepareLimit(limitReq);
+  await subreddit.populate("approvedUsers.userID");
+  if (!beforeReq && !afterReq) {
+    preparedResponse = getSubredditApprovedFirstTime(subreddit, limit);
+  } else if (beforeReq && afterReq) {
+    const error = new Error("Can't set before and after");
+    error.statusCode = 400;
+    throw error;
+  } else if (beforeReq) {
+    validateId(beforeReq);
+    preparedResponse = getSubredditApprovedBefore(subreddit, limit, beforeReq);
+  } else {
+    preparedResponse = getSubredditApprovedAfter(subreddit, limit, afterReq);
+  }
+
+  return preparedResponse;
+}
+
+/**
+ * A Service helper function used to get the subreddit approved for the main service function in case of first time
+ * @param {Subreddit} subreddit The subreddit object
+ * @param {Number} limit the limit identified in the request
+ * @returns {response} the prepared response for the main service function
+ */
+function getSubredditApprovedFirstTime(subreddit, limit) {
+  const response = { children: [] };
+  const numberOfApproved = subreddit.approvedUsers.length;
+  let myLimit;
+  if (numberOfApproved > limit) {
+    myLimit = limit;
+  } else {
+    myLimit = numberOfApproved;
+  }
+  for (let i = 0; i < myLimit; i++) {
+    response.children.push({
+      username: subreddit.approvedUsers[i].userID.username,
+      avatar: subreddit.approvedUsers[i].userID.avatar,
+      dateOfApprove: subreddit.approvedUsers[i].dateOfModeration,
+    });
+  }
+  if (myLimit !== numberOfApproved) {
+    response.after = subreddit.approvedUsers[myLimit - 1].userID._id;
+  }
+  return response;
+}
+
+/**
+ * A Service helper function used to get the subreddit approved users for the main service function in case of before
+ * @param {Subreddit} subreddit The subreddit object
+ * @param {Number} limit the limit identified in the request
+ * @returns {response} the prepared response for the main service function
+ */
+// eslint-disable-next-line max-statements
+function getSubredditApprovedBefore(subreddit, limit, before) {
+  const response = { children: [] };
+  let myStart;
+  const numberOfApproved = subreddit.approvedUsers.length;
+  const neededIndex = subreddit.approvedUsers.findIndex(
+    (mod) => mod.userID._id.toString() === before
+  );
+  if (neededIndex === -1) {
+    const error = new Error("invalid moderator id");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (neededIndex - limit < 0) {
+    myStart = 0;
+  } else {
+    myStart = neededIndex - limit;
+  }
+  for (let i = myStart; i < neededIndex; i++) {
+    response.children.push({
+      username: subreddit.approvedUsers[i].userID.username,
+      avatar: subreddit.approvedUsers[i].userID.avatar,
+      dateOfApprove: subreddit.approvedUsers[i].dateOfModeration,
+    });
+  }
+  if (response.children.length >= 1) {
+    if (myStart !== 0) {
+      response.before = subreddit.approvedUsers[myStart].userID._id;
+    }
+    if (neededIndex !== numberOfApproved - 1) {
+      response.after = subreddit.approvedUsers[neededIndex - 1].userID._id;
+    }
+  }
+  return response;
+}
+
+/**
+ * A Service helper function used to get the subreddit approved users for the main service function in case of after
+ * @param {Subreddit} subreddit The subreddit object
+ * @param {Number} limit the limit identified in the request
+ * @returns {response} the prepared response for the main service function
+ */
+// eslint-disable-next-line max-statements
+function getSubredditApprovedAfter(subreddit, limit, after) {
+  const response = { children: [] };
+  let myLimit;
+  const numberOfApproved = subreddit.approvedUsers.length;
+  const neededIndex = subreddit.approvedUsers.findIndex(
+    (mod) => mod.userID._id.toString() === after
+  );
+  if (neededIndex === -1) {
+    const error = new Error("invalid moderator id");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (neededIndex + limit + 1 >= numberOfApproved) {
+    myLimit = numberOfApproved;
+  } else {
+    myLimit = neededIndex + limit + 1;
+  }
+  for (let i = neededIndex + 1; i < myLimit; i++) {
+    response.children.push({
+      username: subreddit.approvedUsers[i].userID.username,
+      avatar: subreddit.approvedUsers[i].userID.avatar,
+      dateOfApprove: subreddit.approvedUsers[i].dateOfModeration,
+    });
+  }
+  if (response.children.length >= 1) {
+    if (myLimit !== numberOfApproved) {
+      response.after = subreddit.approvedUsers[myLimit - 1].userID._id;
+    }
+    response.before = subreddit.approvedUsers[neededIndex + 1].userID._id;
+  }
+  return response;
+}
