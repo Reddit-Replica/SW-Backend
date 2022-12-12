@@ -328,6 +328,7 @@ export async function getModeratedSubredditsService(userId) {
       response.push({
         title: user.moderatedSubreddits[i].subredditId.title,
         picture: user.moderatedSubreddits[i].subredditId.picture,
+        members: user.moderatedSubreddits[i].subredditId.members,
       });
     }
   }
@@ -353,6 +354,7 @@ export async function getJoinedSubredditsService(userId) {
       response.push({
         title: user.joinedSubreddits[i].subredditId.title,
         picture: user.joinedSubreddits[i].subredditId.picture,
+        members: user.joinedSubreddits[i].subredditId.members,
       });
     }
   }

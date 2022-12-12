@@ -158,6 +158,9 @@
  *   PostDetails:
  *       type: object
  *       properties:
+ *         id:
+ *           type: string
+ *           description: Post ID
  *         kind:
  *           type: string
  *           enum:
@@ -995,7 +998,10 @@
  *         username:
  *           type: string
  *           description: Username of the banned user
- *         userPhoto:
+ *         userId:
+ *           type: string
+ *           description: ID of the banned user
+ *         avatar:
  *           type: string
  *           description: The link of the user profile picture
  *         bannedAt:
