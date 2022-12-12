@@ -12,7 +12,7 @@ import { generateVerifyToken } from "../utils/generateTokens.js";
  */
 export async function getUser(userId) {
   const user = await User.findById(userId);
-  if (!user) {
+  if (!user || user.deletedAt) {
     const error = new Error("User not found");
     error.statusCode = 401;
     throw error;

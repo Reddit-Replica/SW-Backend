@@ -1237,6 +1237,7 @@ moderationRouter.get(
   verifyAuthToken,
   subredditDetails.checkSubreddit,
   verifyAuthTokenModerator,
+  subredditDetails.checkSubreddit,
   userModController.getBannedUsers
 );
 
