@@ -19,17 +19,17 @@ const conversationSchema = mongoose.Schema({
   },
   messages: [
     {
-        type: Schema.Types.ObjectId,
-        ref: "Messages",
+      type: Schema.Types.ObjectId,
+      ref: "Messages",
     },
   ],
-  isFirstNameUser:{
+  isFirstNameUser: {
     type: Boolean,
-    required:true
+    required: true,
   },
-  isSecondNameUser:{
+  isSecondNameUser: {
     type: Boolean,
-    required:true
+    required: true,
   },
 });
 

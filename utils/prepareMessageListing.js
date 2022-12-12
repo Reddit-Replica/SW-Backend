@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Mention from "../models/Mention.js";
 import Message from "../models/Message.js";
 import Conversation from "../models/Conversation.js";
+import Comment from "../models/Comment.js";
 import { prepareLimit } from "./prepareLimit.js";
 
 /**
@@ -175,27 +176,25 @@ export async function mentionListing(listingParams) {
  */
 export async function conversationListing(listingParams, user) {
   let result = {};
-  result.query={};
+  result.query = {};
   //PREPARING LIMIT OF NUMBER OF CONVERSATIONS
   result.limit = prepareLimit(listingParams.limit);
   //PREPARING KIND OF SORTING THE CONVERSATION
-  result.sort = { latestDate:-1 };
+  result.sort = { latestDate: -1 };
   //PREPARING THE SPLITTER WERE WE WILL STOP TO OR START FROM
   let splitterConversation;
   //IN CASE THERE IS BEFORE AND THERE IS NO AFTER OR THERE IS BEFORE AND AFTER THEN I WILL TAKE BEFORE
   if (listingParams.before) {
     splitterConversation = await Conversation.findById(listingParams.before);
     result.query.latestDate = { $gt: splitterConversation.latestDate };
-  //IF THERE IS NO BEFORE BUT THERE IS AN AFTER
+    //IF THERE IS NO BEFORE BUT THERE IS AN AFTER
   } else if (!listingParams.before && listingParams.after) {
     splitterConversation = await Conversation.findById(listingParams.after);
     result.query.latestDate = { $lt: splitterConversation.latestDate };
   } else {
-  //IF THERE IS NO BEFORE OR AFTER THEN I WILL GET THE FIRST ELEMENTS IN USER DATA
+    //IF THERE IS NO BEFORE OR AFTER THEN I WILL GET THE FIRST ELEMENTS IN USER DATA
     if (user.conversations.length !== 0) {
-      splitterConversation = await Conversation.findById(
-        user.conversations[0]
-      );
+      splitterConversation = await Conversation.findById(user.conversations[0]);
       result.query.latestDate = { $lte: splitterConversation.latestDate };
     } else {
       let error = new Error("User Has no conversations");
@@ -205,6 +204,45 @@ export async function conversationListing(listingParams, user) {
   }
 
   return result;
+}
+
+export async function inboxListing(listingParams) {
+  let result = {};
+  result.query = {};
+  //PREPARING LIMIT OF NUMBER OF CONVERSATIONS
+  result.limit = prepareLimit(listingParams.limit);
+  //PREPARING KIND OF SORTING THE CONVERSATION
+  result.sort = { createdAt: -1 };
+  //PREPARING THE SPLITTER WERE WE WILL STOP TO OR START FROM
+  let splitterMessage;
+  //IN CASE THERE IS BEFORE AND THERE IS NO AFTER OR THERE IS BEFORE AND AFTER THEN I WILL TAKE BEFORE
+  if (listingParams.before) {
+    splitterMessage = splitterOnType(listingParams.before);
+    result.query.createdAt = { $gt: splitterMessage.createdAt };
+    //IF THERE IS NO BEFORE BUT THERE IS AN AFTER
+  } else if (!listingParams.before && listingParams.after) {
+    splitterMessage = splitterOnType(listingParams.after);
+    result.query.createdAt = { $gt: splitterMessage.createdAt };
+  }
+  return result;
+}
+
+export async function splitterOnType(Id) {
+  let splitter;
+  console.log(Id);
+  splitter = await Message.findById(Id);
+  if (!splitter) {
+    splitter = await Mention.findById(Id);
+    if (!splitter) {
+      splitter = await Comment.findById(Id);
+      if (!splitter) {
+        let error = new Error("Invalid Id");
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+  }
+  return splitter;
 }
 
 function setResult(listingParams) {

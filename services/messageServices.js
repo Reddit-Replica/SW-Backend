@@ -100,7 +100,7 @@ export async function createNewConversation(msg) {
       messages: [],
       firstUsername: msg.senderUsername,
       secondUsername: msg.receiverUsername,
-      isFirstNameUser:msg.isSenderUser,
+      isFirstNameUser: msg.isSenderUser,
       isSecondNameUser: msg.isReceiverUser,
     }).save();
     return createdConversation.id;
@@ -123,9 +123,9 @@ export async function addToConversation(msg, conversationId) {
     err.statusCode = 400;
     throw err;
   }
-  conversation.messages.push(msg.id );
+  conversation.messages.push(msg.id);
   conversation.latestDate = Date.now();
- await conversation.save();
+  await conversation.save();
 }
 /**
  * This function is used to check if the user has already that conversation or we will need to add a new one for him
@@ -254,9 +254,6 @@ export async function validateMessage(req) {
 
   if (req.body.subredditName) {
     msg.subredditName = req.body.subredditName;
-  }
-  if (req.body.repliedMsgId) {
-    msg.repliedMsgId = req.body.repliedMsgId;
   }
   //CHECKING IF THE RECEIVER IS AVAILABLE OR NOT
   if (msg.isReceiverUser) {

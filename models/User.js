@@ -302,8 +302,8 @@ const userSchema = mongoose.Schema({
   ],
   conversations: [
     {
-        type: Schema.Types.ObjectId,
-        ref: "Conversation",
+      type: Schema.Types.ObjectId,
+      ref: "Conversation",
     },
   ],
 });

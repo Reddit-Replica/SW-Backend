@@ -362,7 +362,7 @@ router.get("/message/sent", verifyAuthToken, messageController.getSentMsg);
  *       - bearerAuth: []
  */
 
-router.get("/message/inbox");
+router.get("/message/inbox", verifyAuthToken, messageController.getInbox);
 
 /**
  * @swagger
