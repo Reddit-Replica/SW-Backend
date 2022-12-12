@@ -26,6 +26,11 @@ const mentionSchema = mongoose.Schema({
   deletedAt: {
     type: Date,
   },
+  type: {
+    type: String,
+    required: true,
+    default: "Mention",
+  },
 });
 
 const Mention = mongoose.model("Mention", mentionSchema);
