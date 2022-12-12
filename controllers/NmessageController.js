@@ -14,6 +14,7 @@ import {
 import {
   userMessageListing,
   userMentionsListing,
+  userConversationListing,
 } from "../services/messageListing.js";
 import { searchForUserService } from "../services/userServices.js";
 import { ConsoleReporter } from "jasmine";
@@ -244,6 +245,26 @@ const getpostReplies = async (req, res) => {
   }
 };
 
+const getConversations = async (req, res) => {
+  try {
+    const { before, after, limit } = req.query;
+    const user = await searchForUserService(req.payload.username);
+    const result = await userConversationListing(user, "conversations", {
+      before,
+      after,
+      limit,
+    });
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   createMessage,
   messageValidator,
@@ -254,4 +275,5 @@ export default {
   getpostReplies,
   createMention,
   getUnreadMsg,
+  getConversations,
 };

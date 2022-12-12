@@ -297,15 +297,13 @@ const userSchema = mongoose.Schema({
   postReplies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Comments",
+      ref: "Comment",
     },
   ],
   conversations: [
     {
-      conversationId: {
         type: Schema.Types.ObjectId,
         ref: "Conversation",
-      },
     },
   ],
 });

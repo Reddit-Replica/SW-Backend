@@ -813,7 +813,11 @@ router.get(
  *       - bearerAuth: []
  */
 
-router.get("/message/messages");
+router.get(
+  "/message/messages",
+  verifyAuthToken,
+  messageController.getConversations
+);
 
 /**
  * @swagger

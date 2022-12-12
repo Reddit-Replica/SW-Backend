@@ -4,8 +4,11 @@ import User from "../models/User.js";
 import {
   messageListing,
   mentionListing,
+  conversationListing,
 } from "../utils/prepareMessageListing.js";
 import { searchForComment, searchForPost } from "./PostActions.js";
+import Conversation from "../models/Conversation.js";
+import Message from "../models/Message.js";
 
 /**
  * Function that get the posts that we want to list from a certain user
@@ -28,6 +31,9 @@ export async function userMessageListing(
 ) {
   // prepare the listing parameters
   const listingResult = await messageListing(listingParams);
+  if (isUnread) {
+    listingResult.find.isRead = false;
+  }
   const result = await User.findOne({ username: user.username })
     .select(typeOfListing)
     .populate({
@@ -41,11 +47,6 @@ export async function userMessageListing(
   let children = [];
   for (const i in result[typeOfListing]) {
     const message = result[typeOfListing][i];
-    if (isUnread) {
-      if (message.isRead) {
-        continue;
-      }
-    }
     message.isRead = true;
     await message.save();
 
@@ -83,7 +84,6 @@ export async function userMessageListing(
 export async function userMentionsListing(user, typeOfListing, listingParams) {
   // GETTING FIND LIMIT SORT THAT WE NEED TO RETURN VALUES
   const listingResult = await mentionListing(listingParams);
-  console.log(listingResult);
   // GETTING THE DESIRED FIELD THAT WE WOULD GET DATA FROM
   const result = await User.findOne({ username: user.username })
     .select(typeOfListing)
@@ -138,56 +138,84 @@ export async function userMentionsListing(user, typeOfListing, listingParams) {
     },
   };
 }
-/*
-export async function userConversationListing(user, typeOfListing, listingParams) {
+
+function compareMsgs(msg1,msg2) {
+  if ( msg1.sendAt < msg2.sendAt ){
+    return 1;
+  }
+  if ( msg1.sendAt > msg2.sendAt ){
+    return -1;
+  }
+  return 0;
+}
+function compareConv(conv1,conv2) {
+  if ( conv1.latestDate < conv2.latestDate ){
+    return 1;
+  }
+  if ( conv1.latestDate > conv2.latestDate ){
+    return -1;
+  }
+  return 0;
+}
+
+export async function userConversationListing(
+  user,
+  typeOfListing,
+  listingParams
+) {
   // GETTING FIND LIMIT SORT THAT WE NEED TO RETURN VALUES
-  const listingResult = await conversationListing(listingParams);
+  const listingResult = await conversationListing(listingParams, user);
+  console.log(listingResult);
   // GETTING THE DESIRED FIELD THAT WE WOULD GET DATA FROM
-  const result = await User.findOne({ username: user.username })
-    .select(typeOfListing)
-    .populate({
-      path: typeOfListing,
-      match: listingResult.find,
-      limit: listingResult.limit,
-      options: {
-        sort: listingResult.sort,
-      },
-    });
+  const result = await User.findOne({ username: user.username }).select(typeOfListing).populate({
+    path: typeOfListing,
+    match: listingResult.query,
+    limit: listingResult.limit,
+    options: {
+      sort: listingResult.sort,
+    },
+  });
   // CHILDREN THAT WE WILL CONTAIN THE DESIRED DATA
   let children = [];
   for (const i in result[typeOfListing]) {
     // lOOPING OVER EACH MENTION OF THAT THE USER HAD RECEIVED
     const conversation = result[typeOfListing][i];
-    let messages=conversation.select("messages").populate({
-      path: "messages",
-      match: { deletedAt: null },
-      limit: listingResult.limit,
-      options: {
-        sort: listingResult.sort,
-    });
-
-    // AS THIS MENTION IS RETURNED THEN IT SHOULD BE MARKED AS READ
-    mention.isRead = true;
-    await mention.save();
-    const post = await searchForPost(mention.postId);
-    const comment = await searchForComment(mention.commentId);
+    const messages=[];
+    for (const smallMessage of conversation.messages) {
+      const message=await Message.findById(smallMessage);
+      const messageData = {
+        msgID:message.id.toString(),
+        text: message.text,
+        subredditName: message.subredditName,
+        senderUsername: message.senderUsername,
+        receiverUsername: message.receiverUsername,
+        sendAt: message.createdAt,
+        subject: message.subject,
+        isSenderUser: message.isSenderUser,
+        isReceiverUser: message.isReceiverUser,
+      };
+      messages.push(messageData);
+    }
+    messages.sort(compareMsgs);
     // GETTING THE DATA THAT WE NEED TO RETURN TO THE USERS , FIRST WE WILL ADD THE ID OF EACH MENTION
-    let mentionData = { id: result[typeOfListing][i]._id.toString() };
+    let ConversationData = { id: result[typeOfListing][i]._id.toString() };
     // THEN WE WILL ADD DATA NEEDED TO THE MENTION
-    mentionData.data = {
-      text: comment.text,
-      senderUsername: post.ownerUsername,
-      receiverUsername: mention.receiverUsername,
-      sendAt: comment.createdAt,
-      subredditName: post.subredditName,
-      postTitle: post.title,
-      postId: mention.postId,
-      commentId: mention.commentId,
-      numOfComments: post.numberOfComments,
+    let subjectTitle,isUser;
+    if (user.username===conversation.firstUsername){
+    subjectTitle=conversation.secondUsername;
+    isUser=conversation.isSecondNameUser;
+    } else if (user.username===conversation.secondUsername){
+    subjectTitle=conversation.firstUsername;
+    isUser=conversation.isFirstNameUser;
+    }
+    ConversationData.data = {
+      subjectTitle:subjectTitle,
+      subjectContent:conversation.subject,
+      isUser:isUser,
+      messages:messages,
     };
-    children.push(mentionData);
+    children.push(ConversationData);
   }
-
   let after = "",
     before = "";
   if (result[typeOfListing].length) {
@@ -204,4 +232,3 @@ export async function userConversationListing(user, typeOfListing, listingParams
     },
   };
 }
-*/
