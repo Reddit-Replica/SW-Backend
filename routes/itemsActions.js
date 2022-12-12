@@ -55,7 +55,6 @@ itemsActionsRouter.delete(
   verifyAuthToken,
   itemsActionController.deleteValidator,
   validateRequestSchema,
-  checkId,
   itemsActionController.deletePoComMes
 );
 
