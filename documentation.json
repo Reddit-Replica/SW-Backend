@@ -885,7 +885,7 @@
           },
           "dateOfModeration": {
             "type": "string",
-            "description": "he date of being a moderator"
+            "description": "the date of being a moderator"
           },
           "permissions": {
             "type": "array",
@@ -896,12 +896,50 @@
           }
         }
       },
+      "approvedUser": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "The username of the user"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "Path of the avatar"
+          },
+          "dateOfApprove": {
+            "type": "string",
+            "description": "the date of being approved"
+          }
+        }
+      },
+      "mutedUser": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "The username of the user"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "Path of the avatar"
+          },
+          "dateOfMute": {
+            "type": "string",
+            "description": "the date of being muted"
+          },
+          "muteReason": {
+            "type": "string",
+            "description": "the reason of being muted"
+          }
+        }
+      },
       "invitedModerator": {
         "type": "object",
         "properties": {
           "username": {
             "type": "string",
-            "description": "The username of the moderator"
+            "description": "The username of the invited moderator"
           },
           "avatar": {
             "type": "string",
@@ -909,11 +947,11 @@
           },
           "dateOfInvitation": {
             "type": "string",
-            "description": "he date of being a moderator"
+            "description": "the date of invitation"
           },
           "permissions": {
             "type": "array",
-            "description": "array of permissions the moderator has",
+            "description": "array of permissions the moderator will has",
             "items": {
               "type": "string"
             }
@@ -1302,7 +1340,11 @@
                 "type": "string",
                 "description": "Username of the banned user"
               },
-              "userPhoto": {
+              "userId": {
+                "type": "string",
+                "description": "ID of the banned user"
+              },
+              "avatar": {
                 "type": "string",
                 "description": "The link of the user profile picture"
               },
@@ -6612,6 +6654,338 @@
         ]
       }
     },
+    "/r/{subreddit}/profile-picture": {
+      "post": {
+        "summary": "Add profile picture for a subreddit",
+        "tags": ["User settings"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["avatar"],
+                "properties": {
+                  "avatar": {
+                    "type": "object",
+                    "description": "The avatar image"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile picture has been added successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete the profile picture in a subreddit",
+        "tags": ["User settings"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Profile picture deleted successfully"
+          },
+          "401": {
+            "description": "Access Denied"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/banner-image": {
+      "post": {
+        "summary": "Add a banner to a subreddit",
+        "tags": ["User settings"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["banner"],
+                "properties": {
+                  "banner": {
+                    "type": "object",
+                    "description": "The banner image"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Banner image has been added successfully"
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete the banner image in a subreddit",
+        "tags": ["User settings"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Banner image deleted successfully"
+          },
+          "401": {
+            "description": "Access Denied"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/approve-user": {
+      "post": {
+        "summary": "Approve a user in a subreddit",
+        "tags": ["Posts and comments moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["id", "type"],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "id of a thing."
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "type of that thing (post, comment,..)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/mute-user": {
+      "post": {
+        "summary": "Mute a user in the subreddit",
+        "tags": ["Posts and comments moderation"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "name of the subreddit.",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["id", "type"],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "id of a thing."
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "type of that thing (post, comment,..)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/notifications": {
       "get": {
         "summary": "get all the notifications sent to the user",
@@ -11118,6 +11492,174 @@
         ]
       }
     },
+    "/r/{subreddit}/about/approved": {
+      "get": {
+        "summary": "Return a listing of approved users in that specified subreddit",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of items desired [Maximum = 100]",
+            "schema": {
+              "type": "integer",
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "before": {
+                      "type": "string",
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
+                    },
+                    "after": {
+                      "type": "string",
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
+                    },
+                    "children": {
+                      "type": "array",
+                      "description": "List of [Things] to return",
+                      "items": {
+                        "$ref": "#/components/schemas/approvedUser"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to view this info"
+          },
+          "404": {
+            "description": "Page not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/r/{subreddit}/about/muted": {
+      "get": {
+        "summary": "Return a listing of muted users in that specified subreddit",
+        "tags": ["Subreddit"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subreddit",
+            "description": "the name of the subreddit",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of items desired [Maximum = 100]",
+            "schema": {
+              "type": "integer",
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "before": {
+                      "type": "string",
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
+                    },
+                    "after": {
+                      "type": "string",
+                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
+                    },
+                    "children": {
+                      "type": "array",
+                      "description": "List of [Things] to return",
+                      "items": {
+                        "$ref": "#/components/schemas/mutedUser"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to view this info"
+          },
+          "404": {
+            "description": "Page not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/r/{subreddit}/about/invited-moderators": {
       "get": {
         "summary": "Return a listing of the invited moderators in that specified subreddit",
@@ -11226,6 +11768,10 @@
                           "picture": {
                             "type": "string",
                             "description": "Path of the picture of the subreddit"
+                          },
+                          "members": {
+                            "type": "number",
+                            "description": "the number of members in that subreddit"
                           }
                         }
                       }
@@ -11273,6 +11819,10 @@
                           "picture": {
                             "type": "string",
                             "description": "Path of the picture of the subreddit"
+                          },
+                          "members": {
+                            "type": "number",
+                            "description": "the number of members in that subreddit"
                           }
                         }
                       }
@@ -13428,7 +13978,7 @@
                                 "type": "string",
                                 "description": "Username of the blocked user"
                               },
-                              "userImage": {
+                              "avatar": {
                                 "type": "string",
                                 "description": "Path of the image of the blocked user"
                               },
