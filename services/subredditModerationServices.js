@@ -659,6 +659,12 @@ function getSubredditMutedAfter(subreddit, limit, after) {
   return response;
 }
 
+
+/**
+ * A Service function used to get the subreddit post settings
+ * @param {Subreddit} subreddit The subreddit object
+ * @returns {response} the prepared response for the controller
+ */
 export function getSubredditPostSettingsService(subreddit) {
   return {
     enableSpoiler: subreddit.subredditPostSettings.enableSpoiler,
