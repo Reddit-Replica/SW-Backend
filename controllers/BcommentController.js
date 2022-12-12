@@ -93,11 +93,17 @@ const createComment = async (req, res) => {
 
 const commentTree = async (req, res) => {
   try {
-    const { sort, before, after, limit } = req.query;
+    let { sort } = req.query;
+    const { before, after, limit } = req.query;
     const { postId } = req.params;
 
     const post = await checkPostId(postId);
     const user = await checkloggedInUser(req.userId);
+
+    if (!sort) {
+      sort = post.suggestedSort;
+    }
+
     const result = await commentTreeListingService(user, post, {
       sort,
       before,
@@ -118,12 +124,18 @@ const commentTree = async (req, res) => {
 
 const commentTreeOfComment = async (req, res) => {
   try {
-    const { sort, before, after, limit } = req.query;
+    let { sort } = req.query;
+    const { before, after, limit } = req.query;
     const { postId, commentId } = req.params;
 
     const post = await checkPostId(postId);
     const comment = await checkCommentId(commentId);
     const user = await checkloggedInUser(req.userId);
+
+    if (!sort) {
+      sort = post.suggestedSort;
+    }
+
     const result = await commentTreeOfCommentListingService(
       user,
       post,
