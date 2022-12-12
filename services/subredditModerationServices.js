@@ -659,7 +659,6 @@ function getSubredditMutedAfter(subreddit, limit, after) {
   return response;
 }
 
-
 /**
  * A Service function used to get the subreddit post settings
  * @param {Subreddit} subreddit The subreddit object
@@ -671,4 +670,21 @@ export function getSubredditPostSettingsService(subreddit) {
     suggestedSort: subreddit.subredditPostSettings.suggestedSort,
     allowImagesInComment: subreddit.subredditPostSettings.allowImagesInComment,
   };
+}
+
+/**
+ * A Service function used to set the subreddit post settings
+ * @param {Subreddit} subreddit The subreddit object
+ * @returns {void}
+ */
+export async function setSubredditPostSettingsService(
+  subreddit,
+  enableSpoiler,
+  suggestedSort,
+  allowImagesInComment
+) {
+  subreddit.subredditPostSettings.enableSpoiler = enableSpoiler;
+  subreddit.subredditPostSettings.suggestedSort = suggestedSort;
+  subreddit.subredditPostSettings.allowImagesInComment = allowImagesInComment;
+  await subreddit.save();
 }

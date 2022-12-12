@@ -347,7 +347,7 @@ subredditModerationsRouter.put(
   verifyAuthTokenModerator,
   subredditModerationsController.subredditPostSettingsValidator,
   validateRequestSchema,
-  subredditModerationsController.setSubredditSettings
+  subredditModerationsController.setSubredditPostSettings
 );
 
 /**
