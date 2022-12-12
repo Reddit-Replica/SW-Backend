@@ -1,6 +1,5 @@
 import { prepareLimit } from "../utils/prepareLimit.js";
 import { validateId } from "./subredditFlairs.js";
-import User from "../models/User.js";
 /**
  * A Service function used to get the subreddit banned users for the controller
  * @param {Number} limitReq the limit identified in the request

@@ -25,7 +25,7 @@ export async function checkThingMod(req, res, next) {
     try {
       const post = await Post.findById(id);
 
-      if (!post) {
+      if (!post || post.deletedAt) {
         return res.status(404).json("Post not found");
       }
       if (post.subredditName) {
@@ -33,7 +33,7 @@ export async function checkThingMod(req, res, next) {
           title: post.subredditName,
         });
 
-        if (!subreddit) {
+        if (!subreddit || subreddit.deletedAt) {
           return res.status(404).json("Subreddit not found");
         }
 
@@ -59,7 +59,7 @@ export async function checkThingMod(req, res, next) {
     try {
       const comment = await Comment.findById(id);
 
-      if (!comment) {
+      if (!comment || comment.deletedAt) {
         return res.status(404).json("Comment not found");
       }
       if (comment.subredditName) {
@@ -67,7 +67,7 @@ export async function checkThingMod(req, res, next) {
           title: comment.subredditName,
         });
 
-        if (!subreddit) {
+        if (!subreddit || subreddit.deletedAt) {
           return res.status(404).json("Subreddit not found");
         }
         if (

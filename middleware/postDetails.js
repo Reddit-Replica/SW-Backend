@@ -46,9 +46,16 @@ export async function setPostActions(req, res, next) {
     if (req.loggedIn) {
       const userId = req.userId;
       const user = await User.findById(userId);
+      if (!user || user.deletedAt) {
+        return res.status(404).json("User not found or deleted");
+      }
       const postId = req.query.id;
-      user.historyPosts.push(postId);
-      await user.save();
+      if (
+        !user.historyPosts.find((id) => id.toString() === postId.toString())
+      ) {
+        user.historyPosts.push(postId);
+        await user.save();
+      }
       if (user.savedPosts?.find((id) => id.toString() === postId)) {
         req.saved = true;
       }
