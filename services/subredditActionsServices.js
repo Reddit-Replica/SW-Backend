@@ -1,5 +1,5 @@
 import Subreddit from "../models/Community.js";
-import Message from "../models/Message.js";
+import { addMessage, validateMessage } from "./messageServices.js";
 
 /**
  * Function used to check that a subreddit with that name exists and return its object
@@ -249,23 +249,21 @@ export async function inviteToModerateService(
     await subreddit.save();
 
     // Send a message to the invited user from the subreddit
-    const message = new Message({
-      subredditName: subreddit.title,
-      subject: `invitation to moderate /r/${subreddit.title}`,
-      // eslint-disable-next-line quotes
-      text: `gadzooks! you are invited to become a moderator of\
-			/r/${subreddit.title}! to accept,\
-			visit the moderators page for /r/${subreddit.title} and click "accept".\
-			otherwise, if you did not expect to receive this,\
-			you can simply ignore this invitation or report it.`,
-      createdAt: Date.now(),
-      isSenderUser: true,
-      senderUsername: moderator.username,
-      isReceiverUser: true,
-      receiverId: userToInvite._id,
-      receiverUsername: userToInvite.username,
-    });
-    await message.save();
+    const req = {
+      payload: {
+        username: moderator.username,
+      },
+      body: {
+        subject: `invitation to moderate /r/${subreddit.title}`,
+        subredditName: subreddit.title,
+        senderUsername: `/u/${moderator.username}`,
+        receiverUsername: `/u/${userToInvite.username}`,
+        // eslint-disable-next-line max-len
+        text: `gadzooks! you are invited to become a moderator of /r/${subreddit.title}! to accept, visit the moderators page for /r/${subreddit.title} and click "accept". otherwise, if you did not expect to receive this, you can simply ignore this invitation or report it.`,
+      },
+    };
+    await validateMessage(req);
+    await addMessage(req);
   }
 
   return {
@@ -320,6 +318,7 @@ export async function cancelInvitationService(
  * @param {Object} subreddit Subreddit object
  * @returns The response to that request containing [statusCode, data]
  */
+// eslint-disable-next-line max-statements
 export async function acceptModerationInviteService(user, subreddit) {
   // check if user is already a moderator
   const userMod = checkIfModerator(user._id, subreddit);
@@ -348,8 +347,24 @@ export async function acceptModerationInviteService(user, subreddit) {
   });
 
   subreddit.invitedModerators.splice(invitedUserIndex, 1);
-
   await subreddit.save();
+
+  // Send a message to the invited user from the subreddit
+  const req = {
+    payload: {
+      username: user.username,
+    },
+    body: {
+      subject: "moderator added",
+      subredditName: subreddit.title,
+      senderUsername: `/u/${user.username}`,
+      receiverUsername: `/r/${subreddit.title}`,
+      // eslint-disable-next-line max-len
+      text: `/u/${user.username} has accepted an invitation to become moderator if /r/${subreddit.title}`,
+    },
+  };
+  await validateMessage(req);
+  await addMessage(req);
 
   return {
     statusCode: 200,
