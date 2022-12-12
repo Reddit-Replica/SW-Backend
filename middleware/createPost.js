@@ -35,7 +35,7 @@ export async function checkPostSubreddit(req, res, next) {
       const postSubreddit = await Subreddit.findOne({
         title: subreddit,
       });
-      if (!postSubreddit) {
+      if (!postSubreddit || postSubreddit.deletedAt) {
         return res.status(404).json("Subreddit not found");
       }
       if (
