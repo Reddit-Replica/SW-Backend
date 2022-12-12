@@ -348,6 +348,7 @@ const addBanner = async (req, res) => {
       deleteFile(user.banner);
     }
     user.banner = req.files.banner[0].path;
+    //user.banner = user.banner.replace("\\", "/");
     await user.save();
     return res.status(200).json("Banner added successfully");
   } catch (error) {
