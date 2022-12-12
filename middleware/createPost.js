@@ -29,6 +29,7 @@ export async function checkPostSubreddit(req, res, next) {
     if (!user || user.deletedAt) {
       return res.status(404).json("User not found or deleted");
     }
+    req.suggestedSort = "new";
     if (inSubreddit && inSubreddit !== "false") {
       if (!subreddit) {
         return res.status(400).json({
@@ -49,6 +50,10 @@ export async function checkPostSubreddit(req, res, next) {
           .status(401)
           .json("User is not a member/mod of this subreddit");
       }
+      req.suggestedSort =
+        postSubreddit.suggestedSort !== "none"
+          ? postSubreddit.suggestedSort
+          : req.suggestedSort;
       if (checkIfBanned(userId, postSubreddit)) {
         return res.status(400).json({
           error: "User is banned from this subreddit",
@@ -277,6 +282,7 @@ export async function postSubmission(req, res, next) {
       flair: flairId,
       content: req.content,
       sendReplies: sendReplies,
+      suggestedSort: req.suggestedSort,
       sharePostId: sharePostId,
       scheduleDate: scheduleDate,
       scheduleTime: scheduleTime,

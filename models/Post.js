@@ -52,7 +52,7 @@ const postSchema = mongoose.Schema({
   },
   suggestedSort: {
     type: String,
-    default: "best",
+    default: "new",
   },
   nsfw: {
     type: Boolean,
