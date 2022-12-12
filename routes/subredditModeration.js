@@ -373,6 +373,9 @@ subredditModerationsRouter.get(
  *                               picture:
  *                                 type: string
  *                                 description: Path of the picture of the subreddit
+ *                               members:
+ *                                 type: number
+ *                                 description: the number of members in that subreddit
  *          401:
  *              description: User unauthorized to view this info
  *          500:
@@ -411,6 +414,9 @@ subredditModerationsRouter.get(
  *                               picture:
  *                                 type: string
  *                                 description: Path of the picture of the subreddit
+ *                               members:
+ *                                 type: number
+ *                                 description: the number of members in that subreddit
  *          401:
  *              description: User unauthorized to view this info
  *          500:

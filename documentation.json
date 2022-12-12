@@ -199,6 +199,10 @@
       "PostDetails": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "Post ID"
+          },
           "kind": {
             "type": "string",
             "enum": ["link", "hybrid", "image", "video", "post"]
@@ -1171,6 +1175,10 @@
             "type": "object",
             "description": "A custom data structure used to hold valuable information.",
             "properties": {
+              "id": {
+                "type": "string",
+                "description": "Post ID"
+              },
               "subreddit": {
                 "type": "string",
                 "description": "Name of subreddit which contain the post"
@@ -5082,56 +5090,6 @@
         ]
       }
     },
-    "/moderated-subreddits": {
-      "get": {
-        "summary": "Return all subreddits that you can send message from ( the ones you are moderator in )",
-        "tags": ["Messages"],
-        "responses": {
-          "200": {
-            "description": "Returned successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "children": {
-                      "type": "array",
-                      "description": "List of the subreddits that your are moderator in and their pictures",
-                      "items": {
-                        "properties": {
-                          "title": {
-                            "type": "string",
-                            "description": "the title of the subreddits that the user can send messages from and his own username"
-                          },
-                          "picture": {
-                            "type": "string",
-                            "description": "Path of the picture of the subreddit"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized to view this info"
-          },
-          "404": {
-            "description": "Page not found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/r/{subreddit}/about/spam?only=posts": {
       "get": {
         "summary": "Return a listing of required items relevant to moderators with things that have been marked as spam in that subreddit. (This endpoint is a listing)",
@@ -5326,6 +5284,10 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "postId": {
+                            "type": "string",
+                            "description": "Post ID"
+                          },
                           "postTitle": {
                             "type": "string",
                             "description": "Post title"
@@ -5333,6 +5295,10 @@
                           "comment": {
                             "type": "object",
                             "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "Comment ID"
+                              },
                               "subreddit": {
                                 "type": "string",
                                 "description": "Subreddit Name"
@@ -5605,6 +5571,10 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "postId": {
+                            "type": "string",
+                            "description": "Post ID"
+                          },
                           "postTitle": {
                             "type": "string",
                             "description": "Post title"
@@ -5612,6 +5582,10 @@
                           "comment": {
                             "type": "object",
                             "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "Comment ID"
+                              },
                               "subreddit": {
                                 "type": "string",
                                 "description": "Subreddit Name"
@@ -8331,7 +8305,93 @@
                     "pinnedPosts": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/Post"
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "id of a post"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": ["link", "hybrid", "image", "video", "post"]
+                          },
+                          "subreddit": {
+                            "type": "string",
+                            "description": "Subreddit name"
+                          },
+                          "link": {
+                            "type": "string",
+                            "description": "Post link (kind = link)"
+                          },
+                          "images": {
+                            "type": "array",
+                            "description": "Images (kind = image)",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "path": {
+                                  "type": "string",
+                                  "description": "Image path"
+                                },
+                                "caption": {
+                                  "type": "string",
+                                  "description": "Image caption"
+                                },
+                                "link": {
+                                  "type": "string",
+                                  "description": "Image link"
+                                }
+                              }
+                            }
+                          },
+                          "video": {
+                            "type": "string",
+                            "description": "Video path (kind = video)"
+                          },
+                          "content": {
+                            "type": "object",
+                            "description": "Post content (kind = hybrid)"
+                          },
+                          "nsfw": {
+                            "type": "boolean",
+                            "description": "Not Safe for Work"
+                          },
+                          "spoiler": {
+                            "type": "boolean",
+                            "description": "Blur the content of the post"
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Title of the submission"
+                          },
+                          "sharePostId": {
+                            "type": "string",
+                            "description": "Post id in case of containing info of a shared post (kind = post)"
+                          },
+                          "flair": {
+                            "$ref": "#/components/schemas/Flair"
+                          },
+                          "comments": {
+                            "type": "number",
+                            "description": "Total number of comments on a post"
+                          },
+                          "votes": {
+                            "type": "number",
+                            "description": "Total number of votes on a post"
+                          },
+                          "postedAt": {
+                            "type": "string",
+                            "description": "The time in which this post was published"
+                          },
+                          "postedBy": {
+                            "type": "string",
+                            "description": "Name of the user associated with the post"
+                          },
+                          "vote": {
+                            "type": "integer",
+                            "description": "1 if the user upvoted this post, -1 for downvoted and 0 otherwise"
+                          }
+                        }
                       }
                     }
                   }
@@ -11130,6 +11190,108 @@
           },
           "404": {
             "description": "Page not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/moderated-subreddits": {
+      "get": {
+        "summary": "Return all subreddits that you are moderator in ( usecase to send message from )",
+        "tags": ["Subreddit"],
+        "responses": {
+          "200": {
+            "description": "Returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "children": {
+                      "type": "array",
+                      "description": "List of the subreddits that your are moderator in and their pictures",
+                      "items": {
+                        "properties": {
+                          "title": {
+                            "type": "string",
+                            "description": "the title of the subreddits that the user can send messages from and his own username"
+                          },
+                          "picture": {
+                            "type": "string",
+                            "description": "Path of the picture of the subreddit"
+                          },
+                          "members": {
+                            "type": "number",
+                            "description": "the number of members in that subreddit"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to view this info"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/joined-subreddits": {
+      "get": {
+        "summary": "Return all subreddits that you are member in ( usecase to post in )",
+        "tags": ["Subreddit"],
+        "responses": {
+          "200": {
+            "description": "Returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "children": {
+                      "type": "array",
+                      "description": "List of the subreddits that your are moderator in and their pictures",
+                      "items": {
+                        "properties": {
+                          "title": {
+                            "type": "string",
+                            "description": "the title of the subreddits that the user can send messages from and his own username"
+                          },
+                          "picture": {
+                            "type": "string",
+                            "description": "Path of the picture of the subreddit"
+                          },
+                          "members": {
+                            "type": "number",
+                            "description": "the number of members in that subreddit"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to view this info"
           },
           "500": {
             "description": "Server Error"
