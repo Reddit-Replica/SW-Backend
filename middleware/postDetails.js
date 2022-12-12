@@ -47,6 +47,8 @@ export async function setPostActions(req, res, next) {
       const userId = req.userId;
       const user = await User.findById(userId);
       const postId = req.query.id;
+      user.historyPosts.push(postId);
+      await user.save();
       if (user.savedPosts?.find((id) => id.toString() === postId)) {
         req.saved = true;
       }
