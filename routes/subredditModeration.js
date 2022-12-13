@@ -738,6 +738,12 @@ subredditModerationsRouter.get(
  *   security:
  *    - bearerAuth: []
  */
-subredditModerationsRouter.get("/r/:subreddit/traffic-stats");
+subredditModerationsRouter.get(
+  "/r/:subreddit/traffic-stats",
+  verifyAuthToken,
+  subredditModerationsController.subredditParamValidator,
+  validateRequestSchema,
+  subredditModerationsController.getTrafficStats
+);
 
 export default subredditModerationsRouter;
