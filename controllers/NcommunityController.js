@@ -140,6 +140,7 @@ const createSubreddit = async (req, res) => {
     const result = await addSubreddit(req, req.payload);
     res.status(result.statusCode).json(result.message);
   } catch (err) {
+    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -155,6 +156,7 @@ const joinSubreddit = async (req, res) => {
   //GETTING USER USERNAME
   const username = authPayload.username;
   try {
+    console.log("haa");
     //GETTING USER DATA,CHECKING FOR HIS EXISTENCE
     const user = await searchForUserService(username);
     //GETTING SUBREDDIT DATA,CHECKING FOR ITS EXISTENCE
@@ -173,6 +175,7 @@ const joinSubreddit = async (req, res) => {
       res.status(result.statusCode).json(result.message);
     }
   } catch (err) {
+    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
