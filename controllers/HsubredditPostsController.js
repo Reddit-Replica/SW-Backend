@@ -293,7 +293,7 @@ const unmuteUser = async (req, res) => {
     const subreddit = req.subreddit;
     const user = await getUserByUsername(req.body.username);
     checkUserInSubreddit(subreddit, user);
-    await removeFromMutedUsers(subreddit, user, req.body.muteReason);
+    await removeFromMutedUsers(subreddit, user);
     return res.status(200).json("User successfully unmuted");
   } catch (error) {
     console.log(error.message);
