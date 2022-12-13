@@ -45,12 +45,7 @@ export async function checkPostSubreddit(req, res, next) {
         return res.status(404).json("Subreddit not found or deleted");
       }
       // CHECK ABILITY TO POST
-      if (
-        !user.joinedSubreddits.find((sr) => sr.name === subreddit) ||
-        !postSubreddit.joinedUsers.find(
-          (jUser) => jUser.userId.toString() === user.id.toString()
-        )
-      ) {
+      if (!user.joinedSubreddits.find((sr) => sr.name === subreddit)) {
         return res.status(401).json("User is not a member of this subreddit");
       }
       if (postSubreddit.type !== "Public") {
