@@ -96,6 +96,7 @@ export async function blockUserService(user, userToBlock, block) {
  * @param {Boolean} follow Flag to know if the operation is follow or unfollow
  * @returns {Object} Response to the request containing [statusCode, message]
  */
+// eslint-disable-next-line max-statements
 export async function followUserService(user, userToFollow, follow) {
   if (user._id.toString() === userToFollow._id.toString()) {
     let error = new Error("User can not follow himself");
@@ -112,6 +113,9 @@ export async function followUserService(user, userToFollow, follow) {
     if (index === -1) {
       userToFollow.followers.push(user._id);
       await userToFollow.save();
+
+      user.followedUsers.push(userToFollow._id);
+      await user.save();
     }
     return {
       statusCode: 200,
@@ -121,6 +125,12 @@ export async function followUserService(user, userToFollow, follow) {
     if (index !== -1) {
       userToFollow.followers.splice(index, 1);
       await userToFollow.save();
+
+      const followIndex = user.followedUsers.findIndex(
+        (elem) => elem.toString() === userToFollow._id.toString()
+      );
+      user.followedUsers.splice(followIndex, 1);
+      await user.save();
     }
     return {
       statusCode: 200,
