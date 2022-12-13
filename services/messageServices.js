@@ -163,6 +163,7 @@ async function addConversationToUsers(message, convId) {
   if (message.isReceiverUser) {
     const receiver = await User.findOne({
       username: message.receiverUsername,
+      deletedAt: undefined,
     });
     const receiverConversation = await checkExistingConversation(
       receiver,
