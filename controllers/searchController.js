@@ -1,4 +1,4 @@
-import { check, param, query } from "express-validator";
+import { param, query } from "express-validator";
 import {
   getLoggedInUser,
   searchComments,
