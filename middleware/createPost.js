@@ -51,15 +51,15 @@ export async function checkPostSubreddit(req, res, next) {
           .json("User is not a member/mod of this subreddit");
       }
       req.suggestedSort =
-        postSubreddit.suggestedSort !== "none"
-          ? postSubreddit.suggestedSort
+        postSubreddit.subredditPostSettings.suggestedSort !== "none"
+          ? postSubreddit.subredditPostSettings.suggestedSort
           : req.suggestedSort;
-      if (checkIfBanned(userId, postSubreddit)) {
+      if (checkIfBanned(userId, postSubreddit) === true) {
         return res.status(400).json({
           error: "User is banned from this subreddit",
         });
       }
-      if (checkIfMuted(userId, postSubreddit)) {
+      if (checkIfMuted(userId, postSubreddit) === true) {
         return res.status(400).json({
           error: "User is muted from this subreddit",
         });
