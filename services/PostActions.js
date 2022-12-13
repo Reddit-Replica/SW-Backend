@@ -804,7 +804,7 @@ export async function downVoteAComment(comment, user) {
 export async function setSuggestedSort(postId, user, sort) {
   const post = await searchForPost(postId);
   const postOwner = post.ownerId.toString();
-  console.log(user.id,post.ownerId);
+  console.log(user.id, post.ownerId);
   if (user.id !== postOwner) {
     let error = new Error("You don't have the right to do this action");
     error.statusCode = 401;
