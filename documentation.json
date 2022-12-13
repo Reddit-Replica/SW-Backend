@@ -11010,7 +11010,7 @@
                       "type": "string",
                       "description": "The main topic of the community."
                     },
-                    "sunTopics": {
+                    "subTopics": {
                       "type": "array",
                       "description": "The sub topics of the community.",
                       "items": {
@@ -11102,7 +11102,7 @@
                 "required": [
                   "communityName",
                   "mainTopic",
-                  "sunTopics",
+                  "subTopics",
                   "communityDescription",
                   "sendWelcomeMessage",
                   "welcomeMessage",
@@ -11123,7 +11123,7 @@
                     "type": "string",
                     "description": "The main topic of the community."
                   },
-                  "sunTopics": {
+                  "subTopics": {
                     "type": "array",
                     "description": "The sub topics of the community.",
                     "items": {
