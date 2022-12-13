@@ -163,6 +163,12 @@ export async function leaveSubredditService(user, subreddit) {
   if (joinedIndex !== -1) {
     user.joinedSubreddits.splice(joinedIndex, 1);
     subreddit.members -= 1;
+
+    const joinedSubIndex = subreddit.joinedUsers.findIndex(
+      (ele) => ele.userId.toString() === user._id.toString()
+    );
+    subreddit.joinedUsers.splice(joinedSubIndex, 1);
+
     subreddit.leftUsers.push({
       userId: user._id,
       leaveDate: Date.now(),
