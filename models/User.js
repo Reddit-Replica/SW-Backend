@@ -35,10 +35,20 @@ const userSchema = mongoose.Schema({
     required: true,
     default: 1,
   },
+  upVotes: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  downVotes: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   createdAt: {
     type: Date,
     required: true,
-    default: Date.now(),
+    // default: Date.now(),
   },
   editedAt: {
     type: Date,
@@ -75,7 +85,7 @@ const userSchema = mongoose.Schema({
     adultContent: {
       type: Boolean,
       required: true,
-      default: true,
+      default: false,
     },
     autoplayMedia: {
       type: Boolean,
@@ -110,6 +120,19 @@ const userSchema = mongoose.Schema({
     ],
   },
   joinedSubreddits: [
+    {
+      subredditId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Subreddit",
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  favoritesSubreddits: [
     {
       subredditId: {
         type: Schema.Types.ObjectId,
@@ -196,13 +219,43 @@ const userSchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  savedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  spammedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
   spammedPosts: [
     {
       type: Schema.Types.ObjectId,
       ref: "Post",
     },
   ],
-  comments: [
+  commentedPosts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  upvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  downvotedComments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  followedComments: [
     {
       type: Schema.Types.ObjectId,
       ref: "Comment",
@@ -223,6 +276,12 @@ const userSchema = mongoose.Schema({
       ref: "User",
     },
   ],
+  followedUsers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   sentMessages: [
     {
       type: Schema.Types.ObjectId,
@@ -238,24 +297,19 @@ const userSchema = mongoose.Schema({
   usernameMentions: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Message",
+      ref: "Mention",
     },
   ],
   postReplies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Message",
+      ref: "Comment",
     },
   ],
   conversations: [
     {
-      conversationId: {
-        type: Schema.Types.ObjectId,
-        ref: "Conversation",
-      },
-      with: {
-        type: String,
-      },
+      type: Schema.Types.ObjectId,
+      ref: "Conversation",
     },
   ],
 });

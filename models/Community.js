@@ -6,6 +6,10 @@ const communitySchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  viewName: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
   },
@@ -96,7 +100,7 @@ const communitySchema = mongoose.Schema({
       createdAt: {
         type: Date,
         required: true,
-        default: Date.now(),
+        // default: Date.now(),
       },
       updatedAt: {
         type: Date,
@@ -115,21 +119,32 @@ const communitySchema = mongoose.Schema({
   ],
   moderators: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
       userID: {
         type: Schema.Types.ObjectId,
         ref: "User",
       },
-      nickname: {
-        type: String,
-      },
       dateOfModeration: {
         type: Date,
         required: true,
-        default: Date.now(),
+        // default: Date.now(),
+      },
+      permissions: [
+        {
+          type: String,
+        },
+      ],
+    },
+  ],
+  invitedModerators: [
+    {
+      userID: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      dateOfInvitation: {
+        type: Date,
+        required: true,
+        // default: Date.now(),
       },
       permissions: [
         {
@@ -144,33 +159,51 @@ const communitySchema = mongoose.Schema({
         type: String,
         required: true,
       },
-      userID: {
+      userId: {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+      bannedAt: {
+        type: Date,
+      },
+      banPeriod: {
+        type: Number,
+      },
+      modNote: {
+        type: String,
+      },
+      noteInclude: {
+        type: String,
+      },
+      reasonForBan: {
+        type: String,
       },
     },
   ],
   mutedUsers: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
       userID: {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+      dateOfMute: {
+        type: Date,
+        required: true,
+      },
+      muteReason: {
+        type: String,
       },
     },
   ],
   approvedUsers: [
     {
-      username: {
-        type: String,
-        required: true,
-      },
       userID: {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+      dateOfApprove: {
+        type: Date,
+        required: true,
       },
     },
   ],
@@ -235,6 +268,59 @@ const communitySchema = mongoose.Schema({
       ref: "Comment",
     },
   ],
+
+  subredditSettings: {
+    sendWelcomeMessage: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    welcomeMessage: {
+      type: String,
+    },
+    language: {
+      type: String,
+      required: true,
+      default: "English",
+    },
+    region: {
+      type: String,
+    },
+    acceptingRequestsToJoin: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    acceptingRequestsToPost: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    approvedUsersHaveTheAbilityTo: {
+      type: String,
+      required: true,
+      default: "Post only",
+    },
+  },
+  subredditPostSettings: {
+    enableSpoiler: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    suggestedSort: {
+      type: String,
+      required: true,
+      default: "none",
+      enum: ["none", "best", "top", "new", "old"],
+    },
+    allowImagesInComment: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
+
   //NEEDS TO BE AUTO INCREMENT
   //Is used to get random subreddit from categories
   randomIndex: {

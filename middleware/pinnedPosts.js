@@ -15,6 +15,9 @@ export async function checkPinnedPosts(req, res, next) {
   const postId = req.body.id;
   try {
     const user = await User.findById(userId);
+    if (!user || user.deletedAt) {
+      return res.status(404).json("User not found or deleted");
+    }
     if (
       req.body.pin &&
       user.pinnedPosts.find((id) => id.toString() === postId)

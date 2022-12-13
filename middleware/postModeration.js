@@ -20,11 +20,12 @@ export async function checkThingMod(req, res, next) {
   const id = req.body.id;
   const type = req.body.type;
   const username = req.payload.username;
+  const userId = req.payload.userId;
   if (type === "post") {
     try {
       const post = await Post.findById(id);
 
-      if (!post) {
+      if (!post || post.deletedAt) {
         return res.status(404).json("Post not found");
       }
       if (post.subredditName) {
@@ -32,11 +33,15 @@ export async function checkThingMod(req, res, next) {
           title: post.subredditName,
         });
 
-        if (!subreddit) {
+        if (!subreddit || subreddit.deletedAt) {
           return res.status(404).json("Subreddit not found");
         }
 
-        if (!subreddit.moderators.find((mod) => mod.username === username)) {
+        if (
+          !subreddit.moderators.find(
+            (mod) => mod.userID.toString() === userId.toString()
+          )
+        ) {
           return res.status(401).json("User is not a mod in this subreddit");
         }
       } else {
@@ -54,7 +59,7 @@ export async function checkThingMod(req, res, next) {
     try {
       const comment = await Comment.findById(id);
 
-      if (!comment) {
+      if (!comment || comment.deletedAt) {
         return res.status(404).json("Comment not found");
       }
       if (comment.subredditName) {
@@ -62,10 +67,14 @@ export async function checkThingMod(req, res, next) {
           title: comment.subredditName,
         });
 
-        if (!subreddit) {
+        if (!subreddit || subreddit.deletedAt) {
           return res.status(404).json("Subreddit not found");
         }
-        if (!subreddit.moderators.find((mod) => mod.username === username)) {
+        if (
+          !subreddit.moderators.find(
+            (mod) => mod.userID.toString() === userId.toString()
+          )
+        ) {
           return res.status(401).json("User is not a mod in this subreddit");
         }
       } else {

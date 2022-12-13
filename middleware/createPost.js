@@ -1,7 +1,13 @@
+/* eslint-disable max-statements */
 import Subreddit from "../models/Community.js";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import Flair from "../models/Flair.js";
+import { deleteFile } from "../services/userSettings.js";
+import {
+  checkIfBanned,
+  checkIfMuted,
+} from "../services/subredditActionsServices.js";
 
 /**
  * Middleware used to check the post is being submitted in a subreddit
@@ -20,6 +26,10 @@ export async function checkPostSubreddit(req, res, next) {
   const userId = req.payload.userId;
   try {
     const user = await User.findById(userId);
+    if (!user || user.deletedAt) {
+      return res.status(404).json("User not found or deleted");
+    }
+    req.suggestedSort = "new";
     if (inSubreddit && inSubreddit !== "false") {
       if (!subreddit) {
         return res.status(400).json({
@@ -29,8 +39,8 @@ export async function checkPostSubreddit(req, res, next) {
       const postSubreddit = await Subreddit.findOne({
         title: subreddit,
       });
-      if (!postSubreddit) {
-        return res.status(404).json("Subreddit not found");
+      if (!postSubreddit || postSubreddit.deletedAt) {
+        return res.status(404).json("Subreddit not found or deleted");
       }
       if (
         !user.joinedSubreddits.find((sr) => sr.name === subreddit) &&
@@ -39,6 +49,20 @@ export async function checkPostSubreddit(req, res, next) {
         return res
           .status(401)
           .json("User is not a member/mod of this subreddit");
+      }
+      req.suggestedSort =
+        postSubreddit.subredditPostSettings.suggestedSort !== "none"
+          ? postSubreddit.subredditPostSettings.suggestedSort
+          : req.suggestedSort;
+      if (checkIfBanned(userId, postSubreddit) === true) {
+        return res.status(400).json({
+          error: "User is banned from this subreddit",
+        });
+      }
+      if (checkIfMuted(userId, postSubreddit) === true) {
+        return res.status(400).json({
+          error: "User is muted from this subreddit",
+        });
       }
       req.subreddit = subreddit;
     }
@@ -58,12 +82,24 @@ export async function checkPostSubreddit(req, res, next) {
  * @param {function} next Next function
  * @returns {void}
  */
-// eslint-disable-next-line max-statements
 export async function checkPostFlair(req, res, next) {
   const flairId = req.body.flairId;
   try {
+    if (flairId && !req.subreddit) {
+      return res.status(400).json({
+        error: "The given flair should belong to a subreddit",
+      });
+    }
     if (req.subreddit && flairId) {
-      const flair = await Flair.findById(flairId).populate("subreddit");
+      if (!mongoose.Types.ObjectId.isValid(flairId)) {
+        return res.status(400).json({
+          error: "Invalid Flair id (should be in the correct format)",
+        });
+      }
+      const flair = await Flair.findById(flairId)?.populate("subreddit");
+      if (!flair || flair.deletedAt) {
+        return res.status(404).json("Flair not found or deleted");
+      }
       if (flair.subreddit.title !== req.subreddit) {
         return res.status(400).json({
           error: "Flair doesn't belong to the post subreddit",
@@ -77,73 +113,18 @@ export async function checkPostFlair(req, res, next) {
 }
 
 /**
- * Middleware used to check if the post kind is hybrid and then extracts
- * the text, images, videos, and links content from the body along with image
- * and video captions. The hybridContent object is formed according to the
- * structure in the Post model and passed with the request.
+ * Middleware used to check if the post kind is hybrid and then sets the
+ * post content as given from the rich text editor in the body with no changes.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
  * @param {function} next Next function
  * @returns {void}
  */
-// eslint-disable-next-line max-statements
 export async function checkHybridPost(req, res, next) {
   const kind = req.body.kind;
   if (kind === "hybrid") {
-    let images = [];
-    let videos = [];
-    const imageFiles = req.files?.images;
-    const videoFiles = req.files?.videos;
-    const { texts, links, imageCaptions, videoCaptions } = req.body;
-    if (imageFiles && !imageCaptions) {
-      return res.status(400).json({
-        error: "Image captions are required",
-      });
-    }
-    if (imageFiles?.length !== imageCaptions?.length) {
-      return res.status(400).json({
-        error: "Each image should have a caption",
-      });
-    }
-    if (videoFiles && !videoCaptions) {
-      return res.status(400).json({
-        error: "Video captions are required",
-      });
-    }
-    if (videoFiles?.length !== videoCaptions?.length) {
-      return res.status(400).json({
-        error: "Each video should have a caption",
-      });
-    }
-    if (imageFiles) {
-      for (let i = 0; i < imageFiles.length; i++) {
-        images.push({
-          image: {
-            path: imageFiles[i].path,
-            caption: imageCaptions[i].caption,
-          },
-          index: imageCaptions[i].index,
-        });
-      }
-    }
-    if (videoFiles) {
-      for (let i = 0; i < videoFiles.length; i++) {
-        videos.push({
-          video: {
-            path: videoFiles[i].path,
-            caption: videoCaptions[i].caption,
-          },
-          index: videoCaptions[i].index,
-        });
-      }
-    }
-    req.hybridContent = {
-      texts,
-      links,
-      images,
-      videos,
-    };
+    req.content = req.body.content;
   }
   next();
 }
@@ -162,18 +143,33 @@ export async function checkHybridPost(req, res, next) {
 // eslint-disable-next-line max-statements
 export function checkImagesAndVideos(req, res, next) {
   const kind = req.body.kind;
-  const imageCaptions = req.body.imageCaptions;
-  const imageLinks = req.body.imageLinks;
-  let images = [];
   if (kind === "image") {
-    const imageFiles = req.files.images;
+    let imageCaptions = req.body.imageCaptions;
+    let imageLinks = req.body.imageLinks;
+    let images = [];
+    const imageFiles = req.files?.images;
     if (!imageFiles) {
       return res.status(404).json("Images not found");
+    }
+    if (
+      imageFiles.length === 1 &&
+      typeof imageCaptions === "string" &&
+      typeof imageLinks === "string"
+    ) {
+      const caption = imageCaptions;
+      const link = imageLinks;
+      imageCaptions = [];
+      imageLinks = [];
+      imageCaptions.push(caption);
+      imageLinks.push(link);
     }
     if (
       imageFiles.length !== imageCaptions?.length ||
       imageFiles.length !== imageLinks?.length
     ) {
+      for (const image of imageFiles) {
+        deleteFile(image.path);
+      }
       return res.status(400).json({
         error: "Each image should have a caption and a link",
       });
@@ -189,16 +185,19 @@ export function checkImagesAndVideos(req, res, next) {
     });
     req.images = images;
   } else if (kind === "video") {
-    const videoFiles = req.files.videos;
-    if (!videoFiles) {
-      return res.status(404).json("Videos not found");
+    const videoFile = req.files?.video;
+    if (!videoFile) {
+      return res.status(404).json("Video not found");
     }
-    if (videoFiles.length > 1) {
+    if (videoFile.length > 1) {
+      for (const video of videoFile) {
+        deleteFile(video.path);
+      }
       return res.status(400).json({
         error: "Videos can only have one video",
       });
     }
-    req.video = videoFiles[0].path;
+    req.video = videoFile[0].path;
   }
   next();
 }
@@ -229,6 +228,9 @@ export async function sharePost(req, res, next) {
         });
       }
       const sharedPost = await Post.findById(sharePostId);
+      if (!sharedPost || sharedPost.deletedAt) {
+        return res.status(404).json("Shared post not found or deleted");
+      }
       sharedPost.insights.totalShares += 1;
       await sharedPost.save();
     }
@@ -251,7 +253,6 @@ export async function sharePost(req, res, next) {
 export async function postSubmission(req, res, next) {
   const {
     kind,
-    subreddit,
     title,
     link,
     nsfw,
@@ -270,7 +271,7 @@ export async function postSubmission(req, res, next) {
       kind: kind,
       ownerUsername: username,
       ownerId: userId,
-      subredditName: subreddit,
+      subredditName: req.subreddit,
       title: title,
       sharePostId: sharePostId,
       link: link,
@@ -279,14 +280,49 @@ export async function postSubmission(req, res, next) {
       nsfw: nsfw,
       spoiler: spoiler,
       flair: flairId,
-      hybridContent: req.hybridContent,
+      content: req.content,
       sendReplies: sendReplies,
+      suggestedSort: req.suggestedSort,
       sharePostId: sharePostId,
       scheduleDate: scheduleDate,
       scheduleTime: scheduleTime,
       scheduleTimeZone: scheduleTimeZone,
+      createdAt: Date.now(),
     }).save();
     req.post = post;
+    next();
+  } catch (err) {
+    return res.status(500).json("Internal server error");
+  }
+}
+/**
+ * Middleware used to add the post in all necesssary places in the user/post/subreddit models and
+ * modify any parameters that are affected upon post creation.
+ *
+ * @param {Object} req Request object
+ * @param {Object} res Response object
+ * @param {function} next Next function
+ * @returns {void}
+ */
+export async function addPost(req, res, next) {
+  try {
+    const user = req.user;
+    const post = req.post;
+    if (post.subredditName) {
+      const subreddit = await Subreddit.findOne({ title: post.subredditName });
+      subreddit.unmoderatedPosts.push(post.id.toString());
+      subreddit.subredditPosts.push(post.id.toString());
+      await subreddit.save();
+    }
+    user.posts.push(post.id);
+    user.upvotedPosts.push(post.id);
+    user.commentedPosts.push(post.id);
+    post.numberOfUpvotes = 1;
+    post.numberOfVotes = 1;
+    user.upVotes += 1;
+    user.karma += 1;
+    post.hotTimingScore = post.createdAt.getTime() / 10000;
+    post.bestTimingScore = post.createdAt.getTime() / 10000000;
     next();
   } catch (err) {
     return res.status(500).json("Internal server error");

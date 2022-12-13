@@ -5,7 +5,6 @@ import {
   verifyAuthTokenModerator,
 } from "../middleware/verifyToken.js";
 import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
-import subredditRulesMiddleware from "../middleware/subredditRules.js";
 // eslint-disable-next-line max-len
 import subredditFlairsController from "../controllers/subredditFlairsController.js";
 // eslint-disable-next-line new-cap
@@ -15,7 +14,7 @@ const subredditFlairsRouter = express.Router();
  * @swagger
  * /r/{subreddit}/about/post-flairs:
  *  get:
- *      summary: Returns all post flairs of a subreddit
+ *      summary: Returns all post flairs of a subreddit (Here the token is optional if the user is logged in add a token if not don't add it)
  *      tags: [Posts and comments moderation]
  *      parameters:
  *          - in: path
@@ -74,11 +73,11 @@ const subredditFlairsRouter = express.Router();
  */
 subredditFlairsRouter.get(
   "/r/:subreddit/about/post-flairs",
-  verifyAuthToken,
+  // verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
   // TODO Think whether i should verify moderator or not? (maybe a user will need that details while creating a post)
-  verifyAuthTokenModerator,
+  // verifyAuthTokenModerator,
   subredditFlairsController.getAllFlairs
 );
 
@@ -86,7 +85,7 @@ subredditFlairsRouter.get(
  * @swagger
  * /r/{subreddit}/about/post-flairs/{flairId}:
  *  get:
- *      summary: Returns details of a specific post flair
+ *      summary: Returns details of a specific post flair (Here the token is optional if the user is logged in add a token if not don't add it)
  *      tags: [Posts and comments moderation]
  *      parameters:
  *          - in: path
@@ -146,11 +145,11 @@ subredditFlairsRouter.get(
  */
 subredditFlairsRouter.get(
   "/r/:subreddit/about/post-flairs/:flairId",
-  verifyAuthToken,
+  // verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
   // TODO Think whether i should verify moderator or not? (maybe a user will need that details while creating a post)
-  verifyAuthTokenModerator,
+  // verifyAuthTokenModerator,
   subredditFlairsController.getFlairDetails
 );
 
@@ -395,7 +394,13 @@ subredditFlairsRouter.delete(
  *      security:
  *          - bearerAuth: []
  */
-subredditFlairsRouter.post("/r/:subreddit/about/post-flairs-order");
+subredditFlairsRouter.post(
+  "/r/:subreddit/about/post-flairs-order",
+  verifyAuthToken,
+  subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
+  subredditFlairsController.editFlairsOrder
+);
 
 /**
  * @swagger

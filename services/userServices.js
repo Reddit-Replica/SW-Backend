@@ -96,6 +96,7 @@ export async function blockUserService(user, userToBlock, block) {
  * @param {Boolean} follow Flag to know if the operation is follow or unfollow
  * @returns {Object} Response to the request containing [statusCode, message]
  */
+// eslint-disable-next-line max-statements
 export async function followUserService(user, userToFollow, follow) {
   if (user._id.toString() === userToFollow._id.toString()) {
     let error = new Error("User can not follow himself");
@@ -112,6 +113,9 @@ export async function followUserService(user, userToFollow, follow) {
     if (index === -1) {
       userToFollow.followers.push(user._id);
       await userToFollow.save();
+
+      user.followedUsers.push(userToFollow._id);
+      await user.save();
     }
     return {
       statusCode: 200,
@@ -121,6 +125,12 @@ export async function followUserService(user, userToFollow, follow) {
     if (index !== -1) {
       userToFollow.followers.splice(index, 1);
       await userToFollow.save();
+
+      const followIndex = user.followedUsers.findIndex(
+        (elem) => elem.toString() === userToFollow._id.toString()
+      );
+      user.followedUsers.splice(followIndex, 1);
+      await user.save();
     }
     return {
       statusCode: 200,
@@ -140,9 +150,10 @@ export async function followUserService(user, userToFollow, follow) {
  */
 // eslint-disable-next-line max-statements
 export async function getUserAboutDataService(username, loggedInUserId) {
-  const user = await User.findOne({ username: username }).populate(
-    "moderatedSubreddits.subredditId"
-  );
+  const user = await User.findOne({
+    username: username,
+    deletedAt: null,
+  }).populate("moderatedSubreddits.subredditId");
   if (!user) {
     return {
       statusCode: 404,
@@ -164,20 +175,22 @@ export async function getUserAboutDataService(username, loggedInUserId) {
 
   let moderatorOf = [];
   for (let i = 0; i < user.moderatedSubreddits.length; i++) {
-    // check if the logged in user follows that subreddit
-    let followed = false;
-    if (loggedInUser) {
-      followed = loggedInUser.joinedSubreddits.includes(
-        user.moderatedSubreddits[i].subredditId._id.toString()
-      );
-    }
+    if (!user.moderatedSubreddits[i].subredditId.deletedAt) {
+      // check if the logged in user follows that subreddit
+      let followed = false;
+      if (loggedInUser) {
+        followed = loggedInUser.joinedSubreddits.includes(
+          user.moderatedSubreddits[i].subredditId._id.toString()
+        );
+      }
 
-    moderatorOf.push({
-      subredditName: user.moderatedSubreddits[i].subredditId.title,
-      numOfMembers: user.moderatedSubreddits[i].subredditId.members,
-      nsfw: user.moderatedSubreddits[i].subredditId.nsfw,
-      followed: followed,
-    });
+      moderatorOf.push({
+        subredditName: user.moderatedSubreddits[i].subredditId.title,
+        numOfMembers: user.moderatedSubreddits[i].subredditId.members,
+        nsfw: user.moderatedSubreddits[i].subredditId.nsfw,
+        followed: followed,
+      });
+    }
   }
 
   // check if the user was blocked by the logged in user
@@ -209,5 +222,21 @@ export async function getUserAboutDataService(username, loggedInUserId) {
       blocked: blocked,
       moderatorOf: moderatorOf,
     },
+  };
+}
+
+/**
+ * Function used to clear user's history posts
+ *
+ * @param {Object} user User object that we want to clear his history
+ * @returns {Object} Response to the request containing [statusCode, message]
+ */
+export async function clearHistoyService(user) {
+  user.historyPosts = [];
+  await user.save();
+
+  return {
+    statusCode: 200,
+    message: "History cleared successfully",
   };
 }

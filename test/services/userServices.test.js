@@ -21,6 +21,7 @@ describe("Testing user services functions", () => {
     user = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user.save();
 
@@ -29,17 +30,20 @@ describe("Testing user services functions", () => {
       email: "veryfunny@gmail.com",
       displayName: "Beshoy Morad",
       about: "I am studying without [stu]",
+      createdAt: Date.now(),
     });
     await mainUser.save();
 
     subreddit = new Subreddit({
       title: "Subreddit",
+      viewName: "Subreddit",
       category: "Sports",
       type: "Public",
       owner: {
         username: mainUser.username,
         userID: mainUser._id,
       },
+      createdAt: Date.now(),
     });
     subreddit.moderators.push({
       username: mainUser.username,
@@ -51,6 +55,7 @@ describe("Testing user services functions", () => {
     userToAction = new User({
       username: "UserToAction",
       email: "haha@gmail.com",
+      createdAt: Date.now(),
     });
     await userToAction.save();
   });

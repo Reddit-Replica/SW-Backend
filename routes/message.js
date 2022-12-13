@@ -31,7 +31,7 @@ const messageRouter = express.Router();
  *             - text
  *             - senderUsername
  *             - receiverUsername
- *             - type
+ *             - subject
  *            properties:
  *             text:
  *               type: string
@@ -45,22 +45,9 @@ const messageRouter = express.Router();
  *             subject:
  *               type: string
  *               description: Subject of the message
- *             type:
- *               type: string
- *               description: describes the type of message
- *               enum:
- *                 - Post replies
- *                 - Mentions
- *                 - Messages
- *             postId:
- *               type: string
- *               description: id of the post that the mention or the reply happens in
  *             subredditName:
  *               type: string
  *               description: name of the subreddit that you send or received the msg via
- *             repliedMsgId:
- *               type: string
- *               description: id of the msg that it's a reply from
  *      responses:
  *          201:
  *              description: Your message is sent successfully
@@ -89,9 +76,60 @@ const messageRouter = express.Router();
 router.post(
   "/message/compose",
   verifyAuthToken,
-  messageController.messageValidator,
   messageController.createMessage
 );
+
+/**
+ * @swagger
+ * /mention:
+ *  post:
+ *      summary: Send a mention to a user
+ *      tags: [Messages]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *            required:
+ *             - postId
+ *             - commentId
+ *             - receiverUsername
+ *            properties:
+ *             postId:
+ *               type: string
+ *               description: Id of the post that the mention is in
+ *             commentId:
+ *               type: string
+ *               description: Id of the comment that the mention is in
+ *             receiverUsername:
+ *               type: string
+ *               description: Username of the user that was mentioned
+ *      responses:
+ *          201:
+ *              description: Your mention is sent successfully
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          500:
+ *              description: Internal Server Error
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.post("/mention", verifyAuthToken, messageController.createMention);
 
 /**
  * @swagger
@@ -200,7 +238,7 @@ router.post(
  *       - bearerAuth: []
  */
 
-messageRouter.get("/message/sent");
+router.get("/message/sent", verifyAuthToken, messageController.getSentMsg);
 
 /**
  * @swagger
@@ -327,7 +365,7 @@ messageRouter.get("/message/sent");
  *       - bearerAuth: []
  */
 
-messageRouter.get("/message/inbox");
+router.get("/message/inbox", verifyAuthToken, messageController.getInbox);
 
 /**
  * @swagger
@@ -436,7 +474,7 @@ messageRouter.get("/message/inbox");
  *       - bearerAuth: []
  */
 
-messageRouter.get("/message/unread");
+router.get("/message/unread", verifyAuthToken, messageController.getUnreadMsg);
 
 /**
  * @swagger
@@ -614,12 +652,6 @@ messageRouter.get("/message/post-reply");
  *                                    type: string
  *                                    format: date-time
  *                                    description: Time of sending the message
- *                                   type:
- *                                    type: string
- *                                    description: describes the type of message
- *                                    enum:
- *                                     - Mentions
- *                                     - Messages
  *                                   subredditName:
  *                                    type: string
  *                                    description: subreddit name that the reply was in
@@ -666,7 +698,11 @@ messageRouter.get("/message/post-reply");
  *       - bearerAuth: []
  */
 
-messageRouter.get("/message/mentions");
+router.get(
+  "/message/mentions",
+  verifyAuthToken,
+  messageController.getUsernameMentions
+);
 
 /**
  * @swagger
@@ -780,7 +816,11 @@ messageRouter.get("/message/mentions");
  *       - bearerAuth: []
  */
 
-messageRouter.get("/message/messages");
+router.get(
+  "/message/messages",
+  verifyAuthToken,
+  messageController.getConversations
+);
 
 /**
  * @swagger
@@ -804,14 +844,76 @@ messageRouter.get("/message/messages");
  *          200:
  *              description: Message has been unread successfully
  *          401:
- *              description: Unauthorized to unread this message
+ *              description: you are unauthorized to do this action
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
  *          500:
  *              description: Server Error
  *      security:
  *       - bearerAuth: []
  */
 
-messageRouter.patch("/unread-message");
+router.patch("/unread-message", verifyAuthToken, messageController.unreadMsg);
+/**
+ * @swagger
+ * /spam-message:
+ *  patch:
+ *      summary: spam a Message
+ *      tags: [Messages]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *              - id
+ *             properties:
+ *              id:
+ *                type: string
+ *                description: Full name of the message you want to spam
+ *      responses:
+ *          200:
+ *              description: Message has been spammed successfully
+ *          401:
+ *              description: you are unauthorized to do this action
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why the request was invalid
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    properties:
+ *                      error:
+ *                        type: string
+ *                        description: Type of error
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+router.patch("/spam-message", verifyAuthToken, messageController.markMsgAsSpam);
 
 /**
  * @swagger

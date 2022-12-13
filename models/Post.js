@@ -24,71 +24,8 @@ const postSchema = mongoose.Schema({
     default: "hybrid",
     required: true,
   },
-  hybridContent: {
-    texts: [
-      {
-        text: {
-          type: String,
-          required: true,
-        },
-        index: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
-    images: [
-      {
-        image: {
-          path: {
-            type: String,
-            required: true,
-          },
-          caption: {
-            type: String,
-          },
-        },
-        index: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
-    videos: [
-      {
-        video: {
-          path: {
-            type: String,
-            required: true,
-          },
-          caption: {
-            type: String,
-          },
-        },
-        index: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
-    links: [
-      {
-        link: {
-          title: {
-            type: String,
-            required: true,
-          },
-          url: {
-            type: String,
-            required: true,
-          },
-        },
-        index: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
+  content: {
+    type: Object,
   },
   images: [
     {
@@ -115,7 +52,7 @@ const postSchema = mongoose.Schema({
   },
   suggestedSort: {
     type: String,
-    default: "best",
+    default: "new",
   },
   nsfw: {
     type: Boolean,
@@ -136,7 +73,7 @@ const postSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     required: true,
-    default: Date.now(),
+    // default: Date.now(),
   },
   editedAt: {
     type: Date,
@@ -222,6 +159,26 @@ const postSchema = mongoose.Schema({
   },
   scheduleTimeZone: {
     type: String,
+  },
+  hotScore: {
+    type: Number,
+    default: 0,
+  },
+  hotTimingScore: {
+    type: Number,
+    default: 0,
+  },
+  bestScore: {
+    type: Number,
+    default: 0,
+  },
+  bestTimingScore: {
+    type: Number,
+    default: 0,
+  },
+  numberOfVotes: {
+    type: Number,
+    default: 0,
   },
 });
 

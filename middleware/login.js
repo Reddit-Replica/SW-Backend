@@ -19,9 +19,9 @@ export async function verifyUserByUsername(req, res, next) {
   const username = req.body.username;
   try {
     const user = await User.findOne({ username: username });
-    if (!user) {
+    if (!user || user.deletedAt) {
       return res.status(400).json({
-        error: "Username not found",
+        error: "Username not found/deleted",
       });
     }
     req.user = user;
@@ -82,9 +82,9 @@ export async function verifyUsernameAndEmail(req, res, next) {
   const email = req.body.email;
   try {
     const user = await User.findOne({ email: email });
-    if (!user) {
+    if (!user || user.deletedAt) {
       return res.status(400).json({
-        error: "Invalid email (User not found)",
+        error: "Invalid email (User not found or deleted)",
       });
     }
     if (user.username !== username) {
@@ -141,7 +141,7 @@ export async function verifyUserById(req, res, next) {
   const id = req.params.id;
   try {
     const user = await User.findById(id);
-    if (!user) {
+    if (!user || user.deletedAt) {
       return res.status(403).json("User not found");
     }
     req.user = user;
@@ -171,8 +171,8 @@ export async function verifyResetToken(req, res, next) {
       type: "forgetPassword",
       token: token,
     });
-    if (!returnedToken) {
-      return res.status(403).json("Invalid Token");
+    if (!returnedToken || returnedToken.deletedAt) {
+      return res.status(403).json("Invalid Token/deleted");
     }
     if (returnedToken.expireAt < Date.now()) {
       await returnedToken.remove();

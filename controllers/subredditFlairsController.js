@@ -11,6 +11,9 @@ import {
   prepareFlairsSettings,
   validateFlairSettingsBody,
   editFlairsSettingsService,
+  checkDublicateFlairOrderService,
+  editFlairsOrderService,
+  checkEditFlairsOrderService,
 } from "../services/subredditFlairs.js";
 
 const addSubredditFlair = async (req, res) => {
@@ -122,6 +125,24 @@ const editFlairsSettings = async (req, res) => {
   }
 };
 
+const editFlairsOrder = async (req, res) => {
+  try {
+    await req.subreddit.populate("flairs");
+    console.log(req.subreddit.flairs);
+    checkEditFlairsOrderService(req);
+    checkDublicateFlairOrderService(req);
+    await editFlairsOrderService(req);
+    res.status(200).json("Order edited successfully");
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   addSubredditFlair,
   deleteSubredditFlair,
@@ -130,4 +151,5 @@ export default {
   getAllFlairs,
   getFlairsSettings,
   editFlairsSettings,
+  editFlairsOrder,
 };

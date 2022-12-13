@@ -2,21 +2,6 @@ import mongoose, { Schema } from "mongoose";
 
 // eslint-disable-next-line new-cap
 const messageSchema = mongoose.Schema({
-  type: {
-    type: String,
-    required: true,
-  },
-  subreddit: {
-    type: String,
-  },
-  postId: {
-    type: Schema.Types.ObjectId,
-    ref: "Post",
-  },
-  repliedMsgId: {
-    type: Schema.Types.ObjectId,
-    ref: "Message",
-  },
   subredditName: {
     type: String,
   },
@@ -27,7 +12,6 @@ const messageSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     required: true,
-    default: Date.now(),
   },
   editedAt: {
     type: Date,
@@ -45,6 +29,7 @@ const messageSchema = mongoose.Schema({
   },
   isSenderUser: {
     type: Boolean,
+    required: true,
   },
   receiverUsername: {
     type: String,
@@ -52,27 +37,25 @@ const messageSchema = mongoose.Schema({
   },
   isReceiverUser: {
     type: Boolean,
-  },
-  sentAt: {
-    type: Date,
-    default: Date.now(),
+    required: true,
   },
   subject: {
     type: String,
-  },
-  isReply: {
-    type: Boolean,
-    required: true,
-    default: false,
   },
   isRead: {
     type: Boolean,
     required: true,
     default: false,
   },
-  spamsCount: {
-    type: Number,
-    default: 0,
+  isSpam: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
+  type: {
+    type: String,
+    required: true,
+    default: "Message",
   },
 });
 

@@ -10,9 +10,20 @@ import {
   addToMainTopic,
   searchForSubredditById,
   addSubreddit,
+  checkForPrivateSubreddits,
+  makeSubredditFavorite,
+  checkForFavoriteSubreddits,
+  removeSubredditFromFavorite,
+  subredditNameAvailable,
+  leaveSubredditService,
 } from "./../services/communityServices.js";
-import { searchForUserService } from "../services/userServices.js";
-let MainTopics = [
+import {
+  getUserFromJWTService,
+  searchForUserService,
+} from "../services/userServices.js";
+import { getSubredditService } from "../services/subredditActionsServices.js";
+import { subredditCategoryListing } from "../services/subredditListing.js";
+export let MainTopics = [
   "Activism",
   "Addition Support",
   "Animals And Pets",
@@ -113,13 +124,22 @@ const subTopicValidator = [
   body("title").not().isEmpty().withMessage("subtopic can not be empty"),
 ];
 
+const subredditNameValidator = [
+  body("subredditName")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Subreddit name can not be empty")
+    .isLength({ min: 0, max: 23 })
+    .withMessage("Subreddit name must be less than 23 character"),
+];
+
 //CREATE SUBREDDIT
 const createSubreddit = async (req, res) => {
   try {
     const result = await addSubreddit(req, req.payload);
     res.status(result.statusCode).json(result.message);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -159,6 +179,23 @@ const joinSubreddit = async (req, res) => {
       });
     } else {
       return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const leaveSubreddit = async (req, res) => {
+  try {
+    const user = await getUserFromJWTService(req.payload.userId);
+    const subreddit = await getSubredditService(req.body.subredditName);
+
+    const result = await leaveSubredditService(user, subreddit);
+    res.status(result.statusCode).json(result.message);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
     }
   }
 };
@@ -226,6 +263,22 @@ const addSubTopics = async (req, res) => {
   }
 };
 
+const availableSubredditName = async (req, res) => {
+  try {
+    const result = await subredditNameAvailable(req.query.subredditName);
+    //SENDING RESPONSES
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
 /* we need to add moderated subreddits in user then we will push this user to them
 const moderate = async(req,res)=>{
   const authPayload = verifyUser(req);
@@ -252,6 +305,111 @@ const moderate = async(req,res)=>{
   }
 };
 */
+const addToFavorite = async (req, res) => {
+  try {
+    const subreddit = await searchForSubreddit(req.params.subreddit);
+    const user = await searchForUserService(req.payload.username);
+    await checkForPrivateSubreddits(user, subreddit);
+    const isFavorite = await checkForFavoriteSubreddits(user, subreddit);
+    if (isFavorite) {
+      let error = new Error(
+        `${subreddit.title} is a favorite subreddit already`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+    const result = await makeSubredditFavorite(
+      user,
+      subreddit.title,
+      subreddit.id
+    );
+
+    //SENDING RESPONSES
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const removeFromFavorite = async (req, res) => {
+  try {
+    const subreddit = await searchForSubreddit(req.params.subreddit);
+    const user = await searchForUserService(req.payload.username);
+    await checkForPrivateSubreddits(user, subreddit);
+    const isFavorite = await checkForFavoriteSubreddits(user, subreddit);
+    if (!isFavorite) {
+      let error = new Error(`${subreddit.title} is not favorite already`);
+      error.statusCode = 400;
+      throw error;
+    }
+    const result = await removeSubredditFromFavorite(user, subreddit.title);
+
+    //SENDING RESPONSES
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const subredditLeaderboardWithCategory = async (req, res) => {
+  try {
+    let { before, after, limit } = req.query;
+    const user = await searchForUserService(req.payload.username);
+    const result = await subredditCategoryListing(
+      user,
+      req.params.categoryName,
+      before,
+      after,
+      limit,
+      true
+    );
+    return res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const subredditLeaderboard = async (req, res) => {
+  try {
+    let { before, after, limit } = req.query;
+    const user = await searchForUserService(req.payload.username);
+    const result = await subredditCategoryListing(
+      user,
+      "",
+      before,
+      after,
+      limit,
+      false
+    );
+    return res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
 
 export default {
   createSubreddit,
@@ -263,4 +421,11 @@ export default {
   addSubTopics,
   mainTopicValidator,
   subTopicValidator,
+  addToFavorite,
+  removeFromFavorite,
+  availableSubredditName,
+  subredditLeaderboard,
+  subredditLeaderboardWithCategory,
+  subredditNameValidator,
+  leaveSubreddit,
 };

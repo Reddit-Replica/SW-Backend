@@ -1,4 +1,7 @@
 import express from "express";
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
+import userSettingsController from "../controllers/userSettingsController.js";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -82,7 +85,11 @@ const router = express.Router();
  *     security:
  *       - bearerAuth: []
  */
-router.get("/account-settings");
+router.get(
+  "/account-settings",
+  verifyAuthToken,
+  userSettingsController.getAccountSettings
+);
 
 /**
  * @swagger
@@ -139,7 +146,11 @@ router.get("/account-settings");
  *     security:
  *       - bearerAuth: []
  */
-router.patch("/account-settings");
+router.patch(
+  "/account-settings",
+  verifyAuthToken,
+  userSettingsController.editAccountSettings
+);
 
 /**
  * @swagger
@@ -163,11 +174,15 @@ router.patch("/account-settings");
  *         application/json:
  *           schema:
  *             required:
+ *               - password
  *               - accessToken
  *             properties:
  *               accessToken:
  *                 type: string
  *                 description: Access token from the response of google or facebook
+ *               password:
+ *                 type: string
+ *                 description: Password entered for verification
  *     responses:
  *       200:
  *         description: Connected successfully
@@ -187,7 +202,67 @@ router.patch("/account-settings");
  *     security:
  *       - bearerAuth: []
  */
-router.post("/connect/:type");
+router.post(
+  "/connect/:type",
+  verifyAuthToken,
+  userSettingsController.connectValidator,
+  validateRequestSchema,
+  userSettingsController.connect
+);
+
+/**
+ * @swagger
+ * /disconnect/{type}:
+ *   post:
+ *     summary: Disconnect google or facebook account
+ *     tags: [User settings]
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         description: Type of disconnect
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - google
+ *             - facebook
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - password
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 description: Password entered for verification
+ *     responses:
+ *       200:
+ *         description: Disconnected successfully
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post(
+  "/disconnect/:type",
+  verifyAuthToken,
+  userSettingsController.disconnectValidator,
+  validateRequestSchema,
+  userSettingsController.disconnect
+);
 
 /**
  * @swagger
@@ -229,7 +304,13 @@ router.post("/connect/:type");
  *     security:
  *       - bearerAuth: []
  */
-router.put("/change-email");
+router.put(
+  "/change-email",
+  verifyAuthToken,
+  userSettingsController.changeEmailValidator,
+  validateRequestSchema,
+  userSettingsController.changeEmail
+);
 
 /**
  * @swagger
@@ -275,7 +356,13 @@ router.put("/change-email");
  *     security:
  *       - bearerAuth: []
  */
-router.put("/change-password");
+router.put(
+  "/change-password",
+  verifyAuthToken,
+  userSettingsController.changePasswordValidator,
+  validateRequestSchema,
+  userSettingsController.changePassword
+);
 
 /**
  * @swagger
@@ -308,7 +395,13 @@ router.put("/change-password");
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/delete-account");
+router.delete(
+  "/delete-account",
+  verifyAuthToken,
+  userSettingsController.deleteValidator,
+  validateRequestSchema,
+  userSettingsController.deleteAccount
+);
 
 /**
  * @swagger
@@ -354,7 +447,13 @@ router.delete("/delete-account");
  *     security:
  *       - bearerAuth: []
  */
-router.post("/social-link");
+router.post(
+  "/social-link",
+  verifyAuthToken,
+  userSettingsController.socialLinkValidator,
+  validateRequestSchema,
+  userSettingsController.addSocialLink
+);
 
 /**
  * @swagger
@@ -393,7 +492,13 @@ router.post("/social-link");
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/social-link");
+router.delete(
+  "/social-link",
+  verifyAuthToken,
+  userSettingsController.socialLinkValidator,
+  validateRequestSchema,
+  userSettingsController.deleteSocialLink
+);
 
 /**
  * @swagger
@@ -407,14 +512,21 @@ router.delete("/social-link");
  *         application/json:
  *           schema:
  *             required:
- *               - picture
+ *               - avatar
  *             properties:
- *               picture:
- *                 type: string
- *                 description: Path of the profile picture
+ *               avatar:
+ *                 type: object
+ *                 description: The avatar image
  *     responses:
  *       200:
  *         description: Profile picture has been added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 path:
+ *                   type: string
+ *                   description: Profile picture path
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -431,7 +543,11 @@ router.delete("/social-link");
  *     security:
  *       - bearerAuth: []
  */
-router.post("/profile-picture");
+router.post(
+  "/profile-picture",
+  verifyAuthToken,
+  userSettingsController.addProfilePicture
+);
 
 /**
  * @swagger
@@ -449,7 +565,11 @@ router.post("/profile-picture");
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/profile-picture");
+router.delete(
+  "/profile-picture",
+  verifyAuthToken,
+  userSettingsController.deleteProfilePicture
+);
 
 /**
  * @swagger
@@ -466,11 +586,18 @@ router.delete("/profile-picture");
  *               - banner
  *             properties:
  *               banner:
- *                 type: string
- *                 description: Path of the banner image
+ *                 type: object
+ *                 description: The banner image
  *     responses:
  *       200:
  *         description: Banner image has been added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 path:
+ *                   type: string
+ *                   description: Banner image path
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -487,7 +614,7 @@ router.delete("/profile-picture");
  *     security:
  *       - bearerAuth: []
  */
-router.post("/banner-image");
+router.post("/banner-image", verifyAuthToken, userSettingsController.addBanner);
 
 /**
  * @swagger
@@ -505,7 +632,11 @@ router.post("/banner-image");
  *     security:
  *       - bearerAuth: []
  */
-router.delete("/banner-image");
+router.delete(
+  "/banner-image",
+  verifyAuthToken,
+  userSettingsController.deleteBanner
+);
 
 /**
  * @swagger
@@ -548,15 +679,12 @@ router.delete("/banner-image");
  *                   description: List of users to return
  *                   items:
  *                     properties:
- *                       id:
- *                         type: string
- *                         description: Id of the users
- *                       data:
- *                         type: object
- *                         properties:
  *                           username:
  *                             type: string
  *                             description: Username of the blocked user
+ *                           avatar:
+ *                             type: string
+ *                             description: Path of the image of the blocked user
  *                           blockDate:
  *                             type: string
  *                             format: date-time
@@ -570,6 +698,10 @@ router.delete("/banner-image");
  *     security:
  *       - bearerAuth: []
  */
-router.get("/blocked-users");
+router.get(
+  "/blocked-users",
+  verifyAuthToken,
+  userSettingsController.getBlockedUsers
+);
 
 export default router;

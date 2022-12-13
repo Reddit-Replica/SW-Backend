@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable max-statements */
 import Subreddit from "./../models/Community.js";
 import { searchForUserService } from "../services/userServices.js";
@@ -5,6 +6,7 @@ import {
   getSortedCategories,
   insertCategoriesIfNotExists,
 } from "../services/categories.js";
+import { checkIfModerator } from "./subredditActionsServices.js";
 /**
  * This function is used to search for a subreddit with its name
  * it gets the subreddit from the database then it checks about it's validity
@@ -14,7 +16,10 @@ import {
  */
 export async function searchForSubreddit(subredditName) {
   //GETTING SUBREDDIT DATA
-  const subreddit = await Subreddit.findOne({ title: subredditName });
+  const subreddit = await Subreddit.findOne({
+    title: subredditName,
+    deletedAt: undefined,
+  });
   if (!subreddit) {
     let error = new Error("This subreddit isn't found");
     error.statusCode = 400;
@@ -27,6 +32,25 @@ export async function searchForSubreddit(subredditName) {
     throw error;
   }
   return subreddit;
+}
+/**
+ * This function is used to check if the subredditName is available or not
+ * it gets the subreddit from the database then it checks about it's validity
+ * if there is no subreddit then it's available
+ * @param {String} subredditName subreddit Name
+ * @returns {Object} error object that contains the msg describing why there is an error and its status code , or if there is no error then it returns the subreddit itself
+ */
+export async function subredditNameAvailable(subredditName) {
+  const subreddit = await Subreddit.findOne({ title: subredditName });
+  if (!subreddit) {
+    return {
+      statusCode: 200,
+      message: "The subreddit's name is available",
+    };
+  }
+  let error = new Error("Subreddit's name is already taken");
+  error.statusCode = 409;
+  throw error;
 }
 /**
  * This function is used to search for a subreddit with its id
@@ -88,7 +112,6 @@ export async function addToJoinedSubreddit(user, subreddit) {
     subredditId: subreddit.id,
     name: subreddit.title,
   });
-  console.log(user);
   await user.save();
   subreddit.members += 1;
   await subreddit.save();
@@ -97,6 +120,67 @@ export async function addToJoinedSubreddit(user, subreddit) {
     message: "you joined the subreddit successfully",
   };
 }
+
+/**
+ * Function used to remove the subreddit from the joinedSubreddit list of the user,
+ * then decrement the number of members of the subreddit.
+ * @param {object} user User object that contains the data of the user
+ * @param {object} subreddit Subreddit object that user want to leave
+ */
+export async function leaveSubredditService(user, subreddit) {
+  // check if the user is the owner of the subreddit or moderator
+  if (subreddit.owner.userID.toString() === user._id.toString()) {
+    let error = new Error("Owner of the subreddit can not leave");
+    error.statusCode = 400;
+    throw error;
+  }
+  if (checkIfModerator(user._id, subreddit) !== -1) {
+    let error = new Error("Moderators of the subreddit can not leave");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // check if the user is not a member in that subreddit
+  const joinedIndex = user.joinedSubreddits.findIndex(
+    (ele) => ele.subredditId.toString() === subreddit._id.toString()
+  );
+  const waitedIndex = subreddit.waitedUsers.findIndex(
+    (ele) => ele.userID.toString() === user._id.toString()
+  );
+
+  if (joinedIndex === -1 && waitedIndex === -1) {
+    let error = new Error("Can not leave a subreddit that you did not join");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // if the user was a member in that subreddit
+  if (joinedIndex !== -1) {
+    user.joinedSubreddits.splice(joinedIndex, 1);
+    subreddit.members -= 1;
+
+    const approvedIndex = subreddit.approvedUsers.findIndex(
+      (ele) => ele.userID.toString() === user._id.toString()
+    );
+    if (approvedIndex !== -1) {
+      subreddit.approvedUsers.splice(approvedIndex, 1);
+    }
+  }
+
+  // if the user was in the waiting list for that subreddit
+  if (waitedIndex !== -1) {
+    subreddit.waitedIndex.splice(waitedIndex, 1);
+  }
+
+  await user.save();
+  await subreddit.save();
+
+  return {
+    statusCode: 200,
+    message: "You left the subreddit successfully",
+  };
+}
+
 /**
  * This function is used to add a description to a subreddit using one of the moderators
  * @param {String} subredditName subreddit Name
@@ -191,10 +275,12 @@ export async function addSubreddit(req, authPayload) {
   };
   const subreddit = await new Subreddit({
     title: subredditName,
+    viewName: subredditName,
     category: category,
     type: type,
     nsfw: nsfw,
     owner: owner,
+    createdAt: Date.now(),
   }).save();
   const addedSubreddit = {
     subredditId: subreddit.id,
@@ -230,6 +316,7 @@ export async function moderateSubreddit(username, subredditName) {
   const addedUser = {
     username: username,
     userID: user.id,
+    dateOfModeration: Date.now(),
   };
   for (const moderator of subreddit.moderators) {
     if (moderator.username === user.username) {
@@ -255,7 +342,7 @@ export async function moderateSubreddit(username, subredditName) {
  * @param {String} category username of the user
  * @returns {Object} error object that contains the msg describing what happened and its status code
  */
-async function checkOnCategory(category) {
+export async function checkOnCategory(category) {
   await insertCategoriesIfNotExists();
   const categories = await getSortedCategories();
   let includes = false;
@@ -269,4 +356,68 @@ async function checkOnCategory(category) {
     error.statusCode = 404;
     throw error;
   }
+}
+
+export async function checkJoining(user, subredditName) {
+  for (const subreddit of user.joinedSubreddits) {
+    if (subreddit.name === subredditName) {
+      return true;
+    }
+  }
+  let error = new Error(
+    `You haven't joined ${subredditName} yet , to do this action you have to join it first`
+  );
+  error.statusCode = 401;
+  throw error;
+}
+
+export async function checkForPrivateSubreddits(user, subreddit) {
+  if (subreddit.type === "Private") {
+    for (const smallSubreddit of user.joinedSubreddits) {
+      if (smallSubreddit.name === subreddit.title) {
+        return true;
+      }
+    }
+  } else {
+    return true;
+  }
+  let error = new Error(
+    `${subreddit.title} is a private subreddit, to do this action you have to request for joining it first`
+  );
+  error.statusCode = 401;
+  throw error;
+}
+
+export async function checkForFavoriteSubreddits(user, subreddit) {
+  for (const smallSubreddit of user.favoritesSubreddits) {
+    if (smallSubreddit.name === subreddit.title) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export async function makeSubredditFavorite(user, subredditName, subredditId) {
+  user.favoritesSubreddits.push({
+    subredditId: subredditId,
+    name: subredditName,
+  });
+  await user.save();
+  return {
+    statusCode: 200,
+    message: "subreddit is now favorite",
+  };
+}
+
+export async function removeSubredditFromFavorite(user, subredditName) {
+  user.favoritesSubreddits = user.favoritesSubreddits.filter(
+    (smallSubreddit) => {
+      return smallSubreddit.name !== subredditName;
+    }
+  );
+  await user.save();
+  return {
+    statusCode: 200,
+    message: "subreddit is now un favorite",
+  };
 }

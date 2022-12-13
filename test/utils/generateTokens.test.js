@@ -52,6 +52,7 @@ describe("Testing generate tokens", () => {
     const user = new User({
       username: "Beshoy",
       email: "beshoy@gmail.com",
+      createdAt: Date.now(),
     });
     await user.save();
     const token = await generateVerifyToken(user._id, "random");

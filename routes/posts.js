@@ -1,11 +1,13 @@
 import express from "express";
 import postController from "../controllers/HpostController.js";
+import postActionsController from "../controllers/NpostActionsController.js";
 import { optionalToken } from "../middleware/optionalToken.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { verifyPostActions } from "../middleware/verifyPostActions.js";
 import { checkId } from "../middleware/checkId.js";
 import {
+  addPost,
   checkHybridPost,
   checkImagesAndVideos,
   checkPostFlair,
@@ -20,7 +22,6 @@ import {
 import {
   checkPostExistence,
   getPostDetails,
-  setHybridContent,
   setPostActions,
 } from "../middleware/postDetails.js";
 
@@ -67,7 +68,13 @@ const postRouter = express.Router();
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/follow-post");
+postRouter.post(
+  "/follow-post",
+  verifyAuthToken,
+  postActionsController.followValidator,
+  validateRequestSchema,
+  postActionsController.followOrUnfollowPost
+);
 
 /**
  * @swagger
@@ -108,7 +115,13 @@ postRouter.post("/follow-post");
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/hide");
+postRouter.post(
+  "/hide",
+  verifyAuthToken,
+  postActionsController.hideValidator,
+  validateRequestSchema,
+  postActionsController.hidePost
+);
 
 /**
  * @swagger
@@ -128,7 +141,12 @@ postRouter.post("/hide");
  *                    description: id of a post
  *                  sort:
  *                    type: string
- *                    description: one of (top, new, random, best, hot)
+ *                    description: sort kind
+ *                    enum:
+ *                    - top
+ *                    - new
+ *                    - best
+ *                    - old
  *      responses:
  *          200:
  *              description: Suggested sort successfully set
@@ -150,7 +168,13 @@ postRouter.post("/hide");
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/set-suggested-sort");
+postRouter.post(
+  "/set-suggested-sort",
+  verifyAuthToken,
+  postActionsController.suggestedSortValidator,
+  validateRequestSchema,
+  postActionsController.setPostSuggestSort
+);
 
 /**
  * @swagger
@@ -189,13 +213,17 @@ postRouter.post("/set-suggested-sort");
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/clear-suggested-sort");
+postRouter.post(
+  "/clear-suggested-sort",
+  verifyAuthToken,
+  postActionsController.clearPostSuggestSort
+);
 
 /**
  * @swagger
  * /submit:
  *  post:
- *      summary: Submit or share a post to a subreddit. The request body could be json in case there are no images and videos submitted with the post but if there is, then it has to be FormData and the image files will be placed in 'images' and video files will be given in 'videos' along with their captions in imageCaptions and videoCaptions. The kind can also be 'post' in case of sharing a post because it's content will be another post basically and the id of the post being shared is given in the 'sharePostId' field. A hybrid kind means that it can contain text, links, images and videos and an index will be associated with each entry to save the order of these fields and return them in the same order when viewing a post.
+ *      summary: Submit or share a post to a subreddit. The request body could be json in case the kind is not image/video, else it has to be FormData with image files placed in an array "images" as well as imageCaptions and imageLinks and video placed in "video". The kind can also be 'post' in case of sharing a post because it's content will be another post basically and the id of the post being shared is given in the 'sharePostId' field. A hybrid kind means that it can contain text, links, images and videos.
  *      tags: [Posts]
  *      requestBody:
  *       required: true
@@ -206,6 +234,13 @@ postRouter.post("/clear-suggested-sort");
  *      responses:
  *          201:
  *              description: Post submitted successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              id:
+ *                                  type: string
+ *                                  description: New post ID
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -235,7 +270,59 @@ postRouter.post(
   checkImagesAndVideos,
   sharePost,
   postSubmission,
+  addPost,
   postController.submit
+);
+
+/**
+ * @swagger
+ * /edit-post:
+ *  post:
+ *      summary: Edit a post (available only for the posts of hyprid type and only edit the content)
+ *      tags: [Posts]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - content
+ *               - postId
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 description: Object received directly from the WYSIWYG tool
+ *               postId:
+ *                 type: string
+ *                 description: the id of the post
+ *      responses:
+ *          200:
+ *              description: Post edited successfully
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why this happened.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: Type of error
+ *          404:
+ *              description: Post not found
+ *          401:
+ *              description: User not allowed to edit this post
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+postRouter.post(
+  "/edit-post",
+  verifyAuthToken,
+  postController.editValidator,
+  validateRequestSchema,
+  postController.editPost
 );
 
 /**
@@ -277,7 +364,13 @@ postRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/unhide");
+postRouter.post(
+  "/unhide",
+  verifyAuthToken,
+  postActionsController.hideValidator,
+  validateRequestSchema,
+  postActionsController.unhidePost
+);
 
 /**
  * @swagger
@@ -386,7 +479,6 @@ postRouter.get(
   validateRequestSchema,
   checkPostExistence,
   setPostActions,
-  setHybridContent,
   getPostDetails,
   postController.postDetails
 );
@@ -459,10 +551,78 @@ postRouter.post(
  *                      schema:
  *                          type: object
  *                          properties:
- *                              Pinned_posts:
+ *                              pinnedPosts:
  *                                type: array
  *                                items:
- *                                    $ref: '#/components/schemas/Post'
+ *                                    type: object
+ *                                    properties:
+ *                                      id:
+ *                                        type: string
+ *                                        description: id of a post
+ *                                      kind:
+ *                                        type: string
+ *                                        enum:
+ *                                            - link
+ *                                            - hybrid
+ *                                            - image
+ *                                            - video
+ *                                            - post
+ *                                      subreddit:
+ *                                        type: string
+ *                                        description: Subreddit name
+ *                                      link:
+ *                                        type: string
+ *                                        description: Post link (kind = link)
+ *                                      images:
+ *                                        type: array
+ *                                        description: Images (kind = image)
+ *                                        items:
+ *                                            type: object
+ *                                            properties:
+ *                                              path:
+ *                                                type: string
+ *                                                description: Image path
+ *                                              caption:
+ *                                                type: string
+ *                                                description: Image caption
+ *                                              link:
+ *                                                type: string
+ *                                                description: Image link
+ *                                      video:
+ *                                        type: string
+ *                                        description: Video path (kind = video)
+ *                                      content:
+ *                                        type: object
+ *                                        description: Post content (kind = hybrid)
+ *                                      nsfw:
+ *                                        type: boolean
+ *                                        description: Not Safe for Work
+ *                                      spoiler:
+ *                                        type: boolean
+ *                                        description: Blur the content of the post
+ *                                      title:
+ *                                        type: string
+ *                                        description: Title of the submission
+ *                                      sharePostId:
+ *                                        type: string
+ *                                        description: Post id in case of containing info of a shared post (kind = post)
+ *                                      flair:
+ *                                        $ref: '#/components/schemas/Flair'
+ *                                      comments:
+ *                                        type: number
+ *                                        description: Total number of comments on a post
+ *                                      votes:
+ *                                        type: number
+ *                                        description: Total number of votes on a post
+ *                                      postedAt:
+ *                                        type: string
+ *                                        description: The time in which this post was published
+ *                                      postedBy:
+ *                                        type: string
+ *                                        description: Name of the user associated with the post
+ *                                      vote:
+ *                                        type: integer
+ *                                        description: 1 if the user upvoted this post, -1 for downvoted and 0 otherwise
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -482,47 +642,5 @@ postRouter.post(
  *          - bearerAuth: []
  */
 postRouter.get("/pinned-posts", verifyAuthToken, postController.getPinnedPosts);
-
-/**
- * @swagger
- * /edit-post-flair:
- *  put:
- *      summary: Change the flair on a post
- *      tags: [Posts]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *              type: object
- *              properties:
- *                  id:
- *                      type: string
- *                      description: id of the post being edited
- *                  flairId:
- *                      type: string
- *                      description: id of the new flair selected
- *      responses:
- *          200:
- *              description: Post flair edited successfully
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          401:
- *              description: Unauthorized to edit this post
- *          404:
- *              description: Post not found
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-postRouter.put("/edit-post-flair");
 
 export default postRouter;

@@ -80,6 +80,7 @@ const signup = async (req, res) => {
       username: username,
       email: email,
       password: hashPassword(password),
+      createdAt: Date.now(),
     });
     await user.save();
 
@@ -149,14 +150,6 @@ const verifyEmail = async (req, res) => {
       });
     }
 
-    // if the token expired, delete it and don't verify the email
-    if (token.expireAt < Date.now()) {
-      await token.remove();
-      return res.status(403).json({
-        error: "Token Expired",
-      });
-    }
-
     user.userSettings.verifiedEmail = true;
     await user.save();
     await token.remove();
@@ -195,6 +188,7 @@ const signinWithGoogleFacebook = async (req, res) => {
         username: randomUsername,
         email: email,
         googleEmail: email,
+        createdAt: Date.now(),
       });
       await newUser.save();
 

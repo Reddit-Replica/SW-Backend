@@ -13,41 +13,44 @@ import {
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
 import Subreddit from "./../../models/Community.js";
+import Category from "./../../models/Category.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing community service functions", () => {
   let normalUser = {},
-    secondNormalUser = {},
-    deletedUser = {},
     subreddit = {},
-    moderatorUser = {},
-    deletedSubreddit = {};
+    moderatorUser = {};
   beforeAll(async () => {
     await connectDatabase();
 
     normalUser = await new User({
       username: "NormalUser",
       email: "Noaman@gmail.com",
+      createdAt: Date.now(),
     }).save();
 
-    secondNormalUser = await new User({
+    await new User({
       username: "SecondNormalUser",
       email: "Ahmed@gmail.com",
+      createdAt: Date.now(),
     }).save();
 
     moderatorUser = await new User({
       username: "Moderator",
       email: "Abelrahman@gmail.com",
+      createdAt: Date.now(),
     }).save();
 
-    deletedUser = await new User({
+    await new User({
       username: "DeletedUser",
       email: "Hamouda@gmail.com",
       deletedAt: "10 June 2015",
+      createdAt: Date.now(),
     }).save();
 
-    deletedSubreddit = await new Subreddit({
+    await new Subreddit({
       title: "DeletedSubreddit",
+      viewName: "DeletedSubreddit",
       category: "Art",
       type: "Public",
       nsfw: false,
@@ -56,17 +59,14 @@ describe("Testing community service functions", () => {
         username: "Noaman",
         userID: normalUser.Id,
       },
+      createdAt: Date.now(),
     }).save();
   });
 
   afterAll(async () => {
-    await normalUser.remove();
-    await moderatorUser.remove();
-    await secondNormalUser.remove();
-    await deletedUser.remove();
-    await deletedSubreddit.remove();
-    subreddit = await searchForSubreddit("Hunter");
-    await subreddit.remove();
+    await User.deleteMany({});
+    await Subreddit.deleteMany({});
+    await Category.deleteMany({});
     await closeDatabaseConnection();
   });
 
