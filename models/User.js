@@ -276,6 +276,12 @@ const userSchema = mongoose.Schema({
       ref: "User",
     },
   ],
+  followedUsers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   sentMessages: [
     {
       type: Schema.Types.ObjectId,
