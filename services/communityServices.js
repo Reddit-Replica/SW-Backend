@@ -169,10 +169,17 @@ export async function leaveSubredditService(user, subreddit) {
     );
     subreddit.joinedUsers.splice(joinedSubIndex, 1);
 
-    subreddit.leftUsers.push({
-      userId: user._id,
-      leaveDate: Date.now(),
-    });
+    const leftIndex = subreddit.leftUsers.findIndex(
+      (ele) => ele.userId.toString() === user._id.toString()
+    );
+    if (leftIndex === -1) {
+      subreddit.leftUsers.push({
+        userId: user._id,
+        leaveDate: Date.now(),
+      });
+    } else {
+      subreddit.leftUsers[leftIndex].leaveDate = Date.now();
+    }
 
     const approvedIndex = subreddit.approvedUsers.findIndex(
       (ele) => ele.userID.toString() === user._id.toString()
