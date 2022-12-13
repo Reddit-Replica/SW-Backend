@@ -33,13 +33,29 @@ const subredditSettingsValidator = [
     .trim()
     .not()
     .isEmpty()
-    .withMessage("sendWelcomeMessage is required"),
+    .withMessage("sendWelcomeMessage is required")
+    .isBoolean()
+    .withMessage("sendWelcomeMessage must be boolean"),
   body("language").trim().not().isEmpty().withMessage("language is required"),
   body("Type").trim().not().isEmpty().withMessage("Type is required"),
   body("Type")
     .isIn(["Private", "Restricted", "Public"])
     .withMessage("Invalid type"),
-  body("NSFW").trim().not().isEmpty().withMessage("NSFW is required"),
+  body("NSFW")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("NSFW is required")
+    .isBoolean()
+    .withMessage("NSFW must be boolean"),
+  body("acceptingRequestsToPost")
+    .optional()
+    .isBoolean()
+    .withMessage("acceptingRequestsToPost must be boolean"),
+  body("acceptingRequestsToJoin")
+    .optional()
+    .isBoolean()
+    .withMessage("acceptingRequestsToJoin must be boolean"),
   body("approvedUsersHaveTheAbilityTo")
     .optional()
     .isIn(["Post only", "Comment only", "Post & Comment"])
