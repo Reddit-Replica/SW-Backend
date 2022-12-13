@@ -1,7 +1,9 @@
 import express from "express";
 
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+import postController from "../controllers/HpostController.js";
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const listingRouter = express.Router();
 
 /**
  * @swagger
@@ -44,7 +46,7 @@ const router = express.Router();
  *     security:
  *      - bearerAuth: []
  */
-router.get("/best");
+listingRouter.get("/best");
 
 /**
  * @swagger
@@ -80,7 +82,7 @@ router.get("/best");
  *     security:
  *      - bearerAuth: []
  */
-router.get("/hot");
+listingRouter.get("/hot");
 
 /**
  * @swagger
@@ -129,7 +131,7 @@ router.get("/hot");
  *     security:
  *      - bearerAuth: []
  */
-router.get("/r/:subreddit/hot");
+listingRouter.get("/r/:subreddit/hot");
 
 /**
  * @swagger
@@ -165,7 +167,7 @@ router.get("/r/:subreddit/hot");
  *     security:
  *      - bearerAuth: []
  */
-router.get("/trending");
+listingRouter.get("/trending");
 
 /**
  * @swagger
@@ -214,7 +216,7 @@ router.get("/trending");
  *     security:
  *      - bearerAuth: []
  */
-router.get("/r/:subreddit/trending");
+listingRouter.get("/r/:subreddit/trending");
 
 /**
  * @swagger
@@ -250,7 +252,8 @@ router.get("/r/:subreddit/trending");
  *     security:
  *      - bearerAuth: []
  */
-router.get("/new");
+listingRouter.get("/new",
+verifyAuthToken,postController.getNewPosts);
 
 /**
  * @swagger
@@ -299,7 +302,7 @@ router.get("/new");
  *     security:
  *      - bearerAuth: []
  */
-router.get("/r/:subreddit/new");
+listingRouter.get("/r/:subreddit/new");
 
 /**
  * @swagger
@@ -321,7 +324,7 @@ router.get("/r/:subreddit/new");
  *     security:
  *      - bearerAuth: []
  */
-router.get("/random");
+listingRouter.get("/random");
 
 /**
  * @swagger
@@ -352,7 +355,7 @@ router.get("/random");
  *     security:
  *      - bearerAuth: []
  */
-router.get("/r/:subreddit/random");
+listingRouter.get("/r/:subreddit/random");
 
 /**
  * @swagger
@@ -401,7 +404,7 @@ router.get("/r/:subreddit/random");
  *     security:
  *      - bearerAuth: []
  */
-router.get("/top");
+listingRouter.get("/top");
 
 /**
  * @swagger
@@ -463,6 +466,6 @@ router.get("/top");
  *     security:
  *      - bearerAuth: []
  */
-router.get("/r/:subreddit/top");
+listingRouter.get("/r/:subreddit/top");
 
-export default router;
+export default listingRouter;
