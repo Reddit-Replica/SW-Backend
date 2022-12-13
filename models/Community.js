@@ -320,11 +320,28 @@ const communitySchema = mongoose.Schema({
       default: false,
     },
   },
-  joinedUsers:[{
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required:true,
-  }],
+  joinedUsers: [
+    {
+      userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      joinDate: {
+        type: Date,
+      },
+    },
+  ],
+  leftUsers: [
+    {
+      userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      leaveDate: {
+        type: Date,
+      },
+    },
+  ],
   //NEEDS TO BE AUTO INCREMENT
   //Is used to get random subreddit from categories
   randomIndex: {
