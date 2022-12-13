@@ -1,10 +1,11 @@
+/* eslint-disable max-len */
 import User from "../models/User.js";
 import { body, check, query } from "express-validator";
 import {
   checkSameUserEditing,
   editPostService,
 } from "../services/postServices.js";
-import { homePostsListing } from "../services/PostListing.js";
+import { homePostsListing,subredditPostListing } from "../services/PostListing.js";
 import { searchForUserService } from "../services/userServices.js";
 const postIdValidator = [
   query("id").not().isEmpty().withMessage("Id can't be empty"),
@@ -146,9 +147,18 @@ const editPost = async (req, res) => {
 
 const getNewPosts = async (req, res) => {
   try {
-    const user = await searchForUserService(req.payload.username);
-    await homePostsListing(user);
-    res.status(200).json("Post edited successfully");
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "new",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
   } catch (err) {
     console.log(err);
     if (err.statusCode) {
@@ -158,6 +168,200 @@ const getNewPosts = async (req, res) => {
     }
   }
 };
+
+const getHotPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "hot",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getBestPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "best",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getTopPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "top",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getTrendingPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "trending",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+const getSubredditNewPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const sort="new";
+    const result = await subredditPostListing(
+      user,
+      { before, after, limit,sort },
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getSubredditHotPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const sort="hot";
+    const result = await subredditPostListing(
+      user,
+      { before, after, limit,sort },
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getSubredditBestPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const sort="best";
+    const result = await subredditPostListing(
+      user,
+      { before, after, limit,sort },
+      "best",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getSubredditTopPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const sort="top";
+    const result = await subredditPostListing(
+      user,
+      { before, after, limit,sort },
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 
 export default {
   postIdValidator,
@@ -171,4 +375,13 @@ export default {
   editPost,
   editValidator,
   getNewPosts,
+  getBestPosts,
+  getHotPosts,
+  getTopPosts,
+  getTrendingPosts,
+  getSubredditTopPosts,
+  getSubredditBestPosts,
+  getSubredditHotPosts,
+  getSubredditNewPosts,
+  getSubredditTrendingPosts,
 };

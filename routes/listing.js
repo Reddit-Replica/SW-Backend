@@ -1,6 +1,6 @@
 import express from "express";
 
-import { verifyAuthToken } from "../middleware/verifyToken.js";
+import { optionalToken } from "../middleware/optionalToken.js";
 import postController from "../controllers/HpostController.js";
 // eslint-disable-next-line new-cap
 const listingRouter = express.Router();
@@ -46,7 +46,7 @@ const listingRouter = express.Router();
  *     security:
  *      - bearerAuth: []
  */
-listingRouter.get("/best");
+listingRouter.get("/best", optionalToken, postController.getBestPosts);
 
 /**
  * @swagger
@@ -82,7 +82,7 @@ listingRouter.get("/best");
  *     security:
  *      - bearerAuth: []
  */
-listingRouter.get("/hot");
+listingRouter.get("/hot", optionalToken, postController.getHotPosts);
 
 /**
  * @swagger
@@ -167,7 +167,7 @@ listingRouter.get("/r/:subreddit/hot");
  *     security:
  *      - bearerAuth: []
  */
-listingRouter.get("/trending");
+listingRouter.get("/trending", optionalToken, postController.getTrendingPosts);
 
 /**
  * @swagger
@@ -252,7 +252,7 @@ listingRouter.get("/r/:subreddit/trending");
  *     security:
  *      - bearerAuth: []
  */
-listingRouter.get("/new", verifyAuthToken, postController.getNewPosts);
+listingRouter.get("/new", optionalToken, postController.getNewPosts);
 
 /**
  * @swagger
@@ -403,7 +403,7 @@ listingRouter.get("/r/:subreddit/random");
  *     security:
  *      - bearerAuth: []
  */
-listingRouter.get("/top");
+listingRouter.get("/top", optionalToken, postController.getNewPosts);
 
 /**
  * @swagger

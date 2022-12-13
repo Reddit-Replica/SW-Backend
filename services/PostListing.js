@@ -5,6 +5,8 @@ import Subreddit from "../models/Community.js";
 import Post from "../models/Post.js";
 import { searchForComment, searchForPost } from "./PostActions.js";
 import { prepareLimit } from "../utils/prepareLimit.js";
+import { postListing } from "../utils/preparePostListing.js";
+import { extraPostsListing } from "../utils/prepareSubreddit.js";
 
 function compareNew(post1, post2) {
   if (post1.createdAt < post2.createdAt) {
@@ -46,66 +48,91 @@ function compareTop(post1, post2) {
   return 0;
 }
 
-export async function homePostsListing(user, listingParams, typeOfSorting) {
-  //GETTING SUBREDDIT POSTS
-  const { joinedSubreddits } = await User.findOne({ username: user.username })
-    .select("joinedSubreddits")
-    .populate({
-      path: "joinedSubreddits",
-      match: { deletedAt: null },
-    });
+function compareTrending(post1, post2) {
+  if (post1.numberOfViews < post2.numberOfViews) {
+    return 1;
+  }
+  if (post1.numberOfViews > post2.numberOfViews) {
+    return -1;
+  }
+  return 0;
+}
+
+//GET THE MOST IMPORTANT POSTS
+//FILTER THEM DEPENDING ON BEFORE AND AFTER
+//IF THEY ARE NOT ENOUGH
+//GET MORE FROM POSTS
+//THEN SORT ALL OF THE POSTS
+//THEN RETURN THEM
+export async function homePostsListing(
+  user,
+  listingParams,
+  typeOfSorting,
+  isLoggedIn
+) {
   let posts = [];
-  //GETTING POSTS FROM SUBREDDITS
-  for (const subreddit of joinedSubreddits) {
-    const { subredditPosts } = await Subreddit.findById(subreddit.subredditId)
-      .select("subredditPosts")
+  //WE WILL GET THE MOST IMPORTANT POSTS FIRST WHICH ARE SUBREDDIT POSTS AND FOLLOWING POSTS
+  //GETTING SUBREDDIT POSTS
+  if (isLoggedIn) {
+    const { joinedSubreddits } = await User.findOne({ username: user.username })
+      .select("joinedSubreddits")
       .populate({
-        path: "subredditPosts",
+        path: "joinedSubreddits",
         match: { deletedAt: null },
       });
-    if (subredditPosts.length !== 0) {
-      posts = [...posts, ...subredditPosts];
+
+    //GETTING POSTS FROM SUBREDDITS
+    for (const subreddit of joinedSubreddits) {
+      const { subredditPosts } = await Subreddit.findById(subreddit.subredditId)
+        .select("subredditPosts")
+        .populate({
+          path: "subredditPosts",
+          match: { deletedAt: null },
+        });
+      if (subredditPosts.length !== 0) {
+        posts = [...posts, ...subredditPosts];
+      }
     }
-  }
-  //GETTING FOLLOWED PEOPLE NEEDS TO BE EDITED TO FOLLOWING WHEN
-  const { followers } = await User.findOne({ username: user.username })
-    .select("followers")
-    .populate({
-      path: "followers",
-      match: { deletedAt: null },
-    });
-  //GETTING POSTS FROM FOLLOWING PEOPLE
-  for (const user of followers) {
-    const { followedPosts } = await Subreddit.findById(user)
-      .select("posts")
+    //GETTING FOLLOWED PEOPLE NEEDS TO BE EDITED TO FOLLOWING WHEN
+    const { followedUsers } = await User.findOne({ username: user.username })
+      .select("followedUsers")
       .populate({
-        path: "posts",
+        path: "followedUsers",
         match: { deletedAt: null },
       });
-    if (followedPosts.length !== 0) {
-      posts = [...posts, ...followedPosts];
+    //GETTING POSTS FROM FOLLOWING PEOPLE
+    for (const user of followedUsers) {
+      const userPosts = await User.findById(user)
+        .select("posts")
+        .populate({
+          path: "posts",
+          match: { deletedAt: null },
+        });
+      if (userPosts.length !== 0) {
+        posts = [...posts, ...userPosts.posts];
+      }
     }
   }
+
   let filteringString;
-  //SORTING THE POSTS THAT WE GOT USING THE TYPE OF SORTING
+  //SELECTING ON WHICH ELEMENT WE WILL FILTER
   if (typeOfSorting === "new") {
-    posts.sort(compareNew);
     filteringString = "createdAt";
   } else if (typeOfSorting === "best") {
-    posts.sort(compareBest);
     filteringString = "bestScore";
   } else if (typeOfSorting === "hot") {
-    posts.sort(compareHot);
     filteringString = "hotScore";
   } else if (typeOfSorting === "top") {
-    posts.sort(compareTop);
     filteringString = "numberOfVotes";
+  } else if (typeOfSorting === "trending") {
+    filteringString = "numberOfViews";
   }
 
   let isBefore = false;
   //FILTERING THE POSTS ARRAY THAT WE MADE WITH BEFORE AND AFTER LIMITS
   //IN CASE OF BEFORE WE NEED TO GET THE LIMIT ELEMENTS BEFORE THE SELECTED ITEM
   //THEN WE NEED TO CHANGE THE VALUES OF STARTING AND ENDING INDICES OF THE POSTS
+  //IF THERE EXIST POSTS BEFORE THEN THEY WILL BE FILTERED ELSE WE WILL ADD EXTRA POSTS
   if (listingParams.before) {
     //HERE WE GET OUR SPLITTER
     const splitter = await searchForPost(listingParams.before);
@@ -120,22 +147,69 @@ export async function homePostsListing(user, listingParams, typeOfSorting) {
       return post[filteringString] < splitter[filteringString];
     });
   }
-
-  //EXTRA FILTER IN CASE OF TOP
-
+  const uniquePosts = new Set();
+  posts = posts.filter((post) => {
+    const isDuplicate = uniquePosts.has(post.id);
+    uniquePosts.add(post.id);
+    if (!isDuplicate) {
+      return true;
+    }
+    return false;
+  });
   //THEN WE WILL GET OUR LIMIT
   let limit = await prepareLimit(listingParams.limit);
-  //IF THE LIMIT IS GREATER THAN THE LENGTH OF THE Posts ARRAY THEN WE MUST MAKE IT THE SAME LENGTH
-  if (limit > totalInbox.length) {
-    limit = totalInbox.length;
+  const result = await extraPostsListing(
+    listingParams.before,
+    listingParams.after,
+    listingParams.limit,
+    typeOfSorting
+  );
+  //WE WILL GET EXTRA POSTS TO FILL THE GAP THAT IS BETWEEN THE FOLLOWED ONES AND THE LIMIT
+  const extraPosts = await Post.find(result.query)
+    .limit(limit)
+    .sort(result.sort);
+  //LOOPING OVER THE EXTRA POSTS TO ADD THE NEEDED NUMBER OF THEM TO THE POSTS THAT WE WILL RETURN
+  let ctr = 0;
+  while (posts.length < limit) {
+    if (ctr === extraPosts.length) {
+      break;
+    }
+    posts.push(extraPosts[ctr]);
+    const unique = new Set();
+    posts = posts.filter((post) => {
+      const isDuplicate = unique.has(post.id);
+      unique.add(post.id);
+      if (!isDuplicate) {
+        return true;
+      }
+      return false;
+    });
+    ctr++;
+  }
+
+  //SORTING THE POSTS THAT WE GOT USING THE TYPE OF SORTING
+  if (typeOfSorting === "new") {
+    posts.sort(compareNew);
+  } else if (typeOfSorting === "best") {
+    posts.sort(compareBest);
+  } else if (typeOfSorting === "hot") {
+    posts.sort(compareHot);
+  } else if (typeOfSorting === "top") {
+    posts.sort(compareTop);
+  } else if (typeOfSorting === "trending") {
+    posts.sort(compareTrending);
+  }
+
+  if (posts.length < limit) {
+    limit = posts.length;
   }
   //INITIALLY WE WILL START FROM 0 UNTIL THE LIMIT
   let startingIndex = 0,
     finishIndex = limit;
   //IN CASE OF BEFORE THEN WE WILL START FROM BEFORE INDEX-LIMIT TO THE BEFORE INDEX
   if (isBefore) {
-    startingIndex = totalInbox.length - limit;
-    finishIndex = totalInbox.length;
+    startingIndex = posts.length - limit;
+    finishIndex = posts.length;
   }
   if (startingIndex < 0) {
     startingIndex = 0;
@@ -144,12 +218,13 @@ export async function homePostsListing(user, listingParams, typeOfSorting) {
   const children = [];
   for (startingIndex; startingIndex < finishIndex; startingIndex++) {
     //EACH ELEMENT THAT IS RETURNED MUST BE MARKED AS READ
+    //NEED TO BE EDITED
     posts[startingIndex].numberOfViews++;
     await posts[startingIndex].save();
     //GETTING THE ID OF THE ELEMENT THAT WILL BE SENT
     const postData = { id: posts[startingIndex].id };
     postData.data = posts[startingIndex];
-    children.push(messageData);
+    children.push(postData);
   }
   let after = "",
     before = "";
@@ -167,7 +242,29 @@ export async function homePostsListing(user, listingParams, typeOfSorting) {
     data: {
       after: after,
       before: before,
+      length: children.length,
       children: children,
     },
   };
+}
+
+
+
+export async function subredditPostListing(
+  user,
+  listingParams,
+  isLoggedIn
+) {
+  const listingResult = await postListing(listingParams);
+  // GETTING THE DESIRED FIELD THAT WE WOULD GET DATA FROM
+  const result = await User.findOne({ username: user.username })
+    .select("posts")
+    .populate({
+      path: "posts",
+      match: listingResult.find,
+      limit: listingResult.limit,
+      options: {
+        sort: listingResult.sort,
+      },
+    });
 }
