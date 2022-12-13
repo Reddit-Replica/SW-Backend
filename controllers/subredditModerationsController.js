@@ -2,7 +2,7 @@ import {
   prepareSubredditSettings,
   updateSubredditSettings,
 } from "../services/subredditSettings.js";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import { MainTopics } from "./NcommunityController.js";
 import {
   getSubredditModerators,
@@ -13,7 +13,10 @@ import {
   getSubredditMuted,
   getSubredditPostSettingsService,
   setSubredditPostSettingsService,
+  getTrafficService,
 } from "../services/subredditModerationServices.js";
+import { getSubredditService } from "../services/subredditActionsServices.js";
+import { getUserFromJWTService } from "../services/userServices.js";
 const subredditSettingsValidator = [
   body("communityName")
     .trim()
@@ -84,6 +87,14 @@ const subredditPostSettingsValidator = [
   body("suggestedSort")
     .isIn(["none", "best", "top", "new", "old"])
     .withMessage("Invalid suggestedSort"),
+];
+
+const subredditParamValidator = [
+  param("subreddit")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("subreddit is required"),
 ];
 
 const getSubredditSettings = (req, res) => {
@@ -247,6 +258,23 @@ const setSubredditPostSettings = async (req, res) => {
   }
 };
 
+const getTrafficStats = async (req, res) => {
+  try {
+    const user = await getUserFromJWTService(req.payload.userId);
+    const subreddit = await getSubredditService(req.params.subreddit);
+
+    const result = await getTrafficService(user, subreddit);
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
 export default {
   getSubredditSettings,
   setSubredditSettings,
@@ -260,4 +288,6 @@ export default {
   subredditPostSettingsValidator,
   getSubredditPostSettings,
   setSubredditPostSettings,
+  subredditParamValidator,
+  getTrafficStats,
 };
