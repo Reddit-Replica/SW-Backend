@@ -252,8 +252,7 @@ listingRouter.get("/r/:subreddit/trending");
  *     security:
  *      - bearerAuth: []
  */
-listingRouter.get("/new",
-verifyAuthToken,postController.getNewPosts);
+listingRouter.get("/new", verifyAuthToken, postController.getNewPosts);
 
 /**
  * @swagger

@@ -602,9 +602,11 @@ export async function upVoteAPost(post, user) {
     };
   }
   postWriter.karma = postWriter.upVotes - postWriter.downVotes;
-  post.numberOfVotes=post.numberOfUpvotes-post.numberOfDownvotes;
-  post.hotScore=post.hotTimingScore+post.numberOfVotes+post.numberOfComments;
-  post.bestScore=post.bestTimingScore+post.numberOfVotes+post.numberOfComments;
+  post.numberOfVotes = post.numberOfUpvotes - post.numberOfDownvotes;
+  post.hotScore =
+    post.hotTimingScore + post.numberOfVotes + post.numberOfComments;
+  post.bestScore =
+    post.bestTimingScore + post.numberOfVotes + post.numberOfComments;
   await post.save();
   await user.save();
   await postWriter.save();
@@ -656,9 +658,11 @@ export async function downVoteAPost(post, user) {
     };
   }
   postWriter.karma = postWriter.upVotes - postWriter.downVotes;
-  post.numberOfVotes=post.numberOfUpvotes-post.numberOfDownvotes;
-  post.hotScore=post.hotTimingScore+post.numberOfVotes+post.numberOfComments;
-  post.bestScore=post.bestTimingScore+post.numberOfVotes+post.numberOfComments;
+  post.numberOfVotes = post.numberOfUpvotes - post.numberOfDownvotes;
+  post.hotScore =
+    post.hotTimingScore + post.numberOfVotes + post.numberOfComments;
+  post.bestScore =
+    post.bestTimingScore + post.numberOfVotes + post.numberOfComments;
   await post.save();
   await user.save();
   await postWriter.save();
@@ -810,7 +814,7 @@ export async function downVoteAComment(comment, user) {
 export async function setSuggestedSort(postId, user, sort) {
   const post = await searchForPost(postId);
   const postOwner = post.ownerId.toString();
-  console.log(user.id,post.ownerId);
+  console.log(user.id, post.ownerId);
   if (user.id !== postOwner) {
     let error = new Error("You don't have the right to do this action");
     error.statusCode = 401;

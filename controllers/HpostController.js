@@ -144,9 +144,9 @@ const editPost = async (req, res) => {
   }
 };
 
-const getNewPosts=async (req,res)=>{
+const getNewPosts = async (req, res) => {
   try {
-    const user=await searchForUserService(req.payload.username);
+    const user = await searchForUserService(req.payload.username);
     await homePostsListing(user);
     res.status(200).json("Post edited successfully");
   } catch (err) {
@@ -169,5 +169,6 @@ export default {
   postDetails,
   postInsights,
   editPost,
-  editValidator,getNewPosts
+  editValidator,
+  getNewPosts,
 };
