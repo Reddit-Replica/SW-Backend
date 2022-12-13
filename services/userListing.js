@@ -3,10 +3,10 @@ import { validateId } from "./subredditFlairs.js";
 /**
  * A Service function used to get the subreddit banned users for the controller
  * @param {Number} limitReq the limit identified in the request
- * @param {ObjectID} beforeReq Before id
- * @param {ObjectID} afterReq After id
+ * @param {ObjectId} beforeReq Before id
+ * @param {ObjectId} afterReq After id
  * @param {Subreddit} subreddit The subreddit object
- * @returns {preparedResponse} the prepared response for the controller
+ * @returns {object} the prepared response for the controller
  */
 export async function listingBannedUsers(
   limitReq,
@@ -71,6 +71,7 @@ function getBannedUsersFirstTime(subreddit, limit) {
  * A Service helper function used to get the banned users for the main service function in case of before
  * @param {Subreddit} subreddit The subreddit object
  * @param {Number} limit the limit identified in the request
+ * @param {ObjectId} before Before ID given
  * @returns {response} the prepared response for the main service function
  */
 // eslint-disable-next-line max-statements
@@ -119,6 +120,7 @@ function getBannedUsersBefore(subreddit, limit, before) {
  * A Service helper function used to get the banned users for the main service function in case of after
  * @param {Subreddit} subreddit The subreddit object
  * @param {Number} limit the limit identified in the request
+ * @param {ObjectID} after After ID
  * @returns {response} the prepared response for the main service function
  */
 // eslint-disable-next-line max-statements
@@ -164,10 +166,10 @@ function getBannedUsersAfter(subreddit, limit, after) {
 /**
  * A Service function used to get the user blocked users for the controller
  * @param {Number} limitReq the limit identified in the request
- * @param {ObjectID} beforeReq Before id
- * @param {ObjectID} afterReq After id
+ * @param {ObjectId} beforeReq Before id
+ * @param {ObjectId} afterReq After id
  * @param {object} user The user object
- * @returns {preparedResponse} the prepared response for the controller
+ * @returns {object} the prepared response for the controller
  */
 export async function listingBlockedUsers(limitReq, beforeReq, afterReq, user) {
   let preparedResponse;
@@ -223,6 +225,7 @@ function getBlockedUsersFirstTime(user, limit) {
  * A Service helper function used to get the user blocked users for the main service function in case of before
  * @param {object} user The user object
  * @param {Number} limit the limit identified in the request
+ * @param {ObjectId} before Before ID given
  * @returns {response} the prepared response for the main service function
  */
 // eslint-disable-next-line max-statements
@@ -267,6 +270,7 @@ function getBlockedUsersBefore(user, limit, before) {
  * A Service helper function used to get the user blocked users for the main service function in case of after
  * @param {object} user The user object
  * @param {Number} limit the limit identified in the request
+ * @param {ObjectId} after After ID given
  * @returns {response} the prepared response for the main service function
  */
 // eslint-disable-next-line max-statements
