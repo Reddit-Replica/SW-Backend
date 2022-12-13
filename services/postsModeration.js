@@ -92,10 +92,15 @@ export async function addToApprovedUsers(subreddit, user) {
  * @returns {void}
  */
 export async function removeFromApprovedUsers(subreddit, user) {
-  user.joinedSubreddits = user.joinedSubreddits.filter(
-    (sr) => sr.name !== subreddit.title
-  );
-  await user.save();
+  if (subreddit.type === "Private") {
+    user.joinedSubreddits = user.joinedSubreddits.filter(
+      (sr) => sr.name !== subreddit.title
+    );
+    await user.save();
+    subreddit.mutedUsers = subreddit.mutedUsers.filter(
+      (mutedUser) => mutedUser.userID.toString() !== user.id.toString()
+    );
+  }
   if (
     !subreddit.approvedUsers.find(
       (approvedUser) => approvedUser.userID.toString() === user.id.toString()
@@ -107,9 +112,6 @@ export async function removeFromApprovedUsers(subreddit, user) {
   }
   subreddit.approvedUsers = subreddit.approvedUsers.filter(
     (approvedUser) => approvedUser.userID.toString() !== user.id.toString()
-  );
-  subreddit.mutedUsers = subreddit.mutedUsers.filter(
-    (mutedUser) => mutedUser.userID.toString() !== user.id.toString()
   );
   await subreddit.save();
 }
@@ -168,12 +170,7 @@ export async function removeFromMutedUsers(subreddit, user) {
  * @returns {void}
  */
 export function checkUserInSubreddit(subreddit, user) {
-  if (
-    !user.joinedSubreddits.find((sr) => sr.name === subreddit.title) ||
-    !subreddit.approvedUsers.find(
-      (approvedUser) => approvedUser.userID.toString() === user.id.toString()
-    )
-  ) {
+  if (!user.joinedSubreddits.find((sr) => sr.name === subreddit.title)) {
     const error = new Error("This user is not a member of " + subreddit.title);
     error.statusCode = 400;
     throw error;
