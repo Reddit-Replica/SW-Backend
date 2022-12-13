@@ -6,6 +6,7 @@ import {
   getSortedCategories,
   insertCategoriesIfNotExists,
 } from "../services/categories.js";
+import { checkIfModerator } from "./subredditActionsServices.js";
 /**
  * This function is used to search for a subreddit with its name
  * it gets the subreddit from the database then it checks about it's validity
@@ -127,6 +128,18 @@ export async function addToJoinedSubreddit(user, subreddit) {
  * @param {object} subreddit Subreddit object that user want to leave
  */
 export async function leaveSubredditService(user, subreddit) {
+  // check if the user is the owner of the subreddit or moderator
+  if (subreddit.owner.userID.toString() === user._id.toString()) {
+    let error = new Error("Owner of the subreddit can not leave");
+    error.statusCode = 400;
+    throw error;
+  }
+  if (checkIfModerator(user._id, subreddit) !== -1) {
+    let error = new Error("Moderators of the subreddit can not leave");
+    error.statusCode = 400;
+    throw error;
+  }
+
   // check if the user is not a member in that subreddit
   const joinedIndex = user.joinedSubreddits.findIndex(
     (ele) => ele.subredditId.toString() === subreddit._id.toString()
@@ -143,17 +156,15 @@ export async function leaveSubredditService(user, subreddit) {
 
   // if the user was a member in that subreddit
   if (joinedIndex !== -1) {
-    // check if the user is the owner of the subreddit
-    if (subreddit.owner.userID.toString() === user._id.toString()) {
-      let error = new Error(
-        "Owner of the subreddit can not leave the subreddit"
-      );
-      error.statusCode = 400;
-      throw error;
-    }
-
     user.joinedSubreddits.splice(joinedIndex, 1);
     subreddit.members -= 1;
+
+    const approvedIndex = subreddit.approvedUsers.findIndex(
+      (ele) => ele.userID.toString() === user._id.toString()
+    );
+    if (approvedIndex !== -1) {
+      subreddit.approvedUsers.splice(approvedIndex, 1);
+    }
   }
 
   // if the user was in the waiting list for that subreddit
