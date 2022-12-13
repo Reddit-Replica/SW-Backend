@@ -25,8 +25,17 @@ const readAllMessages = async (req, res) => {
     type === "Username Mentions" && (await readUsernameMentions(userId));
     type === "Unread Messages" && (await readUnreadMessages(userId));
     return res.status(200).json("Messages marked as read successfully");
-  } catch (err) {
-    res.status(500).json("Internal server error");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
+    } else {
+      res.status(500).json("Internal server error");
+    }
   }
 };
 

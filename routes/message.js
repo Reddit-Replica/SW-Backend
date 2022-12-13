@@ -1,7 +1,6 @@
 import express from "express";
-import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
-import messageController from "../controllers/HmessageController.js";
+import HmessageController from "../controllers/HmessageController.js";
 
 import messageController from "../controllers/NmessageController.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
@@ -73,7 +72,7 @@ const messageRouter = express.Router();
  *       - bearerAuth: []
  */
 
-router.post(
+messageRouter.post(
   "/message/compose",
   verifyAuthToken,
   messageController.createMessage
@@ -129,7 +128,11 @@ router.post(
  *       - bearerAuth: []
  */
 
-router.post("/mention", verifyAuthToken, messageController.createMention);
+messageRouter.post(
+  "/mention",
+  verifyAuthToken,
+  messageController.createMention
+);
 
 /**
  * @swagger
@@ -238,7 +241,11 @@ router.post("/mention", verifyAuthToken, messageController.createMention);
  *       - bearerAuth: []
  */
 
-router.get("/message/sent", verifyAuthToken, messageController.getSentMsg);
+messageRouter.get(
+  "/message/sent",
+  verifyAuthToken,
+  messageController.getSentMsg
+);
 
 /**
  * @swagger
@@ -365,7 +372,11 @@ router.get("/message/sent", verifyAuthToken, messageController.getSentMsg);
  *       - bearerAuth: []
  */
 
-router.get("/message/inbox", verifyAuthToken, messageController.getInbox);
+messageRouter.get(
+  "/message/inbox",
+  verifyAuthToken,
+  messageController.getInbox
+);
 
 /**
  * @swagger
@@ -474,7 +485,11 @@ router.get("/message/inbox", verifyAuthToken, messageController.getInbox);
  *       - bearerAuth: []
  */
 
-router.get("/message/unread", verifyAuthToken, messageController.getUnreadMsg);
+messageRouter.get(
+  "/message/unread",
+  verifyAuthToken,
+  messageController.getUnreadMsg
+);
 
 /**
  * @swagger
@@ -698,7 +713,7 @@ messageRouter.get("/message/post-reply");
  *       - bearerAuth: []
  */
 
-router.get(
+messageRouter.get(
   "/message/mentions",
   verifyAuthToken,
   messageController.getUsernameMentions
@@ -816,7 +831,7 @@ router.get(
  *       - bearerAuth: []
  */
 
-router.get(
+messageRouter.get(
   "/message/messages",
   verifyAuthToken,
   messageController.getConversations
@@ -867,7 +882,11 @@ router.get(
  *       - bearerAuth: []
  */
 
-router.patch("/unread-message", verifyAuthToken, messageController.unreadMsg);
+messageRouter.patch(
+  "/unread-message",
+  verifyAuthToken,
+  messageController.unreadMsg
+);
 /**
  * @swagger
  * /spam-message:
@@ -913,7 +932,11 @@ router.patch("/unread-message", verifyAuthToken, messageController.unreadMsg);
  *       - bearerAuth: []
  */
 
-router.patch("/spam-message", verifyAuthToken, messageController.markMsgAsSpam);
+messageRouter.patch(
+  "/spam-message",
+  verifyAuthToken,
+  messageController.markMsgAsSpam
+);
 
 /**
  * @swagger
@@ -954,7 +977,7 @@ messageRouter.patch(
   verifyAuthToken,
   messageController.messageValidator,
   validateRequestSchema,
-  messageController.readAllMessages
+  HmessageController.readAllMessages
 );
 /**
  * @swagger

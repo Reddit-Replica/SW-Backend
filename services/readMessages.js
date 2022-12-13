@@ -7,7 +7,12 @@ import User from "../models/User.js";
  */
 
 export async function readUsernameMentions(userId) {
-  const user = await User.findById(userId).populate("usernameMentions");
+  const user = await User.findById(userId)?.populate("usernameMentions");
+  if (!user || user.deletedAt) {
+    const error = new Error("User not found");
+    error.statusCode = 401;
+    throw error;
+  }
   for (let message of user.usernameMentions) {
     message.isRead = true;
     await message.save();
@@ -21,7 +26,12 @@ export async function readUsernameMentions(userId) {
  */
 
 export async function readPostReplies(userId) {
-  const user = await User.findById(userId).populate("postReplies");
+  const user = await User.findById(userId)?.populate("postReplies");
+  if (!user || user.deletedAt) {
+    const error = new Error("User not found");
+    error.statusCode = 401;
+    throw error;
+  }
   for (let message of user.postReplies) {
     message.isRead = true;
     await message.save();
@@ -35,7 +45,12 @@ export async function readPostReplies(userId) {
  */
 
 export async function readReceivedMessages(userId) {
-  const user = await User.findById(userId).populate("receivedMessages");
+  const user = await User.findById(userId)?.populate("receivedMessages");
+  if (!user || user.deletedAt) {
+    const error = new Error("User not found");
+    error.statusCode = 401;
+    throw error;
+  }
   for (let message of user.receivedMessages) {
     message.isRead = true;
     await message.save();
@@ -49,7 +64,12 @@ export async function readReceivedMessages(userId) {
  */
 
 export async function readUnreadMessages(userId) {
-  const user = await User.findById(userId).populate("unreadMessages");
+  const user = await User.findById(userId)?.populate("unreadMessages");
+  if (!user || user.deletedAt) {
+    const error = new Error("User not found");
+    error.statusCode = 401;
+    throw error;
+  }
   for (let message of user.unreadMessages) {
     message.isRead = true;
     await message.save();
