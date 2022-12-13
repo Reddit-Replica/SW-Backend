@@ -1,0 +1,8 @@
+node_modules
+videos
+images
+npm-debug.log
+.git
+*Dockerfile*
+*docker-compose*
+node_modules

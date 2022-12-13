@@ -15,10 +15,10 @@ export async function listingSubredditPosts(
   const listingResult = await postListing(listingParams);
 
   const subreddit = await Subreddit.findOne({ title: subredditName });
-  if (!subreddit) {
+  if (!subreddit || subreddit.deletedAt) {
     return {
       statusCode: 404,
-      data: "Subreddit not found",
+      data: "Subreddit not found or deleted",
     };
   }
 
@@ -33,6 +33,12 @@ export async function listingSubredditPosts(
       },
     });
   const mod = await User.findById(modId);
+  if (!mod || mod.deletedAt) {
+    return {
+      statusCode: 404,
+      data: "User not found or deleted",
+    };
+  }
 
   let children = [];
 
@@ -116,7 +122,7 @@ export async function listingSubredditComments(
   const listingResult = await commentListing(listingParams);
 
   const subreddit = await Subreddit.findOne({ title: subredditName });
-  if (!subreddit) {
+  if (!subreddit || subreddit.deletedAt) {
     return {
       statusCode: 404,
       data: "Subreddit not found",
@@ -135,6 +141,12 @@ export async function listingSubredditComments(
     });
 
   const mod = await User.findById(modId);
+  if (!mod || mod.deletedAt) {
+    return {
+      statusCode: 404,
+      data: "User not found or deleted",
+    };
+  }
 
   let children = [];
   for (const i in result[typeOfListing]) {

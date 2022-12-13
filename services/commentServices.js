@@ -4,7 +4,11 @@ import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
-import { checkIfBanned, checkIfMuted } from "./subredditActionsServices.js";
+import {
+  checkIfBanned,
+  checkIfMuted,
+  checkIfModerator,
+} from "./subredditActionsServices.js";
 
 /**
  * Function used to check if the id of the post is valid and if the post exists in the database
@@ -21,7 +25,7 @@ export async function checkPostId(postId) {
   const post = await Post.findById(postId);
   if (!post || post.deletedAt) {
     let error = new Error("Can not find a post with that id");
-    error.statusCode = 400;
+    error.statusCode = 404;
     throw error;
   }
   return post;
@@ -42,7 +46,7 @@ export async function checkCommentId(commentId) {
   const comment = await Comment.findById(commentId);
   if (!comment || comment.deletedAt) {
     let error = new Error("Can not find a comment with that id");
-    error.statusCode = 400;
+    error.statusCode = 404;
     throw error;
   }
   return comment;
@@ -158,6 +162,26 @@ export async function createCommentService(data, post) {
       let error = new Error("User is muted at this subreddit");
       error.statusCode = 400;
       throw error;
+    }
+
+    if (subreddit.type === "Private") {
+      const index = subreddit.approvedUsers.findIndex(
+        (ele) => ele.userID.toString() === user._id.toString()
+      );
+
+      // if user in not approved and he is not the owner nor a moderator
+      // then he can not comment
+      if (
+        index === -1 &&
+        subreddit.owner.userID.toString() !== user._id.toString() &&
+        checkIfModerator(user._id, subreddit) === -1
+      ) {
+        let error = new Error(
+          "User was not approved in this subreddit to comment on this post"
+        );
+        error.statusCode = 400;
+        throw error;
+      }
     }
 
     commentObject.subredditName = data.subredditName;

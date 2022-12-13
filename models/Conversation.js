@@ -19,14 +19,20 @@ const conversationSchema = mongoose.Schema({
   },
   messages: [
     {
-      messageID: {
-        type: Schema.Types.ObjectId,
-        ref: "Message",
-      },
+      type: Schema.Types.ObjectId,
+      ref: "Messages",
     },
   ],
+  isFirstNameUser: {
+    type: Boolean,
+    required: true,
+  },
+  isSecondNameUser: {
+    type: Boolean,
+    required: true,
+  },
 });
 
-const Message = mongoose.model("Conversation", conversationSchema);
+const Conversation = mongoose.model("Conversation", conversationSchema);
 
-export default Message;
+export default Conversation;
