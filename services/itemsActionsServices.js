@@ -135,7 +135,7 @@ export async function deleteItems(userId, id, type) {
   }
 
   return {
-    statusCode: 204,
+    statusCode: 200,
     message: "Deleted successfully",
   };
 }
