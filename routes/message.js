@@ -2,6 +2,8 @@ import express from "express";
 
 import messageController from "../controllers/NmessageController.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
+import HmessageController from "../controllers/HmessageController.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -946,6 +948,12 @@ router.patch("/spam-message", verifyAuthToken, messageController.markMsgAsSpam);
  *       - bearerAuth: []
  */
 
-router.patch("/read-all-msgs");
+router.patch(
+  "/read-all-msgs",
+  verifyAuthToken,
+  HmessageController.messageValidator,
+  validateRequestSchema,
+  HmessageController.readAllMessages
+);
 
 export default router;
