@@ -2,6 +2,9 @@ import { body, query } from "express-validator";
 import {
   addToApprovedUsers,
   addToMutedUsers,
+  checkUserInSubreddit,
+  removeFromApprovedUsers,
+  removeFromMutedUsers,
 } from "../services/postsModeration.js";
 import {
   listingSubredditPosts,
@@ -248,8 +251,50 @@ const muteUser = async (req, res) => {
   try {
     const subreddit = req.subreddit;
     const user = await getUserByUsername(req.body.username);
+    checkUserInSubreddit(subreddit, user);
     await addToMutedUsers(subreddit, user, req.body.muteReason);
     return res.status(200).json("User successfully muted");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const removeUser = async (req, res) => {
+  try {
+    const subreddit = req.subreddit;
+    const user = await getUserByUsername(req.body.username);
+    await removeFromApprovedUsers(subreddit, user);
+    return res.status(200).json("User successfully removed");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const unmuteUser = async (req, res) => {
+  try {
+    const subreddit = req.subreddit;
+    const user = await getUserByUsername(req.body.username);
+    checkUserInSubreddit(subreddit, user);
+    await removeFromMutedUsers(subreddit, user);
+    return res.status(200).json("User successfully unmuted");
   } catch (error) {
     console.log(error.message);
     if (error.statusCode) {
@@ -276,4 +321,6 @@ export default {
   deleteProfilePicture,
   approveUser,
   muteUser,
+  removeUser,
+  unmuteUser,
 };

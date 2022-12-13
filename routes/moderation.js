@@ -1632,7 +1632,15 @@ moderationRouter.post(
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/r/:subreddit/remove-user");
+moderationRouter.post(
+  "/r/:subreddit/remove-user",
+  verifyAuthToken,
+  postModController.usernameValidator,
+  validateRequestSchema,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.removeUser
+);
 
 /**
  * @swagger
@@ -1681,6 +1689,14 @@ moderationRouter.post("/r/:subreddit/remove-user");
  *    - bearerAuth: []
  */
 
-moderationRouter.post("/r/:subreddit/unmute-user");
+moderationRouter.post(
+  "/r/:subreddit/unmute-user",
+  verifyAuthToken,
+  postModController.usernameValidator,
+  validateRequestSchema,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.unmuteUser
+);
 
 export default moderationRouter;
