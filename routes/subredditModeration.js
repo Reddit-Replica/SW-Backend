@@ -43,7 +43,7 @@ const subredditModerationsRouter = express.Router();
  *         mainTopic:
  *          type: string
  *          description: The main topic of the community.
- *         sunTopics:
+ *         subTopics:
  *          type: array
  *          description: The sub topics of the community.
  *          items:
@@ -126,7 +126,7 @@ subredditModerationsRouter.get(
  *       required:
  *        - communityName
  *        - mainTopic
- *        - sunTopics
+ *        - subTopics
  *        - communityDescription
  *        - sendWelcomeMessage
  *        - welcomeMessage
@@ -144,7 +144,7 @@ subredditModerationsRouter.get(
  *         mainTopic:
  *          type: string
  *          description: The main topic of the community.
- *         sunTopics:
+ *         subTopics:
  *          type: array
  *          description: The sub topics of the community.
  *          items:
