@@ -31,29 +31,62 @@ export async function checkPostSubreddit(req, res, next) {
     }
     req.suggestedSort = "new";
     if (inSubreddit && inSubreddit !== "false") {
+      // Check Subreddit name
       if (!subreddit) {
         return res.status(400).json({
           error: "Subreddit can't be empty",
         });
       }
+      // Check if the subreddit exists
       const postSubreddit = await Subreddit.findOne({
         title: subreddit,
       });
       if (!postSubreddit || postSubreddit.deletedAt) {
         return res.status(404).json("Subreddit not found or deleted");
       }
-      if (
-        !user.joinedSubreddits.find((sr) => sr.name === subreddit) &&
-        !user.moderatedSubreddits.find((sr) => sr.name === subreddit)
-      ) {
-        return res
-          .status(401)
-          .json("User is not a member/mod of this subreddit");
+      // CHECK ABILITY TO POST
+      if (!user.joinedSubreddits.find((sr) => sr.name === subreddit)) {
+        return res.status(401).json("User is not a member of this subreddit");
       }
+      if (postSubreddit.type !== "Public") {
+        // eslint-disable-next-line max-depth
+        if (
+          !postSubreddit.approvedUsers.find(
+            (approvedUser) =>
+              approvedUser.userID.toString() === userId.toString()
+          )
+        ) {
+          return res.status(401).json("User is not approved in this subreddit");
+        }
+      }
+      if (postSubreddit.type === "Restricted") {
+        // eslint-disable-next-line max-depth
+        if (
+          postSubreddit.subredditSettings.approvedUsersHaveTheAbilityTo ===
+          "Comment only"
+        ) {
+          return res
+            .status(401)
+            .json(
+              "Approved users don't have the ability to post in this subreddit"
+            );
+        }
+      }
+      // CHECK SPOILER
+      if (
+        req.body.spoiler === true &&
+        postSubreddit.subredditPostSettings.enableSpoiler === false
+      ) {
+        return res.status(400).json({
+          error: "Spoiler can't be set in this subreddit",
+        });
+      }
+      // Prepare suggested sort
       req.suggestedSort =
         postSubreddit.subredditPostSettings.suggestedSort !== "none"
           ? postSubreddit.subredditPostSettings.suggestedSort
           : req.suggestedSort;
+      // Check banned & muted
       if (checkIfBanned(userId, postSubreddit) === true) {
         return res.status(400).json({
           error: "User is banned from this subreddit",
