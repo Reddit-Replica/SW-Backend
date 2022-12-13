@@ -558,4 +558,55 @@ subredditModerationsRouter.get(
   subredditModerationsController.getJoinedSubreddits
 );
 
+/**
+ * @swagger
+ * /r/{subreddit}/traffic-stats:
+ *  get:
+ *   summary:
+ *    Return the traffic stats of members for a certain subreddit
+ *   tags: [Subreddit moderation]
+ *   parameters:
+ *    - in: path
+ *      name: subreddit
+ *      description: name of the subreddit.
+ *      schema:
+ *       type: string
+ *      required: true
+ *   responses:
+ *    200:
+ *     description: Traffic state of this subreddit
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         numberOfJoinedLastDay:
+ *          type: number
+ *          description: Number of users joined that subreddit last 24 hours
+ *         numberOfJoinedLastWeek:
+ *          type: number
+ *          description: Number of users joined that subreddit last 7 days
+ *         numberOfJoinedLastMonth:
+ *          type: number
+ *          description: Number of users joined that subreddit last month
+ *         numberOfLeftLastDay:
+ *          type: number
+ *          description: Number of users left that subreddit last 24 hours
+ *         numberOfLeftLastWeek:
+ *          type: number
+ *          description: Number of users left that subreddit last 7 days
+ *         numberOfLeftLastMonth:
+ *          type: number
+ *          description: Number of users left that subreddit last month
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+subredditModerationsRouter.get("/r/:subreddit/traffic-stats");
+
 export default subredditModerationsRouter;
