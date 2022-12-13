@@ -28,7 +28,7 @@ export async function getSubredditService(subredditName) {
  * @param {Object} subreddit Subreddit object
  * @returns {Number} Index of the moderator in subreddit.moderators array, -1 if none
  */
-function checkIfModerator(userId, subreddit) {
+export function checkIfModerator(userId, subreddit) {
   // check if user is moderator in the subreddit
   const index = subreddit.moderators.findIndex(
     (elem) => elem.userID.toString() === userId.toString()
