@@ -1,12 +1,10 @@
 import express from "express";
-import { validateRequestSchema } from "../middleware/validationResult.js";
-import HmessageController from "../controllers/HmessageController.js";
 
 import messageController from "../controllers/NmessageController.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
 
 // eslint-disable-next-line new-cap
-const messageRouter = express.Router();
+const router = express.Router();
 
 /**
  * @swagger
@@ -72,7 +70,7 @@ const messageRouter = express.Router();
  *       - bearerAuth: []
  */
 
-messageRouter.post(
+router.post(
   "/message/compose",
   verifyAuthToken,
   messageController.createMessage
@@ -128,11 +126,7 @@ messageRouter.post(
  *       - bearerAuth: []
  */
 
-messageRouter.post(
-  "/mention",
-  verifyAuthToken,
-  messageController.createMention
-);
+router.post("/mention", verifyAuthToken, messageController.createMention);
 
 /**
  * @swagger
@@ -241,11 +235,7 @@ messageRouter.post(
  *       - bearerAuth: []
  */
 
-messageRouter.get(
-  "/message/sent",
-  verifyAuthToken,
-  messageController.getSentMsg
-);
+router.get("/message/sent", verifyAuthToken, messageController.getSentMsg);
 
 /**
  * @swagger
@@ -372,11 +362,7 @@ messageRouter.get(
  *       - bearerAuth: []
  */
 
-messageRouter.get(
-  "/message/inbox",
-  verifyAuthToken,
-  messageController.getInbox
-);
+router.get("/message/inbox", verifyAuthToken, messageController.getInbox);
 
 /**
  * @swagger
@@ -485,11 +471,7 @@ messageRouter.get(
  *       - bearerAuth: []
  */
 
-messageRouter.get(
-  "/message/unread",
-  verifyAuthToken,
-  messageController.getUnreadMsg
-);
+router.get("/message/unread", verifyAuthToken, messageController.getUnreadMsg);
 
 /**
  * @swagger
@@ -604,7 +586,7 @@ messageRouter.get(
  *       - bearerAuth: []
  */
 
-messageRouter.get("/message/post-reply");
+router.get("/message/post-reply");
 
 /**
  * @swagger
@@ -713,7 +695,7 @@ messageRouter.get("/message/post-reply");
  *       - bearerAuth: []
  */
 
-messageRouter.get(
+router.get(
   "/message/mentions",
   verifyAuthToken,
   messageController.getUsernameMentions
@@ -831,7 +813,7 @@ messageRouter.get(
  *       - bearerAuth: []
  */
 
-messageRouter.get(
+router.get(
   "/message/messages",
   verifyAuthToken,
   messageController.getConversations
@@ -882,11 +864,7 @@ messageRouter.get(
  *       - bearerAuth: []
  */
 
-messageRouter.patch(
-  "/unread-message",
-  verifyAuthToken,
-  messageController.unreadMsg
-);
+router.patch("/unread-message", verifyAuthToken, messageController.unreadMsg);
 /**
  * @swagger
  * /spam-message:
@@ -932,11 +910,7 @@ messageRouter.patch(
  *       - bearerAuth: []
  */
 
-messageRouter.patch(
-  "/spam-message",
-  verifyAuthToken,
-  messageController.markMsgAsSpam
-);
+router.patch("/spam-message", verifyAuthToken, messageController.markMsgAsSpam);
 
 /**
  * @swagger
@@ -972,47 +946,6 @@ messageRouter.patch(
  *       - bearerAuth: []
  */
 
-messageRouter.patch(
-  "/read-all-msgs",
-  verifyAuthToken,
-  messageController.messageValidator,
-  validateRequestSchema,
-  HmessageController.readAllMessages
-);
-/**
- * @swagger
- * /moderated-subreddits:
- *  get:
- *      summary: Return all subreddits that you can send message from ( the ones you are moderator in )
- *      tags: [Messages]
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: object
- *                        properties:
- *                          children:
- *                            type: array
- *                            description: List of the subreddits that your are moderator in and their pictures
- *                            items:
- *                              properties:
- *                               title:
- *                                 type: string
- *                                 description: the title of the subreddits that the user can send messages from and his own username
- *                               picture:
- *                                 type: string
- *                                 description: Path of the picture of the subreddit
- *          404:
- *              description: Page not found
- *          401:
- *              description: User unauthorized to view this info
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-messageRouter.get("/moderated-subreddits");
+router.patch("/read-all-msgs");
 
-export default messageRouter;
+export default router;
