@@ -362,6 +362,28 @@ const getSubredditTopPosts = async (req, res) => {
   }
 };
 
+const getSubredditTrendingPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await subredditPostListing(
+      user,
+      { before, after, limit },
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
 
 export default {
   postIdValidator,
