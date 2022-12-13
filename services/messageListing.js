@@ -266,21 +266,21 @@ export async function userInboxListing(user, listingParams) {
   ];
   //SORTING ALL OF THE MESSAGES THAT WE HAD BASED ON SENT TIME
   totalInbox.sort(compareMsgs2);
-  let isBefore=false;
+  let isBefore = false;
   //FILTERING THE TOTAL INBOX ARRAY THAT WE MADE WITH BEFORE W AFTER LIMITS
   //IN CASE OF BEFORE WE NEED TO GET THE LIMIT ELEMENTS BEFORE THE SELECTED ITEM
   //THEN WE NEED TO CHANGE THE VALUES OF STARTING AND ENDING INDICES OF THE TOTAL INBOX ARRAY
   if (listingParams.before) {
     //HERE WE GET OUR SPLITTER
     const splitter = await splitterOnType(listingParams.before);
-    isBefore=true;
-    totalInbox=totalInbox.filter((msg) => {
+    isBefore = true;
+    totalInbox = totalInbox.filter((msg) => {
       return msg.createdAt > splitter.createdAt;
     });
-  //THIS IS THE CASE OF AFTER THEN WE WILL DEAL NORMALLY WITHOUT ANY CHANGES IN THE FOR LOOP BOUNDARIES
+    //THIS IS THE CASE OF AFTER THEN WE WILL DEAL NORMALLY WITHOUT ANY CHANGES IN THE FOR LOOP BOUNDARIES
   } else if (listingParams.after && !listingParams.before) {
     const splitter = await splitterOnType(listingParams.after);
-    totalInbox=totalInbox.filter(function (msg){
+    totalInbox = totalInbox.filter(function (msg) {
       return msg.createdAt < splitter.createdAt;
     });
   }
@@ -291,14 +291,15 @@ export async function userInboxListing(user, listingParams) {
     limit = totalInbox.length;
   }
   //INITIALLY WE WILL START FROM 0 UNTIL THE LIMIT
-  let startingIndex=0,finishIndex=limit;
+  let startingIndex = 0,
+    finishIndex = limit;
   //IN CASE OF BEFORE THEN WE WILL START FROM BEFORE INDEX-LIMIT TO THE BEFORE INDEX
-  if (isBefore){
-    startingIndex=totalInbox.length-limit;
-    finishIndex=totalInbox.length;
+  if (isBefore) {
+    startingIndex = totalInbox.length - limit;
+    finishIndex = totalInbox.length;
   }
-  if (startingIndex<0) {
-    startingIndex=0;
+  if (startingIndex < 0) {
+    startingIndex = 0;
   }
   //OUR CHILDREN ARRAY THAT WE WILL SEND AS RESPONSE
   const children = [];
@@ -311,7 +312,9 @@ export async function userInboxListing(user, listingParams) {
     //DEPENDING ON THE TYPE OF ELEMENT WE WILL SEND DIFFERENT DATA
     if (totalInbox[startingIndex].type === "Mention") {
       const post = await searchForPost(totalInbox[startingIndex].postId);
-      const comment = await searchForComment(totalInbox[startingIndex].commentId);
+      const comment = await searchForComment(
+        totalInbox[startingIndex].commentId
+      );
       messageData.data = {
         text: comment.content,
         senderUsername: post.ownerUsername,
@@ -322,7 +325,7 @@ export async function userInboxListing(user, listingParams) {
         postId: totalInbox[startingIndex].postId,
         commentId: totalInbox[startingIndex].commentId,
         numOfComments: post.numberOfComments,
-        type:"Mentions",
+        type: "Mentions",
       };
     } else if (totalInbox[startingIndex].type === "Message") {
       messageData.data = {
@@ -334,7 +337,7 @@ export async function userInboxListing(user, listingParams) {
         subject: totalInbox[startingIndex].subject,
         isSenderUser: totalInbox[startingIndex].isSenderUser,
         isReceiverUser: totalInbox[startingIndex].isReceiverUser,
-        type:"Messages",
+        type: "Messages",
       };
     }
     children.push(messageData);
@@ -343,14 +346,13 @@ export async function userInboxListing(user, listingParams) {
   let after = "",
     before = "";
   if (totalInbox.length) {
-    if (isBefore){
-    after = totalInbox[totalInbox.length - 1]._id.toString();
-    before = totalInbox[totalInbox.length-limit]._id.toString();
+    if (isBefore) {
+      after = totalInbox[totalInbox.length - 1]._id.toString();
+      before = totalInbox[totalInbox.length - limit]._id.toString();
     } else {
-    after = totalInbox[limit - 1]._id.toString();
-    before = totalInbox[0]._id.toString();
+      after = totalInbox[limit - 1]._id.toString();
+      before = totalInbox[0]._id.toString();
     }
-
   }
   return {
     statusCode: 200,

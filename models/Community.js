@@ -320,7 +320,11 @@ const communitySchema = mongoose.Schema({
       default: false,
     },
   },
-
+  joinedUsers:[{
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required:true,
+  }],
   //NEEDS TO BE AUTO INCREMENT
   //Is used to get random subreddit from categories
   randomIndex: {

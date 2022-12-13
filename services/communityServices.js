@@ -113,6 +113,8 @@ export async function addToJoinedSubreddit(user, subreddit) {
   });
   await user.save();
   subreddit.members += 1;
+  console.log(subreddit);
+  subreddit.joinedUsers.push(user.id);
   await subreddit.save();
   return {
     statusCode: 200,
@@ -262,6 +264,8 @@ export async function addSubreddit(req, authPayload) {
     username: creatorUsername,
     userID: creatorId,
   };
+  const joinedUsers=[];
+  joinedUsers.push(owner.userID);
   const subreddit = await new Subreddit({
     title: subredditName,
     viewName: subredditName,
@@ -270,6 +274,7 @@ export async function addSubreddit(req, authPayload) {
     nsfw: nsfw,
     owner: owner,
     createdAt: Date.now(),
+    joinedUsers:joinedUsers,
   }).save();
   const addedSubreddit = {
     subredditId: subreddit.id,
