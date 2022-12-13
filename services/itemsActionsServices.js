@@ -99,7 +99,11 @@ async function deleteMessage(userId, messageId) {
     throw error;
   }
 
-  if (message.receiverId.toString() !== userId.toString()) {
+  if (
+    !message.isReceiverUser ||
+    (message.isReceiverUser &&
+      message.receiverId.toString() !== userId.toString())
+  ) {
     let error = new Error("Unauthorized to delete this message");
     error.statusCode = 401;
     throw error;
