@@ -264,7 +264,7 @@ const getInbox = async (req, res) => {
   try {
     const { before, after, limit } = req.query;
     const user = await searchForUserService(req.payload.username);
-    const result=await userInboxListing(user, {
+    const result = await userInboxListing(user, {
       before,
       after,
       limit,

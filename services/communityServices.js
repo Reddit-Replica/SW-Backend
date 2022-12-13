@@ -114,6 +114,11 @@ export async function addToJoinedSubreddit(user, subreddit) {
   });
   await user.save();
   subreddit.members += 1;
+  console.log(subreddit);
+  subreddit.joinedUsers.push({
+    userId: user.id,
+    joinDate: Date.now(),
+  });
   await subreddit.save();
   return {
     statusCode: 200,
@@ -159,6 +164,23 @@ export async function leaveSubredditService(user, subreddit) {
     user.joinedSubreddits.splice(joinedIndex, 1);
     subreddit.members -= 1;
 
+    const joinedSubIndex = subreddit.joinedUsers.findIndex(
+      (ele) => ele.userId.toString() === user._id.toString()
+    );
+    subreddit.joinedUsers.splice(joinedSubIndex, 1);
+
+    const leftIndex = subreddit.leftUsers.findIndex(
+      (ele) => ele.userId.toString() === user._id.toString()
+    );
+    if (leftIndex === -1) {
+      subreddit.leftUsers.push({
+        userId: user._id,
+        leaveDate: Date.now(),
+      });
+    } else {
+      subreddit.leftUsers[leftIndex].leaveDate = Date.now();
+    }
+
     const approvedIndex = subreddit.approvedUsers.findIndex(
       (ele) => ele.userID.toString() === user._id.toString()
     );
@@ -167,7 +189,7 @@ export async function leaveSubredditService(user, subreddit) {
     }
   }
 
-  // if the user was in the waiting list for that subreddit
+  // if the user is still in the waiting list for that subreddit
   if (waitedIndex !== -1) {
     subreddit.waitedIndex.splice(waitedIndex, 1);
   }
@@ -273,6 +295,11 @@ export async function addSubreddit(req, authPayload) {
     username: creatorUsername,
     userID: creatorId,
   };
+  const joinedUsers = [];
+  joinedUsers.push({
+    userId: owner.userID,
+    joinDate: Date.now(),
+  });
   const subreddit = await new Subreddit({
     title: subredditName,
     viewName: subredditName,
@@ -281,6 +308,7 @@ export async function addSubreddit(req, authPayload) {
     nsfw: nsfw,
     owner: owner,
     createdAt: Date.now(),
+    joinedUsers: joinedUsers,
   }).save();
   const addedSubreddit = {
     subredditId: subreddit.id,
