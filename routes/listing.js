@@ -2,6 +2,9 @@ import express from "express";
 
 import { optionalToken } from "../middleware/optionalToken.js";
 import postController from "../controllers/HpostController.js";
+import subredditDetails from "../middleware/subredditDetails.js";
+// eslint-disable-next-line max-len
+import subredditPostsListingController from "../controllers/subredditPostsListingController.js";
 // eslint-disable-next-line new-cap
 const listingRouter = express.Router();
 
@@ -131,7 +134,12 @@ listingRouter.get("/hot", optionalToken, postController.getHotPosts);
  *     security:
  *      - bearerAuth: []
  */
-listingRouter.get("/r/:subreddit/hot");
+listingRouter.get(
+  "/r/:subreddit/hot",
+  optionalToken,
+  subredditDetails.checkSubreddit,
+  subredditPostsListingController.getHotSubredditPosts
+);
 
 /**
  * @swagger
@@ -216,7 +224,12 @@ listingRouter.get("/trending", optionalToken, postController.getTrendingPosts);
  *     security:
  *      - bearerAuth: []
  */
-listingRouter.get("/r/:subreddit/trending");
+listingRouter.get(
+  "/r/:subreddit/trending",
+  optionalToken,
+  subredditDetails.checkSubreddit,
+  subredditPostsListingController.getTrendingSubredditPosts
+);
 
 /**
  * @swagger
@@ -301,7 +314,12 @@ listingRouter.get("/new", optionalToken, postController.getNewPosts);
  *     security:
  *      - bearerAuth: []
  */
-listingRouter.get("/r/:subreddit/new");
+listingRouter.get(
+  "/r/:subreddit/new",
+  optionalToken,
+  subredditDetails.checkSubreddit,
+  subredditPostsListingController.getNewSubredditPosts
+);
 
 /**
  * @swagger
@@ -465,6 +483,11 @@ listingRouter.get("/top", optionalToken, postController.getNewPosts);
  *     security:
  *      - bearerAuth: []
  */
-listingRouter.get("/r/:subreddit/top");
+listingRouter.get(
+  "/r/:subreddit/top",
+  optionalToken,
+  subredditDetails.checkSubreddit,
+  subredditPostsListingController.getTopSubredditPosts
+);
 
 export default listingRouter;

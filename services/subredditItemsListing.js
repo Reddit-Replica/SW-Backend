@@ -1,6 +1,7 @@
 import Subreddit from "../models/Community.js";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
+import Flair from "../models/Flair.js";
 import { commentListing } from "../utils/prepareCommentListing.js";
 import { postListing } from "../utils/preparePostListing.js";
 
@@ -205,6 +206,137 @@ export async function listingSubredditComments(
     after =
       result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
     before = result[typeOfListing][0]._id.toString();
+  }
+  return {
+    statusCode: 200,
+    data: {
+      after: after,
+      before: before,
+      children: children,
+    },
+  };
+}
+
+/**
+ * This function checks for the given flair Id if it exists and whether
+ * it belongs to the given subreddit or not.
+ *
+ * @param {string} subreddit Subreddit Name
+ * @param {ObjectId} flairId Flair ID
+ * @returns {void}
+ */
+// eslint-disable-next-line max-statements
+export async function checkSubredditFlair(subreddit, flairId) {
+  if (flairId) {
+    if (!mongoose.Types.ObjectId.isValid(flairId)) {
+      const error = new Error("Invalid Flair ID (Incorrect ObjectId format)");
+      error.statusCode = 400;
+      throw error;
+    }
+    const flair = await Flair.findById(flairId)?.populate("subreddit");
+    if (!flair || flair.deletedAt) {
+      const error = new Error("Flair not found or may be deleted");
+      error.statusCode = 404;
+      throw error;
+    }
+    if (flair.subreddit.title !== subreddit) {
+      const error = new Error("Flair doesn't belong to this subreddit");
+      error.statusCode = 400;
+      throw error;
+    }
+    return flair;
+  }
+  return undefined;
+}
+
+// eslint-disable-next-line max-statements
+export async function subredditHome(user, subredditName, flair, listingParams) {
+  // Prepare Listing Parameters
+  const listingResult = await postListing(listingParams);
+
+  const subreddit = await Subreddit.findOne({ title: subredditName });
+  if (!subreddit || subreddit.deletedAt) {
+    return {
+      statusCode: 404,
+      data: "Subreddit not found or deleted",
+    };
+  }
+  listingResult.find["subredditName"] = subredditName;
+  const result = await Subreddit.findOne({ title: subredditName })
+    .select("subredditPosts")
+    .populate({
+      path: "subredditPosts",
+      match: listingResult.find,
+      limit: listingResult.limit,
+      options: {
+        sort: listingResult.sort,
+      },
+    });
+
+  let children = [];
+
+  for (const i in result["subredditPosts"]) {
+    const post = result["subredditPosts"][i];
+    const postId = post.toString();
+    let vote = 0,
+      saved = false,
+      hidden = false,
+      inYourSubreddit = false;
+    if (user) {
+      if (user.savedPosts?.find((id) => id.toString() === postId)) {
+        saved = true;
+      }
+      if (user.hiddenPosts?.find((id) => id.toString() === postId)) {
+        hidden = true;
+      }
+      if (user.upvotedPosts?.find((id) => id.toString() === postId)) {
+        vote = 1;
+      }
+      if (user.downvotedPosts?.find((id) => id.toString() === postId)) {
+        vote = -1;
+      }
+      if (user.moderatedSubreddits?.find((sr) => sr.name === subredditName)) {
+        inYourSubreddit = true;
+      }
+    }
+    let postData = { id: result["subredditPosts"][i]._id.toString() };
+    postData.data = {
+      id: post.id.toString(),
+      subreddit: post.subredditName,
+      postedBy: post.ownerUsername,
+      title: post.title,
+      link: post.link,
+      content: post.content,
+      images: post.images,
+      video: post.video,
+      nsfw: post.nsfw,
+      spoiler: post.spoiler,
+      votes: post.numberOfVotes,
+      numberOfComments: post.numberOfComments,
+      flair: flair,
+      postedAt: post.createdAt,
+      editedAt: post.editedAt,
+      saved: saved,
+      hidden: hidden,
+      vote: vote,
+      approved: post.moderation.approve.approvedBy !== undefined,
+      removed: post.moderation.remove.removedBy !== undefined,
+      spammed: post.moderation.spam.spammedBy !== undefined,
+      lock: post.moderation.lock,
+      inYourSubreddit: inYourSubreddit,
+    };
+
+    children.push(postData);
+  }
+
+  let after = "",
+    before = "";
+  if (result["subredditPosts"].length) {
+    after =
+      result["subredditPosts"][
+        result["subredditPosts"].length - 1
+      ]._id.toString();
+    before = result["subredditPosts"][0]._id.toString();
   }
   return {
     statusCode: 200,
