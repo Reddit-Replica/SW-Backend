@@ -180,6 +180,9 @@ userRouter.post(
  *                   description: List of subreddits in which this user is moderator
  *                   items:
  *                     properties:
+ *                       subredditId:
+ *                         type: string
+ *                         description: Id of the subreddit
  *                       subredditName:
  *                         type: string
  *                         description: Name of the subreddit
