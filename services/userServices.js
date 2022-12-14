@@ -179,12 +179,17 @@ export async function getUserAboutDataService(username, loggedInUserId) {
       // check if the logged in user follows that subreddit
       let followed = false;
       if (loggedInUser) {
-        followed = loggedInUser.joinedSubreddits.includes(
-          user.moderatedSubreddits[i].subredditId._id.toString()
-        );
+        const index = loggedInUser.joinedSubreddits.findIndex((ele) => {
+          return (
+            ele.subredditId.toString() ===
+            user.moderatedSubreddits[i].subredditId._id.toString()
+          );
+        });
+        followed = index !== -1;
       }
 
       moderatorOf.push({
+        subredditId: user.moderatedSubreddits[i].subredditId._id,
         subredditName: user.moderatedSubreddits[i].subredditId.title,
         numOfMembers: user.moderatedSubreddits[i].subredditId.members,
         nsfw: user.moderatedSubreddits[i].subredditId.nsfw,
