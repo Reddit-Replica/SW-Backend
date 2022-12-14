@@ -73,7 +73,6 @@ const postSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     required: true,
-    // default: Date.now(),
   },
   editedAt: {
     type: Date,
@@ -177,6 +176,10 @@ const postSchema = mongoose.Schema({
     default: 0,
   },
   numberOfVotes: {
+    type: Number,
+    default: 0,
+  },
+  numberOfViews: {
     type: Number,
     default: 0,
   },

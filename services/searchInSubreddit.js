@@ -9,7 +9,7 @@ import { commentListing } from "../utils/prepareCommentListing.js";
  * @param {string} subreddit Subreddit name
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchForPosts(subreddit, query, listingParams) {
@@ -98,7 +98,7 @@ export async function searchForPosts(subreddit, query, listingParams) {
  * @param {string} subreddit Subreddit name
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchForComments(subreddit, query, listingParams) {
@@ -107,9 +107,18 @@ export async function searchForComments(subreddit, query, listingParams) {
 
   const regex = new RegExp(query, "i");
   listingResult.find["subredditName"] = subreddit;
-  listingResult.find["content.ops"] = {
-    $elemMatch: { insert: { $regex: regex } },
-  };
+  listingResult.find["$or"] = [
+    {
+      "content.ops": {
+        $elemMatch: { insert: { $regex: regex } },
+      },
+    },
+    {
+      content: {
+        $elemMatch: { insert: { $regex: regex } },
+      },
+    },
+  ];
 
   const checkSubreddit = await Subreddit.findOne({ title: subreddit });
   if (!checkSubreddit) {

@@ -29,7 +29,7 @@
  *          flairName:
  *              type: string
  *              description: Name of the flair
- *          order:
+ *          flairOrder:
  *              type: number
  *              description: Order of the flair among the rest
  *          backgroundColor:

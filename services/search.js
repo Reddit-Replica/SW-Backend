@@ -12,7 +12,7 @@ import { subredditListing } from "../utils/prepareSubredditListing.js";
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchPosts(query, listingParams) {
@@ -81,7 +81,7 @@ export async function searchPosts(query, listingParams) {
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchComments(query, listingParams) {
@@ -89,10 +89,18 @@ export async function searchComments(query, listingParams) {
   const listingResult = await commentListing(listingParams);
 
   const regex = new RegExp(query, "i");
-  listingResult.find["content.ops"] = {
-    $elemMatch: { insert: { $regex: regex } },
-  };
-  console.log(listingResult.find);
+  listingResult.find["$or"] = [
+    {
+      "content.ops": {
+        $elemMatch: { insert: { $regex: regex } },
+      },
+    },
+    {
+      content: {
+        $elemMatch: { insert: { $regex: regex } },
+      },
+    },
+  ];
 
   const result = await Comment.find(listingResult.find)
     .limit(listingResult.limit)
@@ -152,7 +160,7 @@ export async function searchComments(query, listingParams) {
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchUsers(query, listingParams, loggedInUser) {
@@ -225,7 +233,7 @@ export async function searchUsers(query, listingParams, loggedInUser) {
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchSubreddits(query, listingParams, loggedInUser) {

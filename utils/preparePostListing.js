@@ -20,12 +20,16 @@ function preparePostSort(listingSort) {
   } else {
     switch (listingSort) {
       case "hot":
-        // TODO
-        result = { score: -1 };
-        sortingType = { type: "score" };
+        result = { hotScore: -1 };
+        sortingType = { type: "hotScore" };
+        break;
+      case "best":
+        result = { bestScore: -1 };
+        sortingType = { type: "bestScore" };
         break;
       case "top":
-        result = null;
+        result = { numberOfVotes: -1 };
+        sortingType = { type: "numberOfVotes" };
         break;
       case "old":
         result = { createdAt: 1 };

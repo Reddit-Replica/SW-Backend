@@ -28,6 +28,12 @@ const router = express.Router();
  *                 email:
  *                   type: string
  *                   description: Email of the user
+ *                 googleEmail:
+ *                   type: string
+ *                   description: Google Email of the user
+ *                 facebookEmail:
+ *                   type: string
+ *                   description: Facebook Email of the user
  *                 country:
  *                   type: string
  *                   description: Country of the user
