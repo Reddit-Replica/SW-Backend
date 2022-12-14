@@ -247,24 +247,3 @@ export async function homePostsListing(
     },
   };
 }
-
-
-
-export async function subredditPostListing(
-  user,
-  listingParams,
-  isLoggedIn
-) {
-  const listingResult = await postListing(listingParams);
-  // GETTING THE DESIRED FIELD THAT WE WOULD GET DATA FROM
-  const result = await User.findOne({ username: user.username })
-    .select("posts")
-    .populate({
-      path: "posts",
-      match: listingResult.find,
-      limit: listingResult.limit,
-      options: {
-        sort: listingResult.sort,
-      },
-    });
-}
