@@ -132,7 +132,14 @@ export async function createCommentService(data, post) {
     createdAt: Date.now(),
   };
 
-  // check if the subreddit exists
+  // check if post subreddit is the same as comment subreddit
+  if (post.subredditName && !data.haveSubreddit) {
+    let error = new Error(
+      "Can not add a comment without subreddit to post with subreddit"
+    );
+    error.statusCode = 400;
+    throw error;
+  }
   if (data.haveSubreddit) {
     if (post.subredditName !== data.subredditName) {
       let error = new Error(
