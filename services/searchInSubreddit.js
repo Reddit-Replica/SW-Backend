@@ -9,7 +9,7 @@ import { commentListing } from "../utils/prepareCommentListing.js";
  * @param {string} subreddit Subreddit name
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchForPosts(subreddit, query, listingParams) {
@@ -98,7 +98,7 @@ export async function searchForPosts(subreddit, query, listingParams) {
  * @param {string} subreddit Subreddit name
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchForComments(subreddit, query, listingParams) {

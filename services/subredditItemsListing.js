@@ -6,6 +6,17 @@ import { commentListing } from "../utils/prepareCommentListing.js";
 import { postListing } from "../utils/preparePostListing.js";
 import mongoose from "mongoose";
 
+/**
+ * This function returns the subreddit's typeOfListing posts with a given
+ * sort and according to a certain limit with either after or before in the
+ * listing params. It returns post data with additional flags for frontend.
+ *
+ * @param {string} modId User ID
+ * @param {string} subredditName Subreddit Name
+ * @param {string} typeOfListing Type of posts to be listed
+ * @param {object} listingParams Listing parameters (After/before/sort/limit)
+ * @returns {object} Result containing statusCode and data
+ */
 // eslint-disable-next-line max-statements
 export async function listingSubredditPosts(
   modId,
@@ -113,6 +124,17 @@ export async function listingSubredditPosts(
   };
 }
 
+/**
+ * This function returns the subreddit's typeOfListing comments with a given
+ * sort and according to a certain limit with either after or before in the
+ * listing params. It returns comment data and post title with additional flags for frontend.
+ *
+ * @param {string} modId User ID
+ * @param {string} subredditName Subreddit Name
+ * @param {string} typeOfListing Type of posts to be listed
+ * @param {object} listingParams Listing parameters (After/before/sort/limit)
+ * @returns {object} Result containing statusCode and data
+ */
 // eslint-disable-next-line max-statements
 export async function listingSubredditComments(
   modId,
@@ -222,9 +244,9 @@ export async function listingSubredditComments(
  * This function checks for the given flair Id if it exists and whether
  * it belongs to the given subreddit or not.
  *
- * @param {object} subreddit Subreddit Object
+ * @param {string} subreddit Subreddit Name
  * @param {ObjectId} flairId Flair ID
- * @returns {void}
+ * @returns {object} Flair object returned
  */
 // eslint-disable-next-line max-statements
 export async function checkSubredditFlair(subreddit, flairId) {
@@ -251,6 +273,17 @@ export async function checkSubredditFlair(subreddit, flairId) {
   return undefined;
 }
 
+/**
+ * This function returns all the subreddit's posts with a certain limit
+ * and either after or before to cut form. It can also filter according to
+ * a given flair.
+ *
+ * @param {object} user User Object
+ * @param {string} subredditName Subreddit Name
+ * @param {object} flair Flair Object
+ * @param {object} listingParams Listing parameters (After/before/sort/limit)
+ * @returns {object} Result containing statusCode and data
+ */
 // eslint-disable-next-line max-statements
 export async function subredditHome(user, subredditName, flair, listingParams) {
   // Prepare Listing Parameters
