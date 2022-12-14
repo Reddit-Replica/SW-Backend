@@ -264,9 +264,9 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     };
   }
   listingResult.find["subredditName"] = subredditName;
-  console.log(flair);
+
   if (flair) {
-    //listingResult.find["flair.toString()"] = flair.id.toString();
+    listingResult.find["flair"] = flair.id;
   }
   const result = await Subreddit.findOne({ title: subredditName })
     .select("subredditPosts")
@@ -291,6 +291,7 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     let vote = 0,
       saved = false,
       hidden = false,
+      spammed = false,
       inYourSubreddit = false;
     if (user) {
       if (user.savedPosts?.find((id) => id.toString() === postId)) {
@@ -308,6 +309,9 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
       if (user.moderatedSubreddits?.find((sr) => sr.name === subredditName)) {
         inYourSubreddit = true;
       }
+      if (user.spammedPosts?.find((id) => id.toString() === postId)) {
+        spammed = true;
+      }
     }
     let postData = { id: result["subredditPosts"][i]._id.toString() };
     postData.data = {
@@ -322,18 +326,19 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
       nsfw: post.nsfw,
       spoiler: post.spoiler,
       votes: post.numberOfVotes,
-      numberOfComments: post.numberOfComments,
-      flair: flair,
+      comments: post.numberOfComments,
+      flair: post.flair,
       postedAt: post.createdAt,
       editedAt: post.editedAt,
+      sharePostId: post.sharePostId,
+      sendReplies: post.sendReplies,
       saved: saved,
       hidden: hidden,
-      vote: vote,
-      approved: post.moderation.approve.approvedBy !== undefined,
-      removed: post.moderation.remove.removedBy !== undefined,
-      spammed: post.moderation.spam.spammedBy !== undefined,
-      lock: post.moderation.lock,
+      votingType: vote,
+      moderation: post.moderation,
+      markedSpam: post.markedSpam,
       inYourSubreddit: inYourSubreddit,
+      spammed: spammed,
     };
 
     children.push(postData);
