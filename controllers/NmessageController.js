@@ -144,6 +144,7 @@ const getSentMsg = async (req, res) => {
       res.status(result.statusCode).json(result.data);
     }
   } catch (error) {
+    console.log(error);
     if (error.statusCode) {
       res.status(error.statusCode).json({ error: error.message });
     } else {

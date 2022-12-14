@@ -42,18 +42,34 @@ export async function userMessageListing(
     .populate({
       path: typeOfListing,
       match: listingResult.find,
-      limit: listingResult.limit,
       options: {
         sort: listingResult.sort,
       },
     });
-  let children = [];
-  for (const i in result[typeOfListing]) {
-    const message = result[typeOfListing][i];
+    let limit=listingResult.limit;
+    if (result[typeOfListing].length < limit) {
+      limit = result[typeOfListing].length;
+    }
+    //INITIALLY WE WILL START FROM 0 UNTIL THE LIMIT
+    let startingIndex = 0,
+      finishIndex = limit;
+    //IN CASE OF BEFORE THEN WE WILL START FROM BEFORE INDEX-LIMIT TO THE BEFORE INDEX
+    if (listingParams.before) {
+      startingIndex = result[typeOfListing].length - limit;
+      console.log(result[typeOfListing].length,limit);
+      finishIndex = result[typeOfListing].length;
+    }
+    if (startingIndex < 0) {
+      startingIndex = 0;
+    }
+    //OUR CHILDREN ARRAY THAT WE WILL SEND AS RESPONSE
+    const children = [];
+    for (startingIndex; startingIndex < finishIndex; startingIndex++) {
+    const message = result[typeOfListing][startingIndex];
     message.isRead = true;
     await message.save();
 
-    let messageData = { id: result[typeOfListing][i]._id.toString() };
+    let messageData = { id: result[typeOfListing][startingIndex]._id.toString() };
     messageData.data = {
       text: message.text,
       subredditName: message.subredditName,
@@ -69,11 +85,15 @@ export async function userMessageListing(
 
   let after = "",
     before = "";
-  if (result[typeOfListing].length) {
-    after =
-      result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
-    before = result[typeOfListing][0]._id.toString();
-  }
+    if (result[typeOfListing].length) {
+      if (listingParams.before){
+        after = result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
+        before = result[typeOfListing][result[typeOfListing].length - limit]._id.toString();
+      } else {
+      after = result[typeOfListing][limit - 1]._id.toString();
+      before = result[typeOfListing][0]._id.toString();
+      }
+    }
   return {
     statusCode: 200,
     data: {
@@ -93,23 +113,38 @@ export async function userMentionsListing(user, typeOfListing, listingParams) {
     .populate({
       path: typeOfListing,
       match: listingResult.find,
-      limit: listingResult.limit,
       options: {
         sort: listingResult.sort,
       },
     });
-  // CHILDREN THAT WE WILL CONTAIN THE DESIRED DATA
-  let children = [];
-  for (const i in result[typeOfListing]) {
+    let limit=listingResult.limit;
+    if (result[typeOfListing].length < limit) {
+      limit = result[typeOfListing].length;
+    }
+    //INITIALLY WE WILL START FROM 0 UNTIL THE LIMIT
+    let startingIndex = 0,
+      finishIndex = limit;
+    //IN CASE OF BEFORE THEN WE WILL START FROM BEFORE INDEX-LIMIT TO THE BEFORE INDEX
+    if (listingParams.before) {
+      startingIndex = result[typeOfListing].length - limit;
+      console.log(result[typeOfListing].length,limit);
+      finishIndex = result[typeOfListing].length;
+    }
+    if (startingIndex < 0) {
+      startingIndex = 0;
+    }
+    //OUR CHILDREN ARRAY THAT WE WILL SEND AS RESPONSE
+    const children = [];
+    for (startingIndex; startingIndex < finishIndex; startingIndex++) {
     // lOOPING OVER EACH MENTION OF THAT THE USER HAD RECEIVED
-    const mention = result[typeOfListing][i];
+    const mention = result[typeOfListing][startingIndex];
     // AS THIS MENTION IS RETURNED THEN IT SHOULD BE MARKED AS READ
     mention.isRead = true;
     await mention.save();
     const post = await searchForPost(mention.postId);
     const comment = await searchForComment(mention.commentId);
     // GETTING THE DATA THAT WE NEED TO RETURN TO THE USERS , FIRST WE WILL ADD THE ID OF EACH MENTION
-    let mentionData = { id: result[typeOfListing][i]._id.toString() };
+    let mentionData = { id: result[typeOfListing][startingIndex]._id.toString() };
     // THEN WE WILL ADD DATA NEEDED TO THE MENTION
     mentionData.data = {
       text: comment.content,
@@ -127,11 +162,15 @@ export async function userMentionsListing(user, typeOfListing, listingParams) {
 
   let after = "",
     before = "";
-  if (result[typeOfListing].length) {
-    after =
-      result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
-    before = result[typeOfListing][0]._id.toString();
-  }
+    if (result[typeOfListing].length) {
+      if (listingParams.before){
+        after = result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
+        before = result[typeOfListing][result[typeOfListing].length - limit]._id.toString();
+      } else {
+      after = result[typeOfListing][limit - 1]._id.toString();
+      before = result[typeOfListing][0]._id.toString();
+      }
+    }
   return {
     statusCode: 200,
     data: {
@@ -175,16 +214,30 @@ export async function userConversationListing(
     .populate({
       path: typeOfListing,
       match: listingResult.query,
-      limit: listingResult.limit,
       options: {
         sort: listingResult.sort,
       },
     });
-  // CHILDREN THAT WE WILL CONTAIN THE DESIRED DATA
-  let children = [];
-  for (const i in result[typeOfListing]) {
-    // lOOPING OVER EACH MENTION OF THAT THE USER HAD RECEIVED
-    const conversation = result[typeOfListing][i];
+    let limit=listingResult.limit;
+    if (result[typeOfListing].length < limit) {
+      limit = result[typeOfListing].length;
+    }
+    //INITIALLY WE WILL START FROM 0 UNTIL THE LIMIT
+    let startingIndex = 0,
+      finishIndex = limit;
+    //IN CASE OF BEFORE THEN WE WILL START FROM BEFORE INDEX-LIMIT TO THE BEFORE INDEX
+    if (listingParams.before) {
+      startingIndex = result[typeOfListing].length - limit;
+      console.log(result[typeOfListing].length,limit);
+      finishIndex = result[typeOfListing].length;
+    }
+    if (startingIndex < 0) {
+      startingIndex = 0;
+    }
+    //OUR CHILDREN ARRAY THAT WE WILL SEND AS RESPONSE
+    const children = [];
+    for (startingIndex; startingIndex < finishIndex; startingIndex++) {
+    const conversation = result[typeOfListing][startingIndex];
     const messages = [];
     for (const smallMessage of conversation.messages) {
       const message = await Message.findById(smallMessage);
@@ -203,7 +256,7 @@ export async function userConversationListing(
     }
     messages.sort(compareMsgs);
     // GETTING THE DATA THAT WE NEED TO RETURN TO THE USERS , FIRST WE WILL ADD THE ID OF EACH MENTION
-    let ConversationData = { id: result[typeOfListing][i]._id.toString() };
+    let ConversationData = { id: result[typeOfListing][startingIndex]._id.toString() };
     // THEN WE WILL ADD DATA NEEDED TO THE MENTION
     let subjectTitle, isUser;
     if (user.username === conversation.firstUsername) {
@@ -224,9 +277,13 @@ export async function userConversationListing(
   let after = "",
     before = "";
   if (result[typeOfListing].length) {
-    after =
-      result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
+    if (listingParams.before){
+      after = result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
+      before = result[typeOfListing][result[typeOfListing].length - limit]._id.toString();
+    } else {
+    after = result[typeOfListing][limit - 1]._id.toString();
     before = result[typeOfListing][0]._id.toString();
+    }
   }
   return {
     statusCode: 200,

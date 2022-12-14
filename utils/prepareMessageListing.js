@@ -184,10 +184,20 @@ export async function conversationListing(listingParams) {
   //IN CASE THERE IS BEFORE AND THERE IS NO AFTER OR THERE IS BEFORE AND AFTER THEN I WILL TAKE BEFORE
   if (listingParams.before) {
     splitterConversation = await Conversation.findById(listingParams.before);
+    if (!splitterConversation){
+let error = new Error("Invalid before Id");
+error.statusCode=400;
+throw error;
+    }
     result.query.latestDate = { $gt: splitterConversation.latestDate };
     //IF THERE IS NO BEFORE BUT THERE IS AN AFTER
   } else if (!listingParams.before && listingParams.after) {
     splitterConversation = await Conversation.findById(listingParams.after);
+    if (!splitterConversation){
+      let error = new Error("Invalid after Id");
+      error.statusCode=400;
+      throw error;
+    }
     result.query.latestDate = { $lt: splitterConversation.latestDate };
   }
   return result;
