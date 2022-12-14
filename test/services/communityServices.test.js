@@ -168,7 +168,7 @@ describe("Testing community service functions", () => {
       await searchForSubreddit("DeletedSubreddit", "Mahmoud");
     } catch (error) {
       expect(error.statusCode).toEqual(400);
-      expect(error.message).toEqual("This subreddit is deleted");
+      expect(error.message).toEqual("This subreddit isn't found");
     }
   });
 
@@ -197,7 +197,7 @@ describe("Testing community service functions", () => {
       await searchForSubreddit("DeletedSubreddit");
     } catch (error) {
       expect(error.statusCode).toEqual(400);
-      expect(error.message).toEqual("This subreddit is deleted");
+      expect(error.message).toEqual("This subreddit isn't found");
     }
   });
 
@@ -228,7 +228,7 @@ describe("Testing community service functions", () => {
       await searchForSubredditById(subreddit.id);
     } catch (error) {
       expect(error.statusCode).toEqual(400);
-      expect(error.message).toEqual("This subreddit is deleted");
+      expect(error.message).toEqual("This subreddit isn't found");
     }
   });
   it("should have  addUserToWaitingList function", () => {
@@ -294,7 +294,7 @@ describe("Testing community service functions", () => {
       await addToDescription("DeletedSubreddit", "Good Description");
     } catch (error) {
       expect(error.statusCode).toEqual(400);
-      expect(error.message).toEqual("This subreddit is deleted");
+      expect(error.message).toEqual("This subreddit isn't found");
     }
   });
 
@@ -322,7 +322,7 @@ describe("Testing community service functions", () => {
       await addToMainTopic("DeletedSubreddit", "Sports");
     } catch (error) {
       expect(error.statusCode).toEqual(400);
-      expect(error.message).toEqual("This subreddit is deleted");
+      expect(error.message).toEqual("This subreddit isn't found");
     }
   });
 
@@ -362,7 +362,7 @@ describe("Testing community service functions", () => {
       );
     } catch (error) {
       expect(error.statusCode).toEqual(400);
-      expect(error.message).toEqual("This subreddit is deleted");
+      expect(error.message).toEqual("This subreddit isn't found");
     }
   });
 
