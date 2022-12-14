@@ -112,11 +112,12 @@ export async function userMentionsListing(user, typeOfListing, listingParams) {
     .select(typeOfListing)
     .populate({
       path: typeOfListing,
-      match: listingResult.find,
+      match: listingResult.query,
       options: {
         sort: listingResult.sort,
       },
     });
+    console.log(result);
     let limit=listingResult.limit;
     if (result[typeOfListing].length < limit) {
       limit = result[typeOfListing].length;

@@ -160,8 +160,32 @@ export async function messageListing(listingParams) {
  */
 export async function mentionListing(listingParams) {
   let result = {};
-  listingParams = await prepareListingMentions(listingParams);
-  result = setResult(listingParams);
+  result.query = {};
+  //PREPARING LIMIT OF NUMBER OF CONVERSATIONS
+  result.limit = prepareLimit(listingParams.limit);
+  //PREPARING KIND OF SORTING THE CONVERSATION
+  result.sort = { createdAt: -1 };
+  //PREPARING THE SPLITTER WERE WE WILL STOP TO OR START FROM
+  let splitterMention;
+  //IN CASE THERE IS BEFORE AND THERE IS NO AFTER OR THERE IS BEFORE AND AFTER THEN I WILL TAKE BEFORE
+  if (listingParams.before) {
+    splitterMention = await Mention.findById(listingParams.before);
+    if (!splitterMention){
+let error = new Error("Invalid before Id");
+error.statusCode=400;
+throw error;
+    }
+    result.query.createdAt = { $gt: splitterMention.createdAt };
+    //IF THERE IS NO BEFORE BUT THERE IS AN AFTER
+  } else if (!listingParams.before && listingParams.after) {
+    splitterMention = await Mention.findById(listingParams.after);
+    if (!splitterMention){
+      let error = new Error("Invalid after Id");
+      error.statusCode=400;
+      throw error;
+    }
+    result.query.createdAt = { $lt: splitterMention.createdAt };
+  }
   return result;
 }
 
