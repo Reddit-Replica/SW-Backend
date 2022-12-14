@@ -320,7 +320,7 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
 
   for (const i in result["subredditPosts"]) {
     const post = result["subredditPosts"][i];
-    const postId = post.toString();
+    const postId = post.id.toString();
     let vote = 0,
       saved = false,
       hidden = false,
