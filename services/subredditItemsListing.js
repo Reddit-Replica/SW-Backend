@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import Flair from "../models/Flair.js";
 import { commentListing } from "../utils/prepareCommentListing.js";
 import { postListing } from "../utils/preparePostListing.js";
+import mongoose from "mongoose";
 
 // eslint-disable-next-line max-statements
 export async function listingSubredditPosts(
@@ -221,7 +222,7 @@ export async function listingSubredditComments(
  * This function checks for the given flair Id if it exists and whether
  * it belongs to the given subreddit or not.
  *
- * @param {string} subreddit Subreddit Name
+ * @param {object} subreddit Subreddit Object
  * @param {ObjectId} flairId Flair ID
  * @returns {void}
  */
@@ -233,13 +234,14 @@ export async function checkSubredditFlair(subreddit, flairId) {
       error.statusCode = 400;
       throw error;
     }
-    const flair = await Flair.findById(flairId)?.populate("subreddit");
+    const flair = await Flair.findById(flairId);
     if (!flair || flair.deletedAt) {
       const error = new Error("Flair not found or may be deleted");
       error.statusCode = 404;
       throw error;
     }
-    if (flair.subreddit.title !== subreddit) {
+    const flairSubreddit = await Subreddit.findById(flair.subreddit);
+    if (flairSubreddit.title !== subreddit) {
       const error = new Error("Flair doesn't belong to this subreddit");
       error.statusCode = 400;
       throw error;
@@ -262,11 +264,19 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     };
   }
   listingResult.find["subredditName"] = subredditName;
+  console.log(flair);
+  if (flair) {
+    //listingResult.find["flair.toString()"] = flair.id.toString();
+  }
   const result = await Subreddit.findOne({ title: subredditName })
     .select("subredditPosts")
     .populate({
       path: "subredditPosts",
       match: listingResult.find,
+      populate: {
+        path: "flair",
+        model: "Flair",
+      },
       limit: listingResult.limit,
       options: {
         sort: listingResult.sort,

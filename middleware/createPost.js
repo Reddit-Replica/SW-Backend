@@ -8,6 +8,7 @@ import {
   checkIfBanned,
   checkIfMuted,
 } from "../services/subredditActionsServices.js";
+import mongoose from "mongoose";
 
 /**
  * Middleware used to check the post is being submitted in a subreddit
