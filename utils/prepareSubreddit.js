@@ -36,7 +36,7 @@ export async function subredditListing(
   return result;
 }
 
-export async function extraPostsListing(before, after, limit, type) {
+export async function extraPostsListing(before, after, limit, type,time) {
   const result = {};
   let splitterParam;
   if (type === "hot") {
@@ -68,5 +68,28 @@ export async function extraPostsListing(before, after, limit, type) {
     splitterPost = await Post.find(result.query).limit(1).sort(result.sort);
     result.query[splitterParam] = { $lte: splitterPost[0][splitterParam] };
   }
+  if (type==="top"){
+    let filteringDate=new Date();
+    let changed=false;
+    if (time==="year"){
+      filteringDate.setFullYear(filteringDate.getFullYear()-1);
+      changed=true;
+    } else if (time==="month"){
+      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth()-1);
+      changed=true;
+    } else if (time==="week"){
+      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth(),filteringDate.getDate()-7);
+      changed=true;
+    }  else if (time==="day"){
+      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth(),filteringDate.getDate()-1);
+      changed=true;
+    } else if (time==="hour"){
+      filteringDate.setHours(filteringDate.getHours()-1);
+      changed=true;
+    }
+    if (changed){
+    result.query["createdAt"]={ $gte:filteringDate };
+  }
+}
   return result;
 }

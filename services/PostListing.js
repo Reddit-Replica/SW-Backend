@@ -156,18 +156,44 @@ export async function homePostsListing(
     }
     return false;
   });
+
+  if (typeOfSorting==="top"){
+    let filteringDate=new Date();
+    let changed=false;
+    if (listingParams.time==="year"){
+      filteringDate.setFullYear(filteringDate.getFullYear()-1);
+      changed=true;
+    } else if (listingParams.time==="month"){
+      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth()-1);
+      changed=true;
+    } else if (listingParams.time==="week"){
+      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth(),filteringDate.getDate()-7);
+      changed=true;
+    }  else if (listingParams.time==="day"){
+      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth(),filteringDate.getDate()-1);
+      changed=true;
+    } else if (listingParams.time==="hour"){
+      filteringDate.setHours(filteringDate.getHours()-1);
+      changed=true;
+    }
+    if (changed){
+    posts = posts.filter(function (post) {
+      return post.createdAt >= filteringDate ;
+    });
+  }
+}
   //THEN WE WILL GET OUR LIMIT
   let limit = await prepareLimit(listingParams.limit);
   const result = await extraPostsListing(
     listingParams.before,
     listingParams.after,
     listingParams.limit,
-    typeOfSorting
+    typeOfSorting,
+    listingParams.time,
   );
   //WE WILL GET EXTRA POSTS TO FILL THE GAP THAT IS BETWEEN THE FOLLOWED ONES AND THE LIMIT
   const extraPosts = await Post.find(result.query)
-    .limit(limit)
-    .sort(result.sort);
+    .limit(limit);
   //LOOPING OVER THE EXTRA POSTS TO ADD THE NEEDED NUMBER OF THEM TO THE POSTS THAT WE WILL RETURN
   let ctr = 0;
   while (posts.length < limit) {
@@ -200,31 +226,6 @@ export async function homePostsListing(
     posts.sort(compareTrending);
   }
 
-  if (typeOfSorting==="top"){
-    const filteringDate=new Date();
-    if (time==="year"){
-      filteringDate.setFullYear(filteringDate.getFullYear()-1);
-    } else if (time==="month"){
-      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth()-1);
-    } else if (time==="week"){
-      if (filteringDate.getDay()>7) {
-filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth,filteringDate.getDay()-1);
-}
-    }  else if (time==="day"){
-      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth,filteringDate.getDay()-1);
-    } else if (time==="hour"){
-      filteringDate.setHours(filteringDate.getHours()-1);
-    }
-
-
-
-
-
-    posts = posts.filter(function (post) {
-      return post.createdAt >= filteringDate ;
-    });
-
-  }
 
   if (posts.length < limit) {
     limit = posts.length;
