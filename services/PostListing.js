@@ -156,18 +156,44 @@ export async function homePostsListing(
     }
     return false;
   });
+
+  if (typeOfSorting==="top"){
+    let filteringDate=new Date();
+    let changed=false;
+    if (listingParams.time==="year"){
+      filteringDate.setFullYear(filteringDate.getFullYear()-1);
+      changed=true;
+    } else if (listingParams.time==="month"){
+      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth()-1);
+      changed=true;
+    } else if (listingParams.time==="week"){
+      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth(),filteringDate.getDate()-7);
+      changed=true;
+    }  else if (listingParams.time==="day"){
+      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth(),filteringDate.getDate()-1);
+      changed=true;
+    } else if (listingParams.time==="hour"){
+      filteringDate.setHours(filteringDate.getHours()-1);
+      changed=true;
+    }
+    if (changed){
+    posts = posts.filter(function (post) {
+      return post.createdAt >= filteringDate ;
+    });
+  }
+}
   //THEN WE WILL GET OUR LIMIT
   let limit = await prepareLimit(listingParams.limit);
   const result = await extraPostsListing(
     listingParams.before,
     listingParams.after,
     listingParams.limit,
-    typeOfSorting
+    typeOfSorting,
+    listingParams.time,
   );
   //WE WILL GET EXTRA POSTS TO FILL THE GAP THAT IS BETWEEN THE FOLLOWED ONES AND THE LIMIT
   const extraPosts = await Post.find(result.query)
-    .limit(limit)
-    .sort(result.sort);
+    .limit(limit);
   //LOOPING OVER THE EXTRA POSTS TO ADD THE NEEDED NUMBER OF THEM TO THE POSTS THAT WE WILL RETURN
   let ctr = 0;
   while (posts.length < limit) {
@@ -200,6 +226,7 @@ export async function homePostsListing(
     posts.sort(compareTrending);
   }
 
+
   if (posts.length < limit) {
     limit = posts.length;
   }
@@ -219,11 +246,60 @@ export async function homePostsListing(
   for (startingIndex; startingIndex < finishIndex; startingIndex++) {
     //EACH ELEMENT THAT IS RETURNED MUST BE MARKED AS READ
     //NEED TO BE EDITED
-    posts[startingIndex].numberOfViews++;
-    await posts[startingIndex].save();
-    //GETTING THE ID OF THE ELEMENT THAT WILL BE SENT
-    const postData = { id: posts[startingIndex].id };
-    postData.data = posts[startingIndex];
+    const post = posts[startingIndex];
+    const postId = post.id.toString();
+    let vote = 0,
+      saved = false,
+      hidden = false,
+      spammed = false,
+      inYourSubreddit = false;
+    if (isLoggedIn) {
+      if (user.savedPosts?.find((id) => id.toString() === postId)) {
+        saved = true;
+      }
+      if (user.hiddenPosts?.find((id) => id.toString() === postId)) {
+        hidden = true;
+      }
+      if (user.upvotedPosts?.find((id) => id.toString() === postId)) {
+        vote = 1;
+      }
+      if (user.downvotedPosts?.find((id) => id.toString() === postId)) {
+        vote = -1;
+      }
+      if (user.moderatedSubreddits?.find((sr) => sr.name === post.subredditName)) {
+        inYourSubreddit = true;
+      }
+      if (user.spammedPosts?.find((id) => id.toString() === postId)) {
+        spammed = true;
+      }
+    }
+    let postData = { id: postId };
+    postData.data = {
+      subreddit: post.subredditName,
+      postedBy: post.ownerUsername,
+      title: post.title,
+      link: post.link,
+      content: post.content,
+      images: post.images,
+      video: post.video,
+      nsfw: post.nsfw,
+      spoiler: post.spoiler,
+      votes: post.numberOfVotes,
+      comments: post.numberOfComments,
+      flair: post.flair,
+      postedAt: post.createdAt,
+      editedAt: post.editedAt,
+      sharePostId: post.sharePostId,
+      sendReplies: post.sendReplies,
+      saved: saved,
+      hidden: hidden,
+      votingType: vote,
+      moderation: post.moderation,
+      markedSpam: post.markedSpam,
+      inYourSubreddit: inYourSubreddit,
+      spammed: spammed,
+    };
+
     children.push(postData);
   }
   let after = "",
@@ -246,25 +322,4 @@ export async function homePostsListing(
       children: children,
     },
   };
-}
-
-
-
-export async function subredditPostListing(
-  user,
-  listingParams,
-  isLoggedIn
-) {
-  const listingResult = await postListing(listingParams);
-  // GETTING THE DESIRED FIELD THAT WE WOULD GET DATA FROM
-  const result = await User.findOne({ username: user.username })
-    .select("posts")
-    .populate({
-      path: "posts",
-      match: listingResult.find,
-      limit: listingResult.limit,
-      options: {
-        sort: listingResult.sort,
-      },
-    });
 }
