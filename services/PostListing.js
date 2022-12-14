@@ -200,6 +200,32 @@ export async function homePostsListing(
     posts.sort(compareTrending);
   }
 
+  if (typeOfSorting==="top"){
+    const filteringDate=new Date();
+    if (time==="year"){
+      filteringDate.setFullYear(filteringDate.getFullYear()-1);
+    } else if (time==="month"){
+      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth()-1);
+    } else if (time==="week"){
+      if (filteringDate.getDay()>7) {
+filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth,filteringDate.getDay()-1);
+}
+    }  else if (time==="day"){
+      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth,filteringDate.getDay()-1);
+    } else if (time==="hour"){
+      filteringDate.setHours(filteringDate.getHours()-1);
+    }
+
+
+
+
+
+    posts = posts.filter(function (post) {
+      return post.createdAt >= filteringDate ;
+    });
+
+  }
+
   if (posts.length < limit) {
     limit = posts.length;
   }
@@ -219,11 +245,60 @@ export async function homePostsListing(
   for (startingIndex; startingIndex < finishIndex; startingIndex++) {
     //EACH ELEMENT THAT IS RETURNED MUST BE MARKED AS READ
     //NEED TO BE EDITED
-    posts[startingIndex].numberOfViews++;
-    await posts[startingIndex].save();
-    //GETTING THE ID OF THE ELEMENT THAT WILL BE SENT
-    const postData = { id: posts[startingIndex].id };
-    postData.data = posts[startingIndex];
+    const post = posts[startingIndex];
+    const postId = post.id.toString();
+    let vote = 0,
+      saved = false,
+      hidden = false,
+      spammed = false,
+      inYourSubreddit = false;
+    if (isLoggedIn) {
+      if (user.savedPosts?.find((id) => id.toString() === postId)) {
+        saved = true;
+      }
+      if (user.hiddenPosts?.find((id) => id.toString() === postId)) {
+        hidden = true;
+      }
+      if (user.upvotedPosts?.find((id) => id.toString() === postId)) {
+        vote = 1;
+      }
+      if (user.downvotedPosts?.find((id) => id.toString() === postId)) {
+        vote = -1;
+      }
+      if (user.moderatedSubreddits?.find((sr) => sr.name === post.subredditName)) {
+        inYourSubreddit = true;
+      }
+      if (user.spammedPosts?.find((id) => id.toString() === postId)) {
+        spammed = true;
+      }
+    }
+    let postData = { id: postId };
+    postData.data = {
+      subreddit: post.subredditName,
+      postedBy: post.ownerUsername,
+      title: post.title,
+      link: post.link,
+      content: post.content,
+      images: post.images,
+      video: post.video,
+      nsfw: post.nsfw,
+      spoiler: post.spoiler,
+      votes: post.numberOfVotes,
+      comments: post.numberOfComments,
+      flair: post.flair,
+      postedAt: post.createdAt,
+      editedAt: post.editedAt,
+      sharePostId: post.sharePostId,
+      sendReplies: post.sendReplies,
+      saved: saved,
+      hidden: hidden,
+      votingType: vote,
+      moderation: post.moderation,
+      markedSpam: post.markedSpam,
+      inYourSubreddit: inYourSubreddit,
+      spammed: spammed,
+    };
+
     children.push(postData);
   }
   let after = "",
