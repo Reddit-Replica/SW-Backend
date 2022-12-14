@@ -5,9 +5,7 @@ import {
   checkSameUserEditing,
   editPostService,
 } from "../services/postServices.js";
-import {
-  homePostsListing
-} from "../services/PostListing.js";
+import { homePostsListing } from "../services/PostListing.js";
 import { searchForUserService } from "../services/userServices.js";
 const postIdValidator = [
   query("id").not().isEmpty().withMessage("Id can't be empty"),
@@ -74,10 +72,10 @@ const getPinnedPosts = async (req, res) => {
       if (!loggedInUser || loggedInUser.deletedAt) {
         return res.status(400).json({ error: "User not found/deleted" });
       }
-      if (!req.body.username) {
+      if (!req.query.username) {
         user = loggedInUser;
       } else {
-        user = await User.findOne({ username: req.body.username })?.populate(
+        user = await User.findOne({ username: req.query.username })?.populate(
           "pinnedPosts"
         );
         // eslint-disable-next-line max-depth
@@ -85,10 +83,10 @@ const getPinnedPosts = async (req, res) => {
           return res.status(400).json({ error: "User not found/deleted" });
         }
       }
-    } else if (!req.loggedIn && !req.body.username) {
+    } else if (!req.loggedIn && !req.query.username) {
       return res.status(400).json({ error: "Username is needed" });
     } else {
-      user = await User.findOne({ username: req.body.username })?.populate(
+      user = await User.findOne({ username: req.query.username })?.populate(
         "pinnedPosts"
       );
       if (!user || user.deletedAt) {
@@ -255,10 +253,10 @@ const getTopPosts = async (req, res) => {
     if (req.loggedIn) {
       user = await searchForUserService(req.payload.username);
     }
-    const { before, after, limit,time } = req.query;
+    const { before, after, limit, time } = req.query;
     const result = await homePostsListing(
       user,
-      { before, after, limit,time },
+      { before, after, limit, time },
       "top",
       req.loggedIn
     );
