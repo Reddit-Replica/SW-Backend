@@ -1,5 +1,20 @@
 import { prepareLimit } from "../utils/prepareLimit.js";
 import { validateId } from "./subredditFlairs.js";
+import { checkIfBanned } from "./subredditActionsServices.js";
+
+/**
+ * This function is used to filter the subreddit's list of banned users
+ * by removing from it users with finished banned periods
+ * @param {Subreddit} subreddit The subreddit object
+ * @returns {void}
+ */
+export async function checkBanPeriod(subreddit) {
+  const bannedUsers = subreddit.bannedUsers;
+  for (const user of bannedUsers) {
+    await checkIfBanned(user.userId, subreddit);
+  }
+}
+
 /**
  * A Service function used to get the subreddit banned users for the controller
  * @param {Number} limitReq the limit identified in the request
@@ -16,6 +31,7 @@ export async function listingBannedUsers(
 ) {
   let preparedResponse;
   let limit = prepareLimit(limitReq);
+  await checkBanPeriod(subreddit);
   await subreddit.populate("bannedUsers.userId");
   if (!beforeReq && !afterReq) {
     preparedResponse = getBannedUsersFirstTime(subreddit, limit);
