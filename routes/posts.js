@@ -541,8 +541,17 @@ postRouter.post(
  * @swagger
  * /pinned-posts:
  *  get:
- *      summary: Returns all posts pinned by the user
+ *      summary: Returns all posts pinned by the user (Token is optional)
  *      tags: [Posts]
+ *      requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Username of the user who will have the pinned posts
  *      responses:
  *          200:
  *              description: Pinned posts returned successfully
@@ -641,6 +650,6 @@ postRouter.post(
  *      security:
  *          - bearerAuth: []
  */
-postRouter.get("/pinned-posts", verifyAuthToken, postController.getPinnedPosts);
+postRouter.get("/pinned-posts", optionalToken, postController.getPinnedPosts);
 
 export default postRouter;

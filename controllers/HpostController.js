@@ -5,7 +5,10 @@ import {
   checkSameUserEditing,
   editPostService,
 } from "../services/postServices.js";
-import { homePostsListing,subredditPostListing } from "../services/PostListing.js";
+import {
+  homePostsListing,
+  subredditPostListing,
+} from "../services/PostListing.js";
 import { searchForUserService } from "../services/userServices.js";
 const postIdValidator = [
   query("id").not().isEmpty().withMessage("Id can't be empty"),
@@ -62,21 +65,51 @@ const pinPost = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
 const getPinnedPosts = async (req, res) => {
-  const userId = req.payload.userId;
+  const userId = req.payload?.userId;
   try {
-    const user = await User.findById(userId).populate("pinnedPosts");
+    let loggedInUser, user;
+    if (req.loggedIn) {
+      loggedInUser = await User.findById(userId)?.populate("pinnedPosts");
+      if (!loggedInUser || loggedInUser.deletedAt) {
+        return res.status(400).json({ error: "User not found/deleted" });
+      }
+      if (!req.body.username) {
+        user = loggedInUser;
+      } else {
+        user = await User.findOne({ username: req.body.username })?.populate(
+          "pinnedPosts"
+        );
+        // eslint-disable-next-line max-depth
+        if (!user || user.deletedAt) {
+          return res.status(400).json({ error: "User not found/deleted" });
+        }
+      }
+    } else if (!req.loggedIn && !req.body.username) {
+      return res.status(400).json({ error: "Username is needed" });
+    } else {
+      user = await User.findOne({ username: req.body.username })?.populate(
+        "pinnedPosts"
+      );
+      if (!user || user.deletedAt) {
+        return res.status(400).json({ error: "User not found/deleted" });
+      }
+      loggedInUser = user;
+    }
     user.pinnedPosts = user.pinnedPosts.filter((post) => !post.deletedAt);
     const pinnedPosts = user.pinnedPosts.map((post) => {
       let vote = 0;
       if (
-        user.upvotedPosts.find(
+        req.loggedIn &&
+        loggedInUser.upvotedPosts.find(
           (postId) => postId.toString() === post.id.toString()
         )
       ) {
         vote = 1;
       } else if (
-        user.downvotedPosts.find(
+        req.loggedIn &&
+        loggedInUser.downvotedPosts.find(
           (postId) => postId.toString() === post.id.toString()
         )
       ) {
@@ -117,7 +150,7 @@ const postDetails = async (req, res) => {
 const postInsights = async (req, res) => {
   try {
     return res.status(200).json({
-      totalViews: req.post.insights.totalViews,
+      totalViews: req.post.numberOfViews,
       upvoteRate: req.post.insights.upvoteRate,
       communityKarma: req.post.insights.communityKarma,
       totalShares: req.post.insights.totalShares,
@@ -272,10 +305,10 @@ const getSubredditNewPosts = async (req, res) => {
       user = await searchForUserService(req.payload.username);
     }
     const { before, after, limit } = req.query;
-    const sort="new";
+    const sort = "new";
     const result = await subredditPostListing(
       user,
-      { before, after, limit,sort },
+      { before, after, limit, sort },
       req.loggedIn
     );
     res.status(result.statusCode).json(result.data);
@@ -296,10 +329,10 @@ const getSubredditHotPosts = async (req, res) => {
       user = await searchForUserService(req.payload.username);
     }
     const { before, after, limit } = req.query;
-    const sort="hot";
+    const sort = "hot";
     const result = await subredditPostListing(
       user,
-      { before, after, limit,sort },
+      { before, after, limit, sort },
       req.loggedIn
     );
     res.status(result.statusCode).json(result.data);
@@ -320,10 +353,10 @@ const getSubredditBestPosts = async (req, res) => {
       user = await searchForUserService(req.payload.username);
     }
     const { before, after, limit } = req.query;
-    const sort="best";
+    const sort = "best";
     const result = await subredditPostListing(
       user,
-      { before, after, limit,sort },
+      { before, after, limit, sort },
       "best",
       req.loggedIn
     );
@@ -345,10 +378,10 @@ const getSubredditTopPosts = async (req, res) => {
       user = await searchForUserService(req.payload.username);
     }
     const { before, after, limit } = req.query;
-    const sort="top";
+    const sort = "top";
     const result = await subredditPostListing(
       user,
-      { before, after, limit,sort },
+      { before, after, limit, sort },
       req.loggedIn
     );
     res.status(result.statusCode).json(result.data);
