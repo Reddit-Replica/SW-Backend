@@ -1,6 +1,7 @@
 import express from "express";
 import searchController from "../controllers/searchController.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
+import { optionalToken } from "./../middleware/optionalToken.js";
 
 // eslint-disable-next-line new-cap
 const searchRouter = express.Router();
@@ -93,7 +94,13 @@ const searchRouter = express.Router();
  *                           children:
  *                              type: array
  *                              items:
- *                                  $ref: '#/components/schemas/Post'
+ *                                 type: object
+ *                                 properties:
+ *                                  id:
+ *                                      type: string
+ *                                      description: List item ID
+ *                                  data:
+ *                                      $ref: '#/components/schemas/Post'
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -196,8 +203,14 @@ const searchRouter = express.Router();
  *                           children:
  *                              type: array
  *                              items:
- *                                  type: object
- *                                  properties:
+ *                                type: object
+ *                                properties:
+ *                                  id:
+ *                                      type: string
+ *                                      description: List item ID
+ *                                  data:
+ *                                    type: object
+ *                                    properties:
  *                                      post:
  *                                          $ref: '#/components/schemas/Post'
  *                                      comment:
@@ -243,7 +256,7 @@ const searchRouter = express.Router();
  * @swagger
  * /search?type=subreddit:
  *  get:
- *      summary: General search for a subreddit
+ *      summary: General search for a subreddit (An OPTIONAL TOKEN is sent in case there is a logged in user & this is for all search endpoints)
  *      tags: [Search]
  *      parameters:
  *          - in: query
@@ -332,8 +345,14 @@ const searchRouter = express.Router();
  *                           children:
  *                              type: array
  *                              items:
- *                                  type: object
- *                                  properties:
+ *                                type: object
+ *                                properties:
+ *                                  id:
+ *                                     type: string
+ *                                     description: List item ID
+ *                                  data:
+ *                                    type: object
+ *                                    properties:
  *                                      id:
  *                                          type: string
  *                                          description: subreddit Id
@@ -343,9 +362,18 @@ const searchRouter = express.Router();
  *                                      numberOfMembers:
  *                                          type: number
  *                                          description: Total number of members in the subreddit
+ *                                      nsfw:
+ *                                          type: boolean
+ *                                          description: If the subreddit is nsfw or not
+ *                                      picture:
+ *                                          type: number
+ *                                          description: Subreddit displayed picture
  *                                      description:
  *                                          type: string
  *                                          description: Subreddit description
+ *                                      joined:
+ *                                          type: boolean
+ *                                          description: A flag to know if the user joined this subreddit
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -448,8 +476,14 @@ const searchRouter = express.Router();
  *                           children:
  *                              type: array
  *                              items:
- *                                  type: object
- *                                  properties:
+ *                                type: object
+ *                                properties:
+ *                                  id:
+ *                                      type: string
+ *                                      description: List item ID
+ *                                  data:
+ *                                    type: object
+ *                                    properties:
  *                                      id:
  *                                          type: string
  *                                          description: User ID
@@ -459,6 +493,16 @@ const searchRouter = express.Router();
  *                                      karma:
  *                                          type: number
  *                                          description: Karma of this account
+ *                                      nsfw:
+ *                                          type: boolean
+ *                                          description: if this user profile is nsfw
+ *                                      joinDate:
+ *                                          type: string
+ *                                          format: date-time
+ *                                          description: Join date of this user
+ *                                      following:
+ *                                          type: boolean
+ *                                          description: A flag to know if the logged in user follows this user
  *                                      avatar:
  *                                          type: string
  *                                          description: Avatar path of the user
@@ -478,6 +522,7 @@ const searchRouter = express.Router();
  */
 searchRouter.get(
   "/search",
+  optionalToken,
   searchController.searchValidator,
   validateRequestSchema,
   searchController.search
@@ -575,7 +620,13 @@ searchRouter.get(
  *                           children:
  *                              type: array
  *                              items:
- *                                  $ref: '#/components/schemas/Post'
+ *                                type: object
+ *                                properties:
+ *                                  id:
+ *                                     type: string
+ *                                     description: ID of list item
+ *                                  data:
+ *                                     $ref: '#/components/schemas/Post'
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -683,8 +734,14 @@ searchRouter.get(
  *                           children:
  *                              type: array
  *                              items:
- *                                  type: object
- *                                  properties:
+ *                                type: object
+ *                                properties:
+ *                                  id:
+ *                                      type: string
+ *                                      description: List item ID
+ *                                  data:
+ *                                    type: object
+ *                                    properties:
  *                                      post:
  *                                          $ref: '#/components/schemas/Post'
  *                                      comment:

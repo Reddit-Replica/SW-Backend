@@ -34,6 +34,7 @@ describe("Testing user profile listing services functions", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      numberOfVotes: 5,
       createdAt: Date.now(),
     });
     await post1.save();
@@ -44,6 +45,7 @@ describe("Testing user profile listing services functions", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      numberOfVotes: 3,
       createdAt: Date.now(),
     });
     await post2.save();
@@ -54,6 +56,7 @@ describe("Testing user profile listing services functions", () => {
       ownerId: user._id,
       subredditName: "subreddit",
       kind: "hybrid",
+      numberOfVotes: 1,
       createdAt: Date.now(),
     });
     await post3.save();

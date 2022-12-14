@@ -4,6 +4,11 @@ import User from "../models/User.js";
 import Post from "../models/Post.js";
 import Flair from "../models/Flair.js";
 import { deleteFile } from "../services/userSettings.js";
+import {
+  checkIfBanned,
+  checkIfMuted,
+} from "../services/subredditActionsServices.js";
+import mongoose from "mongoose";
 
 /**
  * Middleware used to check the post is being submitted in a subreddit
@@ -22,25 +27,76 @@ export async function checkPostSubreddit(req, res, next) {
   const userId = req.payload.userId;
   try {
     const user = await User.findById(userId);
+    if (!user || user.deletedAt) {
+      return res.status(404).json("User not found or deleted");
+    }
+    req.suggestedSort = "new";
     if (inSubreddit && inSubreddit !== "false") {
+      // Check Subreddit name
       if (!subreddit) {
         return res.status(400).json({
           error: "Subreddit can't be empty",
         });
       }
+      // Check if the subreddit exists
       const postSubreddit = await Subreddit.findOne({
         title: subreddit,
       });
-      if (!postSubreddit) {
-        return res.status(404).json("Subreddit not found");
+      if (!postSubreddit || postSubreddit.deletedAt) {
+        return res.status(404).json("Subreddit not found or deleted");
       }
+      // CHECK ABILITY TO POST
+      if (!user.joinedSubreddits.find((sr) => sr.name === subreddit)) {
+        return res.status(401).json("User is not a member of this subreddit");
+      }
+      if (postSubreddit.type !== "Public") {
+        // eslint-disable-next-line max-depth
+        if (
+          !postSubreddit.approvedUsers.find(
+            (approvedUser) =>
+              approvedUser.userID.toString() === userId.toString()
+          )
+        ) {
+          return res.status(401).json("User is not approved in this subreddit");
+        }
+      }
+      if (postSubreddit.type === "Restricted") {
+        // eslint-disable-next-line max-depth
+        if (
+          postSubreddit.subredditSettings.approvedUsersHaveTheAbilityTo ===
+          "Comment only"
+        ) {
+          return res
+            .status(401)
+            .json(
+              "Approved users don't have the ability to post in this subreddit"
+            );
+        }
+      }
+      // CHECK SPOILER
       if (
-        !user.joinedSubreddits.find((sr) => sr.name === subreddit) &&
-        !user.moderatedSubreddits.find((sr) => sr.name === subreddit)
+        req.body.spoiler === true &&
+        postSubreddit.subredditPostSettings.enableSpoiler === false
       ) {
-        return res
-          .status(401)
-          .json("User is not a member/mod of this subreddit");
+        return res.status(400).json({
+          error: "Spoiler can't be set in this subreddit",
+        });
+      }
+      // Prepare suggested sort
+      req.suggestedSort =
+        postSubreddit.subredditPostSettings.suggestedSort !== "none"
+          ? postSubreddit.subredditPostSettings.suggestedSort
+          : req.suggestedSort;
+      // Check banned & muted
+      if (checkIfBanned(userId, postSubreddit) === true) {
+        return res.status(400).json({
+          error: "User is banned from this subreddit",
+        });
+      }
+      if (checkIfMuted(userId, postSubreddit) === true) {
+        return res.status(400).json({
+          error: "User is muted from this subreddit",
+        });
       }
       req.subreddit = subreddit;
     }
@@ -74,7 +130,10 @@ export async function checkPostFlair(req, res, next) {
           error: "Invalid Flair id (should be in the correct format)",
         });
       }
-      const flair = await Flair.findById(flairId).populate("subreddit");
+      const flair = await Flair.findById(flairId)?.populate("subreddit");
+      if (!flair || flair.deletedAt) {
+        return res.status(404).json("Flair not found or deleted");
+      }
       if (flair.subreddit.title !== req.subreddit) {
         return res.status(400).json({
           error: "Flair doesn't belong to the post subreddit",
@@ -203,6 +262,9 @@ export async function sharePost(req, res, next) {
         });
       }
       const sharedPost = await Post.findById(sharePostId);
+      if (!sharedPost || sharedPost.deletedAt) {
+        return res.status(404).json("Shared post not found or deleted");
+      }
       sharedPost.insights.totalShares += 1;
       await sharedPost.save();
     }
@@ -254,6 +316,7 @@ export async function postSubmission(req, res, next) {
       flair: flairId,
       content: req.content,
       sendReplies: sendReplies,
+      suggestedSort: req.suggestedSort,
       sharePostId: sharePostId,
       scheduleDate: scheduleDate,
       scheduleTime: scheduleTime,

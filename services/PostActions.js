@@ -602,6 +602,11 @@ export async function upVoteAPost(post, user) {
     };
   }
   postWriter.karma = postWriter.upVotes - postWriter.downVotes;
+  post.numberOfVotes = post.numberOfUpvotes - post.numberOfDownvotes;
+  post.hotScore =
+    post.hotTimingScore + post.numberOfVotes + post.numberOfComments;
+  post.bestScore =
+    post.bestTimingScore + post.numberOfVotes + post.numberOfComments;
   await post.save();
   await user.save();
   await postWriter.save();
@@ -653,6 +658,11 @@ export async function downVoteAPost(post, user) {
     };
   }
   postWriter.karma = postWriter.upVotes - postWriter.downVotes;
+  post.numberOfVotes = post.numberOfUpvotes - post.numberOfDownvotes;
+  post.hotScore =
+    post.hotTimingScore + post.numberOfVotes + post.numberOfComments;
+  post.bestScore =
+    post.bestTimingScore + post.numberOfVotes + post.numberOfComments;
   await post.save();
   await user.save();
   await postWriter.save();
@@ -792,4 +802,50 @@ export async function downVoteAComment(comment, user) {
   await commentWriter.save();
 
   return result;
+}
+
+/**
+ * This function is used to set a suggested sort for the post
+ * @param {String} postId Id of the post that we will set the suggested sort for
+ * @param {Object} user the user object that will set the suggested sort for the post
+ * @param {String} sort the type of sort that will be set for the post
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function setSuggestedSort(postId, user, sort) {
+  const post = await searchForPost(postId);
+  const postOwner = post.ownerId.toString();
+  console.log(user.id, post.ownerId);
+  if (user.id !== postOwner) {
+    let error = new Error("You don't have the right to do this action");
+    error.statusCode = 401;
+    throw error;
+  }
+  post.suggestedSort = sort;
+  await post.save();
+  return {
+    statusCode: 200,
+    message: `post-suggested sort is ${sort} now`,
+  };
+}
+
+/**
+ * This function is used to clear the suggested sort for the post
+ * @param {String} postId Id of the post that we will clear the suggested sort for
+ * @param {Object} user the user object that will clear the suggested sort for the post
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function clearSuggestedSort(postId, user) {
+  const post = await searchForPost(postId);
+  const postOwner = post.ownerId.toString();
+  if (user.id !== postOwner) {
+    let error = new Error("You don't have the right to do this action");
+    error.statusCode = 401;
+    throw error;
+  }
+  post.suggestedSort = "best";
+  await post.save();
+  return {
+    statusCode: 200,
+    message: "post-suggested sort is best now",
+  };
 }

@@ -1,6 +1,8 @@
 import { prepareLimit } from "../utils/prepareLimit.js";
 import { validateId } from "./subredditFlairs.js";
+import { checkIfModerator } from "./subredditActionsServices.js";
 import User from "../models/User.js";
+
 /**
  * A Service function used to get the subreddit moderators for the controller
  * @param {Number} limitReq the limit identified in the request
@@ -657,4 +659,100 @@ function getSubredditMutedAfter(subreddit, limit, after) {
     response.before = subreddit.mutedUsers[neededIndex + 1].userID._id;
   }
   return response;
+}
+
+/**
+ * A Service function used to get the subreddit post settings
+ * @param {Subreddit} subreddit The subreddit object
+ * @returns {response} the prepared response for the controller
+ */
+export function getSubredditPostSettingsService(subreddit) {
+  return {
+    enableSpoiler: subreddit.subredditPostSettings.enableSpoiler,
+    suggestedSort: subreddit.subredditPostSettings.suggestedSort,
+    allowImagesInComment: subreddit.subredditPostSettings.allowImagesInComment,
+  };
+}
+
+/**
+ * A Service function used to set the subreddit post settings
+ * @param {Subreddit} subreddit The subreddit object
+ * @returns {void}
+ */
+export async function setSubredditPostSettingsService(
+  subreddit,
+  enableSpoiler,
+  suggestedSort,
+  allowImagesInComment
+) {
+  subreddit.subredditPostSettings.enableSpoiler = enableSpoiler;
+  subreddit.subredditPostSettings.suggestedSort = suggestedSort;
+  subreddit.subredditPostSettings.allowImagesInComment = allowImagesInComment;
+  await subreddit.save();
+}
+
+/**
+ * Function used to get the traffic stats of a certain sureddit, and also check that the user
+ * requesting is the owner of a moderator of this subreddit.
+ *
+ * @param {Object} user User object that who request to see the traffic
+ * @param {Object} subreddit Subreddit Object that we need to get its traffic stats
+ * @returns {Object} The response to that request containing [statusCode, data]
+ */
+export async function getTrafficService(user, subreddit) {
+  const mod = checkIfModerator(user._id, subreddit);
+  if (mod === -1) {
+    let error = new Error("Unauthorized access");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const day = new Date().setDate(new Date().getDate() - 1);
+  const week = new Date().setDate(new Date().getDate() - 7);
+  const month = new Date().setMonth(new Date().getMonth() - 1);
+
+  // get number of joined users last day, last week, and last month
+  let joinedLastDay = 0,
+    joinedLastWeek = 0,
+    joinedLastMonth = 0;
+
+  subreddit.joinedUsers.forEach((el) => {
+    if (el.joinDate > day) {
+      joinedLastDay++;
+    }
+    if (el.joinDate > week) {
+      joinedLastWeek++;
+    }
+    if (el.joinDate > month) {
+      joinedLastMonth++;
+    }
+  });
+
+  // get number of left users last day, last week, and last month
+  let leftLastDay = 0,
+    leftLastWeek = 0,
+    leftLastMonth = 0;
+
+  subreddit.leftUsers.forEach((el) => {
+    if (el.leaveDate > day) {
+      leftLastDay++;
+    }
+    if (el.leaveDate > week) {
+      leftLastWeek++;
+    }
+    if (el.leaveDate > month) {
+      leftLastMonth++;
+    }
+  });
+  return {
+    statusCode: 200,
+    data: {
+      numberOfJoinedLastDay: joinedLastDay,
+      numberOfJoinedLastWeek: joinedLastWeek,
+      numberOfJoinedLastMonth: joinedLastMonth,
+      numberOfLeftLastDay: leftLastDay,
+      numberOfLeftLastWeek: leftLastWeek,
+      numberOfLeftLastMonth: leftLastMonth,
+    },
+  };
 }

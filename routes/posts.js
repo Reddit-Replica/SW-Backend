@@ -141,7 +141,12 @@ postRouter.post(
  *                    description: id of a post
  *                  sort:
  *                    type: string
- *                    description: one of (top, new, random, best, hot)
+ *                    description: sort kind
+ *                    enum:
+ *                    - top
+ *                    - new
+ *                    - best
+ *                    - old
  *      responses:
  *          200:
  *              description: Suggested sort successfully set
@@ -163,7 +168,13 @@ postRouter.post(
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/set-suggested-sort");
+postRouter.post(
+  "/set-suggested-sort",
+  verifyAuthToken,
+  postActionsController.suggestedSortValidator,
+  validateRequestSchema,
+  postActionsController.setPostSuggestSort
+);
 
 /**
  * @swagger
@@ -202,7 +213,11 @@ postRouter.post("/set-suggested-sort");
  *      security:
  *       - bearerAuth: []
  */
-postRouter.post("/clear-suggested-sort");
+postRouter.post(
+  "/clear-suggested-sort",
+  verifyAuthToken,
+  postActionsController.clearPostSuggestSort
+);
 
 /**
  * @swagger
@@ -526,8 +541,17 @@ postRouter.post(
  * @swagger
  * /pinned-posts:
  *  get:
- *      summary: Returns all posts pinned by the user
+ *      summary: Returns all posts pinned by the user (Token is optional)
  *      tags: [Posts]
+ *      requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Username of the user who will have the pinned posts
  *      responses:
  *          200:
  *              description: Pinned posts returned successfully
@@ -626,48 +650,6 @@ postRouter.post(
  *      security:
  *          - bearerAuth: []
  */
-postRouter.get("/pinned-posts", verifyAuthToken, postController.getPinnedPosts);
-
-/**
- * @swagger
- * /edit-post-flair:
- *  put:
- *      summary: Change the flair on a post
- *      tags: [Posts]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *              type: object
- *              properties:
- *                  id:
- *                      type: string
- *                      description: id of the post being edited
- *                  flairId:
- *                      type: string
- *                      description: id of the new flair selected
- *      responses:
- *          200:
- *              description: Post flair edited successfully
- *          400:
- *              description: The request was invalid. You may refer to response for details around why this happened.
- *              content:
- *                  application/json:
- *                      schema:
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: Type of error
- *          401:
- *              description: Unauthorized to edit this post
- *          404:
- *              description: Post not found
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-postRouter.put("/edit-post-flair");
+postRouter.get("/pinned-posts", optionalToken, postController.getPinnedPosts);
 
 export default postRouter;

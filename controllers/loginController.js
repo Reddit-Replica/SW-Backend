@@ -90,7 +90,7 @@ const forgetUsername = async (req, res) => {
   try {
     const email = req.body.email;
     const user = await User.findOne({ email: email });
-    if (!user) {
+    if (!user || user.deletedAt) {
       return res.status(400).json({ error: "No user with that email found" });
     }
     const sentEmail = sendUsernameEmail(email, user.username);

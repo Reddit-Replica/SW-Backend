@@ -28,6 +28,12 @@ const router = express.Router();
  *                 email:
  *                   type: string
  *                   description: Email of the user
+ *                 googleEmail:
+ *                   type: string
+ *                   description: Google Email of the user
+ *                 facebookEmail:
+ *                   type: string
+ *                   description: Facebook Email of the user
  *                 country:
  *                   type: string
  *                   description: Country of the user
@@ -520,6 +526,13 @@ router.delete(
  *     responses:
  *       200:
  *         description: Profile picture has been added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 path:
+ *                   type: string
+ *                   description: Profile picture path
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -584,6 +597,13 @@ router.delete(
  *     responses:
  *       200:
  *         description: Banner image has been added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 path:
+ *                   type: string
+ *                   description: Banner image path
  *       400:
  *         description: The request was invalid. You may refer to response for details around why the request was invalid
  *         content:
@@ -665,16 +685,10 @@ router.delete(
  *                   description: List of users to return
  *                   items:
  *                     properties:
- *                       id:
- *                         type: string
- *                         description: Id of the users
- *                       data:
- *                         type: object
- *                         properties:
  *                           username:
  *                             type: string
  *                             description: Username of the blocked user
- *                           userImage:
+ *                           avatar:
  *                             type: string
  *                             description: Path of the image of the blocked user
  *                           blockDate:

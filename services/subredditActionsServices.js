@@ -1,4 +1,5 @@
 import Subreddit from "../models/Community.js";
+import { addMessage, validateMessage } from "./messageServices.js";
 
 /**
  * Function used to check that a subreddit with that name exists and return its object
@@ -23,15 +24,59 @@ export async function getSubredditService(subredditName) {
  * Function used to check if the user is a moderator to that subreddit.
  * It throw an error if he was not a moderator.
  *
- * @param {Object} user User to check if he is a moderator to the subreddit
+ * @param {Object} userId User id to check if he is a moderator to the subreddit
  * @param {Object} subreddit Subreddit object
+ * @returns {Number} Index of the moderator in subreddit.moderators array, -1 if none
  */
-function checkIfModerator(user, subreddit) {
+export function checkIfModerator(userId, subreddit) {
   // check if user is moderator in the subreddit
   const index = subreddit.moderators.findIndex(
-    (elem) => elem.userID.toString() === user._id.toString()
+    (elem) => elem.userID.toString() === userId.toString()
   );
   return index;
+}
+
+/**
+ * Function used to check if the user is banned from that subreddit.
+ * It checks if the ban period is done to remove that user from the ban list of that subreddit.
+ *
+ * @param {Object} userId User id to check if he is banned from that subreddit
+ * @param {Object} subreddit Subreddit object
+ * @returns {Boolean} True if the user was banned from that subreddit, false otherwise
+ */
+export async function checkIfBanned(userId, subreddit) {
+  // check if user is banned from that subreddit
+  const index = subreddit.bannedUsers.findIndex(
+    (elem) => elem.userId.toString() === userId.toString()
+  );
+  if (index !== -1) {
+    // check for the period
+    const banDate = new Date(subreddit.bannedUsers[index].bannedAt);
+    banDate.setDate(banDate.getDate() + subreddit.bannedUsers[index].banPeriod);
+    if (banDate > Date.now()) {
+      return true;
+    } else {
+      // remove the user from banned list
+      subreddit.bannedUsers.splice(index, 1);
+      await subreddit.save();
+    }
+  }
+  return false;
+}
+
+/**
+ * Function used to check if the user is muted in this subreddit.
+ *
+ * @param {Object} userId User id to check if he is muted in this subreddit
+ * @param {Object} subreddit Subreddit object
+ * @returns {Boolean} True if the user was muted from that subreddit, false otherwise
+ */
+export function checkIfMuted(userId, subreddit) {
+  // check if user is banned from that subreddit
+  const index = subreddit.mutedUsers.findIndex(
+    (elem) => elem.userID.toString() === userId.toString()
+  );
+  return index !== -1;
 }
 
 /**
@@ -46,7 +91,7 @@ function checkIfModerator(user, subreddit) {
  */
 // eslint-disable-next-line max-statements
 export async function banUserService(moderator, userToBan, subreddit, data) {
-  const mod = checkIfModerator(moderator, subreddit);
+  const mod = checkIfModerator(moderator._id, subreddit);
   if (mod === -1) {
     let error = new Error("Unauthorized access");
     error.statusCode = 401;
@@ -69,6 +114,7 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
       username: userToBan.username,
       userId: userToBan._id,
       banPeriod: data.banPeriod,
+      bannedAt: Date.now(),
       reasonForBan: data.reasonForBan,
       modNote: data.modNote,
       noteInclude: data.noteInclude,
@@ -101,7 +147,7 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
  * @returns The response to that request containing [statusCode, data]
  */
 export async function unbanUserService(moderator, userToBan, subreddit) {
-  const mod = checkIfModerator(moderator, subreddit);
+  const mod = checkIfModerator(moderator._id, subreddit);
   if (mod === -1) {
     let error = new Error("Unauthorized access");
     error.statusCode = 401;
@@ -167,7 +213,7 @@ export async function inviteToModerateService(
   subreddit,
   data
 ) {
-  const mod = checkIfModerator(moderator, subreddit);
+  const mod = checkIfModerator(moderator._id, subreddit);
   if (mod === -1) {
     let error = new Error("Unauthorized access");
     error.statusCode = 401;
@@ -175,7 +221,7 @@ export async function inviteToModerateService(
   }
 
   // check if user is already a moderator
-  const userMod = checkIfModerator(userToInvite, subreddit);
+  const userMod = checkIfModerator(userToInvite._id, subreddit);
   if (userMod !== -1) {
     // edit his permissions
     const permissions = extractPermissions(data);
@@ -201,6 +247,23 @@ export async function inviteToModerateService(
       dateOfInvitation: Date.now(),
     });
     await subreddit.save();
+
+    // Send a message to the invited user from the subreddit
+    const req = {
+      payload: {
+        username: moderator.username,
+      },
+      body: {
+        subject: `invitation to moderate /r/${subreddit.title}`,
+        subredditName: subreddit.title,
+        senderUsername: `/u/${moderator.username}`,
+        receiverUsername: `/u/${userToInvite.username}`,
+        // eslint-disable-next-line max-len
+        text: `gadzooks! you are invited to become a moderator of /r/${subreddit.title}! to accept, visit the moderators page for /r/${subreddit.title} and click "accept". otherwise, if you did not expect to receive this, you can simply ignore this invitation or report it.`,
+      },
+    };
+    await validateMessage(req);
+    await addMessage(req);
   }
 
   return {
@@ -224,7 +287,7 @@ export async function cancelInvitationService(
   invitedUser,
   subreddit
 ) {
-  const mod = checkIfModerator(moderator, subreddit);
+  const mod = checkIfModerator(moderator._id, subreddit);
   if (mod === -1) {
     let error = new Error("Unauthorized access");
     error.statusCode = 401;
@@ -255,9 +318,10 @@ export async function cancelInvitationService(
  * @param {Object} subreddit Subreddit object
  * @returns The response to that request containing [statusCode, data]
  */
+// eslint-disable-next-line max-statements
 export async function acceptModerationInviteService(user, subreddit) {
   // check if user is already a moderator
-  const userMod = checkIfModerator(user, subreddit);
+  const userMod = checkIfModerator(user._id, subreddit);
   if (userMod !== -1) {
     let error = new Error("User is already a moderator in that subreddit");
     error.statusCode = 400;
@@ -283,8 +347,24 @@ export async function acceptModerationInviteService(user, subreddit) {
   });
 
   subreddit.invitedModerators.splice(invitedUserIndex, 1);
-
   await subreddit.save();
+
+  // Send a message to the invited user from the subreddit
+  const req = {
+    payload: {
+      username: user.username,
+    },
+    body: {
+      subject: "moderator added",
+      subredditName: subreddit.title,
+      senderUsername: `/u/${user.username}`,
+      receiverUsername: `/r/${subreddit.title}`,
+      // eslint-disable-next-line max-len
+      text: `/u/${user.username} has accepted an invitation to become moderator if /r/${subreddit.title}`,
+    },
+  };
+  await validateMessage(req);
+  await addMessage(req);
 
   return {
     statusCode: 200,

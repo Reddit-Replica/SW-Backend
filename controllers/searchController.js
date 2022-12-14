@@ -1,5 +1,6 @@
-import { check, param, query } from "express-validator";
+import { param, query } from "express-validator";
 import {
+  getLoggedInUser,
   searchComments,
   searchPosts,
   searchSubreddits,
@@ -38,6 +39,13 @@ const search = async (req, res) => {
   const query = req.query.q;
   const { after, before, limit, sort, time } = req.query;
   try {
+    let loggedInUser = undefined;
+    if (req.loggedIn) {
+      const user = await getLoggedInUser(req.userId);
+      if (user) {
+        loggedInUser = user;
+      }
+    }
     let result;
     if (!type) {
       type = "post";
@@ -59,14 +67,22 @@ const search = async (req, res) => {
         time,
       });
     } else if (type === "user") {
-      result = await searchUsers(query, { after, before, limit, time });
+      result = await searchUsers(
+        query,
+        { after, before, limit, time },
+        loggedInUser
+      );
     } else {
-      result = await searchSubreddits(query, {
-        after,
-        before,
-        limit,
-        time,
-      });
+      result = await searchSubreddits(
+        query,
+        {
+          after,
+          before,
+          limit,
+          time,
+        },
+        loggedInUser
+      );
     }
     res.status(result.statusCode).json(result.data);
   } catch (error) {

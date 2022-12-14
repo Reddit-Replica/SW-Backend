@@ -52,6 +52,20 @@ const messageSchema = mongoose.Schema({
     default: false,
     required: true,
   },
+  type: {
+    type: String,
+    required: true,
+    default: "Message",
+  },
+  isReply:{
+    type: Boolean,
+    required: true,
+    default:false,
+  },
+  repliedMsgId:{
+    type: Schema.Types.ObjectId,
+    ref: "Message",
+  }
 });
 
 const Message = mongoose.model("Message", messageSchema);

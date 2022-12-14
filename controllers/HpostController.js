@@ -1,9 +1,14 @@
+/* eslint-disable max-len */
 import User from "../models/User.js";
 import { body, check, query } from "express-validator";
 import {
   checkSameUserEditing,
   editPostService,
 } from "../services/postServices.js";
+import {
+  homePostsListing
+} from "../services/PostListing.js";
+import { searchForUserService } from "../services/userServices.js";
 const postIdValidator = [
   query("id").not().isEmpty().withMessage("Id can't be empty"),
 ];
@@ -59,21 +64,51 @@ const pinPost = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
 const getPinnedPosts = async (req, res) => {
-  const userId = req.payload.userId;
+  const userId = req.payload?.userId;
   try {
-    const user = await User.findById(userId).populate("pinnedPosts");
+    let loggedInUser, user;
+    if (req.loggedIn) {
+      loggedInUser = await User.findById(userId)?.populate("pinnedPosts");
+      if (!loggedInUser || loggedInUser.deletedAt) {
+        return res.status(400).json({ error: "User not found/deleted" });
+      }
+      if (!req.body.username) {
+        user = loggedInUser;
+      } else {
+        user = await User.findOne({ username: req.body.username })?.populate(
+          "pinnedPosts"
+        );
+        // eslint-disable-next-line max-depth
+        if (!user || user.deletedAt) {
+          return res.status(400).json({ error: "User not found/deleted" });
+        }
+      }
+    } else if (!req.loggedIn && !req.body.username) {
+      return res.status(400).json({ error: "Username is needed" });
+    } else {
+      user = await User.findOne({ username: req.body.username })?.populate(
+        "pinnedPosts"
+      );
+      if (!user || user.deletedAt) {
+        return res.status(400).json({ error: "User not found/deleted" });
+      }
+      loggedInUser = user;
+    }
     user.pinnedPosts = user.pinnedPosts.filter((post) => !post.deletedAt);
     const pinnedPosts = user.pinnedPosts.map((post) => {
       let vote = 0;
       if (
-        user.upvotedPosts.find(
+        req.loggedIn &&
+        loggedInUser.upvotedPosts.find(
           (postId) => postId.toString() === post.id.toString()
         )
       ) {
         vote = 1;
       } else if (
-        user.downvotedPosts.find(
+        req.loggedIn &&
+        loggedInUser.downvotedPosts.find(
           (postId) => postId.toString() === post.id.toString()
         )
       ) {
@@ -114,7 +149,7 @@ const postDetails = async (req, res) => {
 const postInsights = async (req, res) => {
   try {
     return res.status(200).json({
-      totalViews: req.post.insights.totalViews,
+      totalViews: req.post.numberOfViews,
       upvoteRate: req.post.insights.upvoteRate,
       communityKarma: req.post.insights.communityKarma,
       totalShares: req.post.insights.totalShares,
@@ -142,6 +177,126 @@ const editPost = async (req, res) => {
   }
 };
 
+const getNewPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "new",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getHotPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "hot",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getBestPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "best",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getTopPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit,time } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit,time },
+      "top",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getTrendingPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "trending",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   postIdValidator,
   pinPostValidator,
@@ -153,4 +308,9 @@ export default {
   postInsights,
   editPost,
   editValidator,
+  getNewPosts,
+  getBestPosts,
+  getHotPosts,
+  getTopPosts,
+  getTrendingPosts,
 };

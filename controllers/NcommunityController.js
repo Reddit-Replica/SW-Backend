@@ -15,8 +15,13 @@ import {
   checkForFavoriteSubreddits,
   removeSubredditFromFavorite,
   subredditNameAvailable,
+  leaveSubredditService,
 } from "./../services/communityServices.js";
-import { searchForUserService } from "../services/userServices.js";
+import {
+  getUserFromJWTService,
+  searchForUserService,
+} from "../services/userServices.js";
+import { getSubredditService } from "../services/subredditActionsServices.js";
 import { subredditCategoryListing } from "../services/subredditListing.js";
 export let MainTopics = [
   "Activism",
@@ -119,12 +124,23 @@ const subTopicValidator = [
   body("title").not().isEmpty().withMessage("subtopic can not be empty"),
 ];
 
+const subredditNameValidator = [
+  body("subredditName")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Subreddit name can not be empty")
+    .isLength({ min: 0, max: 23 })
+    .withMessage("Subreddit name must be less than 23 character"),
+];
+
 //CREATE SUBREDDIT
 const createSubreddit = async (req, res) => {
   try {
     const result = await addSubreddit(req, req.payload);
     res.status(result.statusCode).json(result.message);
   } catch (err) {
+    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -140,6 +156,7 @@ const joinSubreddit = async (req, res) => {
   //GETTING USER USERNAME
   const username = authPayload.username;
   try {
+    console.log("haa");
     //GETTING USER DATA,CHECKING FOR HIS EXISTENCE
     const user = await searchForUserService(username);
     //GETTING SUBREDDIT DATA,CHECKING FOR ITS EXISTENCE
@@ -158,12 +175,30 @@ const joinSubreddit = async (req, res) => {
       res.status(result.statusCode).json(result.message);
     }
   } catch (err) {
+    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
       });
     } else {
       return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const leaveSubreddit = async (req, res) => {
+  try {
+    const user = await getUserFromJWTService(req.payload.userId);
+    const subreddit = await getSubredditService(req.body.subredditName);
+
+    const result = await leaveSubredditService(user, subreddit);
+    res.status(result.statusCode).json(result.message);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
     }
   }
 };
@@ -394,4 +429,6 @@ export default {
   availableSubredditName,
   subredditLeaderboard,
   subredditLeaderboardWithCategory,
+  subredditNameValidator,
+  leaveSubreddit,
 };
