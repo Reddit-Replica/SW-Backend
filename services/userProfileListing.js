@@ -60,7 +60,7 @@ export async function listingUserProfileService(
       sharePostId: post.sharePostId,
       flair: post.flair,
       comments: post.numberOfComments,
-      votes: post.numberOfUpvotes - post.numberOfDownvotes,
+      votes: post.numberOfVotes,
       postedAt: post.createdAt,
       sendReplies: post.sendReplies,
       markedSpam: post.markedSpam,

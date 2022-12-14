@@ -17,6 +17,7 @@ describe("Testing comment services functions", () => {
   let user = {},
     loggedInUser = {},
     subreddit = {},
+    post = {},
     post1 = {},
     post2 = {},
     firstLevelComment1 = {},
@@ -44,6 +45,15 @@ describe("Testing comment services functions", () => {
     });
     await loggedInUser.save();
 
+    post = new Post({
+      title: "Without subreddit post",
+      ownerUsername: user.username,
+      ownerId: user._id,
+      kind: "hybrid",
+      createdAt: Date.now(),
+    });
+    await post.save();
+
     post1 = new Post({
       title: "First post",
       ownerUsername: user.username,
@@ -58,7 +68,6 @@ describe("Testing comment services functions", () => {
       title: "Second post",
       ownerUsername: loggedInUser.username,
       ownerId: loggedInUser._id,
-      subredditName: "subreddit",
       kind: "hybrid",
       createdAt: Date.now(),
     });
@@ -315,15 +324,15 @@ describe("Testing comment services functions", () => {
     const result = await createCommentService(
       {
         content: { text: "Comment for testing" },
-        parentId: post1._id,
-        postId: post1._id,
+        parentId: post._id,
+        postId: post._id,
         parentType: "post",
         level: 1,
         haveSubreddit: false,
         username: user.username,
         userId: user._id,
       },
-      post1
+      post
     );
     expect(result.statusCode).toEqual(201);
     await Comment.deleteOne({ content: { text: "Comment for testing" } });

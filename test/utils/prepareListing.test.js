@@ -77,7 +77,7 @@ describe("Testing prepare listing functions", () => {
 
   it("try to set sort = hot in prepareListingPosts", async () => {
     const result = await prepareListingPosts({ sort: "hot" });
-    expect(result.sort).toEqual({ score: -1 });
+    expect(result.sort).toEqual({ hotScore: -1 });
   });
 
   it("try to set sort = invalid in prepareListingPosts", async () => {
@@ -88,7 +88,7 @@ describe("Testing prepare listing functions", () => {
   // eslint-disable-next-line max-len
   it("try to set sort = top without setting time in prepareListingPosts", async () => {
     const result = await prepareListingPosts({ sort: "top" });
-    expect(result.sort).toBeNull();
+    expect(result.sort).toEqual({ numberOfVotes: -1 });
   });
 
   // eslint-disable-next-line max-len
@@ -177,7 +177,7 @@ describe("Testing prepare listing functions", () => {
       before: post1._id,
       sort: "hot",
     });
-    expect(result.listing.type).toEqual("score");
+    expect(result.listing.type).toEqual("hotScore");
   });
 
   // eslint-disable-next-line max-len
@@ -186,7 +186,7 @@ describe("Testing prepare listing functions", () => {
       after: post1._id,
       sort: "hot",
     });
-    expect(result.listing.type).toEqual("score");
+    expect(result.listing.type).toEqual("hotScore");
   });
 
   it("should have postListing function", () => {
@@ -213,7 +213,7 @@ describe("Testing prepare listing functions", () => {
 
   it("try to set sort = hot in postListing", async () => {
     const result = await postListing({ sort: "hot" });
-    expect(result.sort).toEqual({ score: -1 });
+    expect(result.sort).toEqual({ hotScore: -1 });
   });
 
   it("try to set sort = invalid in postListing", async () => {
@@ -223,36 +223,36 @@ describe("Testing prepare listing functions", () => {
 
   it("try to set sort = top without setting time in postListing", async () => {
     const result = await postListing({ sort: "top" });
-    expect(result.sort).toBeNull();
+    expect(result.sort).toEqual({ numberOfVotes: -1 });
   });
 
   it("try to set sort = top with time = hour in postListing", async () => {
     const result = await postListing({ sort: "top", time: "hour" });
-    expect(result.sort).toBeNull();
+    expect(result.sort).toEqual({ numberOfVotes: -1 });
     expect(result.find.createdAt).toBeDefined();
   });
 
   it("try to set sort = top with time = day in postListing", async () => {
     const result = await postListing({ sort: "top", time: "day" });
-    expect(result.sort).toBeNull();
+    expect(result.sort).toEqual({ numberOfVotes: -1 });
     expect(result.find.createdAt).toBeDefined();
   });
 
   it("try to set sort = top with time = week in postListing", async () => {
     const result = await postListing({ sort: "top", time: "week" });
-    expect(result.sort).toBeNull();
+    expect(result.sort).toEqual({ numberOfVotes: -1 });
     expect(result.find.createdAt).toBeDefined();
   });
 
   it("try to set sort = top with time = month in postListing", async () => {
     const result = await postListing({ sort: "top", time: "month" });
-    expect(result.sort).toBeNull();
+    expect(result.sort).toEqual({ numberOfVotes: -1 });
     expect(result.find.createdAt).toBeDefined();
   });
 
   it("try to set sort = top with time = year in postListing", async () => {
     const result = await postListing({ sort: "top", time: "year" });
-    expect(result.sort).toBeNull();
+    expect(result.sort).toEqual({ numberOfVotes: -1 });
     expect(result.find.createdAt).toBeDefined();
   });
 
@@ -310,7 +310,7 @@ describe("Testing prepare listing functions", () => {
       before: post1._id,
       sort: "hot",
     });
-    expect(result.find.score).toBeDefined();
+    expect(result.find.hotScore).toBeDefined();
   });
 
   // eslint-disable-next-line max-len
@@ -319,7 +319,7 @@ describe("Testing prepare listing functions", () => {
       after: post1._id,
       sort: "hot",
     });
-    expect(result.find.score).toBeDefined();
+    expect(result.find.hotScore).toBeDefined();
   });
 
   it("should have prepareListingCommentTree", () => {
