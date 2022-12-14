@@ -89,10 +89,18 @@ export async function searchComments(query, listingParams) {
   const listingResult = await commentListing(listingParams);
 
   const regex = new RegExp(query, "i");
-  listingResult.find["content.ops"] = {
-    $elemMatch: { insert: { $regex: regex } },
-  };
-  console.log(listingResult.find);
+  listingResult.find["$or"] = [
+    {
+      "content.ops": {
+        $elemMatch: { insert: { $regex: regex } },
+      },
+    },
+    {
+      content: {
+        $elemMatch: { insert: { $regex: regex } },
+      },
+    },
+  ];
 
   const result = await Comment.find(listingResult.find)
     .limit(listingResult.limit)

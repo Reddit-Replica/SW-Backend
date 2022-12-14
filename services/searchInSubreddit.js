@@ -107,9 +107,18 @@ export async function searchForComments(subreddit, query, listingParams) {
 
   const regex = new RegExp(query, "i");
   listingResult.find["subredditName"] = subreddit;
-  listingResult.find["content.ops"] = {
-    $elemMatch: { insert: { $regex: regex } },
-  };
+  listingResult.find["$or"] = [
+    {
+      "content.ops": {
+        $elemMatch: { insert: { $regex: regex } },
+      },
+    },
+    {
+      content: {
+        $elemMatch: { insert: { $regex: regex } },
+      },
+    },
+  ];
 
   const checkSubreddit = await Subreddit.findOne({ title: subreddit });
   if (!checkSubreddit) {
