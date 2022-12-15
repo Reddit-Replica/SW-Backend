@@ -804,6 +804,9 @@ router.get(
  *                                      senderUsername:
  *                                        type: string
  *                                        description: Username of the sender
+ *                                      text:
+ *                                        type: string
+ *                                        description: text of the message
  *                                      receiverUsername:
  *                                        type: string
  *                                        description: Username of the receiver
