@@ -4,6 +4,7 @@ import {
   unsubscribeNotification,
   markAllNotificationsRead,
   markNotificationRead,
+  markNotificationHidden,
 } from "../services/notificationServices.js";
 const notificationSubscribeValidator = [
   body("accessToken")
@@ -89,6 +90,20 @@ const markNotificationAsRead = async (req, res) => {
   }
 };
 
+const markNotificationAsHidden = async (req, res) => {
+  try {
+    await markNotificationHidden(req.payload.userId, req.params.notificationId);
+    res.status(200).json("Notification marked as read successfully");
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
 export default {
   notificationSubscribe,
   notificationSubscribeValidator,
@@ -96,4 +111,5 @@ export default {
   notificationUnsubscribeValidator,
   markNotificationsAsRead,
   markNotificationAsRead,
+  markNotificationAsHidden,
 };

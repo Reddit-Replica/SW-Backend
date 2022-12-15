@@ -194,3 +194,29 @@ export async function markNotificationRead(userId, notificationId) {
   notification.read = true;
   await notification.save();
 }
+
+/**
+ * A service function used to mark a notification as hidden
+ * @param {ObjectID} userId The user id
+ * @param {ObjectID} notificationId The id of the notifcation
+ * @returns {void}
+ */
+export async function markNotificationHidden(userId, notificationId) {
+  // console.log(userId);
+  const notification = await Notification.findById(notificationId);
+  // console.log(notification);
+  if (!notification) {
+    const error = new Error("Notification not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  if (notification.ownerId.toString() !== userId) {
+    const error = new Error(
+      "User unauthorized to mark this notification as read"
+    );
+    error.statusCode = 401;
+    throw error;
+  }
+  notification.hidden = true;
+  await notification.save();
+}

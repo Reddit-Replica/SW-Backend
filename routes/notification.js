@@ -139,32 +139,26 @@ notificationRouter.patch(
 
 /**
  * @swagger
- * /hide-noification:
+ * /hide-notification/{notificationId}:
  *  patch:
  *      summary: mark a specific notification as hidden
  *      tags: [Notifications]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              id:
- *                type: string
- *                description: id of the notification you want to make hidden
  *      responses:
  *          200:
- *              description: Notifications are set to read successfully
+ *              description: Notification marked as hidden successfully
  *          401:
- *              description: Unauthorized to Read the notifications
+ *              description: User unauthorized to mark this notification as hidden
  *          500:
  *              description: Server Error
  *      security:
  *       - bearerAuth: []
  */
 
-notificationRouter.patch("/hide-noification");
+notificationRouter.patch(
+  "/hide-notification/:notificationId",
+  verifyAuthToken,
+  notificationController.markNotificationAsHidden
+);
 
 /**
  * @swagger
