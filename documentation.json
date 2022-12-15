@@ -7150,10 +7150,29 @@
         "tags": ["Notifications"],
         "responses": {
           "200": {
-            "description": "Notification is hidden successfully"
+            "description": "Notification marked as read successfully"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/mark-notification-read/{notificationId}": {
+      "patch": {
+        "summary": "mark a notification as read",
+        "tags": ["Notifications"],
+        "responses": {
+          "200": {
+            "description": "Notification marked as read successfully"
           },
           "401": {
-            "description": "Unauthorized to hide the notifications"
+            "description": "User unauthorized to mark this notification as read"
           },
           "500": {
             "description": "Server Error"
