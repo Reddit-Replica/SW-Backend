@@ -2,7 +2,6 @@ import { body, check } from "express-validator";
 import {
   readPostReplies,
   readReceivedMessages,
-  readUnreadMessages,
   readUsernameMentions,
 } from "../services/readMessages.js";
 
