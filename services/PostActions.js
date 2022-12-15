@@ -16,14 +16,11 @@ import { searchForUserService } from "./userServices.js";
  * @returns {Object} Object contains the post or maybe the error that happened
  */
 export async function searchForPost(postId) {
-  console.log(postId);
   if (!mongoose.Types.ObjectId.isValid(postId)) {
-    console.log("ana ahu");
     let error = new Error("Invalid post id");
     error.statusCode = 400;
     throw error;
   }
-  console.log("a7a");
   const post = await Post.findById(postId);
   if (!post || post.deletedAt) {
     let error = new Error("This post isn't found");
@@ -825,7 +822,6 @@ export async function downVoteAComment(comment, user) {
 export async function setSuggestedSort(postId, user, sort) {
   const post = await searchForPost(postId);
   const postOwner = post.ownerId.toString();
-  console.log(user.id, post.ownerId);
   if (user.id !== postOwner) {
     let error = new Error("You don't have the right to do this action");
     error.statusCode = 401;
@@ -873,7 +869,6 @@ export async function getCommentedUsers(postId) {
     const { username }=await User.findById(user);
     users.add(username);
   }
-  console.log([...users]);
   return {
     data: [...users],
     statusCode:200,
