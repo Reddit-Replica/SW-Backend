@@ -118,7 +118,7 @@ notificationRouter.patch(
  * @swagger
  * /mark-notification-read/{notificationId}:
  *  patch:
- *      summary: mark all the notifications as read
+ *      summary: mark a notification as read
  *      tags: [Notifications]
  *      responses:
  *          200:
