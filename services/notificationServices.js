@@ -78,6 +78,13 @@ export async function unsubscribeNotification(userId, type) {
   await neededUser.save();
 }
 
+/**
+ * A service function used to send notification to a user
+ * @param {User} user The user to send notification
+ * @param {String} title the title of the notification
+ * @param {String} data the data of the notification
+ * @returns {void}
+ */
 async function sendNotification(user, title, data) {
   const message = {
     notification: {
@@ -110,6 +117,12 @@ async function sendNotification(user, title, data) {
   }
 }
 
+/**
+ * A service function used to create a notification and send it
+ * @param {String} followingUsername The following username
+ * @param {ObjectID} followedUserId the id of the followed user Id
+ * @returns {void}
+ */
 export async function createFollowUserNotification(
   followingUsername,
   followedUserId
