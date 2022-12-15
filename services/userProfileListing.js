@@ -264,7 +264,7 @@ async function getPostComments(
  * @param {Object} user User that we want to list his posts + comments
  * @param {Object} loggedInUser Logged in user that did the request
  * @param {String} typeOfListing Name of the list in the user model that we want to list
- * @param {Boolean} requestComments Flag used to know that posts will only be wit type = summaryPost
+ * @param {Boolean} requestComments Flag used to know that posts will only be with type = summaryPost
  * @param {Object} listingParams Listing parameters that was in the query of the request
  * @returns {Object} The response to that request containing [statusCode, data]
  */
