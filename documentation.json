@@ -4763,6 +4763,10 @@
                                       "type": "string",
                                       "description": "Username of the sender"
                                     },
+                                    "text": {
+                                      "type": "string",
+                                      "description": "text of the message"
+                                    },
                                     "receiverUsername": {
                                       "type": "string",
                                       "description": "Username of the receiver"
@@ -7893,6 +7897,72 @@
           },
           "409": {
             "description": "NSFW mark already removed"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/commented-users": {
+      "get": {
+        "summary": "returns the user that made a comment in a specific post",
+        "tags": ["Posts"],
+        "parameters": [
+          {
+            "in": "query",
+            "required": true,
+            "name": "id",
+            "schema": {
+              "type": "stringget"
+            },
+            "description": "id of the post"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "usernames of the users that made comments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "usernames": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to follow/unfollow this post"
+          },
+          "404": {
+            "description": "Post not found"
           },
           "500": {
             "description": "Server Error"
@@ -13330,6 +13400,56 @@
           },
           "404": {
             "description": "Didn't find a user with that username"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/user-details/{username}": {
+      "get": {
+        "summary": "Return the details of the user",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "description": "The username of the user to get details",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "karma": {
+                      "type": "string",
+                      "description": "Karma of the user"
+                    },
+                    "joinDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Join date of the user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
           },
           "500": {
             "description": "Internal server error"
