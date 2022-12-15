@@ -1,5 +1,6 @@
 import fcm from "../notification.cjs";
 import User from "../models/User.js";
+import Notification from "../models/Notification.js";
 const token =
   // eslint-disable-next-line max-len
   "cNkaHpkEvLgtUsIenOseE4:APA91bFz0c0A1TZzwGOG8Z8OCBexVQgg75QG4EwOxWtkC9god1pAKmu3p52CWa3vYVLOF5bQkR7y2rsByrYpLy7IhBiTvZduAZJt9dkrKF9R5n1lcLCuBOabhdlTV4id5Pxpz6Hk8KGp";
@@ -75,4 +76,64 @@ export async function unsubscribeNotification(userId, type) {
     neededUser.flutterNotificationToken = undefined;
   }
   await neededUser.save();
+}
+
+async function sendNotification(user, title, data) {
+  const message = {
+    notification: {
+      title: title,
+      data: data,
+    },
+  };
+  if (user.webNotificationToken) {
+    message.to = user.webNotificationToken;
+    fcm.send(message, (err, response) => {
+      if (err) {
+        console.log(err.message);
+      } else {
+        console.log("Sent web");
+        console.log(response);
+      }
+    });
+  }
+  if (user.flutterNotificationToken) {
+    message.to = user.flutterNotificationToken;
+
+    fcm.send(message, (err, response) => {
+      if (err) {
+        console.log(err.message);
+      } else {
+        console.log("Sent flutter");
+        console.log(response);
+      }
+    });
+  }
+}
+
+export async function createFollowUserNotification(
+  followingUsername,
+  followedUserId
+) {
+  const neededUser = await User.findById(followedUserId);
+  if (!neededUser || neededUser.deletedAt) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  const notification = await new Notification({
+    ownerId: followedUserId,
+    type: "Follow",
+    data: `${followingUsername} followed you!`,
+    link: `${process.env.FRONT_BASE}/user/${followingUsername}`,
+    date: Date.now(),
+  }).save();
+  // console.log(notification);
+  const title = `${followingUsername} followed you!`;
+  const data = {
+    data: `${followingUsername} followed you!`,
+    notificationId: notification._id,
+    link: notification.link,
+    createdAt: notification.date,
+  };
+  await sendNotification(neededUser, title, JSON.stringify(data));
 }

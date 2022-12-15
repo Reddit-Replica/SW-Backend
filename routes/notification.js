@@ -5,7 +5,7 @@ import notificationController from "../controllers/notificationController.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 // eslint-disable-next-line new-cap
 const notificationRouter = express.Router();
-import { sendMessage } from "../services/notificationServices.js";
+import { createFollowUserNotification } from "../services/notificationServices.js";
 /**
  * @swagger
  * tags:
@@ -222,7 +222,8 @@ notificationRouter.post(
 );
 
 notificationRouter.post("/send", (req, res) => {
-  sendMessage();
+  createFollowUserNotification("ahmed", "63972839aea1062bb18835d4");
+  console.log(process.env.FRONT_BASE);
   res.status(200).json("send");
 });
 
