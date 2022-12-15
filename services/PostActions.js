@@ -742,7 +742,7 @@ export async function upVoteAComment(comment, user) {
     commentWriter.upVotes++;
     result = {
       statusCode: 200,
-      message: "comment is Upvoted successfully",
+      message: "Comment is Upvoted successfully",
     };
   }
   commentWriter.karma = commentWriter.upVotes - commentWriter.downVotes;
@@ -793,7 +793,7 @@ export async function downVoteAComment(comment, user) {
     commentWriter.downVotes++;
     result = {
       statusCode: 200,
-      message: "Post is Downvoted successfully",
+      message: "Comment is Downvoted successfully",
     };
   }
   commentWriter.karma = commentWriter.upVotes - commentWriter.downVotes;

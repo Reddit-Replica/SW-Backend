@@ -19,6 +19,8 @@ import {
   upVoteAPost,
   clearSuggestedSort,
   setSuggestedSort,
+  upVoteAComment,
+  downVoteAComment,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
 import {
@@ -280,7 +282,7 @@ const vote = async (req, res) => {
       }
       if (type === "comment") {
         const comment = await searchForComment(req.body.id);
-        result = await unmarkCommentAsSpam(comment, user);
+        result = await upVoteAComment(comment, user);
       }
     } else if (direction === -1) {
       if (type === "post") {
@@ -289,7 +291,7 @@ const vote = async (req, res) => {
       }
       if (type === "comment") {
         const comment = await searchForComment(req.body.id);
-        result = await unmarkCommentAsSpam(comment, user);
+        result = await downVoteAComment(comment, user);
       }
     }
     return res.status(result.statusCode).json(result.message);
