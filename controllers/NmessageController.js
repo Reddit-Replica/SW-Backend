@@ -144,6 +144,7 @@ const getSentMsg = async (req, res) => {
       res.status(result.statusCode).json(result.data);
     }
   } catch (error) {
+    console.log(error);
     if (error.statusCode) {
       res.status(error.statusCode).json({ error: error.message });
     } else {
@@ -193,26 +194,14 @@ const getUsernameMentions = async (req, res) => {
   try {
     let { before, after, limit } = req.query;
     const user = await searchForUserService(req.payload.username);
-    if (!before && !after) {
-      for (const mentionId of user.usernameMentions) {
-        const mention = await Mention.findById(mentionId);
-        if (mention && !mention.deletedAt) {
-          before = mentionId;
-          break;
-        }
-      }
-    }
-    if (!before && !after) {
-      res.status(200).json({ before: "", after: "", children: [] });
-    } else {
-      const result = await userMentionsListing(user, "UsernameMention", {
+      const result = await userMentionsListing(user, "usernameMentions", {
         before,
         after,
         limit,
       });
       res.status(result.statusCode).json(result.data);
-    }
   } catch (error) {
+    console.log(error);
     if (error.statusCode) {
       res.status(error.statusCode).json({ error: error.message });
     } else {
