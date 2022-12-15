@@ -183,6 +183,44 @@ notificationRouter.post(
   notificationController.notificationSubscribe
 );
 
+/**
+ * @swagger
+ * /notification-unsubscribe:
+ *  post:
+ *      summary: unsubscribe from notifications (with signout)
+ *      tags: [Notifications]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *              - type
+ *             type: object
+ *             properties:
+ *              type:
+ *                type: string
+ *                description: web or flutter
+ *                enum:
+ *                 - web
+ *                 - flutter
+ *      responses:
+ *          200:
+ *              description: Unsubscribed successfully
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+notificationRouter.post(
+  "/notification-unsubscribe",
+  verifyAuthToken,
+  notificationController.notificationUnsubscribeValidator,
+  validateRequestSchema,
+  notificationController.notificationSubscribe
+);
+
 notificationRouter.post("/send", (req, res) => {
   sendMessage();
   res.status(200).json("send");

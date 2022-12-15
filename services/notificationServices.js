@@ -36,9 +36,9 @@ export const sendMessage = () => {
 
 /**
  * A service function used to add the access token to user to subscribe at the notifications
- * @param {ObjectID} userId the prepared flair object
- * @param {String} type the subreddit to which that flair is created
- * @param {Token} accessToken the subreddit to which that flair is created
+ * @param {ObjectID} userId the id of the user to subscribe
+ * @param {String} type the type whether flutter or web
+ * @param {Token} accessToken the accessToken from firebase
  * @returns {void}
  */
 export async function subscribeNotification(userId, type, accessToken) {
@@ -52,6 +52,27 @@ export async function subscribeNotification(userId, type, accessToken) {
     neededUser.webNotificationToken = accessToken;
   } else {
     neededUser.flutterNotificationToken = accessToken;
+  }
+  await neededUser.save();
+}
+
+/**
+ * A service function used to remove the access token from user to unsubscribe at the notifications
+ * @param {ObjectID} userId the id of the user to unsubscribe
+ * @param {String} type the type whether flutter or web
+ * @returns {void}
+ */
+export async function unsubscribeNotification(userId, type) {
+  const neededUser = await User.findById(userId);
+  if (!neededUser || neededUser.deletedAt) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  if (type === "web") {
+    neededUser.webNotificationToken = undefined;
+  } else {
+    neededUser.flutterNotificationToken = undefined;
   }
   await neededUser.save();
 }
