@@ -10,6 +10,7 @@ import {
   followUserService,
   getUserAboutDataService,
   clearHistoyService,
+  getUserDetailsService,
 } from "../services/userServices.js";
 
 const blockUserValidator = [
@@ -374,6 +375,21 @@ const userComments = async (req, res) => {
   }
 };
 
+const getUserDetails = async (req, res) => {
+  try {
+    const userDetails = await getUserDetailsService(req.params.username);
+    console.log(userDetails);
+    res.status(200).json(userDetails);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   blockUserValidator,
   blockUser,
@@ -391,4 +407,5 @@ export default {
   userOverview,
   userSavedPostsAndComments,
   userComments,
+  getUserDetails,
 };

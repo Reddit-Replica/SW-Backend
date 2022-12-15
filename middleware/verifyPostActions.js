@@ -1,4 +1,5 @@
 import Post from "../models/Post.js";
+import mongoose from "mongoose";
 
 /**
  * Middleware used to check if the post that we want to perform the action on
@@ -17,6 +18,12 @@ export async function verifyPostActions(req, res, next) {
       id = req.query.id;
     }
     const { userId } = req.payload;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        error: "In valid id",
+      });
+    }
     const post = await Post.findById(id);
 
     if (!post || post.deletedAt) {
@@ -24,7 +31,7 @@ export async function verifyPostActions(req, res, next) {
     }
 
     // check if the post does not belong to the user making the request
-    if (post.ownerId.toString() !== userId) {
+    if (post.ownerId.toString() !== userId.toString()) {
       return res.status(401).json("Access Denied");
     }
 

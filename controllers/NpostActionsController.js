@@ -19,6 +19,9 @@ import {
   upVoteAPost,
   clearSuggestedSort,
   setSuggestedSort,
+  upVoteAComment,
+  downVoteAComment,
+  getCommentedUsers,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
 import {
@@ -280,7 +283,7 @@ const vote = async (req, res) => {
       }
       if (type === "comment") {
         const comment = await searchForComment(req.body.id);
-        result = await unmarkCommentAsSpam(comment, user);
+        result = await upVoteAComment(comment, user);
       }
     } else if (direction === -1) {
       if (type === "post") {
@@ -289,7 +292,7 @@ const vote = async (req, res) => {
       }
       if (type === "comment") {
         const comment = await searchForComment(req.body.id);
-        result = await unmarkCommentAsSpam(comment, user);
+        result = await downVoteAComment(comment, user);
       }
     }
     return res.status(result.statusCode).json(result.message);
@@ -340,6 +343,25 @@ const clearPostSuggestSort = async (req, res) => {
   }
 };
 
+const getCommentedUsersOnAPost = async (req, res) => {
+  try {
+    if (!req.query.id) {
+      let err = new Error("Id of the post cannot be empty");
+      err.statusCode = 400;
+      throw err;
+    }
+    const result = await getCommentedUsers(req.query.id);
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   followOrUnfollowPost,
   savePostOrComment,
@@ -357,4 +379,5 @@ export default {
   suggestedSortValidator,
   setPostSuggestSort,
   clearPostSuggestSort,
+  getCommentedUsersOnAPost,
 };

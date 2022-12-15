@@ -30,7 +30,7 @@ const itemsActionsRouter = express.Router();
  *                  - comment
  *                  - message
  *      responses:
- *          204:
+ *          200:
  *              description: Successfully deleted
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.

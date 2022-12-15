@@ -22,13 +22,29 @@ export async function searchPosts(query, listingParams) {
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
 
-  const result = await Post.find(listingResult.find)
-    .limit(listingResult.limit)
-    .sort(listingResult.sort);
+  const result = await Post.find(listingResult.find).sort(listingResult.sort);
+
+  let limit = listingResult.limit;
+
+  if (limit > result.length) {
+    limit = result.length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result.length - limit;
+    finish = result.length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
 
   let children = [];
 
-  for (const i in result) {
+  for (i; i < finish; i++) {
     const post = result[i];
 
     let postData = { id: result[i]._id.toString() };
@@ -63,8 +79,8 @@ export async function searchPosts(query, listingParams) {
   let after = "",
     before = "";
   if (result.length) {
-    after = result[result.length - 1]._id.toString();
-    before = result[0]._id.toString();
+    after = result[finish - 1]._id.toString();
+    before = result[start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -103,13 +119,30 @@ export async function searchComments(query, listingParams) {
   ];
 
   const result = await Comment.find(listingResult.find)
-    .limit(listingResult.limit)
     .sort(listingResult.sort)
     .populate("postId");
 
+  let limit = listingResult.limit;
+
+  if (limit > result.length) {
+    limit = result.length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result.length - limit;
+    finish = result.length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
+
   let children = [];
 
-  for (const i in result) {
+  for (i; i < finish; i++) {
     const comment = result[i];
     let commentData = { id: result[i]._id.toString() };
     commentData.data = {
@@ -142,8 +175,8 @@ export async function searchComments(query, listingParams) {
   let after = "",
     before = "";
   if (result.length) {
-    after = result[result.length - 1]._id.toString();
-    before = result[0]._id.toString();
+    after = result[finish - 1]._id.toString();
+    before = result[start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -178,13 +211,29 @@ export async function searchUsers(query, listingParams, loggedInUser) {
     };
   }
 
-  const result = await User.find(listingResult.find)
-    .limit(listingResult.limit)
-    .sort(listingResult.sort);
+  const result = await User.find(listingResult.find).sort(listingResult.sort);
+
+  let limit = listingResult.limit;
+
+  if (limit > result.length) {
+    limit = result.length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result.length - limit;
+    finish = result.length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
 
   let children = [];
 
-  for (const i in result) {
+  for (i; i < finish; i++) {
     const user = result[i];
     let following = undefined;
     if (loggedInUser) {
@@ -215,8 +264,8 @@ export async function searchUsers(query, listingParams, loggedInUser) {
   let after = "",
     before = "";
   if (result.length) {
-    after = result[result.length - 1]._id.toString();
-    before = result[0]._id.toString();
+    after = result[finish - 1]._id.toString();
+    before = result[start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -249,13 +298,31 @@ export async function searchSubreddits(query, listingParams, loggedInUser) {
     $not: { $regex: "(?i)\\bprivate\\b" },
   };
 
-  const result = await Subreddit.find(listingResult.find)
-    .limit(listingResult.limit)
-    .sort(listingResult.sort);
+  const result = await Subreddit.find(listingResult.find).sort(
+    listingResult.sort
+  );
+
+  let limit = listingResult.limit;
+
+  if (limit > result.length) {
+    limit = result.length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result.length - limit;
+    finish = result.length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
 
   let children = [];
 
-  for (const i in result) {
+  for (i; i < finish; i++) {
     const subreddit = result[i];
     let joined = undefined;
     if (loggedInUser) {
@@ -285,8 +352,8 @@ export async function searchSubreddits(query, listingParams, loggedInUser) {
   let after = "",
     before = "";
   if (result.length) {
-    after = result[result.length - 1]._id.toString();
-    before = result[0]._id.toString();
+    after = result[finish - 1]._id.toString();
+    before = result[start]._id.toString();
   }
   return {
     statusCode: 200,
