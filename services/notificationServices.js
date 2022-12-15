@@ -1,6 +1,7 @@
 import fcm from "../notification.cjs";
 import User from "../models/User.js";
 import Notification from "../models/Notification.js";
+import { ObjectId } from "mongoose";
 const token =
   // eslint-disable-next-line max-len
   "cNkaHpkEvLgtUsIenOseE4:APA91bFz0c0A1TZzwGOG8Z8OCBexVQgg75QG4EwOxWtkC9god1pAKmu3p52CWa3vYVLOF5bQkR7y2rsByrYpLy7IhBiTvZduAZJt9dkrKF9R5n1lcLCuBOabhdlTV4id5Pxpz6Hk8KGp";
@@ -149,4 +150,21 @@ export async function createFollowUserNotification(
     createdAt: notification.date,
   };
   await sendNotification(neededUser, title, JSON.stringify(data));
+}
+
+/**
+ * A service function used to mark all the notifications as read
+ * @param {ObjectID} userId The user id
+ * @returns {void}
+ */
+export async function markAllNotificationsRead(userId) {
+  // console.log(userId);
+  const result = await Notification.updateMany(
+    { ownerId: userId, read: false },
+    { $set: { read: true } }
+  );
+  console.log(
+    // eslint-disable-next-line max-len
+    `Matched ${result.matchedCount} document, updated ${result.modifiedCount} document`
+  );
 }

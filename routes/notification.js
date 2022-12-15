@@ -101,16 +101,18 @@ notificationRouter.get("/notifications");
  *      tags: [Notifications]
  *      responses:
  *          200:
- *              description: Notification is hidden successfully
- *          401:
- *              description: Unauthorized to hide the notifications
+ *              description: Notification marked as read successfully
  *          500:
  *              description: Server Error
  *      security:
  *       - bearerAuth: []
  */
 
-notificationRouter.patch("/mark-all-notifications-read");
+notificationRouter.patch(
+  "/mark-all-notifications-read",
+  verifyAuthToken,
+  notificationController.markNotificationsAsRead
+);
 
 /**
  * @swagger
