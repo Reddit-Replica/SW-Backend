@@ -942,7 +942,6 @@ router.patch("/spam-message", verifyAuthToken, messageController.markMsgAsSpam);
  *                    - Post Replies
  *                    - Messages
  *                    - Username Mentions
- *                    - Unread Messages
  *      responses:
  *          200:
  *              description: All Message have been read successfully
