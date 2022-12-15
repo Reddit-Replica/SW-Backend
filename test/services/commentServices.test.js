@@ -165,17 +165,10 @@ describe("Testing comment services functions", () => {
     await secondLevelComment3.save();
   });
   afterAll(async () => {
-    await user.remove();
-    await loggedInUser.remove();
-    await post1.remove();
-    await post2.remove();
-    await subreddit.remove();
-    await firstLevelComment1.remove();
-    await firstLevelComment2.remove();
-    await firstLevelComment3.remove();
-    await secondLevelComment1.remove();
-    await secondLevelComment2.remove();
-    await secondLevelComment3.remove();
+    await User.deleteMany({});
+    await Subreddit.deleteMany({});
+    await Comment.deleteMany({});
+    await Post.deleteMany({});
     await closeDatabaseConnection();
   });
 

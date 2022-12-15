@@ -130,7 +130,7 @@ export async function deleteItems(userId, id, type) {
   } else {
     return {
       statusCode: 400,
-      message: "Invalid request: type is invalid value",
+      message: "type is invalid value",
     };
   }
 

@@ -678,7 +678,7 @@ export async function downVoteAPost(post, user) {
  * @param {Object} user the user object that we will search in
  * @returns {Boolean} detects if the post exists or not
  */
-function checkForUpVotedComments(comment, user) {
+export function checkForUpVotedComments(comment, user) {
   for (const smallComment of user.upvotedComments) {
     if (comment.id === smallComment.toString()) {
       return true;
@@ -692,7 +692,7 @@ function checkForUpVotedComments(comment, user) {
  * @param {Object} user the user object that we will search in
  * @returns {Boolean} detects if the post exists or not
  */
-function checkForDownVotedComments(comment, user) {
+export function checkForDownVotedComments(comment, user) {
   for (const smallComment of user.downvotedComments) {
     if (comment.id === smallComment.toString()) {
       return true;
@@ -742,7 +742,7 @@ export async function upVoteAComment(comment, user) {
     commentWriter.upVotes++;
     result = {
       statusCode: 200,
-      message: "comment is Upvoted successfully",
+      message: "Comment is Upvoted successfully",
     };
   }
   commentWriter.karma = commentWriter.upVotes - commentWriter.downVotes;
@@ -793,7 +793,7 @@ export async function downVoteAComment(comment, user) {
     commentWriter.downVotes++;
     result = {
       statusCode: 200,
-      message: "Post is Downvoted successfully",
+      message: "Comment is Downvoted successfully",
     };
   }
   commentWriter.karma = commentWriter.upVotes - commentWriter.downVotes;

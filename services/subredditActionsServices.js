@@ -103,7 +103,7 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
 
   // make sure that the moderator is not trying to ban himself
   if (moderator._id.toString() === userToBan._id.toString()) {
-    let error = new Error("User can not ban himself");
+    let error = new Error("Moderator can not ban himself");
     error.statusCode = 400;
     throw error;
   }
@@ -223,9 +223,18 @@ export async function inviteToModerateService(
     throw error;
   }
 
-  // check if user is already a moderator
+  // check if user is already a
   const userMod = checkIfModerator(userToInvite._id, subreddit);
   if (userMod !== -1) {
+    // check that he is not the owner
+    if (
+      subreddit.moderators[userMod].userID.toString() ===
+      subreddit.owner.userID.toString()
+    ) {
+      let error = new Error("Can not change the permissions of the owner");
+      error.statusCode = 400;
+      throw error;
+    }
     // edit his permissions
     const permissions = extractPermissions(data);
     subreddit.moderators[userMod].permissions = permissions;
@@ -365,6 +374,7 @@ export async function acceptModerationInviteService(user, subreddit) {
       receiverUsername: `/r/${subreddit.title}`,
       // eslint-disable-next-line max-len
       text: `/u/${user.username} has accepted an invitation to become moderator if /r/${subreddit.title}`,
+      isReply: false,
     },
   };
   await validateMessage(req);

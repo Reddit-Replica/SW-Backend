@@ -20,7 +20,7 @@ import { searchForSubredditById } from "./../services/communityServices.js";
 export async function checkJoinedBefore(req, res, next) {
   const authPayload = req.payload;
   try {
-    const user=await searchForUserService(authPayload.username);
+    const user = await searchForUserService(authPayload.username);
     //GETTING LIST OF SUBREDDITS THE USER JOINED BEFORE
     const { joinedSubreddits } = user;
     const subreddit = await searchForSubredditById(req.body.subredditId);
