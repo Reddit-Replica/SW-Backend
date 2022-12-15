@@ -796,4 +796,40 @@ userRouter.get(
   userController.userHiddenPosts
 );
 
+/**
+ * @swagger
+ * /user-details/{username}:
+ *   get:
+ *     summary: Return the details of the user
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         description: The username of the user to get details
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                karma:
+ *                  type: string
+ *                  description: Karma of the user
+ *                joinDate:
+ *                  type: string
+ *                  format: date-time
+ *                  description: Join date of the user
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+userRouter.get("/user-details/:username", userController.getUserDetails);
+
 export default userRouter;
