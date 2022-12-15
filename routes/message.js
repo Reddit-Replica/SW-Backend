@@ -321,10 +321,10 @@ router.get("/message/sent", verifyAuthToken, messageController.getSentMsg);
  *                                   postTitle:
  *                                    type: string
  *                                    description: the title of the post that the reply or the mention happened in (special for Mentions)
- *                                   postID:
+ *                                   postId:
  *                                    type: string
  *                                    description: id of the post that the reply or the mention happened in (special for Mentions)
- *                                   commentID:
+ *                                   commentId:
  *                                    type: string
  *                                    description: id of the comment that the reply or the mention happened ( to make it upvote or downvote) (special for Mentions)
  *                                   numOfComments:
@@ -555,10 +555,10 @@ router.get("/message/unread", verifyAuthToken, messageController.getUnreadMsg);
  *                                   postTitle:
  *                                    type: string
  *                                    description: the title of the post that the reply happened in
- *                                   postID:
+ *                                   postId:
  *                                    type: string
  *                                    description: id of the post that the reply happened in
- *                                   commentID:
+ *                                   commentId:
  *                                    type: string
  *                                    description: id of the comment that the reply happened in ( to make it upvote or downvote)
  *                                   numOfComments:
@@ -677,10 +677,10 @@ router.get("/message/post-reply");
  *                                   postTitle:
  *                                    type: string
  *                                    description: the title of the post that the reply happened in
- *                                   postID:
+ *                                   postId:
  *                                    type: string
  *                                    description: id of the post that the reply happened in
- *                                   commentID:
+ *                                   commentId:
  *                                    type: string
  *                                    description: id of the comment that the reply happened in ( to make it upvote or downvote)
  *                                   numOfComments:
