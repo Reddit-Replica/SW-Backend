@@ -864,13 +864,13 @@ export async function clearSuggestedSort(postId, user) {
  */
 export async function getCommentedUsers(postId) {
   const post = await searchForPost(postId);
-  const users=new Set();
-  for (const user of post.usersCommented){
-    const { username }=await User.findById(user);
+  const users = new Set();
+  for (const user of post.usersCommented) {
+    const { username } = await User.findById(user);
     users.add(username);
   }
   return {
-    data: [...users],
-    statusCode:200,
+    data:{ usernames: [...users] },
+    statusCode: 200,
   };
 }

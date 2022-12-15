@@ -20,7 +20,8 @@ import {
   clearSuggestedSort,
   setSuggestedSort,
   upVoteAComment,
-  downVoteAComment,getCommentedUsers,
+  downVoteAComment,
+  getCommentedUsers,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
 import {
@@ -342,12 +343,11 @@ const clearPostSuggestSort = async (req, res) => {
   }
 };
 
-
 const getCommentedUsersOnAPost = async (req, res) => {
   try {
-    if (!req.query.id){
-      let err=new Error("Id of the post cannot be empty");
-      err.statusCode=400;
+    if (!req.query.id) {
+      let err = new Error("Id of the post cannot be empty");
+      err.statusCode = 400;
       throw err;
     }
     const result = await getCommentedUsers(req.query.id);
@@ -378,5 +378,6 @@ export default {
   spamValidator,
   suggestedSortValidator,
   setPostSuggestSort,
-  clearPostSuggestSort,getCommentedUsersOnAPost
+  clearPostSuggestSort,
+  getCommentedUsersOnAPost,
 };

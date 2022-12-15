@@ -30,7 +30,7 @@ const postRouter = express.Router();
 /**
  * @swagger
  * /commented-users:
- *  post:
+ *  get:
  *      summary: returns the user that made a comment in a specific post
  *      tags: [Posts]
  *      parameters:
@@ -48,7 +48,7 @@ const postRouter = express.Router();
  *                      schema:
  *                          type: object
  *                          properties:
- *                              pinnedPosts:
+ *                              usernames:
  *                                type: array
  *                                items:
  *                                    type: string
@@ -71,7 +71,9 @@ const postRouter = express.Router();
  *       - bearerAuth: []
  */
 postRouter.get(
-  "/commented-users",verifyAuthToken,postActionsController.getCommentedUsersOnAPost
+  "/commented-users",
+  verifyAuthToken,
+  postActionsController.getCommentedUsersOnAPost
 );
 /**
  * @swagger
