@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import express from "express";
 import postController from "../controllers/HpostController.js";
 import postActionsController from "../controllers/NpostActionsController.js";
@@ -71,7 +72,9 @@ const postRouter = express.Router();
  *       - bearerAuth: []
  */
 postRouter.get(
-  "/commented-users",verifyAuthToken,postActionsController.getCommentedUsersOnAPost
+  "/commented-users",
+  verifyAuthToken,
+  postActionsController.getCommentedUsersOnAPost
 );
 /**
  * @swagger
