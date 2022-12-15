@@ -356,8 +356,26 @@ export async function acceptModerationInviteService(user, subreddit) {
     dateOfModeration: Date.now(),
   });
 
+  // check if user was a member in this subreddit
+  const joinedIndex = subreddit.joinedUsers.findIndex(
+    (ele) => ele.userId.toString() === user._id.toString()
+  );
+  if (joinedIndex === -1) {
+    subreddit.members += 1;
+    subreddit.joinedUsers.push({
+      userId: user._id,
+      joinDate: Date.now(),
+    });
+
+    user.joinedSubreddits.push({
+      subredditId: subreddit._id,
+      name: subreddit.title,
+    });
+  }
+
   subreddit.invitedModerators.splice(invitedUserIndex, 1);
   await subreddit.save();
+  await user.save();
 
   // Send a message to the invited user from the subreddit
   const req = {
