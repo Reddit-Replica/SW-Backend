@@ -76,6 +76,8 @@ describe("Testing Posts Moderation Service functions", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
+    await Post.deleteMany({});
+    await Comment.deleteMany({});
     await closeDatabaseConnection();
   });
 
