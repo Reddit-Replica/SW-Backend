@@ -34,6 +34,13 @@ export const sendMessage = () => {
   });
 };
 
+/**
+ * A service function used to add the access token to user to subscribe at the notifications
+ * @param {ObjectID} userId the prepared flair object
+ * @param {String} type the subreddit to which that flair is created
+ * @param {Token} accessToken the subreddit to which that flair is created
+ * @returns {void}
+ */
 export async function subscribeNotification(userId, type, accessToken) {
   const neededUser = await User.findById(userId);
   if (!neededUser || neededUser.deletedAt) {
