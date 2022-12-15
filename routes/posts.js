@@ -30,7 +30,7 @@ const postRouter = express.Router();
 /**
  * @swagger
  * /commented-users:
- *  post:
+ *  get:
  *      summary: returns the user that made a comment in a specific post
  *      tags: [Posts]
  *      parameters:
