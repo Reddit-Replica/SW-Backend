@@ -39,7 +39,7 @@ const postRouter = express.Router();
  *            required: true
  *            name: id
  *            schema:
- *              type: stringget
+ *              type: string
  *            description: id of the post
  *      responses:
  *          200:
