@@ -49,7 +49,7 @@ const postRouter = express.Router();
  *                      schema:
  *                          type: object
  *                          properties:
- *                              pinnedPosts:
+ *                              usernames:
  *                                type: array
  *                                items:
  *                                    type: string
