@@ -5,7 +5,7 @@ import notificationController from "../controllers/notificationController.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 // eslint-disable-next-line new-cap
 const notificationRouter = express.Router();
-import { sendMessage } from "../services/notificationServices.js";
+import { createFollowUserNotification } from "../services/notificationServices.js";
 /**
  * @swagger
  * tags:
@@ -101,16 +101,41 @@ notificationRouter.get("/notifications");
  *      tags: [Notifications]
  *      responses:
  *          200:
- *              description: Notification is hidden successfully
- *          401:
- *              description: Unauthorized to hide the notifications
+ *              description: Notification marked as read successfully
  *          500:
  *              description: Server Error
  *      security:
  *       - bearerAuth: []
  */
 
-notificationRouter.patch("/mark-all-notifications-read");
+notificationRouter.patch(
+  "/mark-all-notifications-read",
+  verifyAuthToken,
+  notificationController.markNotificationsAsRead
+);
+
+/**
+ * @swagger
+ * /mark-notification-read/{notificationId}:
+ *  patch:
+ *      summary: mark a notification as read
+ *      tags: [Notifications]
+ *      responses:
+ *          200:
+ *              description: Notification marked as read successfully
+ *          401:
+ *              description: User unauthorized to mark this notification as read
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+notificationRouter.patch(
+  "/mark-notification-read/:notificationId",
+  verifyAuthToken,
+  notificationController.markNotificationAsRead
+);
 
 /**
  * @swagger
@@ -222,7 +247,8 @@ notificationRouter.post(
 );
 
 notificationRouter.post("/send", (req, res) => {
-  sendMessage();
+  createFollowUserNotification("ahmed", "63972839aea1062bb18835d4");
+  console.log(process.env.FRONT_BASE);
   res.status(200).json("send");
 });
 

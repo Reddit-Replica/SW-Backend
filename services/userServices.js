@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import mongoose from "mongoose";
+import { createFollowUserNotification } from "./notificationServices.js";
 
 /**
  * Service to search for a user object with his username and return it
@@ -116,6 +117,10 @@ export async function followUserService(user, userToFollow, follow) {
 
       user.followedUsers.push(userToFollow._id);
       await user.save();
+      await createFollowUserNotification(
+        user.username,
+        userToFollow._id.toString()
+      );
     }
     return {
       statusCode: 200,
