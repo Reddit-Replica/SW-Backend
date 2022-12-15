@@ -168,7 +168,11 @@ async function getPostComments(
   requestComments
 ) {
   // get all the comments of the post that was written by the user
-  const comments = await Comment.find({ postId: postId, ownerId: user._id });
+  const comments = await Comment.find({
+    postId: postId,
+    ownerId: user._id,
+    deletedAt: null,
+  });
   let readyComments = [];
 
   // resort comments so that children come after parent comment
@@ -227,14 +231,21 @@ async function getPostComments(
     }
 
     if (loggedInUser) {
-      // if comment.subreddit in our moderated subreddits add moderation
-      const found = loggedInUser.moderatedSubreddits.find(
-        (subreddit) => subreddit.name === comment.subredditName
-      );
-
-      if (found) {
+      // check if comment was written by the logged in user
+      if (comment.ownerId.toString() === loggedInUser._id.toString()) {
         data.inYourSubreddit = true;
         data.moderation = comment.moderation;
+      } else {
+        // if comment.subreddit in our moderated subreddits add moderation
+        const found = loggedInUser.moderatedSubreddits.find(
+          (subreddit) => subreddit.name === comment.subredditName
+        );
+
+        // eslint-disable-next-line max-depth
+        if (found) {
+          data.inYourSubreddit = true;
+          data.moderation = comment.moderation;
+        }
       }
     }
     readyComments.push(data);
@@ -253,7 +264,7 @@ async function getPostComments(
  * @param {Object} user User that we want to list his posts + comments
  * @param {Object} loggedInUser Logged in user that did the request
  * @param {String} typeOfListing Name of the list in the user model that we want to list
- * @param {Boolean} requestComments Flag used to know that posts will only be wit type = summaryPost
+ * @param {Boolean} requestComments Flag used to know that posts will only be with type = summaryPost
  * @param {Object} listingParams Listing parameters that was in the query of the request
  * @returns {Object} The response to that request containing [statusCode, data]
  */
@@ -268,7 +279,10 @@ export async function listingUserOverview(
   // prepare the listing parameters
   const listingResult = await postListing(listingParams);
 
-  const result = await User.findOne({ username: user.username })
+  const result = await User.findOne({
+    username: user.username,
+    deletedAt: null,
+  })
     .select(typeOfListing)
     .populate({
       path: typeOfListing,
@@ -374,25 +388,19 @@ export async function listingUserOverview(
         postData.data.post.spammed = false;
       }
 
-      // if post.subreddit in our moderated subreddits add moderation
-      const found = loggedInUser.moderatedSubreddits.find(
-        (subreddit) => subreddit.name === post.subredditName
-      );
-
-      if (found) {
+      // check if post belongs to the logged in user
+      if (post.ownerId.toString() === loggedInUser._id.toString()) {
         postData.data.post.inYourSubreddit = true;
         postData.data.post.moderation = post.moderation;
       } else {
-        // check if post is created by logged in user [post have no subreddit]
-        const found = loggedInUser.posts.find(
-          (ele) => ele._id.toString() === post._id.toString()
+        // if post.subreddit in our moderated subreddits add moderation
+        const found = loggedInUser.moderatedSubreddits.find(
+          (subreddit) => subreddit.name === post.subredditName
         );
 
         if (found) {
           postData.data.post.inYourSubreddit = true;
           postData.data.post.moderation = post.moderation;
-        } else {
-          postData.data.post.inYourSubreddit = false;
         }
       }
     }
