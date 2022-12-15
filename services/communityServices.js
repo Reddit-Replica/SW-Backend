@@ -114,7 +114,6 @@ export async function addToJoinedSubreddit(user, subreddit) {
   });
   await user.save();
   subreddit.members += 1;
-  console.log(subreddit);
   subreddit.joinedUsers.push({
     userId: user.id,
     joinDate: Date.now(),
@@ -172,6 +171,7 @@ export async function leaveSubredditService(user, subreddit) {
     const leftIndex = subreddit.leftUsers.findIndex(
       (ele) => ele.userId.toString() === user._id.toString()
     );
+    // add him to leftList or update his leaveDate
     if (leftIndex === -1) {
       subreddit.leftUsers.push({
         userId: user._id,

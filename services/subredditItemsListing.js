@@ -40,7 +40,6 @@ export async function listingSubredditPosts(
     .populate({
       path: typeOfListing,
       match: listingResult.find,
-      limit: listingResult.limit,
       options: {
         sort: listingResult.sort,
       },
@@ -53,9 +52,26 @@ export async function listingSubredditPosts(
     };
   }
 
+  let limit = listingResult.limit;
+
+  if (limit > result[typeOfListing].length) {
+    limit = result[typeOfListing].length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result[typeOfListing].length - limit;
+    finish = result[typeOfListing].length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
   let children = [];
 
-  for (const i in result[typeOfListing]) {
+  for (i; i < finish; i++) {
     const post = result[typeOfListing][i];
     let saved = false,
       vote;
@@ -110,9 +126,8 @@ export async function listingSubredditPosts(
   let after = "",
     before = "";
   if (result[typeOfListing].length) {
-    after =
-      result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
-    before = result[typeOfListing][0]._id.toString();
+    after = result[typeOfListing][finish - 1]._id.toString();
+    before = result[typeOfListing][start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -158,7 +173,6 @@ export async function listingSubredditComments(
     .populate({
       path: typeOfListing,
       match: listingResult.find,
-      limit: listingResult.limit,
       options: {
         sort: listingResult.sort,
       },
@@ -172,8 +186,26 @@ export async function listingSubredditComments(
     };
   }
 
+  let limit = listingResult.limit;
+
+  if (limit > result[typeOfListing].length) {
+    limit = result[typeOfListing].length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result[typeOfListing].length - limit;
+    finish = result[typeOfListing].length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
+
   let children = [];
-  for (const i in result[typeOfListing]) {
+  for (i; i < finish; i++) {
     const comment = result[typeOfListing][i];
     const post = await Post.findById(comment.postId);
     let saved = false,
@@ -226,9 +258,8 @@ export async function listingSubredditComments(
   let after = "",
     before = "";
   if (result[typeOfListing].length) {
-    after =
-      result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
-    before = result[typeOfListing][0]._id.toString();
+    after = result[typeOfListing][finish - 1]._id.toString();
+    before = result[typeOfListing][start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -310,15 +341,32 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
         path: "flair",
         model: "Flair",
       },
-      limit: listingResult.limit,
       options: {
         sort: listingResult.sort,
       },
     });
 
+  let limit = listingResult.limit;
+
+  if (limit > result["subredditPosts"].length) {
+    limit = result["subredditPosts"].length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result["subredditPosts"].length - limit;
+    finish = result["subredditPosts"].length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
+
   let children = [];
 
-  for (const i in result["subredditPosts"]) {
+  for (i; i < finish; i++) {
     const post = result["subredditPosts"][i];
     const postId = post.id.toString();
     let vote = 0,
@@ -380,11 +428,8 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
   let after = "",
     before = "";
   if (result["subredditPosts"].length) {
-    after =
-      result["subredditPosts"][
-        result["subredditPosts"].length - 1
-      ]._id.toString();
-    before = result["subredditPosts"][0]._id.toString();
+    after = result["subredditPosts"][finish - 1]._id.toString();
+    before = result["subredditPosts"][start]._id.toString();
   }
   return {
     statusCode: 200,

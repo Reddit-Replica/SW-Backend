@@ -47,6 +47,12 @@ const router = express.Router();
  *             subredditName:
  *               type: string
  *               description: name of the subreddit that you send or received the msg via
+ *             isReply:
+ *               type: boolean
+ *               description: describes if the message is a reply or not
+ *             repliedMsgId:
+ *               type: string
+ *               description: describes the name of the msg that this msg is a reply for
  *      responses:
  *          201:
  *              description: Your message is sent successfully
