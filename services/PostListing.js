@@ -275,6 +275,7 @@ export async function homePostsListing(
     }
     let postData = { id: postId };
     postData.data = {
+      id: postId,
       subreddit: post.subredditName,
       postedBy: post.ownerUsername,
       title: post.title,
