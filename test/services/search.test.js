@@ -4,11 +4,13 @@ import {
   searchComments,
   searchUsers,
   searchSubreddits,
+  getLoggedInUser,
 } from "../../services/search.js";
 import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
 import Subreddit from "./../../models/Community.js";
 import Comment from "./../../models/Comment.js";
+import mongoose from "mongoose";
 
 // eslint-disable-next-line max-statements
 describe("Testing Search Service functions", () => {
@@ -410,7 +412,7 @@ describe("Testing Search Service functions", () => {
   });
 
   // eslint-disable-next-line max-len
-  it("Search for users with a valid query with both before & limit", async () => {
+  it("Search for subreddits with a valid query with both before & limit", async () => {
     const query = "SR";
     const result = await searchSubreddits(query, {
       before: subreddit2.id.toString(),
@@ -419,5 +421,22 @@ describe("Testing Search Service functions", () => {
     expect(result.data.before).toEqual(subreddit1.id.toString());
     expect(result.data.after).toEqual(subreddit1.id.toString());
     expect(result.data.children.length).toEqual(1);
+  });
+
+  it("Should have getLoggedInUser defined", () => {
+    expect(getLoggedInUser).toBeDefined();
+  });
+
+  it("Get a logged in user given an ID", async () => {
+    const userId = user1.id.toString();
+    const result = await getLoggedInUser(userId);
+    expect(result).toBeTruthy();
+  });
+
+  it("Get a not-found user", async () => {
+    // eslint-disable-next-line new-cap
+    const userId = mongoose.Types.ObjectId("569ed8269353e9f4c51617aa");
+    const result = await getLoggedInUser(userId);
+    expect(result).toBeFalsy();
   });
 });
