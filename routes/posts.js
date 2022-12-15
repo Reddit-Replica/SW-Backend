@@ -71,7 +71,9 @@ const postRouter = express.Router();
  *       - bearerAuth: []
  */
 postRouter.get(
-  "/commented-users",verifyAuthToken,postActionsController.getCommentedUsersOnAPost
+  "/commented-users",
+  verifyAuthToken,
+  postActionsController.getCommentedUsersOnAPost
 );
 /**
  * @swagger
