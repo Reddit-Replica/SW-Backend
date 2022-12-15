@@ -151,6 +151,18 @@ const postSchema = mongoose.Schema({
       ref: "User",
     },
   ],
+  followingUsers: [
+    {
+      username: {
+        type: String,
+        required: true,
+      },
+      userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    },
+  ],
   scheduleDate: {
     type: Date,
   },
