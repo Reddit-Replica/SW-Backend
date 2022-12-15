@@ -21,7 +21,6 @@ describe("Testing Posts Moderation Service functions", () => {
   let user = {},
     subreddit = {},
     post = {},
-    mod = {},
     comment = {};
   beforeAll(async () => {
     await connectDatabase();
