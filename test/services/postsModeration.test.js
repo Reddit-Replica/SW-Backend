@@ -31,25 +31,6 @@ describe("Testing Posts Moderation Service functions", () => {
       createdAt: Date.now(),
     }).save();
 
-    await new User({
-      username: "Ahmed",
-      email: "Ahmed@gmail.com",
-      createdAt: Date.now(),
-    }).save();
-
-    mod = await new User({
-      username: "Besho",
-      email: "Beshoy@gmail.com",
-      createdAt: Date.now(),
-    }).save();
-
-    await new User({
-      username: "deleted",
-      email: "mohamed@gmail.com",
-      deletedAt: "10 June 2015",
-      createdAt: Date.now(),
-    }).save();
-
     subreddit = await new Subreddit({
       title: "subreddit",
       viewName: "Subreddit",
