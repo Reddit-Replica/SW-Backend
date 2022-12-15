@@ -63,7 +63,7 @@ const postRouter = express.Router();
  *                                  type: string
  *                                  description: Type of error
  *          401:
- *              description: User unauthorized to follow/unfollow this post
+ *              description: User unauthorized to get the usernames
  *          404:
  *              description: Post not found
  *          500:
