@@ -75,7 +75,7 @@ export async function addMention(req) {
   const receiver = await searchForUserService(mention.receiverUsername);
   const post = await searchForPost(req.mention.postId);
   for (const smallUser of post.usersCommented) {
-    if (smallUser === receiver.id) {
+    if (smallUser.toString() === receiver.id) {
       await addUserMention(receiver.id, mention);
       break;
     }
