@@ -1,8 +1,11 @@
 import express from "express";
 
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+import notificationController from "../controllers/notificationController.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
 // eslint-disable-next-line new-cap
-const router = express.Router();
-
+const notificationRouter = express.Router();
+import { sendMessage } from "../services/notificationServices.js";
 /**
  * @swagger
  * tags:
@@ -88,7 +91,7 @@ const router = express.Router();
  *       - bearerAuth: []
  */
 
-router.get("/notifications");
+notificationRouter.get("/notifications");
 
 /**
  * @swagger
@@ -107,7 +110,7 @@ router.get("/notifications");
  *       - bearerAuth: []
  */
 
-router.patch("/mark-all-notifications-read");
+notificationRouter.patch("/mark-all-notifications-read");
 
 /**
  * @swagger
@@ -136,6 +139,53 @@ router.patch("/mark-all-notifications-read");
  *       - bearerAuth: []
  */
 
-router.patch("/hide-noification");
+notificationRouter.patch("/hide-noification");
 
-export default router;
+/**
+ * @swagger
+ * /notification-subscribe:
+ *  post:
+ *      summary: subscribe to notifications with the client token from firebase (after the login directly)
+ *      tags: [Notifications]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *              - type
+ *              - accessToken
+ *             type: object
+ *             properties:
+ *              type:
+ *                type: string
+ *                description: web or flutter
+ *                enum:
+ *                 - web
+ *                 - flutter
+ *              accessToken:
+ *                type: string
+ *                description: the access token from firebase
+ *      responses:
+ *          200:
+ *              description: Subscribed successfully
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+notificationRouter.post(
+  "/notification-subscribe",
+  verifyAuthToken,
+  notificationController.notificationSubscribeValidator,
+  validateRequestSchema,
+  notificationController.notificationSubscribe
+);
+
+notificationRouter.post("/send", (req, res) => {
+  sendMessage();
+  res.status(200).json("send");
+});
+
+export default notificationRouter;
