@@ -12,8 +12,10 @@ import Comment from "./../../models/Comment.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing Search Service functions", () => {
-  let user = {},
-    subreddit = {},
+  let user1 = {},
+    user2 = {},
+    subreddit1 = {},
+    subreddit2 = {},
     post1 = {},
     comment1 = {},
     comment2 = {},
@@ -24,30 +26,50 @@ describe("Testing Search Service functions", () => {
   beforeAll(async () => {
     await connectDatabase();
 
-    user = await new User({
+    user1 = await new User({
       username: "hamdy",
       email: "hamdy@gmail.com",
       createdAt: Date.now(),
     }).save();
 
-    subreddit = await new Subreddit({
-      title: "subreddit",
-      viewName: "Subreddit",
+    user2 = await new User({
+      username: "ahmed",
+      displayName: "HAMDY",
+      email: "ahmed@gmail.com",
+      createdAt: Date.now(),
+    }).save();
+
+    subreddit1 = await new Subreddit({
+      title: "subreddit1",
+      viewName: "SR",
       category: "Art",
       type: "Public",
       nsfw: false,
       owner: {
         username: "hamdy",
-        userID: user.id,
+        userID: user1.id,
+      },
+      createdAt: Date.now(),
+    }).save();
+
+    subreddit2 = await new Subreddit({
+      title: "subreddit2",
+      viewName: "SRVIEW",
+      category: "Art",
+      type: "Public",
+      nsfw: false,
+      owner: {
+        username: "hamdy",
+        userID: user1.id,
       },
       createdAt: Date.now(),
     }).save();
 
     post1 = new Post({
       title: "First post",
-      ownerUsername: user.username,
-      ownerId: user._id,
-      subredditName: "subreddit",
+      ownerUsername: user1.username,
+      ownerId: user1._id,
+      subredditName: "subreddit1",
       kind: "hybrid",
       numberOfVotes: 5,
       createdAt: Date.now(),
@@ -59,9 +81,10 @@ describe("Testing Search Service functions", () => {
       postId: post1._id,
       parentType: "post",
       level: 1,
-      content: { text: "Comment 1" },
-      ownerId: user._id,
-      ownerUsername: user.username,
+      content: [{ insert: "Comment 1" }],
+      ownerId: user1._id,
+      ownerUsername: user1.username,
+      subredditName: "subreddit1",
       numberOfVotes: 5,
       createdAt: Date.now(),
     });
@@ -69,9 +92,9 @@ describe("Testing Search Service functions", () => {
 
     post2 = new Post({
       title: "Second Post",
-      ownerUsername: user.username,
-      ownerId: user._id,
-      subredditName: "subreddit",
+      ownerUsername: user1.username,
+      ownerId: user1._id,
+      subredditName: "subreddit1",
       kind: "hybrid",
       numberOfVotes: 3,
       createdAt: Date.now(),
@@ -81,8 +104,8 @@ describe("Testing Search Service functions", () => {
     // user post
     post3 = new Post({
       title: "Third post",
-      ownerUsername: user.username,
-      ownerId: user._id,
+      ownerUsername: user1.username,
+      ownerId: user1._id,
       kind: "hybrid",
       numberOfVotes: 1,
       createdAt: Date.now(),
@@ -94,9 +117,10 @@ describe("Testing Search Service functions", () => {
       postId: post2._id,
       parentType: "post",
       level: 1,
-      content: { text: "Comment 2" },
-      ownerId: user._id,
-      ownerUsername: user.username,
+      content: [{ insert: "Comment 2" }],
+      ownerId: user1._id,
+      ownerUsername: user1.username,
+      subredditName: "subreddit1",
       numberOfVotes: 4,
       createdAt: Date.now(),
     });
@@ -107,17 +131,18 @@ describe("Testing Search Service functions", () => {
       postId: post3._id,
       parentType: "post",
       level: 2,
-      content: { text: "Comment 3" },
-      ownerId: user._id,
-      ownerUsername: user.username,
+      content: [{ insert: "Comment 3" }],
+      ownerId: user1._id,
+      ownerUsername: user1.username,
       numberOfVotes: 4,
       createdAt: Date.now(),
     });
     await comment3.save();
 
-    user.posts.push(post1._id, post2._id, post3._id);
-    user.commentedPosts.push(post1._id, post2._id, post3._id);
-    await user.save();
+    user1.posts.push(post1._id, post2._id, post3._id);
+    user1.commentedPosts.push(post1._id, post2._id, post3._id);
+    await user1.save();
+    await user2.save();
   });
   afterAll(async () => {
     await User.deleteMany({});
@@ -154,5 +179,245 @@ describe("Testing Search Service functions", () => {
     expect(result.data.before).toEqual(post3.id.toString());
     expect(result.data.after).toEqual(post1.id.toString());
     expect(result.data.children.length).toEqual(3);
+  });
+
+  it("Search for posts with after", async () => {
+    const query = "post";
+    const result = await searchPosts(query, {
+      sort: "new",
+      after: post2.id.toString(),
+    });
+    expect(result.data.before).toEqual(post1.id.toString());
+    expect(result.data.after).toEqual(post1.id.toString());
+    expect(result.data.children.length).toEqual(1);
+  });
+
+  it("Search for posts with before", async () => {
+    const query = "post";
+    const result = await searchPosts(query, {
+      sort: "new",
+      before: post1.id.toString(),
+    });
+    expect(result.data.before).toEqual(post3.id.toString());
+    expect(result.data.after).toEqual(post2.id.toString());
+    expect(result.data.children.length).toEqual(2);
+  });
+
+  it("Search for posts with old sort", async () => {
+    const query = "post";
+    const result = await searchPosts(query, {
+      sort: "old",
+      after: post1.id.toString(),
+    });
+    expect(result.data.before).toEqual(post2.id.toString());
+    expect(result.data.after).toEqual(post3.id.toString());
+    expect(result.data.children.length).toEqual(2);
+  });
+
+  it("Should have searchComments defined", () => {
+    expect(searchComments).toBeDefined();
+  });
+
+  it("Search for comments with an invalid query", async () => {
+    const query = "not-found";
+    const result = await searchComments(query, { sort: "new" });
+    expect(result).toEqual({
+      statusCode: 200,
+      data: { before: "", after: "", children: [] },
+    });
+  });
+
+  it("Search for comments with a valid query", async () => {
+    const query = "comm";
+    const result = await searchComments(query, { sort: "new" });
+    expect(result.data.before).toEqual(comment3.id.toString());
+    expect(result.data.after).toEqual(comment1.id.toString());
+    expect(result.data.children.length).toEqual(3);
+  });
+
+  it("Search for comments with a valid query returning 1 comment", async () => {
+    const query = "comment 1";
+    const result = await searchComments(query, { sort: "new" });
+    expect(result.data.before).toEqual(comment1.id.toString());
+    expect(result.data.after).toEqual(comment1.id.toString());
+    expect(result.data.children.length).toEqual(1);
+  });
+
+  it("Search for comments with a valid query with after", async () => {
+    const query = "comment";
+    const result = await searchComments(query, {
+      sort: "new",
+      after: comment2.id.toString(),
+    });
+    expect(result.data.before).toEqual(comment1.id.toString());
+    expect(result.data.after).toEqual(comment1.id.toString());
+    expect(result.data.children.length).toEqual(1);
+  });
+
+  it("Search for comments with a valid query with before", async () => {
+    const query = "comment";
+    const result = await searchComments(query, {
+      sort: "new",
+      before: comment1.id.toString(),
+    });
+    expect(result.data.before).toEqual(comment3.id.toString());
+    expect(result.data.after).toEqual(comment2.id.toString());
+    expect(result.data.children.length).toEqual(2);
+  });
+
+  // eslint-disable-next-line max-len
+  it("Search for comments with a valid query with both before & after & limit", async () => {
+    const query = "comment";
+    const result = await searchComments(query, {
+      sort: "new",
+      before: comment1.id.toString(),
+      after: comment3.id.toString(),
+      limit: 2,
+    });
+    expect(result.data.before).toEqual(comment3.id.toString());
+    expect(result.data.after).toEqual(comment2.id.toString());
+    expect(result.data.children.length).toEqual(2);
+  });
+
+  // eslint-disable-next-line max-len
+  it("Search for comments with a valid query with both before & limit", async () => {
+    const query = "comment";
+    const result = await searchComments(query, {
+      sort: "new",
+      before: comment1.id.toString(),
+      limit: 1,
+    });
+    expect(result.data.before).toEqual(comment2.id.toString());
+    expect(result.data.after).toEqual(comment2.id.toString());
+    expect(result.data.children.length).toEqual(1);
+  });
+
+  it("Should have searchUsers defined", () => {
+    expect(searchUsers).toBeDefined();
+  });
+
+  it("Search for users with an invalid query", async () => {
+    const query = "not-found";
+    const result = await searchUsers(query, { limit: 3 });
+    expect(result).toEqual({
+      statusCode: 200,
+      data: { before: "", after: "", children: [] },
+    });
+  });
+
+  it("Search for users with a valid query", async () => {
+    const query = "hamdy";
+    const result = await searchUsers(query, { limit: 3 });
+    expect(result.data.before).toEqual(user1.id.toString());
+    expect(result.data.after).toEqual(user2.id.toString());
+    expect(result.data.children.length).toEqual(2);
+  });
+
+  it("Search for users with a valid query returning 1 user", async () => {
+    const query = "ahmed";
+    const result = await searchUsers(query, { limit: 3 });
+    expect(result.data.before).toEqual(user2.id.toString());
+    expect(result.data.after).toEqual(user2.id.toString());
+    expect(result.data.children.length).toEqual(1);
+  });
+
+  // eslint-disable-next-line max-len
+  it("Search for users with a valid query with after & over-limit", async () => {
+    const query = "DY";
+    const result = await searchUsers(query, {
+      after: user1.id.toString(),
+      limit: 3,
+    });
+    expect(result.data.before).toEqual(user2.id.toString());
+    expect(result.data.after).toEqual(user2.id.toString());
+    expect(result.data.children.length).toEqual(1);
+  });
+
+  it("Search for users with a valid query with before", async () => {
+    const query = "H";
+    const result = await searchUsers(query, {
+      before: user1.id.toString(),
+    });
+    expect(result).toEqual({
+      statusCode: 200,
+      data: { before: "", after: "", children: [] },
+    });
+  });
+
+  // eslint-disable-next-line max-len
+  it("Search for users with a valid query with both before & limit", async () => {
+    const query = "ham";
+    const result = await searchUsers(query, {
+      before: user2.id.toString(),
+      limit: 1,
+    });
+    expect(result.data.before).toEqual(user1.id.toString());
+    expect(result.data.after).toEqual(user1.id.toString());
+    expect(result.data.children.length).toEqual(1);
+  });
+
+  it("Should have searchSubreddits defined", () => {
+    expect(searchSubreddits).toBeDefined();
+  });
+
+  it("Search for subreddits with an invalid query", async () => {
+    const query = "not-found";
+    const result = await searchSubreddits(query, { limit: 3 });
+    expect(result).toEqual({
+      statusCode: 200,
+      data: { before: "", after: "", children: [] },
+    });
+  });
+
+  it("Search for subreddits with a valid query", async () => {
+    const query = "sr";
+    const result = await searchSubreddits(query, { limit: 3 });
+    expect(result.data.before).toEqual(subreddit1.id.toString());
+    expect(result.data.after).toEqual(subreddit2.id.toString());
+    expect(result.data.children.length).toEqual(2);
+  });
+
+  // eslint-disable-next-line max-len
+  it("Search for subreddits with a valid query returning 1 subreddit", async () => {
+    const query = "view";
+    const result = await searchSubreddits(query, { limit: 2 });
+    expect(result.data.before).toEqual(subreddit2.id.toString());
+    expect(result.data.after).toEqual(subreddit2.id.toString());
+    expect(result.data.children.length).toEqual(1);
+  });
+
+  // eslint-disable-next-line max-len
+  it("Search for subreddits with a valid query with after & over-limit", async () => {
+    const query = "subreddit";
+    const result = await searchSubreddits(query, {
+      after: subreddit1.id.toString(),
+      limit: 3,
+    });
+    expect(result.data.before).toEqual(subreddit2.id.toString());
+    expect(result.data.after).toEqual(subreddit2.id.toString());
+    expect(result.data.children.length).toEqual(1);
+  });
+
+  it("Search for subreddits with a valid query with before", async () => {
+    const query = "subreddit";
+    const result = await searchSubreddits(query, {
+      before: subreddit1.id.toString(),
+    });
+    expect(result).toEqual({
+      statusCode: 200,
+      data: { before: "", after: "", children: [] },
+    });
+  });
+
+  // eslint-disable-next-line max-len
+  it("Search for users with a valid query with both before & limit", async () => {
+    const query = "SR";
+    const result = await searchSubreddits(query, {
+      before: subreddit2.id.toString(),
+      limit: 1,
+    });
+    expect(result.data.before).toEqual(subreddit1.id.toString());
+    expect(result.data.after).toEqual(subreddit1.id.toString());
+    expect(result.data.children.length).toEqual(1);
   });
 });
