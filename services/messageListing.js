@@ -176,7 +176,7 @@ export async function userMentionsListing(user, typeOfListing, listingParams) {
       numOfComments: post.numberOfComments,
       isRead: mention.isRead,
       vote: vote,
-      postOwner:post.ownerUsername,
+      postOwner: post.ownerUsername,
     };
     children.push(mentionData);
     mention.isRead = true;
@@ -346,11 +346,7 @@ export async function userInboxListing(user, listingParams) {
     .select("postReplies")
     .populate({ path: "postReplies" });
   //MERGING ALL OF THEM TOGETHER
-  let totalInbox = [
-    ...receivedMessages,
-    ...usernameMentions,
-    ...postReplies,
-  ];
+  let totalInbox = [...receivedMessages, ...usernameMentions, ...postReplies];
   //SORTING ALL OF THE MESSAGES THAT WE HAD BASED ON SENT TIME
   totalInbox.sort(compareMsgs2);
   let isBefore = false;
@@ -395,8 +391,8 @@ export async function userInboxListing(user, listingParams) {
     //GETTING THE ID OF THE ELEMENT THAT WILL BE SENT
     const messageData = { id: totalInbox[startingIndex].id };
     const isRead = totalInbox[startingIndex].isRead;
-      totalInbox[startingIndex].isRead = true;
-      await totalInbox[startingIndex].save();
+    totalInbox[startingIndex].isRead = true;
+    await totalInbox[startingIndex].save();
     //DEPENDING ON THE TYPE OF ELEMENT WE WILL SEND DIFFERENT DATA
     if (totalInbox[startingIndex].type === "Mention") {
       const post = await searchForPost(totalInbox[startingIndex].postId);
@@ -422,7 +418,7 @@ export async function userInboxListing(user, listingParams) {
         type: "Mentions",
         isRead: isRead,
         vote: vote,
-        postOwner:post.ownerUsername,
+        postOwner: post.ownerUsername,
       };
     } else if (totalInbox[startingIndex].type === "Message") {
       messageData.data = {
