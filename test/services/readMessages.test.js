@@ -89,6 +89,8 @@ describe("Testing Read Messages Service functions", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Message.deleteMany({});
+    await Post.deleteMany({});
+    await Comment.deleteMany({});
     await Mention.deleteMany({});
     // await PostReply.deleteMany({});
     await closeDatabaseConnection();
