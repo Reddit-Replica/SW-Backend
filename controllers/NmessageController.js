@@ -194,12 +194,12 @@ const getUsernameMentions = async (req, res) => {
   try {
     let { before, after, limit } = req.query;
     const user = await searchForUserService(req.payload.username);
-      const result = await userMentionsListing(user, "usernameMentions", {
-        before,
-        after,
-        limit,
-      });
-      res.status(result.statusCode).json(result.data);
+    const result = await userMentionsListing(user, "usernameMentions", {
+      before,
+      after,
+      limit,
+    });
+    res.status(result.statusCode).json(result.data);
   } catch (error) {
     console.log(error);
     if (error.statusCode) {

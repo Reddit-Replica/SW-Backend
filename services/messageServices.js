@@ -11,7 +11,7 @@ import {
 import { searchForUserService } from "./userServices.js";
 import { searchForSubreddit } from "./communityServices.js";
 import Mention from "../models/Mention.js";
-import { searchForComment } from "./PostActions.js";
+import { searchForComment, searchForPost } from "./PostActions.js";
 /**
  * This function is used to add a message
  * it add the msg to sender's sent messages and to the receiver's received messages
@@ -39,10 +39,10 @@ export async function addMessage(req) {
   let conversationId;
   console.log(message);
   //CREATING A NEW CONVERSATIONS USING THE MESSAGE SENT
-  if (!message.isReply){
-  conversationId = await createNewConversation(message);
+  if (!message.isReply) {
+    conversationId = await createNewConversation(message);
   } else {
-  conversationId = await getExistingConversation(message.repliedMsgId);
+    conversationId = await getExistingConversation(message.repliedMsgId);
   }
   //GETTING THE CONVERSATION SO WE WOULD BE ABLE TO ADD THE MSG TO IT
   await addToConversation(message, conversationId);
@@ -73,7 +73,13 @@ export async function addMention(req) {
   }
   const mention = await new Mention(req.mention).save();
   const receiver = await searchForUserService(mention.receiverUsername);
-  await addUserMention(receiver.id, mention);
+  const post = await searchForPost(req.mention.postId);
+  for (const smallUser of post.usersCommented) {
+    if (smallUser.toString() === receiver.id) {
+      await addUserMention(receiver.id, mention);
+      break;
+    }
+  }
 }
 /**
  * This function is used to create a new conversation
@@ -85,16 +91,16 @@ export async function addMention(req) {
  */
 export async function createNewConversation(msg) {
   //IF THERE IS NO CONVERSATION WITH THESE DATA THEN WE WILL CREATE A NEW ONE AND RETURN ITS ID , BUT IF THERE IS SO WE WILL RETURN THE ID OF THE EXISTING ONE
-    const createdConversation = await new Conversation({
-      latestDate: msg.sentAt,
-      subject: msg.subject,
-      messages: [],
-      firstUsername: msg.senderUsername,
-      secondUsername: msg.receiverUsername,
-      isFirstNameUser: msg.isSenderUser,
-      isSecondNameUser: msg.isReceiverUser,
-    }).save();
-    return createdConversation.id;
+  const createdConversation = await new Conversation({
+    latestDate: msg.sentAt,
+    subject: msg.subject,
+    messages: [],
+    firstUsername: msg.senderUsername,
+    secondUsername: msg.receiverUsername,
+    isFirstNameUser: msg.isSenderUser,
+    isSecondNameUser: msg.isReceiverUser,
+  }).save();
+  return createdConversation.id;
 }
 /**
  * This function is used to create a new conversation
@@ -106,9 +112,11 @@ export async function createNewConversation(msg) {
  */
 export async function getExistingConversation(repliedMsgId) {
   //IF THERE IS NO CONVERSATION WITH THESE DATA THEN WE WILL CREATE A NEW ONE AND RETURN ITS ID , BUT IF THERE IS SO WE WILL RETURN THE ID OF THE EXISTING ONE
-    const existedConversation = await Conversation.findOne({ messages:repliedMsgId.toString() });
-    console.log(existedConversation);
-    return existedConversation.id;
+  const existedConversation = await Conversation.findOne({
+    messages: repliedMsgId.toString(),
+  });
+  console.log(existedConversation);
+  return existedConversation.id;
 }
 /**
  * This function is used to add new messages to the conversation
@@ -206,13 +214,13 @@ export async function validateMessage(req) {
     err.statusCode = 400;
     throw err;
   }
-  if (req.body.isReply===undefined){
+  if (req.body.isReply === undefined) {
     let err = new Error("isReply is needed");
     err.statusCode = 400;
     throw err;
   }
-  if (req.body.isReply){
-    if (!req.body.repliedMsgId){
+  if (req.body.isReply) {
+    if (!req.body.repliedMsgId) {
       let err = new Error("repliedMsgId is needed");
       err.statusCode = 400;
       throw err;
@@ -239,12 +247,12 @@ export async function validateMessage(req) {
     receiverUsername: receiverArr[receiverArr.length - 1],
     subject: req.body.subject,
   };
-  if (req.body.isReply!==undefined){
-    msg.isReply=req.body.isReply;
+  if (req.body.isReply !== undefined) {
+    msg.isReply = req.body.isReply;
   }
-  if (req.body.repliedMsgId&&req.body.isReply){
-    msg.repliedMsgId=req.body.repliedMsgId;
-  await searchForMessage(msg.repliedMsgId);
+  if (req.body.repliedMsgId && req.body.isReply) {
+    msg.repliedMsgId = req.body.repliedMsgId;
+    await searchForMessage(msg.repliedMsgId);
   }
   //CHECKING IF THE SENDER IS SUBREDDIT OR NORMAL USER
   if (senderArr[senderArr.length - 2] === "r") {
