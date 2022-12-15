@@ -276,6 +276,12 @@ const userSchema = mongoose.Schema({
       ref: "User",
     },
   ],
+  followedUsers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   sentMessages: [
     {
       type: Schema.Types.ObjectId,
@@ -297,17 +303,27 @@ const userSchema = mongoose.Schema({
   postReplies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Comments",
+      ref: "Comment",
     },
   ],
   conversations: [
     {
-      conversationId: {
-        type: Schema.Types.ObjectId,
-        ref: "Conversation",
-      },
+      type: Schema.Types.ObjectId,
+      ref: "Conversation",
     },
   ],
+  notifications: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Notification",
+    },
+  ],
+  webNotificationToken: {
+    type: String,
+  },
+  flutterNotificationToken: {
+    type: String,
+  },
 });
 
 const User = mongoose.model("User", userSchema);

@@ -29,7 +29,7 @@
  *          flairName:
  *              type: string
  *              description: Name of the flair
- *          order:
+ *          flairOrder:
  *              type: number
  *              description: Order of the flair among the rest
  *          backgroundColor:
@@ -1015,17 +1015,13 @@
  *   ListingUserItem:
  *     type: object
  *     properties:
- *      id:
- *       type: string
- *       description: this item's identifier.
- *      data:
- *       type: object
- *       description: A custom data structure used to hold valuable information.
- *       properties:
  *         username:
  *           type: string
  *           description: Username of the banned user
- *         userPhoto:
+ *         userId:
+ *           type: string
+ *           description: ID of the banned user
+ *         avatar:
  *           type: string
  *           description: The link of the user profile picture
  *         bannedAt:

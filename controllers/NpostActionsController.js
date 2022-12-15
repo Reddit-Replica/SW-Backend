@@ -17,6 +17,11 @@ import {
   unmarkCommentAsSpam,
   downVoteAPost,
   upVoteAPost,
+  clearSuggestedSort,
+  setSuggestedSort,
+  upVoteAComment,
+  downVoteAComment,
+  getCommentedUsers,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
 import {
@@ -77,6 +82,16 @@ const followValidator = [
 ];
 const hideValidator = [
   body("id").trim().not().isEmpty().withMessage("id content can not be empty"),
+];
+const suggestedSortValidator = [
+  body("id").trim().not().isEmpty().withMessage("id content can not be empty"),
+  body("sort")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("sort can not be empty")
+    .isIn(["top", "new", "old", "best"])
+    .withMessage("sort must be either top, new, old, best"),
 ];
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //FOLLOW
@@ -268,7 +283,7 @@ const vote = async (req, res) => {
       }
       if (type === "comment") {
         const comment = await searchForComment(req.body.id);
-        result = await unmarkCommentAsSpam(comment, user);
+        result = await upVoteAComment(comment, user);
       }
     } else if (direction === -1) {
       if (type === "post") {
@@ -277,7 +292,7 @@ const vote = async (req, res) => {
       }
       if (type === "comment") {
         const comment = await searchForComment(req.body.id);
-        result = await unmarkCommentAsSpam(comment, user);
+        result = await downVoteAComment(comment, user);
       }
     }
     return res.status(result.statusCode).json(result.message);
@@ -288,6 +303,61 @@ const vote = async (req, res) => {
       });
     } else {
       return res.status(500).json("Server Error");
+    }
+  }
+};
+
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//SetSuggestedSort
+const setPostSuggestSort = async (req, res) => {
+  try {
+    const user = await searchForUserService(req.payload.username);
+    const result = await setSuggestedSort(req.body.id, user, req.body.sort);
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Server Error");
+    }
+  }
+};
+
+//------------------------------------------------------------------------------------------------------------------------------------------------
+//ClearSuggestedSort
+const clearPostSuggestSort = async (req, res) => {
+  try {
+    const user = await searchForUserService(req.payload.username);
+    const result = await clearSuggestedSort(req.body.id, user);
+    return res.status(result.statusCode).json(result.message);
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Server Error");
+    }
+  }
+};
+
+const getCommentedUsersOnAPost = async (req, res) => {
+  try {
+    if (!req.query.id) {
+      let err = new Error("Id of the post cannot be empty");
+      err.statusCode = 400;
+      throw err;
+    }
+    const result = await getCommentedUsers(req.query.id);
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
     }
   }
 };
@@ -306,4 +376,8 @@ export default {
   hideValidator,
   followValidator,
   spamValidator,
+  suggestedSortValidator,
+  setPostSuggestSort,
+  clearPostSuggestSort,
+  getCommentedUsersOnAPost,
 };

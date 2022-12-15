@@ -2,6 +2,8 @@
 import mongoose from "mongoose";
 import Mention from "../models/Mention.js";
 import Message from "../models/Message.js";
+import Conversation from "../models/Conversation.js";
+import Comment from "../models/Comment.js";
 import { prepareLimit } from "./prepareLimit.js";
 
 /**
@@ -91,42 +93,6 @@ async function prepareMentionBeforeAfter(before, after) {
   }
   return result;
 }
-
-async function prepareConversationsBeforeAfter(before, after) {
-  let result = null;
-  if (!after && !before) {
-    return null;
-  } else if (!after && before) {
-    if (mongoose.Types.ObjectId.isValid(before)) {
-      // get the wanted value that we will split from
-      const conversation = await Conversation.findById(before);
-      if (!conversation) {
-        return null;
-      }
-      result = {
-        type: "latestDate",
-        value: { $gt: conversation["latestDate"] },
-      };
-    }
-  } else if (after && !before) {
-    if (mongoose.Types.ObjectId.isValid(after)) {
-      // get the wanted value that we will split from
-      const conversation = await Conversation.findById(after);
-      if (!conversation) {
-        return null;
-      }
-      result = {
-        type: "latestDate",
-        value: { $lt: conversation["latestDate"] },
-      };
-    } else {
-      return null;
-    }
-  } else {
-    return null;
-  }
-  return result;
-}
 /**
  * Function to prepare the listing parameters and set the appropriate condition that will be used with mongoose later.
  * Check the sort algorithm, time interval for the results, limit of the result, and the anchor point of the slice
@@ -171,20 +137,6 @@ export async function prepareListingMentions(listingParams) {
   return result;
 }
 
-export async function prepareListingConversation(listingParams) {
-  const result = {};
-  result.sort = { createdAt: -1, text: 1 };
-
-  // prepare the limit
-  result.limit = prepareLimit(listingParams.limit);
-  // check if after or before
-  result.listing = await prepareConversationsBeforeAfter(
-    listingParams.before,
-    listingParams.after
-  );
-  return result;
-}
-
 /**
  * Function to create the exact condition that will be used by mongoose directly to list posts.
  * Used to map every listing parameter to the exact query that mongoose will use later
@@ -208,8 +160,32 @@ export async function messageListing(listingParams) {
  */
 export async function mentionListing(listingParams) {
   let result = {};
-  listingParams = await prepareListingMentions(listingParams);
-  result = setResult(listingParams);
+  result.query = {};
+  //PREPARING LIMIT OF NUMBER OF CONVERSATIONS
+  result.limit = prepareLimit(listingParams.limit);
+  //PREPARING KIND OF SORTING THE CONVERSATION
+  result.sort = { createdAt: -1 };
+  //PREPARING THE SPLITTER WERE WE WILL STOP TO OR START FROM
+  let splitterMention;
+  //IN CASE THERE IS BEFORE AND THERE IS NO AFTER OR THERE IS BEFORE AND AFTER THEN I WILL TAKE BEFORE
+  if (listingParams.before) {
+    splitterMention = await Mention.findById(listingParams.before);
+    if (!splitterMention) {
+      let error = new Error("Invalid before Id");
+      error.statusCode = 400;
+      throw error;
+    }
+    result.query.createdAt = { $gt: splitterMention.createdAt };
+    //IF THERE IS NO BEFORE BUT THERE IS AN AFTER
+  } else if (!listingParams.before && listingParams.after) {
+    splitterMention = await Mention.findById(listingParams.after);
+    if (!splitterMention) {
+      let error = new Error("Invalid after Id");
+      error.statusCode = 400;
+      throw error;
+    }
+    result.query.createdAt = { $lt: splitterMention.createdAt };
+  }
   return result;
 }
 
@@ -222,9 +198,72 @@ export async function mentionListing(listingParams) {
  */
 export async function conversationListing(listingParams) {
   let result = {};
-  listingParams = await prepareListingConversation(listingParams);
-  result = setResult(listingParams);
+  result.query = {};
+  //PREPARING LIMIT OF NUMBER OF CONVERSATIONS
+  result.limit = prepareLimit(listingParams.limit);
+  //PREPARING KIND OF SORTING THE CONVERSATION
+  result.sort = { latestDate: -1 };
+  //PREPARING THE SPLITTER WERE WE WILL STOP TO OR START FROM
+  let splitterConversation;
+  //IN CASE THERE IS BEFORE AND THERE IS NO AFTER OR THERE IS BEFORE AND AFTER THEN I WILL TAKE BEFORE
+  if (listingParams.before) {
+    splitterConversation = await Conversation.findById(listingParams.before);
+    if (!splitterConversation) {
+      let error = new Error("Invalid before Id");
+      error.statusCode = 400;
+      throw error;
+    }
+    result.query.latestDate = { $gt: splitterConversation.latestDate };
+    //IF THERE IS NO BEFORE BUT THERE IS AN AFTER
+  } else if (!listingParams.before && listingParams.after) {
+    splitterConversation = await Conversation.findById(listingParams.after);
+    if (!splitterConversation) {
+      let error = new Error("Invalid after Id");
+      error.statusCode = 400;
+      throw error;
+    }
+    result.query.latestDate = { $lt: splitterConversation.latestDate };
+  }
   return result;
+}
+
+export async function inboxListing(listingParams) {
+  let result = {};
+  result.query = {};
+  //PREPARING LIMIT OF NUMBER OF CONVERSATIONS
+  result.limit = prepareLimit(listingParams.limit);
+  //PREPARING KIND OF SORTING THE CONVERSATION
+  result.sort = { createdAt: -1 };
+  //PREPARING THE SPLITTER WERE WE WILL STOP TO OR START FROM
+  let splitterMessage;
+  //IN CASE THERE IS BEFORE AND THERE IS NO AFTER OR THERE IS BEFORE AND AFTER THEN I WILL TAKE BEFORE
+  if (listingParams.before) {
+    splitterMessage = splitterOnType(listingParams.before);
+    result.query.createdAt = { $gt: splitterMessage.createdAt };
+    //IF THERE IS NO BEFORE BUT THERE IS AN AFTER
+  } else if (!listingParams.before && listingParams.after) {
+    splitterMessage = splitterOnType(listingParams.after);
+    result.query.createdAt = { $gt: splitterMessage.createdAt };
+  }
+  return result;
+}
+
+export async function splitterOnType(Id) {
+  let splitter;
+  console.log(Id);
+  splitter = await Message.findById(Id);
+  if (!splitter) {
+    splitter = await Mention.findById(Id);
+    if (!splitter) {
+      splitter = await Comment.findById(Id);
+      if (!splitter) {
+        let error = new Error("Invalid Id");
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+  }
+  return splitter;
 }
 
 function setResult(listingParams) {

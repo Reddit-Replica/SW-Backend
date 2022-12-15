@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import mongoose from "mongoose";
+import { createFollowUserNotification } from "./notificationServices.js";
 
 /**
  * Service to search for a user object with his username and return it
@@ -96,6 +97,7 @@ export async function blockUserService(user, userToBlock, block) {
  * @param {Boolean} follow Flag to know if the operation is follow or unfollow
  * @returns {Object} Response to the request containing [statusCode, message]
  */
+// eslint-disable-next-line max-statements
 export async function followUserService(user, userToFollow, follow) {
   if (user._id.toString() === userToFollow._id.toString()) {
     let error = new Error("User can not follow himself");
@@ -112,6 +114,13 @@ export async function followUserService(user, userToFollow, follow) {
     if (index === -1) {
       userToFollow.followers.push(user._id);
       await userToFollow.save();
+
+      user.followedUsers.push(userToFollow._id);
+      await user.save();
+      await createFollowUserNotification(
+        user.username,
+        userToFollow._id.toString()
+      );
     }
     return {
       statusCode: 200,
@@ -121,6 +130,12 @@ export async function followUserService(user, userToFollow, follow) {
     if (index !== -1) {
       userToFollow.followers.splice(index, 1);
       await userToFollow.save();
+
+      const followIndex = user.followedUsers.findIndex(
+        (elem) => elem.toString() === userToFollow._id.toString()
+      );
+      user.followedUsers.splice(followIndex, 1);
+      await user.save();
     }
     return {
       statusCode: 200,
@@ -169,12 +184,17 @@ export async function getUserAboutDataService(username, loggedInUserId) {
       // check if the logged in user follows that subreddit
       let followed = false;
       if (loggedInUser) {
-        followed = loggedInUser.joinedSubreddits.includes(
-          user.moderatedSubreddits[i].subredditId._id.toString()
-        );
+        const index = loggedInUser.joinedSubreddits.findIndex((ele) => {
+          return (
+            ele.subredditId.toString() ===
+            user.moderatedSubreddits[i].subredditId._id.toString()
+          );
+        });
+        followed = index !== -1;
       }
 
       moderatorOf.push({
+        subredditId: user.moderatedSubreddits[i].subredditId._id,
         subredditName: user.moderatedSubreddits[i].subredditId.title,
         numOfMembers: user.moderatedSubreddits[i].subredditId.members,
         nsfw: user.moderatedSubreddits[i].subredditId.nsfw,
@@ -228,5 +248,27 @@ export async function clearHistoyService(user) {
   return {
     statusCode: 200,
     message: "History cleared successfully",
+  };
+}
+
+/**
+ * A service function used to get the karma and the join date of any user
+ *
+ * @param {String} username the username of the user to get details
+ * @returns {Object} containing karma and joinDate
+ */
+export async function getUserDetailsService(username) {
+  const neededUser = await User.findOne({
+    username: username,
+    deletedAt: null,
+  });
+  if (!neededUser) {
+    const err = new Error("User not found");
+    err.statusCode = 404;
+    throw err;
+  }
+  return {
+    karma: neededUser.karma,
+    joinDate: neededUser.createdAt,
   };
 }

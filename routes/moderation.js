@@ -1237,6 +1237,7 @@ moderationRouter.get(
   verifyAuthToken,
   subredditDetails.checkSubreddit,
   verifyAuthTokenModerator,
+  subredditDetails.checkSubreddit,
   userModController.getBannedUsers
 );
 
@@ -1287,6 +1288,415 @@ moderationRouter.get(
   subredditActionsController.getSuggestedTopicsValidator,
   validateRequestSchema,
   subredditActionsController.getSuggestedTopics
+);
+
+/**
+ * @swagger
+ * /r/{subreddit}/profile-picture:
+ *   post:
+ *     summary: Add profile picture for a subreddit
+ *     tags: [Subreddit]
+ *     parameters:
+ *      - in: path
+ *        name: subreddit
+ *        description: name of the subreddit.
+ *        schema:
+ *          type: string
+ *        required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - avatar
+ *             properties:
+ *               avatar:
+ *                 type: object
+ *                 description: The avatar image
+ *     responses:
+ *       200:
+ *         description: Profile picture has been added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 path:
+ *                   type: string
+ *                   description: Profile picture path
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+moderationRouter.post(
+  "/r/:subreddit/profile-picture",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.addProfilePicture
+);
+
+/**
+ * @swagger
+ * /r/{subreddit}/profile-picture:
+ *   delete:
+ *     summary: Delete the profile picture in a subreddit
+ *     tags: [Subreddit]
+ *     parameters:
+ *      - in: path
+ *        name: subreddit
+ *        description: name of the subreddit.
+ *        schema:
+ *          type: string
+ *        required: true
+ *     responses:
+ *       204:
+ *         description: Profile picture deleted successfully
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+moderationRouter.delete(
+  "/r/:subreddit/profile-picture",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.deleteProfilePicture
+);
+
+/**
+ * @swagger
+ * /r/{subreddit}/banner-image:
+ *   post:
+ *     summary: Add a banner to a subreddit
+ *     tags: [Subreddit]
+ *     parameters:
+ *      - in: path
+ *        name: subreddit
+ *        description: name of the subreddit.
+ *        schema:
+ *          type: string
+ *        required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *               - banner
+ *             properties:
+ *               banner:
+ *                 type: object
+ *                 description: The banner image
+ *     responses:
+ *       200:
+ *         description: Banner image has been added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 path:
+ *                   type: string
+ *                   description: Profile picture path
+ *       400:
+ *         description: The request was invalid. You may refer to response for details around why the request was invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Type of error
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+moderationRouter.post(
+  "/r/:subreddit/banner-image",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.addBanner
+);
+
+/**
+ * @swagger
+ * /r/{subreddit}/banner-image:
+ *   delete:
+ *     summary: Delete the banner image in a subreddit
+ *     tags: [Subreddit]
+ *     parameters:
+ *      - in: path
+ *        name: subreddit
+ *        description: name of the subreddit.
+ *        schema:
+ *          type: string
+ *        required: true
+ *     responses:
+ *       204:
+ *         description: Banner image deleted successfully
+ *       401:
+ *         description: Access Denied
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+moderationRouter.delete(
+  "/r/:subreddit/banner-image",
+  verifyAuthToken,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.deleteBanner
+);
+
+/**
+ * @swagger
+ * /r/{subreddit}/approve-user:
+ *  post:
+ *   summary:
+ *    Approve a user in a subreddit
+ *   tags: [Subreddit moderation]
+ *   parameters:
+ *      - in: path
+ *        name: subreddit
+ *        description: name of the subreddit.
+ *        schema:
+ *          type: string
+ *        required: true
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - username
+ *       properties:
+ *        username:
+ *         type: string
+ *         description: Username of the user to be approved
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post(
+  "/r/:subreddit/approve-user",
+  verifyAuthToken,
+  postModController.usernameValidator,
+  validateRequestSchema,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.approveUser
+);
+
+/**
+ * @swagger
+ * /r/{subreddit}/mute-user:
+ *  post:
+ *   summary:
+ *    Mute a user in the subreddit
+ *   tags: [Subreddit moderation]
+ *   parameters:
+ *      - in: path
+ *        name: subreddit
+ *        description: name of the subreddit.
+ *        schema:
+ *          type: string
+ *        required: true
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - username
+ *       properties:
+ *        username:
+ *         type: string
+ *         description: Username of the user to be muted
+ *        muteReason:
+ *         type: string
+ *         description: Reason to why this user was muted
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post(
+  "/r/:subreddit/mute-user",
+  verifyAuthToken,
+  postModController.usernameValidator,
+  validateRequestSchema,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.muteUser
+);
+
+/**
+ * @swagger
+ * /r/{subreddit}/remove-user:
+ *  post:
+ *   summary:
+ *    Remove a user from the list of approved users in a subreddit
+ *   tags: [Subreddit moderation]
+ *   parameters:
+ *      - in: path
+ *        name: subreddit
+ *        description: name of the subreddit.
+ *        schema:
+ *          type: string
+ *        required: true
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - username
+ *       properties:
+ *        username:
+ *         type: string
+ *         description: Username of the user to be removed
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post(
+  "/r/:subreddit/remove-user",
+  verifyAuthToken,
+  postModController.usernameValidator,
+  validateRequestSchema,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.removeUser
+);
+
+/**
+ * @swagger
+ * /r/{subreddit}/unmute-user:
+ *  post:
+ *   summary:
+ *    Remove a user from the list of muted users in the subreddit
+ *   tags: [Subreddit moderation]
+ *   parameters:
+ *      - in: path
+ *        name: subreddit
+ *        description: name of the subreddit.
+ *        schema:
+ *          type: string
+ *        required: true
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       required:
+ *        - username
+ *       properties:
+ *        username:
+ *         type: string
+ *         description: Username of the user to be unmuted
+ *   responses:
+ *    200:
+ *     description: Accepted
+ *    400:
+ *     description: Bad Request
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         error:
+ *          type: string
+ *          description: Type of error
+ *    401:
+ *     description: Unauthorized access
+ *    404:
+ *     description: Not Found
+ *    500:
+ *     description: Internal Server Error
+ *   security:
+ *    - bearerAuth: []
+ */
+
+moderationRouter.post(
+  "/r/:subreddit/unmute-user",
+  verifyAuthToken,
+  postModController.usernameValidator,
+  validateRequestSchema,
+  subredditDetails.checkSubreddit,
+  verifyAuthTokenModerator,
+  postModController.unmuteUser
 );
 
 export default moderationRouter;

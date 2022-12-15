@@ -1,7 +1,6 @@
 import { body } from "express-validator";
 import Comment from "../models/Comment.js";
-import Message from "../models/Message.js";
-import Post from "../models/Post.js";
+import { deleteItems } from "../services/itemsActionsServices.js";
 
 const deleteValidator = [
   body("id").not().isEmpty().withMessage("Id can not be empty"),
@@ -17,40 +16,16 @@ const editComValidator = [
 const deletePoComMes = async (req, res) => {
   try {
     const { id, type } = req.body;
-    let item = {};
-    let itemOwnerId = "ownerId";
-    if (type === "post") {
-      item = await Post.findById(id);
-    } else if (type === "comment") {
-      item = await Comment.findById(id);
-    } else if (type === "message") {
-      item = await Message.findById(id);
-      itemOwnerId = "receiverId";
-    } else {
-      return res
-        .status(400)
-        .json({ error: "Invalid request: type is invalid value" });
-    }
 
-    // check if the item was deleted before or does not exist
-    if (!item || item.deletedAt) {
-      return res.status(404).json("Item was not found");
-    }
-
-    // check if the item was created by the same user making the request
-    const { userId } = req.payload;
-    if (item[itemOwnerId].toString() !== userId) {
-      return res.status(401).json("Access Denied");
-    }
-
-    // if yes then add deletedAt to the post
-    item.deletedAt = Date.now();
-    await item.save();
-
-    res.sendStatus(204);
+    const result = await deleteItems(req.payload.userId, id, type);
+    res.status(result.statusCode).json(result.message);
   } catch (error) {
-    console.log(error);
-    res.status(500).json("Internal Server Error");
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
   }
 };
 

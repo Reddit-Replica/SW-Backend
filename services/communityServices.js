@@ -6,6 +6,7 @@ import {
   getSortedCategories,
   insertCategoriesIfNotExists,
 } from "../services/categories.js";
+import { checkIfModerator } from "./subredditActionsServices.js";
 /**
  * This function is used to search for a subreddit with its name
  * it gets the subreddit from the database then it checks about it's validity
@@ -15,7 +16,10 @@ import {
  */
 export async function searchForSubreddit(subredditName) {
   //GETTING SUBREDDIT DATA
-  const subreddit = await Subreddit.findOne({ title: subredditName });
+  const subreddit = await Subreddit.findOne({
+    title: subredditName,
+    deletedAt: undefined,
+  });
   if (!subreddit) {
     let error = new Error("This subreddit isn't found");
     error.statusCode = 400;
@@ -110,12 +114,95 @@ export async function addToJoinedSubreddit(user, subreddit) {
   });
   await user.save();
   subreddit.members += 1;
+  subreddit.joinedUsers.push({
+    userId: user.id,
+    joinDate: Date.now(),
+  });
   await subreddit.save();
   return {
     statusCode: 200,
     message: "you joined the subreddit successfully",
   };
 }
+
+/**
+ * Function used to remove the subreddit from the joinedSubreddit list of the user,
+ * then decrement the number of members of the subreddit.
+ * @param {object} user User object that contains the data of the user
+ * @param {object} subreddit Subreddit object that user want to leave
+ */
+export async function leaveSubredditService(user, subreddit) {
+  // check if the user is the owner of the subreddit or moderator
+  if (subreddit.owner.userID.toString() === user._id.toString()) {
+    let error = new Error("Owner of the subreddit can not leave");
+    error.statusCode = 400;
+    throw error;
+  }
+  if (checkIfModerator(user._id, subreddit) !== -1) {
+    let error = new Error("Moderators of the subreddit can not leave");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // check if the user is not a member in that subreddit
+  const joinedIndex = user.joinedSubreddits.findIndex(
+    (ele) => ele.subredditId.toString() === subreddit._id.toString()
+  );
+  const waitedIndex = subreddit.waitedUsers.findIndex(
+    (ele) => ele.userID.toString() === user._id.toString()
+  );
+
+  if (joinedIndex === -1 && waitedIndex === -1) {
+    let error = new Error("Can not leave a subreddit that you did not join");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // if the user was a member in that subreddit
+  if (joinedIndex !== -1) {
+    user.joinedSubreddits.splice(joinedIndex, 1);
+    subreddit.members -= 1;
+
+    const joinedSubIndex = subreddit.joinedUsers.findIndex(
+      (ele) => ele.userId.toString() === user._id.toString()
+    );
+    subreddit.joinedUsers.splice(joinedSubIndex, 1);
+
+    const leftIndex = subreddit.leftUsers.findIndex(
+      (ele) => ele.userId.toString() === user._id.toString()
+    );
+    // add him to leftList or update his leaveDate
+    if (leftIndex === -1) {
+      subreddit.leftUsers.push({
+        userId: user._id,
+        leaveDate: Date.now(),
+      });
+    } else {
+      subreddit.leftUsers[leftIndex].leaveDate = Date.now();
+    }
+
+    const approvedIndex = subreddit.approvedUsers.findIndex(
+      (ele) => ele.userID.toString() === user._id.toString()
+    );
+    if (approvedIndex !== -1) {
+      subreddit.approvedUsers.splice(approvedIndex, 1);
+    }
+  }
+
+  // if the user is still in the waiting list for that subreddit
+  if (waitedIndex !== -1) {
+    subreddit.waitedIndex.splice(waitedIndex, 1);
+  }
+
+  await user.save();
+  await subreddit.save();
+
+  return {
+    statusCode: 200,
+    message: "You left the subreddit successfully",
+  };
+}
+
 /**
  * This function is used to add a description to a subreddit using one of the moderators
  * @param {String} subredditName subreddit Name
@@ -208,6 +295,11 @@ export async function addSubreddit(req, authPayload) {
     username: creatorUsername,
     userID: creatorId,
   };
+  const joinedUsers = [];
+  joinedUsers.push({
+    userId: owner.userID,
+    joinDate: Date.now(),
+  });
   const subreddit = await new Subreddit({
     title: subredditName,
     viewName: subredditName,
@@ -216,6 +308,7 @@ export async function addSubreddit(req, authPayload) {
     nsfw: nsfw,
     owner: owner,
     createdAt: Date.now(),
+    joinedUsers: joinedUsers,
   }).save();
   const addedSubreddit = {
     subredditId: subreddit.id,

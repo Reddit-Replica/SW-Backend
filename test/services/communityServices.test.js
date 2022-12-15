@@ -8,6 +8,7 @@ import {
   searchForSubredditById,
   addSubreddit,
   moderateSubreddit,
+  leaveSubredditService,
 } from "../../services/communityServices.js";
 
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
@@ -19,7 +20,8 @@ import Category from "./../../models/Category.js";
 describe("Testing community service functions", () => {
   let normalUser = {},
     subreddit = {},
-    moderatorUser = {};
+    moderatorUser = {},
+    subredditToJoin = {};
   beforeAll(async () => {
     await connectDatabase();
 
@@ -58,6 +60,19 @@ describe("Testing community service functions", () => {
       owner: {
         username: "Noaman",
         userID: normalUser.Id,
+      },
+      createdAt: Date.now(),
+    }).save();
+
+    subredditToJoin = await new Subreddit({
+      title: "Manga",
+      viewName: "MangaReddit",
+      category: "Art",
+      type: "Public",
+      nsfw: false,
+      owner: {
+        username: moderatorUser.username,
+        userID: moderatorUser._id,
       },
       createdAt: Date.now(),
     }).save();
@@ -168,7 +183,7 @@ describe("Testing community service functions", () => {
       await searchForSubreddit("DeletedSubreddit", "Mahmoud");
     } catch (error) {
       expect(error.statusCode).toEqual(400);
-      expect(error.message).toEqual("This subreddit is deleted");
+      expect(error.message).toEqual("This subreddit isn't found");
     }
   });
 
@@ -197,7 +212,7 @@ describe("Testing community service functions", () => {
       await searchForSubreddit("DeletedSubreddit");
     } catch (error) {
       expect(error.statusCode).toEqual(400);
-      expect(error.message).toEqual("This subreddit is deleted");
+      expect(error.message).toEqual("This subreddit isn't found");
     }
   });
 
@@ -228,7 +243,7 @@ describe("Testing community service functions", () => {
       await searchForSubredditById(subreddit.id);
     } catch (error) {
       expect(error.statusCode).toEqual(400);
-      expect(error.message).toEqual("This subreddit is deleted");
+      expect(error.message).toEqual("This subreddit isn't found");
     }
   });
   it("should have  addUserToWaitingList function", () => {
@@ -294,7 +309,7 @@ describe("Testing community service functions", () => {
       await addToDescription("DeletedSubreddit", "Good Description");
     } catch (error) {
       expect(error.statusCode).toEqual(400);
-      expect(error.message).toEqual("This subreddit is deleted");
+      expect(error.message).toEqual("This subreddit isn't found");
     }
   });
 
@@ -322,7 +337,7 @@ describe("Testing community service functions", () => {
       await addToMainTopic("DeletedSubreddit", "Sports");
     } catch (error) {
       expect(error.statusCode).toEqual(400);
-      expect(error.message).toEqual("This subreddit is deleted");
+      expect(error.message).toEqual("This subreddit isn't found");
     }
   });
 
@@ -362,7 +377,7 @@ describe("Testing community service functions", () => {
       );
     } catch (error) {
       expect(error.statusCode).toEqual(400);
-      expect(error.message).toEqual("This subreddit is deleted");
+      expect(error.message).toEqual("This subreddit isn't found");
     }
   });
 
@@ -382,5 +397,40 @@ describe("Testing community service functions", () => {
       expect(error.statusCode).toEqual(404);
       expect(error.message).toEqual("Subtopic Football is not available");
     }
+  });
+
+  it("should have leaveSubredditService function", () => {
+    expect(leaveSubredditService).toBeDefined();
+  });
+
+  it("try to to let the moderator leave the subreddit", async () => {
+    try {
+      await leaveSubredditService(moderatorUser, subredditToJoin);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it("try to to let a user leave a subreddit that he didn't join before", async () => {
+    try {
+      await leaveSubredditService(normalUser, subredditToJoin);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it("try to to let a user leave a subreddit", async () => {
+    const userJoined = await new User({
+      username: "IWantToJoin",
+      email: "lol@gmail.com",
+      createdAt: Date.now(),
+    }).save();
+
+    userJoined.joinedSubreddits.push({
+      subredditId: subredditToJoin._id,
+      name: subredditToJoin.title,
+    });
+    await userJoined.save();
+
+    const result = await leaveSubredditService(userJoined, subredditToJoin);
+    expect(result.statusCode).toEqual(200);
   });
 });

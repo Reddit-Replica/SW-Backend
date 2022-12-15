@@ -60,7 +60,7 @@ export async function listingUserProfileService(
       sharePostId: post.sharePostId,
       flair: post.flair,
       comments: post.numberOfComments,
-      votes: post.numberOfUpvotes - post.numberOfDownvotes,
+      votes: post.numberOfVotes,
       postedAt: post.createdAt,
       sendReplies: post.sendReplies,
       markedSpam: post.markedSpam,
@@ -168,11 +168,30 @@ async function getPostComments(
   requestComments
 ) {
   // get all the comments of the post that was written by the user
-  const comments = await Comment.find({ postId: postId, ownerId: user._id });
+  const comments = await Comment.find({
+    postId: postId,
+    ownerId: user._id,
+    deletedAt: null,
+  });
   let readyComments = [];
 
-  for (const i in comments) {
-    const comment = comments[i];
+  // resort comments so that children come after parent comment
+  let preprocessedList = [];
+  for (let i = 0; i < comments.length; i++) {
+    if (!preprocessedList.includes(comments[i])) {
+      preprocessedList.push(comments[i]);
+    }
+
+    for (let j = i + 1; j < comments.length; j++) {
+      // eslint-disable-next-line max-depth
+      if (comments[i].children.includes(comments[j]._id)) {
+        preprocessedList.push(comments[j]);
+      }
+    }
+  }
+
+  for (const i in preprocessedList) {
+    const comment = preprocessedList[i];
 
     // check if the comment is saved if the listing is savedPosts
     if (typeOfListing === "savedPosts") {
@@ -194,27 +213,39 @@ async function getPostComments(
     };
 
     // add parent data
-    if (comment.parentType === "comment" && !requestComments) {
-      const parent = await Comment.findById(comment.parentId);
-      data.parent = {
-        commentId: parent._id,
-        commentedBy: parent.ownerUsername,
-        commentBody: parent.content,
-        points: parent.numberOfVotes,
-        publishTime: parent.createdAt,
-        editTime: parent.editedAt,
-      };
+    if (!requestComments && comment.parentType === "comment") {
+      const index = preprocessedList.findIndex(
+        (ele) => ele._id.toString() === comment.parentId.toString()
+      );
+      if (index === -1) {
+        const parent = await Comment.findById(comment.parentId);
+        data.parent = {
+          commentId: parent._id,
+          commentedBy: parent.ownerUsername,
+          commentBody: parent.content,
+          points: parent.numberOfVotes,
+          publishTime: parent.createdAt,
+          editTime: parent.editedAt,
+        };
+      }
     }
 
     if (loggedInUser) {
-      // if comment.subreddit in our moderated subreddits add moderation
-      const found = loggedInUser.moderatedSubreddits.find(
-        (subreddit) => subreddit.name === comment.subredditName
-      );
-
-      if (found) {
+      // check if comment was written by the logged in user
+      if (comment.ownerId.toString() === loggedInUser._id.toString()) {
         data.inYourSubreddit = true;
         data.moderation = comment.moderation;
+      } else {
+        // if comment.subreddit in our moderated subreddits add moderation
+        const found = loggedInUser.moderatedSubreddits.find(
+          (subreddit) => subreddit.name === comment.subredditName
+        );
+
+        // eslint-disable-next-line max-depth
+        if (found) {
+          data.inYourSubreddit = true;
+          data.moderation = comment.moderation;
+        }
       }
     }
     readyComments.push(data);
@@ -233,7 +264,7 @@ async function getPostComments(
  * @param {Object} user User that we want to list his posts + comments
  * @param {Object} loggedInUser Logged in user that did the request
  * @param {String} typeOfListing Name of the list in the user model that we want to list
- * @param {Boolean} requestComments Flag used to know that posts will only be wit type = summaryPost
+ * @param {Boolean} requestComments Flag used to know that posts will only be with type = summaryPost
  * @param {Object} listingParams Listing parameters that was in the query of the request
  * @returns {Object} The response to that request containing [statusCode, data]
  */
@@ -248,7 +279,10 @@ export async function listingUserOverview(
   // prepare the listing parameters
   const listingResult = await postListing(listingParams);
 
-  const result = await User.findOne({ username: user.username })
+  const result = await User.findOne({
+    username: user.username,
+    deletedAt: null,
+  })
     .select(typeOfListing)
     .populate({
       path: typeOfListing,
@@ -354,25 +388,19 @@ export async function listingUserOverview(
         postData.data.post.spammed = false;
       }
 
-      // if post.subreddit in our moderated subreddits add moderation
-      const found = loggedInUser.moderatedSubreddits.find(
-        (subreddit) => subreddit.name === post.subredditName
-      );
-
-      if (found) {
+      // check if post belongs to the logged in user
+      if (post.ownerId.toString() === loggedInUser._id.toString()) {
         postData.data.post.inYourSubreddit = true;
         postData.data.post.moderation = post.moderation;
       } else {
-        // check if post is created by logged in user [post have no subreddit]
-        const found = loggedInUser.posts.find(
-          (ele) => ele._id.toString() === post._id.toString()
+        // if post.subreddit in our moderated subreddits add moderation
+        const found = loggedInUser.moderatedSubreddits.find(
+          (subreddit) => subreddit.name === post.subredditName
         );
 
         if (found) {
           postData.data.post.inYourSubreddit = true;
           postData.data.post.moderation = post.moderation;
-        } else {
-          postData.data.post.inYourSubreddit = false;
         }
       }
     }

@@ -1,8 +1,11 @@
 import express from "express";
 
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+import notificationController from "../controllers/notificationController.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
 // eslint-disable-next-line new-cap
-const router = express.Router();
-
+const notificationRouter = express.Router();
+import { createFollowUserNotification } from "../services/notificationServices.js";
 /**
  * @swagger
  * tags:
@@ -88,7 +91,7 @@ const router = express.Router();
  *       - bearerAuth: []
  */
 
-router.get("/notifications");
+notificationRouter.get("/notifications");
 
 /**
  * @swagger
@@ -98,257 +101,149 @@ router.get("/notifications");
  *      tags: [Notifications]
  *      responses:
  *          200:
- *              description: Notification is hidden successfully
- *          401:
- *              description: Unauthorized to hide the notifications
+ *              description: Notification marked as read successfully
  *          500:
  *              description: Server Error
  *      security:
  *       - bearerAuth: []
  */
 
-router.patch("/mark-all-notifications-read");
+notificationRouter.patch(
+  "/mark-all-notifications-read",
+  verifyAuthToken,
+  notificationController.markNotificationsAsRead
+);
 
 /**
  * @swagger
- * /hide-noification:
+ * /mark-notification-read/{notificationId}:
+ *  patch:
+ *      summary: mark a notification as read
+ *      tags: [Notifications]
+ *      responses:
+ *          200:
+ *              description: Notification marked as read successfully
+ *          401:
+ *              description: User unauthorized to mark this notification as read
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+notificationRouter.patch(
+  "/mark-notification-read/:notificationId",
+  verifyAuthToken,
+  notificationController.markNotificationAsRead
+);
+
+/**
+ * @swagger
+ * /hide-notification/{notificationId}:
  *  patch:
  *      summary: mark a specific notification as hidden
+ *      tags: [Notifications]
+ *      responses:
+ *          200:
+ *              description: Notification marked as hidden successfully
+ *          401:
+ *              description: User unauthorized to mark this notification as hidden
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+notificationRouter.patch(
+  "/hide-notification/:notificationId",
+  verifyAuthToken,
+  notificationController.markNotificationAsHidden
+);
+
+/**
+ * @swagger
+ * /notification-subscribe:
+ *  post:
+ *      summary: subscribe to notifications with the client token from firebase (after the login directly)
  *      tags: [Notifications]
  *      requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
+ *             required:
+ *              - type
+ *              - accessToken
  *             type: object
  *             properties:
- *              id:
+ *              type:
  *                type: string
- *                description: id of the notification you want to make hidden
+ *                description: web or flutter
+ *                enum:
+ *                 - web
+ *                 - flutter
+ *              accessToken:
+ *                type: string
+ *                description: the access token from firebase
  *      responses:
  *          200:
- *              description: Notifications are set to read successfully
- *          401:
- *              description: Unauthorized to Read the notifications
+ *              description: Subscribed successfully
  *          500:
  *              description: Server Error
  *      security:
  *       - bearerAuth: []
  */
 
-router.patch("/hide-noification");
+notificationRouter.post(
+  "/notification-subscribe",
+  verifyAuthToken,
+  notificationController.notificationSubscribeValidator,
+  validateRequestSchema,
+  notificationController.notificationSubscribe
+);
 
 /**
  * @swagger
- * /live/thread:
- *  get:
- *      summary: Get a list of updates posted in this thread. (canceled feature)
- *      tags: [Threads]
- *      parameters:
- *       - in: query
- *         name: before
- *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
- *         schema:
- *           type: string
- *       - in: query
- *         name: after
- *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
- *         schema:
- *           type: string
- *       - in: query
- *         name: limit
- *         description: Maximum number of items desired [Maximum = 100]
- *         schema:
- *           type: integer
- *           default: 25
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: array
- *                        items:
- *                              $ref: '#/components/schemas/Threads'
- *          404:
- *              description: thread not found
- *          401:
- *              description: User unauthorized to get this thread
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-router.get("/live/thread");
-
-/**
- * @swagger
- * /live/by-id/names:
- *  get:
- *      summary: Get a list all the live events (canceled feature)
- *      tags: [Threads]
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: array
- *                        items:
- *                              $ref: '#/components/schemas/Threads'
- *          404:
- *              description: thread not found
- *          401:
- *              description: User unauthorized to get this thread
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-router.get("live/by-id/names");
-
-/**
- * @swagger
- * /live/create:
+ * /notification-unsubscribe:
  *  post:
- *      summary: Create a new live thread.
- *       Once created, the initial settings can be modified with /live/thread/edit and new updates can be posted with /live/thread/update. (canceled feature)
- *      tags: [Threads]
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: array
- *                        items:
- *                              $ref: '#/components/schemas/Threads'
- *          201:
- *              description: Created successfully
- *          401:
- *              description: Unauthorized to create this thread
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-router.post("/live/create");
-
-/**
- * @swagger
- * /live/thread/about:
- *  get:
- *      summary: get a some basic info about the live thread (canceled feature)
- *      tags: [Threads]
- *      responses:
- *          200:
- *              description: Returned successfully
- *              content:
- *                  application/json:
- *                      schema:
- *                        type: array
- *                        items:
- *                              $ref: '#/components/schemas/Threads'
- *          404:
- *              description: threads not found
- *          401:
- *              description: User unauthorized to get the threads
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-router.get("/live/thread/about");
-
-/**
- * @swagger
- * /live/thread:
- *  patch:
- *      summary: editing a thread (canceled feature)
- *      tags: [Threads]
+ *      summary: unsubscribe from notifications (with signout)
+ *      tags: [Notifications]
  *      requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
+ *             required:
+ *              - type
  *             type: object
  *             properties:
- *              id:
+ *              type:
  *                type: string
- *                description: Full name of the thread that you want to edit
+ *                description: web or flutter
+ *                enum:
+ *                 - web
+ *                 - flutter
  *      responses:
  *          200:
- *              description: thread has just been edited
- *          401:
- *              description: Unauthorized to spam this thread
+ *              description: Unsubscribed successfully
  *          500:
  *              description: Server Error
  *      security:
  *       - bearerAuth: []
  */
 
-router.patch("/live/thread");
+notificationRouter.post(
+  "/notification-unsubscribe",
+  verifyAuthToken,
+  notificationController.notificationUnsubscribeValidator,
+  validateRequestSchema,
+  notificationController.notificationSubscribe
+);
 
-/**
- * @swagger
- * /live/thread:
- *  put:
- *      summary: updating a thread (canceled feature)
- *      tags: [Threads]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              id:
- *                type: string
- *                description: Full name of the thread
- *      responses:
- *          200:
- *              description: Thread has ben updated successfully
- *          401:
- *              description: Unauthorized to update this thread
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
+notificationRouter.post("/send", (req, res) => {
+  createFollowUserNotification("ahmed", "63972839aea1062bb18835d4");
+  console.log(process.env.FRONT_BASE);
+  res.status(200).json("send");
+});
 
-router.put("/live/thread");
-
-/**
- * @swagger
- * /live/thread:
- *  delete:
- *      summary: closes a thread (canceled feature)
- *      tags: [Threads]
- *      requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              id:
- *                type: string
- *                description: Full name of the thread that you want to close
- *      responses:
- *          200:
- *              description: thread has just been closed successfully
- *          401:
- *              description: Unauthorized to close this thread
- *          500:
- *              description: Server Error
- *      security:
- *       - bearerAuth: []
- */
-
-router.delete("/live/thread");
-
-export default router;
+export default notificationRouter;

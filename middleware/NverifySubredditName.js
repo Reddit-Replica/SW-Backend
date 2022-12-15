@@ -17,6 +17,7 @@ export async function checkDuplicateSubredditTitle(req, res, next) {
   try {
     const subreddit = await Subreddit.findOne({
       title: req.body.subredditName,
+      deletedAt: undefined,
     });
     if (!subreddit) {
       next();

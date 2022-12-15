@@ -12,7 +12,7 @@ import { subredditListing } from "../utils/prepareSubredditListing.js";
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchPosts(query, listingParams) {
@@ -22,13 +22,29 @@ export async function searchPosts(query, listingParams) {
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
 
-  const result = await Post.find(listingResult.find)
-    .limit(listingResult.limit)
-    .sort(listingResult.sort);
+  const result = await Post.find(listingResult.find).sort(listingResult.sort);
+
+  let limit = listingResult.limit;
+
+  if (limit > result.length) {
+    limit = result.length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result.length - limit;
+    finish = result.length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
 
   let children = [];
 
-  for (const i in result) {
+  for (i; i < finish; i++) {
     const post = result[i];
 
     let postData = { id: result[i]._id.toString() };
@@ -63,8 +79,8 @@ export async function searchPosts(query, listingParams) {
   let after = "",
     before = "";
   if (result.length) {
-    after = result[result.length - 1]._id.toString();
-    before = result[0]._id.toString();
+    after = result[finish - 1]._id.toString();
+    before = result[start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -81,7 +97,7 @@ export async function searchPosts(query, listingParams) {
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchComments(query, listingParams) {
@@ -89,19 +105,44 @@ export async function searchComments(query, listingParams) {
   const listingResult = await commentListing(listingParams);
 
   const regex = new RegExp(query, "i");
-  listingResult.find["content.ops"] = {
-    $elemMatch: { insert: { $regex: regex } },
-  };
-  console.log(listingResult.find);
+  listingResult.find["$or"] = [
+    {
+      "content.ops": {
+        $elemMatch: { insert: { $regex: regex } },
+      },
+    },
+    {
+      content: {
+        $elemMatch: { insert: { $regex: regex } },
+      },
+    },
+  ];
 
   const result = await Comment.find(listingResult.find)
-    .limit(listingResult.limit)
     .sort(listingResult.sort)
     .populate("postId");
 
+  let limit = listingResult.limit;
+
+  if (limit > result.length) {
+    limit = result.length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result.length - limit;
+    finish = result.length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
+
   let children = [];
 
-  for (const i in result) {
+  for (i; i < finish; i++) {
     const comment = result[i];
     let commentData = { id: result[i]._id.toString() };
     commentData.data = {
@@ -134,8 +175,8 @@ export async function searchComments(query, listingParams) {
   let after = "",
     before = "";
   if (result.length) {
-    after = result[result.length - 1]._id.toString();
-    before = result[0]._id.toString();
+    after = result[finish - 1]._id.toString();
+    before = result[start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -152,9 +193,10 @@ export async function searchComments(query, listingParams) {
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
-export async function searchUsers(query, listingParams) {
+// eslint-disable-next-line max-statements
+export async function searchUsers(query, listingParams, loggedInUser) {
   // Prepare Listing Parameters
   const listingResult = await userListing(listingParams);
 
@@ -163,22 +205,57 @@ export async function searchUsers(query, listingParams) {
     { username: { $regex: regex } },
     { displayName: { $regex: regex } },
   ];
+  if (loggedInUser) {
+    listingResult.find["username"] = {
+      $not: { $regex: loggedInUser.username },
+    };
+  }
 
-  const result = await User.find(listingResult.find)
-    .limit(listingResult.limit)
-    .sort(listingResult.sort);
+  const result = await User.find(listingResult.find).sort(listingResult.sort);
+
+  let limit = listingResult.limit;
+
+  if (limit > result.length) {
+    limit = result.length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result.length - limit;
+    finish = result.length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
 
   let children = [];
 
-  for (const i in result) {
+  for (i; i < finish; i++) {
     const user = result[i];
-
+    let following = undefined;
+    if (loggedInUser) {
+      if (
+        user.followers.find(
+          (userId) => userId.toString() === loggedInUser.id.toString()
+        )
+      ) {
+        following = true;
+      } else {
+        following = false;
+      }
+    }
     let userData = { id: result[i]._id.toString() };
     userData.data = {
       id: user.id.toString(),
       karma: user.karma,
       username: user.username,
+      nsfw: user.userSettings.nsfw,
+      joinDate: user.createdAt,
       avatar: user.avatar,
+      following: following,
     };
 
     children.push(userData);
@@ -187,8 +264,8 @@ export async function searchUsers(query, listingParams) {
   let after = "",
     before = "";
   if (result.length) {
-    after = result[result.length - 1]._id.toString();
-    before = result[0]._id.toString();
+    after = result[finish - 1]._id.toString();
+    before = result[start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -205,10 +282,10 @@ export async function searchUsers(query, listingParams) {
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
-export async function searchSubreddits(query, listingParams) {
+export async function searchSubreddits(query, listingParams, loggedInUser) {
   // Prepare Listing Parameters
   const listingResult = await subredditListing(listingParams);
 
@@ -221,14 +298,42 @@ export async function searchSubreddits(query, listingParams) {
     $not: { $regex: "(?i)\\bprivate\\b" },
   };
 
-  const result = await Subreddit.find(listingResult.find)
-    .limit(listingResult.limit)
-    .sort(listingResult.sort);
+  const result = await Subreddit.find(listingResult.find).sort(
+    listingResult.sort
+  );
+
+  let limit = listingResult.limit;
+
+  if (limit > result.length) {
+    limit = result.length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result.length - limit;
+    finish = result.length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
 
   let children = [];
 
-  for (const i in result) {
+  for (i; i < finish; i++) {
     const subreddit = result[i];
+    let joined = undefined;
+    if (loggedInUser) {
+      if (
+        loggedInUser.joinedSubreddits.find((sr) => sr.name === subreddit.title)
+      ) {
+        joined = true;
+      } else {
+        joined = false;
+      }
+    }
 
     let subredditData = { id: result[i]._id.toString() };
     subredditData.data = {
@@ -236,6 +341,9 @@ export async function searchSubreddits(query, listingParams) {
       subredditName: subreddit.title,
       numberOfMembers: subreddit.members,
       description: subreddit.description,
+      picture: subreddit.picture,
+      nsfw: subreddit.nsfw,
+      joined: joined,
     };
 
     children.push(subredditData);
@@ -244,8 +352,8 @@ export async function searchSubreddits(query, listingParams) {
   let after = "",
     before = "";
   if (result.length) {
-    after = result[result.length - 1]._id.toString();
-    before = result[0]._id.toString();
+    after = result[finish - 1]._id.toString();
+    before = result[start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -255,4 +363,19 @@ export async function searchSubreddits(query, listingParams) {
       children: children,
     },
   };
+}
+
+/**
+ * This service function return the logged in user if there is a token
+ * sent with the request.
+ *
+ * @param {string} userId User ID
+ * @returns {object} The user object
+ */
+export async function getLoggedInUser(userId) {
+  const user = await User.findById(userId);
+  if (!user || user.deletedAt) {
+    return false;
+  }
+  return user;
 }
