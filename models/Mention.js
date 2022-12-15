@@ -31,6 +31,11 @@ const mentionSchema = mongoose.Schema({
     required: true,
     default: "Mention",
   },
+  isRead: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 const Mention = mongoose.model("Mention", mentionSchema);

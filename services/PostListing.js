@@ -248,13 +248,7 @@ export async function homePostsListing(
   };
 }
 
-
-
-export async function subredditPostListing(
-  user,
-  listingParams,
-  isLoggedIn
-) {
+export async function subredditPostListing(user, listingParams, isLoggedIn) {
   const listingResult = await postListing(listingParams);
   // GETTING THE DESIRED FIELD THAT WE WOULD GET DATA FROM
   const result = await User.findOne({ username: user.username })
