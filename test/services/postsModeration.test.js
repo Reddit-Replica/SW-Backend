@@ -38,7 +38,7 @@ describe("Testing Posts Moderation Service functions", () => {
       type: "Public",
       nsfw: false,
       owner: {
-        username: "Noaman",
+        username: "hamdy",
         userID: user.id,
       },
       createdAt: Date.now(),
