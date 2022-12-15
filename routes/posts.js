@@ -27,7 +27,52 @@ import {
 
 // eslint-disable-next-line new-cap
 const postRouter = express.Router();
-
+/**
+ * @swagger
+ * /commented-users:
+ *  post:
+ *      summary: returns the user that made a comment in a specific post
+ *      tags: [Posts]
+ *      parameters:
+ *          - in: query
+ *            required: true
+ *            name: id
+ *            schema:
+ *              type: string
+ *            description: id of the post
+ *      responses:
+ *          200:
+ *              description: usernames of the users that made comments
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              pinnedPosts:
+ *                                type: array
+ *                                items:
+ *                                    type: string
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why this happened.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: Type of error
+ *          401:
+ *              description: User unauthorized to follow/unfollow this post
+ *          404:
+ *              description: Post not found
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+postRouter.get(
+  "/commented-users",verifyAuthToken,postActionsController.getCommentedUsersOnAPost
+);
 /**
  * @swagger
  * /follow-post:

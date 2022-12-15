@@ -66,6 +66,12 @@ export async function extraPostsListing(before, after, limit, type,time) {
     result.query[splitterParam] = { $lt: splitterPost[splitterParam] };
   } else if (!before && !after) {
     splitterPost = await Post.find(result.query).limit(1).sort(result.sort);
+    console.log(splitterPost);
+    if (splitterPost.length===0){
+      let error= new Error("No Posts found");
+      error.statusCode=404;
+      throw error;
+    }
     result.query[splitterParam] = { $lte: splitterPost[0][splitterParam] };
   }
   if (type==="top"){
