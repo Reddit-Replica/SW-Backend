@@ -295,6 +295,7 @@ const getTrendingPosts = async (req, res) => {
   }
 };
 
+
 export default {
   postIdValidator,
   pinPostValidator,
