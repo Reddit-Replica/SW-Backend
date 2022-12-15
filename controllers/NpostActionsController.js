@@ -20,7 +20,7 @@ import {
   clearSuggestedSort,
   setSuggestedSort,
   upVoteAComment,
-  downVoteAComment,
+  downVoteAComment,getCommentedUsers,
 } from "../services/PostActions.js";
 import { searchForUserService } from "../services/userServices.js";
 import {
@@ -342,6 +342,26 @@ const clearPostSuggestSort = async (req, res) => {
   }
 };
 
+
+const getCommentedUsersOnAPost = async (req, res) => {
+  try {
+    if (!req.query.id){
+      let err=new Error("Id of the post cannot be empty");
+      err.statusCode=400;
+      throw err;
+    }
+    const result = await getCommentedUsers(req.query.id);
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   followOrUnfollowPost,
   savePostOrComment,
@@ -358,5 +378,5 @@ export default {
   spamValidator,
   suggestedSortValidator,
   setPostSuggestSort,
-  clearPostSuggestSort,
+  clearPostSuggestSort,getCommentedUsersOnAPost
 };
