@@ -308,37 +308,47 @@ router.get("/message/sent", verifyAuthToken, messageController.getSentMsg);
  *                                    description: Time of sending the message
  *                                   subject:
  *                                    type: string
- *                                    description: Subject of the message
+ *                                    description: Subject of the message (special for Messages)
  *                                   type:
  *                                    type: string
- *                                    description: describes the type of message
+ *                                    description: describes the type of message check on the type of the message to know the kind of data that you need
  *                                    enum:
  *                                     - Mentions
  *                                     - Messages
  *                                   subredditName:
  *                                    type: string
  *                                    description: subreddit name that the reply or the mention was in
- *                                   isModerator:
- *                                    type: boolean
- *                                    description: true if the user is a moderator of the subreddit that the msg was sent via
  *                                   postTitle:
  *                                    type: string
- *                                    description: the title of the post that the reply or the mention happened in
- *                                   postID:
+ *                                    description: the title of the post that the reply or the mention happened in (special for Mentions)
+ *                                   postId:
  *                                    type: string
- *                                    description: id of the post that the reply or the mention happened in
- *                                   commentID:
+ *                                    description: id of the post that the reply or the mention happened in (special for Mentions)
+ *                                   commentId:
  *                                    type: string
- *                                    description: id of the comment that the reply or the mention happened ( to make it upvote or downvote)
+ *                                    description: id of the comment that the reply or the mention happened ( to make it upvote or downvote) (special for Mentions)
  *                                   numOfComments:
  *                                    type: number
- *                                    description: total number of comments in the post that the mention or reply happened in
+ *                                    description: total number of comments in the post that the mention or reply happened in (special for Mentions)
  *                                   isSenderUser:
  *                                    type: boolean
- *                                    description: true if the senderUsername is for a user , false if it's for a subreddit
+ *                                    description: true if the senderUsername is for a user , false if it's for a subreddit(special for Messages)
  *                                   isReceiverUser:
  *                                    type: boolean
- *                                    description: true if the receiverUsername is for a user , false if it's for a subreddit
+ *                                    description: true if the receiverUsername is for a user , false if it's for a subreddit (special for Messages)
+ *                                   isRead:
+ *                                    type: boolean
+ *                                    description: true if the msg or mention is read , false if it's unread
+ *                                   vote:
+ *                                    type: number
+ *                                    description: describes if the mention was upvoted or downvoted or none by the user it will be 1 for upvoted, 0 for none , -1 for downvoted (special for Mentions)
+ *                                    enum:
+ *                                     - 1
+ *                                     - 0
+ *                                     - -1
+ *                                   postOwner:
+ *                                    type: string
+ *                                    description: describes the username of the user that posted the post (special for Mentions)
  *          401:
  *              description: you are unauthorized to do this action
  *              content:
@@ -423,6 +433,9 @@ router.get("/message/inbox", verifyAuthToken, messageController.getInbox);
  *                                   text:
  *                                    type: string
  *                                    description: Message Content as text
+ *                                   subredditName:
+ *                                    type: string
+ *                                    description: name of the subreddit that you send or received the msg via
  *                                   senderUsername:
  *                                    type: string
  *                                    description: Username of the receiver
@@ -436,12 +449,6 @@ router.get("/message/inbox", verifyAuthToken, messageController.getInbox);
  *                                   subject:
  *                                    type: string
  *                                    description: Subject of the message
- *                                   subredditName:
- *                                    type: string
- *                                    description: name of the subreddit that you send or received the msg via
- *                                   isModerator:
- *                                    type: boolean
- *                                    description: true if the user is a moderator of the subreddit that the msg was sent via
  *                                   isSenderUser:
  *                                    type: boolean
  *                                    description: true if the senderUsername is for a user , false if it's for a subreddit
@@ -542,27 +549,34 @@ router.get("/message/unread", verifyAuthToken, messageController.getUnreadMsg);
  *                                    type: string
  *                                    format: date-time
  *                                    description: Time of sending the message
- *                                   type:
- *                                    type: string
- *                                    description: describes the type of message
- *                                    enum:
- *                                     - Mentions
- *                                     - Messages
  *                                   subredditName:
  *                                    type: string
  *                                    description: subreddit name that the reply was in
  *                                   postTitle:
  *                                    type: string
  *                                    description: the title of the post that the reply happened in
- *                                   postID:
+ *                                   postId:
  *                                    type: string
  *                                    description: id of the post that the reply happened in
- *                                   commentID:
+ *                                   commentId:
  *                                    type: string
  *                                    description: id of the comment that the reply happened in ( to make it upvote or downvote)
  *                                   numOfComments:
  *                                    type: number
  *                                    description: total number of comments in the post that the mention or reply happened in
+ *                                   isRead:
+ *                                    type: boolean
+ *                                    description: true if the msg or mention is read , false if it's unread
+ *                                   vote:
+ *                                    type: number
+ *                                    description: describes if the mention was upvoted or downvoted or none by the user it will be 1 for upvoted, 0 for none , -1 for downvoted
+ *                                    enum:
+ *                                     - 1
+ *                                     - 0
+ *                                     - -1
+ *                                   postOwner:
+ *                                    type: string
+ *                                    description: describes the username of the user that posted the post
  *          401:
  *              description: you are unauthorized to do this action
  *              content:
@@ -663,15 +677,28 @@ router.get("/message/post-reply");
  *                                   postTitle:
  *                                    type: string
  *                                    description: the title of the post that the reply happened in
- *                                   postID:
+ *                                   postId:
  *                                    type: string
  *                                    description: id of the post that the reply happened in
- *                                   commentID:
+ *                                   commentId:
  *                                    type: string
  *                                    description: id of the comment that the reply happened in ( to make it upvote or downvote)
  *                                   numOfComments:
  *                                    type: number
  *                                    description: total number of comments in the post that the mention or reply happened in
+ *                                   isRead:
+ *                                    type: boolean
+ *                                    description: true if the msg or mention is read , false if it's unread
+ *                                   vote:
+ *                                    type: number
+ *                                    description: describes if the mention was upvoted or downvoted or none by the user it will be 1 for upvoted, 0 for none , -1 for downvoted
+ *                                    enum:
+ *                                     - 1
+ *                                     - 0
+ *                                     - -1
+ *                                   postOwner:
+ *                                    type: string
+ *                                    description: describes the username of the user that posted the post
  *          401:
  *              description: you are unauthorized to do this action
  *              content:
@@ -751,16 +778,22 @@ router.get(
  *                            description: List of [Things] to return
  *                            items:
  *                              properties:
- *                                subjectTitle:
+ *                               id:
+ *                                 type: string
+ *                                 description: Message id
+ *                               data:
+ *                                type: object
+ *                                properties:
+ *                                 subjectTitle:
  *                                  type: string
  *                                  description: contains the username of the person or subreddit that you messaged or the subreddit you sent msg from
- *                                isUser:
+ *                                 isUser:
  *                                  type: boolean
  *                                  description: true if the subject title content is for a user , false if it is for a subreddit
- *                                subjectContent:
+ *                                 subjectContent:
  *                                  type: string
  *                                  description: contains the content of the subject of the msg
- *                                messages:
+ *                                 messages:
  *                                  type: array
  *                                  description: List of the messages in that subject
  *                                  items:
@@ -781,9 +814,6 @@ router.get(
  *                                      subredditName:
  *                                        type: string
  *                                        description: Subreddit name that the message was sent via
- *                                      isModerator:
- *                                        type: string
- *                                        description: true if the user is a moderator of the subreddit that the message was sent via
  *                                      isSenderUser:
  *                                        type: boolean
  *                                        description: true if the senderUsername is for a user , false if it's for a subreddit
