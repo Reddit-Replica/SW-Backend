@@ -3,6 +3,7 @@ import {
   subscribeNotification,
   unsubscribeNotification,
   markAllNotificationsRead,
+  markNotificationRead,
 } from "../services/notificationServices.js";
 const notificationSubscribeValidator = [
   body("accessToken")
@@ -63,6 +64,20 @@ const notificationUnsubscribe = async (req, res) => {
 const markNotificationsAsRead = async (req, res) => {
   try {
     await markAllNotificationsRead(req.payload.userId);
+    res.status(200).json("Notifications marked as read successfully");
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const markNotificationAsRead = async (req, res) => {
+  try {
+    await markNotificationRead(req.payload.userId, req.params.notificationId);
     res.status(200).json("Notification marked as read successfully");
   } catch (err) {
     console.log(err.message);
@@ -80,4 +95,5 @@ export default {
   notificationUnsubscribe,
   notificationUnsubscribeValidator,
   markNotificationsAsRead,
+  markNotificationAsRead,
 };

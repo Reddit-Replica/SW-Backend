@@ -116,6 +116,29 @@ notificationRouter.patch(
 
 /**
  * @swagger
+ * /mark-notification-read/{notificationId}:
+ *  patch:
+ *      summary: mark all the notifications as read
+ *      tags: [Notifications]
+ *      responses:
+ *          200:
+ *              description: Notification marked as read successfully
+ *          401:
+ *              description: User unauthorized to mark this notification as read
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+notificationRouter.patch(
+  "/mark-notification-read/:notificationId",
+  verifyAuthToken,
+  notificationController.markNotificationAsRead
+);
+
+/**
+ * @swagger
  * /hide-noification:
  *  patch:
  *      summary: mark a specific notification as hidden
