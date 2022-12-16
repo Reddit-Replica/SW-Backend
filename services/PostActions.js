@@ -877,7 +877,7 @@ export async function getCommentedUsers(postId) {
     users.add(username);
   }
   return {
-    data:{ usernames: [...users] },
+    data: { usernames: [...users] },
     statusCode: 200,
   };
 }

@@ -49,7 +49,7 @@ export async function userMessageListing(
         sort: listingResult.sort,
       },
     });
-    console.log(listingResult);
+  console.log(listingResult);
   let limit = listingResult.limit;
   if (result[typeOfListing].length < limit) {
     limit = result[typeOfListing].length;
@@ -281,7 +281,7 @@ export async function userConversationListing(
     const messages = [];
     for (const smallMessage of conversation.messages) {
       const message = await Message.findById(smallMessage);
-      if (message.receiverUsername===user.username && message.deletedAt) {
+      if (message.receiverUsername === user.username && message.deletedAt) {
         continue;
       }
       const messageData = {
@@ -352,8 +352,7 @@ export async function userInboxListing(user, listingParams) {
   //GETTING RECEIVED MESSAGES
   const { receivedMessages } = await User.findOne({ username: user.username })
     .select("receivedMessages")
-    .populate({ path: "receivedMessages" ,
-    match: { deletedAt:null } });
+    .populate({ path: "receivedMessages", match: { deletedAt: null } });
   //GETTING USERNAME MENTIONS
   const { usernameMentions } = await User.findOne({ username: user.username })
     .select("usernameMentions")
