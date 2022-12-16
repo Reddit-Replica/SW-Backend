@@ -355,8 +355,12 @@ export async function addPost(req, res, next) {
     post.numberOfVotes = 1;
     user.upVotes += 1;
     user.karma += 1;
-    post.hotTimingScore = post.createdAt.getTime() / 10000;
-    post.bestTimingScore = post.createdAt.getTime() / 10000000;
+    post.hotTimingScore = Math.round(post.createdAt.getTime() / 10000);
+    post.bestTimingScore = Math.round(post.createdAt.getTime() / 100000);
+    post.hotScore =
+      post.hotTimingScore + post.numberOfVotes + post.numberOfComments;
+    post.bestScore =
+      post.bestTimingScore + post.numberOfVotes + post.numberOfComments;
     next();
   } catch (err) {
     return res.status(500).json("Internal server error");

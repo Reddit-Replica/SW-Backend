@@ -52,18 +52,18 @@ export async function extraPostsListing(before, after, limit, type, time) {
     result.sort = { numberOfVotes: -1 };
     splitterParam = "numberOfVotes";
   } else if (type === "trending") {
-    result.sort = { totalViews: -1 };
-    splitterParam = "numberOfVotes";
+    result.sort = { numberOfViews: -1 };
+    splitterParam = "numberOfViews";
   }
   result.query = {};
   result.limit = prepareLimit(limit);
   let splitterPost;
   if (before) {
     splitterPost = await searchForPost(before);
-    result.query[splitterParam] = { $gt: splitterPost[splitterParam] };
+    result.query[splitterParam] = { $gte: splitterPost[splitterParam] };
   } else if (!before && after) {
     splitterPost = await searchForPost(after);
-    result.query[splitterParam] = { $lt: splitterPost[splitterParam] };
+    result.query[splitterParam] = { $lte: splitterPost[splitterParam] };
   } else if (!before && !after) {
     splitterPost = await Post.find(result.query).limit(1).sort(result.sort);
     console.log(splitterPost);
