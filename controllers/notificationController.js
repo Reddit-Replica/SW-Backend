@@ -5,6 +5,7 @@ import {
   markAllNotificationsRead,
   markNotificationRead,
   markNotificationHidden,
+  getUserNotifications,
 } from "../services/notificationServices.js";
 const notificationSubscribeValidator = [
   body("accessToken")
@@ -104,6 +105,25 @@ const markNotificationAsHidden = async (req, res) => {
   }
 };
 
+const getAllNotifications = async (req, res) => {
+  try {
+    const preapredResponse = await getUserNotifications(
+      req.query.limit,
+      req.query.before,
+      req.query.after,
+      req.payload.userId
+    );
+    res.status(200).json(preapredResponse);
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
 export default {
   notificationSubscribe,
   notificationSubscribeValidator,
@@ -112,4 +132,5 @@ export default {
   markNotificationsAsRead,
   markNotificationAsRead,
   markNotificationAsHidden,
+  getAllNotifications,
 };

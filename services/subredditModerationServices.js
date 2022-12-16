@@ -34,6 +34,7 @@ export async function getSubredditModerators(
       beforeReq
     );
   } else {
+    validateId(afterReq);
     preparedResponse = getSubredditModeratorsAfter(subreddit, limit, afterReq);
   }
 
@@ -186,6 +187,7 @@ export async function getSubredditInvitedModerators(
       beforeReq
     );
   } else {
+    validateId(afterReq);
     preparedResponse = getSubredditInvitedModeratorsAfter(
       subreddit,
       limit,
@@ -390,6 +392,7 @@ export async function getSubredditApproved(
     validateId(beforeReq);
     preparedResponse = getSubredditApprovedBefore(subreddit, limit, beforeReq);
   } else {
+    validateId(afterReq);
     preparedResponse = getSubredditApprovedAfter(subreddit, limit, afterReq);
   }
 
@@ -439,7 +442,7 @@ function getSubredditApprovedBefore(subreddit, limit, before) {
     (mod) => mod.userID._id.toString() === before
   );
   if (neededIndex === -1) {
-    const error = new Error("invalid moderator id");
+    const error = new Error("invalid approved id");
     error.statusCode = 400;
     throw error;
   }
@@ -482,7 +485,7 @@ function getSubredditApprovedAfter(subreddit, limit, after) {
     (mod) => mod.userID._id.toString() === after
   );
   if (neededIndex === -1) {
-    const error = new Error("invalid moderator id");
+    const error = new Error("invalid approved id");
     error.statusCode = 400;
     throw error;
   }
@@ -540,6 +543,7 @@ export async function getSubredditMuted(
     validateId(beforeReq);
     preparedResponse = getSubredditMutedBefore(subreddit, limit, beforeReq);
   } else {
+    validateId(afterReq);
     preparedResponse = getSubredditMutedAfter(subreddit, limit, afterReq);
   }
 
@@ -590,7 +594,7 @@ function getSubredditMutedBefore(subreddit, limit, before) {
     (mod) => mod.userID._id.toString() === before
   );
   if (neededIndex === -1) {
-    const error = new Error("invalid moderator id");
+    const error = new Error("invalid muted user  id");
     error.statusCode = 400;
     throw error;
   }
@@ -634,7 +638,7 @@ function getSubredditMutedAfter(subreddit, limit, after) {
     (mod) => mod.userID._id.toString() === after
   );
   if (neededIndex === -1) {
-    const error = new Error("invalid moderator id");
+    const error = new Error("invalid muted user id");
     error.statusCode = 400;
     throw error;
   }

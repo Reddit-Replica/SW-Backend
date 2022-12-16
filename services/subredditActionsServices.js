@@ -1,8 +1,5 @@
 import Subreddit from "../models/Community.js";
 import { addMessage, validateMessage } from "./messageServices.js";
-import dotenv from "dotenv";
-dotenv.config();
-const FRONT_BASE = process.env.FRONT_BASE.trim();
 
 /**
  * Function used to check that a subreddit with that name exists and return its object
@@ -271,7 +268,7 @@ export async function inviteToModerateService(
         senderUsername: `/u/${moderator.username}`,
         receiverUsername: `/u/${userToInvite.username}`,
         // eslint-disable-next-line max-len
-        text: `gadzooks! you are invited to become a moderator of /r/${subreddit.title}! to accept, visit the <a href="${FRONT_BASE}/r/${subreddit.title}/about/accept-moderator-invite">moderators page for /r/${subreddit.title}</a> and click "accept". otherwise, if you did not expect to receive this, you can simply ignore this invitation or report it.`,
+        text: `gadzooks! you are invited to become a moderator of /r/${subreddit.title}! to accept, click on the link above. otherwise, if you did not expect to receive this, you can simply ignore this invitation or report it.`,
         isReply: false,
       },
     };
@@ -359,8 +356,26 @@ export async function acceptModerationInviteService(user, subreddit) {
     dateOfModeration: Date.now(),
   });
 
+  // check if user was a member in this subreddit
+  const joinedIndex = subreddit.joinedUsers.findIndex(
+    (ele) => ele.userId.toString() === user._id.toString()
+  );
+  if (joinedIndex === -1) {
+    subreddit.members += 1;
+    subreddit.joinedUsers.push({
+      userId: user._id,
+      joinDate: Date.now(),
+    });
+
+    user.joinedSubreddits.push({
+      subredditId: subreddit._id,
+      name: subreddit.title,
+    });
+  }
+
   subreddit.invitedModerators.splice(invitedUserIndex, 1);
   await subreddit.save();
+  await user.save();
 
   // Send a message to the invited user from the subreddit
   const req = {
