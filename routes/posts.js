@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import express from "express";
 import postController from "../controllers/HpostController.js";
 import postActionsController from "../controllers/NpostActionsController.js";
@@ -62,7 +63,7 @@ const postRouter = express.Router();
  *                                  type: string
  *                                  description: Type of error
  *          401:
- *              description: User unauthorized to follow/unfollow this post
+ *              description: User unauthorized to get the usernames
  *          404:
  *              description: Post not found
  *          500:
@@ -676,6 +677,15 @@ postRouter.post(
  *                                      vote:
  *                                        type: integer
  *                                        description: 1 if the user upvoted this post, -1 for downvoted and 0 otherwise
+ *                                      yourPost:
+ *                                        type: boolean
+ *                                        description: True if the user owns this post
+ *                                      inYourSubreddit:
+ *                                        type: boolean
+ *                                        description: True if the user is a mod in this post's subreddit
+ *                                      locked:
+ *                                        type: boolean
+ *                                        description: True if the post is locked
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:

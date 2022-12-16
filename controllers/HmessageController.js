@@ -2,18 +2,12 @@ import { body, check } from "express-validator";
 import {
   readPostReplies,
   readReceivedMessages,
-  readUnreadMessages,
   readUsernameMentions,
 } from "../services/readMessages.js";
 
 const messageValidator = [
   body("type").not().isEmpty().withMessage("Message type can't be empty"),
-  check("type").isIn([
-    "Post Replies",
-    "Messages",
-    "Username Mentions",
-    "Unread Messages",
-  ]),
+  check("type").isIn(["Post Replies", "Messages", "Username Mentions"]),
 ];
 
 const readAllMessages = async (req, res) => {
@@ -23,7 +17,6 @@ const readAllMessages = async (req, res) => {
     type === "Messages" && (await readReceivedMessages(userId));
     type === "Post Replies" && (await readPostReplies(userId));
     type === "Username Mentions" && (await readUsernameMentions(userId));
-    type === "Unread Messages" && (await readUnreadMessages(userId));
     return res.status(200).json("Messages marked as read successfully");
   } catch (error) {
     console.log(error.message);

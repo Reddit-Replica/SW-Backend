@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import mongoose from "mongoose";
+import { createFollowUserNotification } from "./notificationServices.js";
 
 /**
  * Service to search for a user object with his username and return it
@@ -116,6 +117,10 @@ export async function followUserService(user, userToFollow, follow) {
 
       user.followedUsers.push(userToFollow._id);
       await user.save();
+      await createFollowUserNotification(
+        user.username,
+        userToFollow._id.toString()
+      );
     }
     return {
       statusCode: 200,
@@ -243,5 +248,27 @@ export async function clearHistoyService(user) {
   return {
     statusCode: 200,
     message: "History cleared successfully",
+  };
+}
+
+/**
+ * A service function used to get the karma and the join date of any user
+ *
+ * @param {String} username the username of the user to get details
+ * @returns {Object} containing karma and joinDate
+ */
+export async function getUserDetailsService(username) {
+  const neededUser = await User.findOne({
+    username: username,
+    deletedAt: null,
+  });
+  if (!neededUser) {
+    const err = new Error("User not found");
+    err.statusCode = 404;
+    throw err;
+  }
+  return {
+    karma: neededUser.karma,
+    joinDate: neededUser.createdAt,
   };
 }

@@ -107,15 +107,26 @@ async function checkForSavedPosts(post, user) {
  * @returns {Object} success object that contains the message and status code
  */
 export async function savePost(post, user) {
-  //CHECK IF THE POST IS ALREADY SAVED
-  const saved = await checkForSavedPosts(post, user);
-  if (saved) {
-    let error = new Error("This Post is already saved");
-    error.statusCode = 409;
-    throw error;
-  }
+  // //CHECK IF THE POST IS ALREADY SAVED
+  // const saved = await checkForSavedPosts(post, user);
+  // if (saved) {
+  //   let error = new Error("This Post is already saved");
+  //   error.statusCode = 409;
+  //   throw error;
+  // }
   //ADD THE POST TO USER'S SAVED POSTS
-  user.savedPosts.push(post.id);
+  const postIndex = user.savedPosts.findIndex(
+    (elem) => elem.toString() === post._id.toString()
+  );
+  if (postIndex === -1) {
+    user.savedPosts.push(post.id);
+  }
+  const postOnlyIndex = user.savedPostsOnly.findIndex(
+    (elem) => elem.toString() === post._id.toString()
+  );
+  if (postOnlyIndex === -1) {
+    user.savedPostsOnly.push(post.id);
+  }
   await user.save();
   return {
     statusCode: 200,
@@ -138,7 +149,10 @@ export async function unSavePost(post, user) {
     throw error;
   }
 
-  user.savedPosts = user.savedPosts.filter((smallPost) => {
+  // user.savedPosts = user.savedPosts.filter((smallPost) => {
+  //   return smallPost.toString() !== post.id;
+  // });
+  user.savedPostsOnly = user.savedPostsOnly.filter((smallPost) => {
     return smallPost.toString() !== post.id;
   });
   await user.save();
@@ -232,9 +246,15 @@ export async function unSaveComment(comment, user) {
     }
   }
   if (numOfComments === 1) {
-    user.savedPosts = user.savedPosts.filter((smallPost) => {
-      return smallPost.toString() !== comment.postId.toString();
-    });
+    // check that post itself is saved
+    const postOnlyIndex = user.savedPostsOnly.findIndex(
+      (elem) => elem.toString() === comment.postId.toString()
+    );
+    if (postOnlyIndex === -1) {
+      user.savedPosts = user.savedPosts.filter((smallPost) => {
+        return smallPost.toString() !== comment.postId.toString();
+      });
+    }
   }
   await user.save();
   return {
@@ -276,7 +296,9 @@ export async function followPost(post, user) {
   }
   //ADD THE POST TO USER'S SAVED POSTS
   user.followedPosts.push(post.id);
+  post.followingUsers.push({ username: user.username, userId: user.id });
   await user.save();
+  await post.save();
   return {
     statusCode: 200,
     message: "Followed! You will get updates when there is new activity.",
@@ -299,7 +321,12 @@ export async function unfollowPost(post, user) {
   user.followedPosts = user.followedPosts.filter((smallPost) => {
     return smallPost.toString() !== post.id;
   });
+  post.followingUsers = post.followingUsers.filter((smallUser) => {
+    console.log(smallUser);
+    return smallUser.userId.toString() !== user.id;
+  });
   await user.save();
+  await post.save();
   return {
     statusCode: 200,
     message: "Unfollowed. You will not get updates on this post anymore.",
@@ -870,7 +897,7 @@ export async function getCommentedUsers(postId) {
     users.add(username);
   }
   return {
-    data:{ usernames: [...users] },
+    data: { usernames: [...users] },
     statusCode: 200,
   };
 }

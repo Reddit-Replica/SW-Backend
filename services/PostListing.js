@@ -160,7 +160,6 @@ export async function homePostsListing(
       });
     }
   }
-  console.log(posts.length);
   //THEN WE WILL GET OUR LIMIT
   let limit = await prepareLimit(listingParams.limit);
   //WE WILL GET EXTRA POSTS TO FILL THE GAP THAT IS BETWEEN THE FOLLOWED ONES AND THE LIMIT
@@ -215,6 +214,8 @@ end =posts.length;
     //EACH ELEMENT THAT IS RETURNED MUST BE MARKED AS READ
     //NEED TO BE EDITED
     const post = posts[start];
+    post.numberOfViews++;
+    post.save();
     const postId = post.id.toString();
     let vote = 0,
       saved = false,
