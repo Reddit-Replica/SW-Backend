@@ -11,7 +11,8 @@ import Subreddit from "./../../models/Community.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing Pinned Posts Service functions", () => {
-  let user = {},
+  let loggedInUser = {},
+    user = {},
     subreddit = {},
     post1 = {},
     post4 = {},
@@ -21,9 +22,15 @@ describe("Testing Pinned Posts Service functions", () => {
   beforeAll(async () => {
     await connectDatabase();
 
-    user = await new User({
+    loggedInUser = await new User({
       username: "hamdy",
       email: "hamdy@gmail.com",
+      createdAt: Date.now(),
+    }).save();
+
+    user = await new User({
+      username: "ahmed",
+      email: "ahmed@gmail.com",
       createdAt: Date.now(),
     }).save();
 
@@ -35,15 +42,15 @@ describe("Testing Pinned Posts Service functions", () => {
       nsfw: false,
       owner: {
         username: "hamdy",
-        userID: user.id,
+        userID: loggedInUser.id,
       },
       createdAt: Date.now(),
     }).save();
 
     post1 = new Post({
       title: "First post",
-      ownerUsername: user.username,
-      ownerId: user._id,
+      ownerUsername: loggedInUser.username,
+      ownerId: loggedInUser._id,
       subredditName: "subreddit",
       kind: "hybrid",
       numberOfVotes: 5,
@@ -53,8 +60,8 @@ describe("Testing Pinned Posts Service functions", () => {
 
     post2 = new Post({
       title: "Second Post",
-      ownerUsername: user.username,
-      ownerId: user._id,
+      ownerUsername: loggedInUser.username,
+      ownerId: loggedInUser._id,
       subredditName: "subreddit",
       kind: "hybrid",
       numberOfVotes: 3,
@@ -85,29 +92,24 @@ describe("Testing Pinned Posts Service functions", () => {
     await post4.save();
 
     user.posts.push(post1._id, post2._id, post3._id);
+    loggedInUser.posts.push(post4._id);
+
+    loggedInUser.pinnedPosts.push(post1._id, post2._id, post4._id);
+    user.pinnedPosts.push(post3._id);
     await user.save();
+    await loggedInUser.save();
   });
 
   afterAll(async () => {
     await User.deleteMany({});
-    await Comment.deleteMany({});
     await Subreddit.deleteMany({});
     await Post.deleteMany({});
     await closeDatabaseConnection();
   });
 
-  it("Should have searchForPosts defined", () => {
-    expect(searchForPosts).toBeDefined();
+  it("Should have checkUserPinnedPosts defined", () => {
+    expect(checkUserPinnedPosts).toBeDefined();
   });
 
-  it("Search for posts in a subreddit with an invalid query", async () => {
-    const query = "not-found";
-    const result = await searchForPosts(subreddit.title, query, {
-      sort: "new",
-    });
-    expect(result).toEqual({
-      statusCode: 200,
-      data: { before: "", after: "", children: [] },
-    });
-  });
+  it("Test checkUserPinnedPosts for same loggedIn user & user", async () => {});
 });
