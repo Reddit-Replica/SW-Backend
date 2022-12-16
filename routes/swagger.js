@@ -490,6 +490,9 @@
  *                          level:
  *                            type: integer
  *                            description: The level of the comment [level of nesting]
+ *                          saved:
+ *                            type: integer
+ *                            description: If true, then the comment was saved by the logged in user
  *                          inYourSubreddit:
  *                            type: boolean
  *                            description: If true, then you can approve, remove, or spam that post
@@ -587,6 +590,9 @@
  *                          level:
  *                            type: integer
  *                            description: The level of the comment [level of nesting]
+ *                          saved:
+ *                            type: integer
+ *                            description: If true, then the comment was saved by the logged in user
  *                          inYourSubreddit:
  *                            type: boolean
  *                            description: If true, then you can approve, remove, or spam that post
