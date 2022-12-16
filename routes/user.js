@@ -726,7 +726,7 @@ userRouter.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/UserOverview"
+ *               $ref: "#/components/schemas/SavedOverview"
  *       401:
  *         description: Access Denied
  *       404:
