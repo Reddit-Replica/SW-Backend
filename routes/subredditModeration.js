@@ -729,6 +729,42 @@ subredditModerationsRouter.get(
  *         numberOfLeftLastMonth:
  *          type: number
  *          description: Number of users left that subreddit last month
+ *         days:
+ *          type: array
+ *          description: List of days on current month with the number of joined users
+ *          items:
+ *            type: object
+ *            properties:
+ *              day:
+ *                type: string
+ *                description: Date of that day
+ *              numberOfJoined:
+ *                type: number
+ *                description: Number of joined users at this day
+ *         weeks:
+ *          type: array
+ *          description: List of days on this week with the number of joined users
+ *          items:
+ *            type: object
+ *            properties:
+ *              day:
+ *                type: string
+ *                description: Day name
+ *              numberOfJoined:
+ *                type: number
+ *                description: Number of joined users at this day
+ *         months:
+ *          type: array
+ *          description: List of months with the number of joined users
+ *          items:
+ *            type: object
+ *            properties:
+ *              month:
+ *                type: string
+ *                description: Name of the month
+ *              numberOfJoined:
+ *                type: number
+ *                description: Number of joined users at this month
  *    401:
  *     description: Unauthorized access
  *    404:
