@@ -14,6 +14,8 @@ import {
 import {
   userMessageListing,
   userMentionsListing,
+  userConversationListing,
+  userInboxListing,
 } from "../services/messageListing.js";
 import { searchForUserService } from "../services/userServices.js";
 import { ConsoleReporter } from "jasmine";
@@ -142,6 +144,7 @@ const getSentMsg = async (req, res) => {
       res.status(result.statusCode).json(result.data);
     }
   } catch (error) {
+    console.log(error);
     if (error.statusCode) {
       res.status(error.statusCode).json({ error: error.message });
     } else {
@@ -191,26 +194,14 @@ const getUsernameMentions = async (req, res) => {
   try {
     let { before, after, limit } = req.query;
     const user = await searchForUserService(req.payload.username);
-    if (!before && !after) {
-      for (const mentionId of user.usernameMentions) {
-        const mention = await Mention.findById(mentionId);
-        if (mention && !mention.deletedAt) {
-          before = mentionId;
-          break;
-        }
-      }
-    }
-    if (!before && !after) {
-      res.status(200).json({ before: "", after: "", children: [] });
-    } else {
-      const result = await userMentionsListing(user, "UsernameMention", {
-        before,
-        after,
-        limit,
-      });
-      res.status(result.statusCode).json(result.data);
-    }
+    const result = await userMentionsListing(user, "usernameMentions", {
+      before,
+      after,
+      limit,
+    });
+    res.status(result.statusCode).json(result.data);
   } catch (error) {
+    console.log(error);
     if (error.statusCode) {
       res.status(error.statusCode).json({ error: error.message });
     } else {
@@ -238,6 +229,46 @@ const getpostReplies = async (req, res) => {
   }
 };
 
+const getConversations = async (req, res) => {
+  try {
+    const { before, after, limit } = req.query;
+    const user = await searchForUserService(req.payload.username);
+    const result = await userConversationListing(user, "conversations", {
+      before,
+      after,
+      limit,
+    });
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getInbox = async (req, res) => {
+  try {
+    const { before, after, limit } = req.query;
+    const user = await searchForUserService(req.payload.username);
+    const result = await userInboxListing(user, {
+      before,
+      after,
+      limit,
+    });
+    res.status(result.statusCode).json(result.data);
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   createMessage,
   messageValidator,
@@ -248,4 +279,6 @@ export default {
   getpostReplies,
   createMention,
   getUnreadMsg,
+  getConversations,
+  getInbox,
 };

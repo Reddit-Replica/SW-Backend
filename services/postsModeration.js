@@ -60,6 +60,24 @@ export async function removeFromSpammedComments(id, subredditName) {
  * @returns {void}
  */
 export async function addToApprovedUsers(subreddit, user) {
+  if (!user.joinedSubreddits.find((sr) => sr.name === subreddit.title)) {
+    user.joinedSubreddits.push({
+      subredditId: subreddit.id,
+      name: subreddit.title,
+    });
+    await user.save();
+  }
+  if (
+    !subreddit.joinedUsers.find(
+      (jUser) => jUser.userId.toString() === user.id.toString()
+    )
+  ) {
+    subreddit.joinedUsers.push({
+      userId: user.id,
+      joinDate: Date.now(),
+    });
+    await subreddit.save();
+  }
   if (
     subreddit.approvedUsers.find(
       (approvedUser) => approvedUser.userID.toString() === user.id.toString()
@@ -74,13 +92,43 @@ export async function addToApprovedUsers(subreddit, user) {
     dateOfApprove: Date.now(),
   });
   await subreddit.save();
-  if (!user.joinedSubreddits.find((sr) => sr.name === subreddit.title)) {
-    user.joinedSubreddits.push({
-      subredditId: subreddit.id,
-      name: subreddit.title,
-    });
+}
+
+/**
+ * This function checks if a user is already removed from the subreddit's
+ * list of approved users and removes it if not. It also removes the subreddit from
+ * user's list of joined subreddits
+ * @param {object} subreddit Subreddit object
+ * @param {object} user User object
+ * @returns {void}
+ */
+export async function removeFromApprovedUsers(subreddit, user) {
+  if (subreddit.type === "Private") {
+    user.joinedSubreddits = user.joinedSubreddits.filter(
+      (sr) => sr.name !== subreddit.title
+    );
+    subreddit.joinedUsers = subreddit.joinedUsers.filter(
+      (jUser) => jUser.userId.toString() !== user.id.toString()
+    );
+    subreddit.mutedUsers = subreddit.mutedUsers.filter(
+      (mutedUser) => mutedUser.userID.toString() !== user.id.toString()
+    );
     await user.save();
+    await subreddit.save();
   }
+  if (
+    !subreddit.approvedUsers.find(
+      (approvedUser) => approvedUser.userID.toString() === user.id.toString()
+    )
+  ) {
+    const error = new Error("This user is already removed");
+    error.statusCode = 400;
+    throw error;
+  }
+  subreddit.approvedUsers = subreddit.approvedUsers.filter(
+    (approvedUser) => approvedUser.userID.toString() !== user.id.toString()
+  );
+  await subreddit.save();
 }
 
 /**
@@ -106,4 +154,40 @@ export async function addToMutedUsers(subreddit, user, muteReason) {
     muteReason: muteReason,
   });
   await subreddit.save();
+}
+
+/**
+ * This function removes a user from the subreddit's list of muted users
+ * @param {object} subreddit Subreddit object
+ * @param {object} user User object
+ * @returns {void}
+ */
+export async function removeFromMutedUsers(subreddit, user) {
+  if (
+    !subreddit.mutedUsers.find(
+      (mutedUser) => mutedUser.userID.toString() === user.id.toString()
+    )
+  ) {
+    const error = new Error("This user is already unmuted");
+    error.statusCode = 400;
+    throw error;
+  }
+  subreddit.mutedUsers = subreddit.mutedUsers.filter(
+    (mutedUser) => mutedUser.userID.toString() !== user.id.toString()
+  );
+  await subreddit.save();
+}
+
+/**
+ * This function checks if a user is in the given subreddit
+ * @param {object} subreddit Subreddit object
+ * @param {object} user User object
+ * @returns {void}
+ */
+export function checkUserInSubreddit(subreddit, user) {
+  if (!user.joinedSubreddits.find((sr) => sr.name === subreddit.title)) {
+    const error = new Error("This user is not a member of " + subreddit.title);
+    error.statusCode = 400;
+    throw error;
+  }
 }

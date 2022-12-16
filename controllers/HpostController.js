@@ -1,9 +1,17 @@
+/* eslint-disable max-len */
 import User from "../models/User.js";
 import { body, check, query } from "express-validator";
 import {
   checkSameUserEditing,
   editPostService,
 } from "../services/postServices.js";
+import { homePostsListing } from "../services/PostListing.js";
+import { searchForUserService } from "../services/userServices.js";
+import {
+  checkUserPinnedPosts,
+  getPinnedPostDetails,
+  setPinnedPostsFlags,
+} from "../services/getPinnedPosts.js";
 const postIdValidator = [
   query("id").not().isEmpty().withMessage("Id can't be empty"),
 ];
@@ -59,51 +67,42 @@ const pinPost = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
 const getPinnedPosts = async (req, res) => {
-  const userId = req.payload.userId;
+  const userId = req.payload?.userId;
   try {
-    const user = await User.findById(userId).populate("pinnedPosts");
+    let { loggedInUser, user } = await checkUserPinnedPosts(
+      req.loggedIn,
+      userId,
+      req.query.username
+    );
     user.pinnedPosts = user.pinnedPosts.filter((post) => !post.deletedAt);
     const pinnedPosts = user.pinnedPosts.map((post) => {
-      let vote = 0;
-      if (
-        user.upvotedPosts.find(
-          (postId) => postId.toString() === post.id.toString()
-        )
-      ) {
-        vote = 1;
-      } else if (
-        user.downvotedPosts.find(
-          (postId) => postId.toString() === post.id.toString()
-        )
-      ) {
-        vote = -1;
+      let vote = 0,
+        yourPost = false,
+        inYourSubreddit = false;
+      if (req.loggedIn) {
+        const result = setPinnedPostsFlags(loggedInUser, post);
+        vote = result.vote;
+        yourPost = result.yourPost;
+        inYourSubreddit = result.inYourSubreddit;
       }
-      return {
-        id: post.id.toString(),
-        kind: post.kind,
-        subreddit: post.subredditName,
-        link: post.link,
-        images: post.images,
-        video: post.video,
-        content: post.content,
-        nsfw: post.nsfw,
-        spoiler: post.spoiler,
-        title: post.title,
-        sharePostId: post.sharePostId,
-        flair: post.flair,
-        comments: post.numberOfComments,
-        votes: post.numberOfVotes,
-        postedAt: post.createdAt,
-        postedBy: post.ownerUsername,
-        vote: vote,
-      };
+      return getPinnedPostDetails(post, { vote, yourPost, inYourSubreddit });
     });
     return res.status(200).json({
       pinnedPosts: pinnedPosts,
     });
-  } catch (err) {
-    res.status(500).json("Internal server error");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
+    } else {
+      res.status(500).json("Internal server error");
+    }
   }
 };
 
@@ -114,7 +113,7 @@ const postDetails = async (req, res) => {
 const postInsights = async (req, res) => {
   try {
     return res.status(200).json({
-      totalViews: req.post.insights.totalViews,
+      totalViews: req.post.numberOfViews,
       upvoteRate: req.post.insights.upvoteRate,
       communityKarma: req.post.insights.communityKarma,
       totalShares: req.post.insights.totalShares,
@@ -142,6 +141,126 @@ const editPost = async (req, res) => {
   }
 };
 
+const getNewPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "new",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getHotPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "hot",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getBestPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "best",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getTopPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit, time } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit, time },
+      "top",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
+const getTrendingPosts = async (req, res) => {
+  try {
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const { before, after, limit } = req.query;
+    const result = await homePostsListing(
+      user,
+      { before, after, limit },
+      "trending",
+      req.loggedIn
+    );
+    res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   postIdValidator,
   pinPostValidator,
@@ -153,4 +272,9 @@ export default {
   postInsights,
   editPost,
   editValidator,
+  getNewPosts,
+  getBestPosts,
+  getHotPosts,
+  getTopPosts,
+  getTrendingPosts,
 };

@@ -1,12 +1,14 @@
 import {
-  getUserFromJWTService,
   searchForUserService,
+  getUserFromJWTService,
   blockUserService,
   followUserService,
   getUserAboutDataService,
+  clearHistoyService,
 } from "../../services/userServices.js";
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
+import Post from "./../../models/Post.js";
 import Subreddit from "./../../models/Community.js";
 
 // eslint-disable-next-line max-statements
@@ -14,7 +16,8 @@ describe("Testing user services functions", () => {
   let user = {},
     mainUser = {},
     userToAction = {},
-    subreddit = {};
+    subreddit = {},
+    post = {};
   beforeAll(async () => {
     await connectDatabase();
 
@@ -58,12 +61,19 @@ describe("Testing user services functions", () => {
       createdAt: Date.now(),
     });
     await userToAction.save();
+
+    post = new Post({
+      title: "Without subreddit post",
+      ownerUsername: user.username,
+      ownerId: user._id,
+      kind: "hybrid",
+      createdAt: Date.now(),
+    });
+    await post.save();
   });
   afterAll(async () => {
-    await user.remove();
-    await mainUser.remove();
-    await userToAction.remove();
-    await subreddit.remove();
+    await User.deleteMany({});
+    await Subreddit.deleteMany({});
     await closeDatabaseConnection();
   });
 
@@ -185,6 +195,18 @@ describe("Testing user services functions", () => {
     const result = await followUserService(mainUser, userToAction, false);
     expect(result.statusCode).toEqual(200);
     expect(result.message).toEqual("User unfollowed successfully");
+  });
+
+  it("should have clearHistoyService function", () => {
+    expect(clearHistoyService).toBeDefined();
+  });
+
+  it("try to clear the history of a user", async () => {
+    mainUser.historyPosts.push(post._id);
+    await mainUser.save();
+
+    await clearHistoyService(mainUser);
+    expect(mainUser.historyPosts.length).toEqual(0);
   });
 
   it("should have getUserAboutDataService function", () => {

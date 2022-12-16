@@ -3,7 +3,7 @@ import Comment from "../models/Comment.js";
 import User from "../models/User.js";
 import Subreddit from "../models/Community.js";
 import { postListing } from "../utils/preparePostListing.js";
-import { commentListing } from "../utils/prepareCommentListing.js";
+import { commentTreeListing } from "../utils/prepareCommentListing.js";
 import { userListing } from "../utils/prepareUserListing.js";
 import { subredditListing } from "../utils/prepareSubredditListing.js";
 
@@ -12,7 +12,7 @@ import { subredditListing } from "../utils/prepareSubredditListing.js";
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchPosts(query, listingParams) {
@@ -22,13 +22,29 @@ export async function searchPosts(query, listingParams) {
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
 
-  const result = await Post.find(listingResult.find)
-    .limit(listingResult.limit)
-    .sort(listingResult.sort);
+  const result = await Post.find(listingResult.find).sort(listingResult.sort);
+
+  let limit = listingResult.limit;
+
+  if (limit > result.length) {
+    limit = result.length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result.length - limit;
+    finish = result.length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
 
   let children = [];
 
-  for (const i in result) {
+  for (i; i < finish; i++) {
     const post = result[i];
 
     let postData = { id: result[i]._id.toString() };
@@ -63,8 +79,8 @@ export async function searchPosts(query, listingParams) {
   let after = "",
     before = "";
   if (result.length) {
-    after = result[result.length - 1]._id.toString();
-    before = result[0]._id.toString();
+    after = result[finish - 1]._id.toString();
+    before = result[start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -81,27 +97,52 @@ export async function searchPosts(query, listingParams) {
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchComments(query, listingParams) {
   // Prepare Listing Parameters
-  const listingResult = await commentListing(listingParams);
+  const listingResult = await commentTreeListing(listingParams);
 
   const regex = new RegExp(query, "i");
-  listingResult.find["content.ops"] = {
-    $elemMatch: { insert: { $regex: regex } },
-  };
-  console.log(listingResult.find);
+  listingResult.find["$or"] = [
+    {
+      "content.ops": {
+        $elemMatch: { insert: { $regex: regex } },
+      },
+    },
+    {
+      content: {
+        $elemMatch: { insert: { $regex: regex } },
+      },
+    },
+  ];
 
   const result = await Comment.find(listingResult.find)
-    .limit(listingResult.limit)
     .sort(listingResult.sort)
     .populate("postId");
 
+  let limit = listingResult.limit;
+
+  if (limit > result.length) {
+    limit = result.length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result.length - limit;
+    finish = result.length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
+
   let children = [];
 
-  for (const i in result) {
+  for (i; i < finish; i++) {
     const comment = result[i];
     let commentData = { id: result[i]._id.toString() };
     commentData.data = {
@@ -134,8 +175,8 @@ export async function searchComments(query, listingParams) {
   let after = "",
     before = "";
   if (result.length) {
-    after = result[result.length - 1]._id.toString();
-    before = result[0]._id.toString();
+    after = result[finish - 1]._id.toString();
+    before = result[start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -152,7 +193,7 @@ export async function searchComments(query, listingParams) {
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchUsers(query, listingParams, loggedInUser) {
@@ -170,13 +211,29 @@ export async function searchUsers(query, listingParams, loggedInUser) {
     };
   }
 
-  const result = await User.find(listingResult.find)
-    .limit(listingResult.limit)
-    .sort(listingResult.sort);
+  const result = await User.find(listingResult.find).sort(listingResult.sort);
+
+  let limit = listingResult.limit;
+
+  if (limit > result.length) {
+    limit = result.length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result.length - limit;
+    finish = result.length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
 
   let children = [];
 
-  for (const i in result) {
+  for (i; i < finish; i++) {
     const user = result[i];
     let following = undefined;
     if (loggedInUser) {
@@ -207,8 +264,8 @@ export async function searchUsers(query, listingParams, loggedInUser) {
   let after = "",
     before = "";
   if (result.length) {
-    after = result[result.length - 1]._id.toString();
-    before = result[0]._id.toString();
+    after = result[finish - 1]._id.toString();
+    before = result[start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -225,7 +282,7 @@ export async function searchUsers(query, listingParams, loggedInUser) {
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {void}
+ * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
 export async function searchSubreddits(query, listingParams, loggedInUser) {
@@ -241,13 +298,31 @@ export async function searchSubreddits(query, listingParams, loggedInUser) {
     $not: { $regex: "(?i)\\bprivate\\b" },
   };
 
-  const result = await Subreddit.find(listingResult.find)
-    .limit(listingResult.limit)
-    .sort(listingResult.sort);
+  const result = await Subreddit.find(listingResult.find).sort(
+    listingResult.sort
+  );
+
+  let limit = listingResult.limit;
+
+  if (limit > result.length) {
+    limit = result.length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result.length - limit;
+    finish = result.length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
 
   let children = [];
 
-  for (const i in result) {
+  for (i; i < finish; i++) {
     const subreddit = result[i];
     let joined = undefined;
     if (loggedInUser) {
@@ -277,8 +352,8 @@ export async function searchSubreddits(query, listingParams, loggedInUser) {
   let after = "",
     before = "";
   if (result.length) {
-    after = result[result.length - 1]._id.toString();
-    before = result[0]._id.toString();
+    after = result[finish - 1]._id.toString();
+    before = result[start]._id.toString();
   }
   return {
     statusCode: 200,

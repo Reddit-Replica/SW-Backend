@@ -3,8 +3,13 @@ import User from "../models/User.js";
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
+import { createCommentNotification } from "./notificationServices.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
-import { checkIfBanned, checkIfMuted } from "./subredditActionsServices.js";
+import {
+  checkIfBanned,
+  checkIfMuted,
+  checkIfModerator,
+} from "./subredditActionsServices.js";
 
 /**
  * Function used to check if the id of the post is valid and if the post exists in the database
@@ -128,7 +133,14 @@ export async function createCommentService(data, post) {
     createdAt: Date.now(),
   };
 
-  // check if the subreddit exists
+  // check if post subreddit is the same as comment subreddit
+  if (post.subredditName && !data.haveSubreddit) {
+    let error = new Error(
+      "Can not add a comment without subreddit to post with subreddit"
+    );
+    error.statusCode = 400;
+    throw error;
+  }
   if (data.haveSubreddit) {
     if (post.subredditName !== data.subredditName) {
       let error = new Error(
@@ -158,6 +170,26 @@ export async function createCommentService(data, post) {
       let error = new Error("User is muted at this subreddit");
       error.statusCode = 400;
       throw error;
+    }
+
+    if (subreddit.type === "Private") {
+      const index = subreddit.approvedUsers.findIndex(
+        (ele) => ele.userID.toString() === user._id.toString()
+      );
+
+      // if user in not approved and he is not the owner nor a moderator
+      // then he can not comment
+      if (
+        index === -1 &&
+        subreddit.owner.userID.toString() !== user._id.toString() &&
+        checkIfModerator(user._id, subreddit) === -1
+      ) {
+        let error = new Error(
+          "User was not approved in this subreddit to comment on this post"
+        );
+        error.statusCode = 400;
+        throw error;
+      }
     }
 
     commentObject.subredditName = data.subredditName;
@@ -196,6 +228,7 @@ export async function createCommentService(data, post) {
   post.numberOfComments = post.numberOfComments + 1;
   await post.save();
 
+  createCommentNotification(comment);
   return {
     statusCode: 201,
     data: { id: comment._id },

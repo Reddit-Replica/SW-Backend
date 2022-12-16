@@ -11,7 +11,7 @@ import {
 import { searchForUserService } from "./userServices.js";
 import { searchForSubreddit } from "./communityServices.js";
 import Mention from "../models/Mention.js";
-import { searchForComment } from "./PostActions.js";
+import { searchForComment, searchForPost } from "./PostActions.js";
 /**
  * This function is used to add a message
  * it add the msg to sender's sent messages and to the receiver's received messages
@@ -36,9 +36,14 @@ export async function addMessage(req) {
     //ADD THIS MESSAGE TO RECEIVER RECEIVED MESSAGES
     addReceivedMessages(receiver.id, message);
   }
-
+  let conversationId;
+  console.log(message);
   //CREATING A NEW CONVERSATIONS USING THE MESSAGE SENT
-  const conversationId = await createNewConversation(message);
+  if (!message.isReply) {
+    conversationId = await createNewConversation(message);
+  } else {
+    conversationId = await getExistingConversation(message.repliedMsgId);
+  }
   //GETTING THE CONVERSATION SO WE WOULD BE ABLE TO ADD THE MSG TO IT
   await addToConversation(message, conversationId);
   //ADDING THIS CONVERSATION TO THE USERS IF IT EXISTS THERE
@@ -68,7 +73,13 @@ export async function addMention(req) {
   }
   const mention = await new Mention(req.mention).save();
   const receiver = await searchForUserService(mention.receiverUsername);
-  await addUserMention(receiver.id, mention);
+  const post = await searchForPost(req.mention.postId);
+  for (const smallUser of post.usersCommented) {
+    if (smallUser.toString() === receiver.id) {
+      await addUserMention(receiver.id, mention);
+      break;
+    }
+  }
 }
 /**
  * This function is used to create a new conversation
@@ -79,32 +90,33 @@ export async function addMention(req) {
  * @returns {String} it return the id of the created conversation or the already existing one
  */
 export async function createNewConversation(msg) {
-  //HERE WE NEED TO CREATE THE CONVERSATION FROM SCRATCH
-  //CHECK IF THE CONVERSATION IS IN THE DATABASE
-  const conversation = await Conversation.findOne({
-    subject: msg.subject,
-    $or: [
-      { firstUsername: msg.senderUsername },
-      { firstUsername: msg.receiverUsername },
-    ],
-    $or: [
-      { secondUsername: msg.senderUsername },
-      { secondUsername: msg.receiverUsername },
-    ],
-  });
   //IF THERE IS NO CONVERSATION WITH THESE DATA THEN WE WILL CREATE A NEW ONE AND RETURN ITS ID , BUT IF THERE IS SO WE WILL RETURN THE ID OF THE EXISTING ONE
-  if (!conversation) {
-    const createdConversation = await new Conversation({
-      latestDate: msg.sentAt,
-      subject: msg.subject,
-      messages: [],
-      firstUsername: msg.senderUsername,
-      secondUsername: msg.receiverUsername,
-    }).save();
-    return createdConversation.id;
-  } else {
-    return conversation.id;
-  }
+  const createdConversation = await new Conversation({
+    latestDate: msg.sentAt,
+    subject: msg.subject,
+    messages: [],
+    firstUsername: msg.senderUsername,
+    secondUsername: msg.receiverUsername,
+    isFirstNameUser: msg.isSenderUser,
+    isSecondNameUser: msg.isReceiverUser,
+  }).save();
+  return createdConversation.id;
+}
+/**
+ * This function is used to create a new conversation
+ * firstly we check if there was an existing one with the same users and subject
+ * if there is then we won't create a new one but we will return the id of that old conversation
+ * so we will be able to add more messages to this conversation
+ * @param {Object} msg msg object from which we will get our data to check if the conversation was created before or not
+ * @returns {String} it return the id of the created conversation or the already existing one
+ */
+export async function getExistingConversation(repliedMsgId) {
+  //IF THERE IS NO CONVERSATION WITH THESE DATA THEN WE WILL CREATE A NEW ONE AND RETURN ITS ID , BUT IF THERE IS SO WE WILL RETURN THE ID OF THE EXISTING ONE
+  const existedConversation = await Conversation.findOne({
+    messages: repliedMsgId.toString(),
+  });
+  console.log(existedConversation);
+  return existedConversation.id;
 }
 /**
  * This function is used to add new messages to the conversation
@@ -121,9 +133,9 @@ export async function addToConversation(msg, conversationId) {
     err.statusCode = 400;
     throw err;
   }
-  conversation.messages.push({ messageID: msg.id });
+  conversation.messages.push(msg.id);
   conversation.latestDate = Date.now();
-  conversation.save();
+  await conversation.save();
 }
 /**
  * This function is used to check if the user has already that conversation or we will need to add a new one for him
@@ -134,7 +146,7 @@ export async function addToConversation(msg, conversationId) {
 async function checkExistingConversation(user, conversationId) {
   //CHECKING IF THE USER HAVE ALREADY THAT CONVERSATION OR WE NEED TO ADD IT
   for (const conversation of user.conversations) {
-    if (conversation.id === conversationId) {
+    if (conversation.toString() === conversationId) {
       return true;
     }
   }
@@ -151,24 +163,24 @@ async function addConversationToUsers(message, convId) {
   // WE SEARCH FOR THE SENDER TO CHECK IF HE HAS THE CONVERSATION OR NOT
   if (message.isSenderUser) {
     const sender = await User.findOne({ username: message.senderUsername });
-    const senderConversation = checkExistingConversation(sender, convId);
+    const senderConversation = await checkExistingConversation(sender, convId);
     if (!senderConversation) {
-      sender.conversations.push({
-        conversationId: convId,
-      });
+      sender.conversations.push(convId);
       await sender.save();
     }
   }
+
   if (message.isReceiverUser) {
     const receiver = await User.findOne({
       username: message.receiverUsername,
       deletedAt: undefined,
     });
-    const receiverConversation = checkExistingConversation(receiver, convId);
+    const receiverConversation = await checkExistingConversation(
+      receiver,
+      convId
+    );
     if (!receiverConversation) {
-      receiver.conversations.push({
-        conversationId: convId,
-      });
+      receiver.conversations.push(convId);
       await receiver.save();
     }
   }
@@ -202,6 +214,18 @@ export async function validateMessage(req) {
     err.statusCode = 400;
     throw err;
   }
+  if (req.body.isReply === undefined) {
+    let err = new Error("isReply is needed");
+    err.statusCode = 400;
+    throw err;
+  }
+  if (req.body.isReply) {
+    if (!req.body.repliedMsgId) {
+      let err = new Error("repliedMsgId is needed");
+      err.statusCode = 400;
+      throw err;
+    }
+  }
 
   //SENDER AND RECEIVER USERNAME MUST BE IN THE FORM /U/USERNAME OR /R/SUBREDDITNAME
   if (
@@ -223,6 +247,13 @@ export async function validateMessage(req) {
     receiverUsername: receiverArr[receiverArr.length - 1],
     subject: req.body.subject,
   };
+  if (req.body.isReply !== undefined) {
+    msg.isReply = req.body.isReply;
+  }
+  if (req.body.repliedMsgId && req.body.isReply) {
+    msg.repliedMsgId = req.body.repliedMsgId;
+    await searchForMessage(msg.repliedMsgId);
+  }
   //CHECKING IF THE SENDER IS SUBREDDIT OR NORMAL USER
   if (senderArr[senderArr.length - 2] === "r") {
     msg.isSenderUser = false;
@@ -253,9 +284,6 @@ export async function validateMessage(req) {
 
   if (req.body.subredditName) {
     msg.subredditName = req.body.subredditName;
-  }
-  if (req.body.repliedMsgId) {
-    msg.repliedMsgId = req.body.repliedMsgId;
   }
   //CHECKING IF THE RECEIVER IS AVAILABLE OR NOT
   if (msg.isReceiverUser) {

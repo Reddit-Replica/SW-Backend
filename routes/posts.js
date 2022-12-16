@@ -27,7 +27,54 @@ import {
 
 // eslint-disable-next-line new-cap
 const postRouter = express.Router();
-
+/**
+ * @swagger
+ * /commented-users:
+ *  get:
+ *      summary: returns the user that made a comment in a specific post
+ *      tags: [Posts]
+ *      parameters:
+ *          - in: query
+ *            required: true
+ *            name: id
+ *            schema:
+ *              type: string
+ *            description: id of the post
+ *      responses:
+ *          200:
+ *              description: usernames of the users that made comments
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              usernames:
+ *                                type: array
+ *                                items:
+ *                                    type: string
+ *          400:
+ *              description: The request was invalid. You may refer to response for details around why this happened.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: Type of error
+ *          401:
+ *              description: User unauthorized to follow/unfollow this post
+ *          404:
+ *              description: Post not found
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+postRouter.get(
+  "/commented-users",
+  verifyAuthToken,
+  postActionsController.getCommentedUsersOnAPost
+);
 /**
  * @swagger
  * /follow-post:
@@ -141,7 +188,12 @@ postRouter.post(
  *                    description: id of a post
  *                  sort:
  *                    type: string
- *                    description: one of (top, new, random, best, hot)
+ *                    description: sort kind
+ *                    enum:
+ *                    - top
+ *                    - new
+ *                    - best
+ *                    - old
  *      responses:
  *          200:
  *              description: Suggested sort successfully set
@@ -536,8 +588,14 @@ postRouter.post(
  * @swagger
  * /pinned-posts:
  *  get:
- *      summary: Returns all posts pinned by the user
+ *      summary: Returns all posts pinned by the user (Token is optional)
  *      tags: [Posts]
+ *      parameters:
+ *          - in: query
+ *            name: username
+ *            schema:
+ *              type: string
+ *            description: Username of the user to get pinned posts
  *      responses:
  *          200:
  *              description: Pinned posts returned successfully
@@ -618,6 +676,15 @@ postRouter.post(
  *                                      vote:
  *                                        type: integer
  *                                        description: 1 if the user upvoted this post, -1 for downvoted and 0 otherwise
+ *                                      yourPost:
+ *                                        type: boolean
+ *                                        description: True if the user owns this post
+ *                                      inYourSubreddit:
+ *                                        type: boolean
+ *                                        description: True if the user is a mod in this post's subreddit
+ *                                      locked:
+ *                                        type: boolean
+ *                                        description: True if the post is locked
  *          400:
  *              description: The request was invalid. You may refer to response for details around why this happened.
  *              content:
@@ -636,6 +703,6 @@ postRouter.post(
  *      security:
  *          - bearerAuth: []
  */
-postRouter.get("/pinned-posts", verifyAuthToken, postController.getPinnedPosts);
+postRouter.get("/pinned-posts", optionalToken, postController.getPinnedPosts);
 
 export default postRouter;

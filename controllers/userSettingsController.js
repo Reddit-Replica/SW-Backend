@@ -121,6 +121,8 @@ const getAccountSettings = async (req, res) => {
     const user = await getUser(userId);
     res.status(200).json({
       email: user.email,
+      googleEmail: user.googleEmail,
+      facebookEmail: user.facebookEmail,
       country: user.userSettings.country,
       gender: user.userSettings.gender,
       displayName: user.displayName,

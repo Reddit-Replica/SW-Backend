@@ -28,7 +28,7 @@ export async function getSubredditService(subredditName) {
  * @param {Object} subreddit Subreddit object
  * @returns {Number} Index of the moderator in subreddit.moderators array, -1 if none
  */
-function checkIfModerator(userId, subreddit) {
+export function checkIfModerator(userId, subreddit) {
   // check if user is moderator in the subreddit
   const index = subreddit.moderators.findIndex(
     (elem) => elem.userID.toString() === userId.toString()
@@ -100,7 +100,7 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
 
   // make sure that the moderator is not trying to ban himself
   if (moderator._id.toString() === userToBan._id.toString()) {
-    let error = new Error("User can not ban himself");
+    let error = new Error("Moderator can not ban himself");
     error.statusCode = 400;
     throw error;
   }
@@ -220,9 +220,18 @@ export async function inviteToModerateService(
     throw error;
   }
 
-  // check if user is already a moderator
+  // check if user is already a
   const userMod = checkIfModerator(userToInvite._id, subreddit);
   if (userMod !== -1) {
+    // check that he is not the owner
+    if (
+      subreddit.moderators[userMod].userID.toString() ===
+      subreddit.owner.userID.toString()
+    ) {
+      let error = new Error("Can not change the permissions of the owner");
+      error.statusCode = 400;
+      throw error;
+    }
     // edit his permissions
     const permissions = extractPermissions(data);
     subreddit.moderators[userMod].permissions = permissions;
@@ -259,7 +268,8 @@ export async function inviteToModerateService(
         senderUsername: `/u/${moderator.username}`,
         receiverUsername: `/u/${userToInvite.username}`,
         // eslint-disable-next-line max-len
-        text: `gadzooks! you are invited to become a moderator of /r/${subreddit.title}! to accept, visit the moderators page for /r/${subreddit.title} and click "accept". otherwise, if you did not expect to receive this, you can simply ignore this invitation or report it.`,
+        text: `gadzooks! you are invited to become a moderator of /r/${subreddit.title}! to accept, click on the link above. otherwise, if you did not expect to receive this, you can simply ignore this invitation or report it.`,
+        isReply: false,
       },
     };
     await validateMessage(req);
@@ -346,8 +356,26 @@ export async function acceptModerationInviteService(user, subreddit) {
     dateOfModeration: Date.now(),
   });
 
+  // check if user was a member in this subreddit
+  const joinedIndex = subreddit.joinedUsers.findIndex(
+    (ele) => ele.userId.toString() === user._id.toString()
+  );
+  if (joinedIndex === -1) {
+    subreddit.members += 1;
+    subreddit.joinedUsers.push({
+      userId: user._id,
+      joinDate: Date.now(),
+    });
+
+    user.joinedSubreddits.push({
+      subredditId: subreddit._id,
+      name: subreddit.title,
+    });
+  }
+
   subreddit.invitedModerators.splice(invitedUserIndex, 1);
   await subreddit.save();
+  await user.save();
 
   // Send a message to the invited user from the subreddit
   const req = {
@@ -361,6 +389,7 @@ export async function acceptModerationInviteService(user, subreddit) {
       receiverUsername: `/r/${subreddit.title}`,
       // eslint-disable-next-line max-len
       text: `/u/${user.username} has accepted an invitation to become moderator if /r/${subreddit.title}`,
+      isReply: false,
     },
   };
   await validateMessage(req);

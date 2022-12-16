@@ -99,7 +99,11 @@ async function deleteMessage(userId, messageId) {
     throw error;
   }
 
-  if (message.receiverId.toString() !== userId.toString()) {
+  if (
+    !message.isReceiverUser ||
+    (message.isReceiverUser &&
+      message.receiverId.toString() !== userId.toString())
+  ) {
     let error = new Error("Unauthorized to delete this message");
     error.statusCode = 401;
     throw error;
@@ -126,12 +130,12 @@ export async function deleteItems(userId, id, type) {
   } else {
     return {
       statusCode: 400,
-      message: "Invalid request: type is invalid value",
+      message: "type is invalid value",
     };
   }
 
   return {
-    statusCode: 204,
+    statusCode: 200,
     message: "Deleted successfully",
   };
 }

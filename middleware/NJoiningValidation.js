@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import { searchForUserService } from "../services/userServices.js";
 import { searchForSubredditById } from "./../services/communityServices.js";
 
 /**
@@ -19,10 +20,9 @@ import { searchForSubredditById } from "./../services/communityServices.js";
 export async function checkJoinedBefore(req, res, next) {
   const authPayload = req.payload;
   try {
+    const user = await searchForUserService(authPayload.username);
     //GETTING LIST OF SUBREDDITS THE USER JOINED BEFORE
-    const { joinedSubreddits } = await User.findById(authPayload.userId).select(
-      "joinedSubreddits"
-    );
+    const { joinedSubreddits } = user;
     const subreddit = await searchForSubredditById(req.body.subredditId);
     for (const smallSubreddit of joinedSubreddits) {
       //CHECKING IF THE SUBREDDIT HE WANTS TO JOIN WAS JOINED BEFORE
@@ -45,6 +45,7 @@ export async function checkJoinedBefore(req, res, next) {
     //CONTINUE TO JOIN CONTROLLER TO DO THE LOGIC OF JOINING
     next();
   } catch (err) {
+    console.log(err);
     if (err.statusCode) {
       res.status(err.statusCode).json({
         error: err.message,

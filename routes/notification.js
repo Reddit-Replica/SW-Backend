@@ -1,8 +1,10 @@
 import express from "express";
 
+import { verifyAuthToken } from "../middleware/verifyToken.js";
+import notificationController from "../controllers/notificationController.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
 // eslint-disable-next-line new-cap
-const router = express.Router();
-
+const notificationRouter = express.Router();
 /**
  * @swagger
  * tags:
@@ -54,32 +56,28 @@ const router = express.Router();
  *                            description: List of notifications
  *                            items:
  *                              properties:
+ *                               id:
+ *                                 type: string
+ *                                 description: id of the notification
  *                               title:
  *                                 type: string
  *                                 description: title of the notification
+ *                               type:
+ *                                 type: string
+ *                                 description: type of the notification
+ *                                 enum:
+ *                                  - Comment
+ *                                  - Follow
  *                               link:
  *                                 type: string
  *                                 description: link to the full item in the notification
  *                               sendAt:
  *                                 type: string
+ *                                 format: date-time
  *                                 description: time of sending the notification
- *                               content:
- *                                 type: string
- *                                 description: content of the notification
  *                               isRead:
  *                                type: boolean
  *                                description: true if notification is read false if it's not
- *                               smallIcon:
- *                                 type: string
- *                                 description: the path of the icon of the notification
- *                               senderID:
- *                                 type: string
- *                                 description: Name of the sender of the notification
- *                               data:
- *                                 type: object
- *                                 description: the external data that you want to send with the notification
- *          404:
- *              description: notifications not found
  *          401:
  *              description: User unauthorized to view this info
  *          500:
@@ -88,7 +86,11 @@ const router = express.Router();
  *       - bearerAuth: []
  */
 
-router.get("/notifications");
+notificationRouter.get(
+  "/notifications",
+  verifyAuthToken,
+  notificationController.getAllNotifications
+);
 
 /**
  * @swagger
@@ -98,44 +100,149 @@ router.get("/notifications");
  *      tags: [Notifications]
  *      responses:
  *          200:
- *              description: Notification is hidden successfully
+ *              description: Notification marked as read successfully
  *          401:
- *              description: Unauthorized to hide the notifications
+ *              description: User unauthorized to make this action
  *          500:
  *              description: Server Error
  *      security:
  *       - bearerAuth: []
  */
 
-router.patch("/mark-all-notifications-read");
+notificationRouter.patch(
+  "/mark-all-notifications-read",
+  verifyAuthToken,
+  notificationController.markNotificationsAsRead
+);
 
 /**
  * @swagger
- * /hide-noification:
+ * /mark-notification-read/{notificationId}:
+ *  patch:
+ *      summary: mark a notification as read
+ *      tags: [Notifications]
+ *      responses:
+ *          200:
+ *              description: Notification marked as read successfully
+ *          401:
+ *              description: User unauthorized to mark this notification as read
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+notificationRouter.patch(
+  "/mark-notification-read/:notificationId",
+  verifyAuthToken,
+  notificationController.markNotificationAsRead
+);
+
+/**
+ * @swagger
+ * /hide-notification/{notificationId}:
  *  patch:
  *      summary: mark a specific notification as hidden
+ *      tags: [Notifications]
+ *      responses:
+ *          200:
+ *              description: Notification marked as hidden successfully
+ *          401:
+ *              description: User unauthorized to mark this notification as hidden
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+notificationRouter.patch(
+  "/hide-notification/:notificationId",
+  verifyAuthToken,
+  notificationController.markNotificationAsHidden
+);
+
+/**
+ * @swagger
+ * /notification-subscribe:
+ *  post:
+ *      summary: subscribe to notifications with the client token from firebase (after the login directly)
  *      tags: [Notifications]
  *      requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
+ *             required:
+ *              - type
+ *              - accessToken
  *             type: object
  *             properties:
- *              id:
+ *              type:
  *                type: string
- *                description: id of the notification you want to make hidden
+ *                description: web or flutter
+ *                enum:
+ *                 - web
+ *                 - flutter
+ *              accessToken:
+ *                type: string
+ *                description: the access token from firebase
  *      responses:
  *          200:
- *              description: Notifications are set to read successfully
+ *              description: Subscribed successfully
  *          401:
- *              description: Unauthorized to Read the notifications
+ *              description: User unauthorized to make this action
  *          500:
  *              description: Server Error
  *      security:
  *       - bearerAuth: []
  */
 
-router.patch("/hide-noification");
+notificationRouter.post(
+  "/notification-subscribe",
+  verifyAuthToken,
+  notificationController.notificationSubscribeValidator,
+  validateRequestSchema,
+  notificationController.notificationSubscribe
+);
 
-export default router;
+/**
+ * @swagger
+ * /notification-unsubscribe:
+ *  post:
+ *      summary: unsubscribe from notifications (with signout)
+ *      tags: [Notifications]
+ *      requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             required:
+ *              - type
+ *             type: object
+ *             properties:
+ *              type:
+ *                type: string
+ *                description: web or flutter
+ *                enum:
+ *                 - web
+ *                 - flutter
+ *      responses:
+ *          200:
+ *              description: Unsubscribed successfully
+ *          401:
+ *              description: User unauthorized to make this action
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+
+notificationRouter.post(
+  "/notification-unsubscribe",
+  verifyAuthToken,
+  notificationController.notificationUnsubscribeValidator,
+  validateRequestSchema,
+  notificationController.notificationSubscribe
+);
+
+export default notificationRouter;
