@@ -192,7 +192,6 @@ export async function homePostsListing(
       });
     }
   }
-  console.log(posts);
   //THEN WE WILL GET OUR LIMIT
   let limit = await prepareLimit(listingParams.limit);
   const result = await extraPostsListing(
