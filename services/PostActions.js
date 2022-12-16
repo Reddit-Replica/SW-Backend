@@ -149,9 +149,9 @@ export async function unSavePost(post, user) {
     throw error;
   }
 
-  user.savedPosts = user.savedPosts.filter((smallPost) => {
-    return smallPost.toString() !== post.id;
-  });
+  // user.savedPosts = user.savedPosts.filter((smallPost) => {
+  //   return smallPost.toString() !== post.id;
+  // });
   user.savedPostsOnly = user.savedPostsOnly.filter((smallPost) => {
     return smallPost.toString() !== post.id;
   });
@@ -246,9 +246,15 @@ export async function unSaveComment(comment, user) {
     }
   }
   if (numOfComments === 1) {
-    user.savedPosts = user.savedPosts.filter((smallPost) => {
-      return smallPost.toString() !== comment.postId.toString();
-    });
+    // check that post itself is saved
+    const postOnlyIndex = user.savedPostsOnly.findIndex(
+      (elem) => elem.toString() === comment.postId.toString()
+    );
+    if (postOnlyIndex === -1) {
+      user.savedPosts = user.savedPosts.filter((smallPost) => {
+        return smallPost.toString() !== comment.postId.toString();
+      });
+    }
   }
   await user.save();
   return {
