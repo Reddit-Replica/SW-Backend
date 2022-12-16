@@ -5,6 +5,7 @@ import {
   setPinnedPostsFlags,
   getPinnedPostDetails,
 } from "../../services/getPinnedPosts.js";
+import mongoose from "mongoose";
 import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
 import Subreddit from "./../../models/Community.js";
@@ -111,5 +112,124 @@ describe("Testing Pinned Posts Service functions", () => {
     expect(checkUserPinnedPosts).toBeDefined();
   });
 
-  it("Test checkUserPinnedPosts for same loggedIn user & user", async () => {});
+  it("Test checkUserPinnedPosts with no loggedIn user & username", async () => {
+    try {
+      await checkUserPinnedPosts(false);
+    } catch (err) {
+      expect(err.statusCode).toEqual(400);
+      expect(err.message).toEqual("Username is needed");
+    }
+  });
+
+  it("Test checkUserPinnedPosts with only a loggedIn user", async () => {
+    const users = await checkUserPinnedPosts(true, loggedInUser.id.toString());
+    expect(users.loggedInUser).toEqual(users.user);
+  });
+
+  it("Test checkUserPinnedPosts with the same loggedIn user & same username", async () => {
+    const users = await checkUserPinnedPosts(
+      true,
+      loggedInUser.id.toString(),
+      loggedInUser.username
+    );
+    expect(users.loggedInUser).toEqual(users.user);
+  });
+
+  it("Test checkUserPinnedPosts with the a loggedIn user & a different username", async () => {
+    const users = await checkUserPinnedPosts(
+      true,
+      loggedInUser.id.toString(),
+      user.username
+    );
+    expect(users.loggedInUser.username).toEqual(loggedInUser.username);
+    expect(users.user.username).toEqual(user.username);
+  });
+
+  it("Test checkUserPinnedPosts witha not-found user", async () => {
+    try {
+      const invalidId = mongoose.Types.ObjectId.generate(10);
+      await checkUserPinnedPosts(true, invalidId);
+    } catch (err) {
+      expect(err.statusCode).toEqual(400);
+      expect(err.message).toEqual("User not found or may be deleted");
+    }
+  });
+
+  it("Should have setPinnedPostsFlags defined", () => {
+    expect(setPinnedPostsFlags).toBeDefined();
+  });
+
+  it("Test setPinnedPostsFlags with another owner's post", async () => {
+    const { vote, yourPost, inYourSubreddit } = setPinnedPostsFlags(
+      loggedInUser,
+      post1
+    );
+    expect(vote).toEqual(0);
+    expect(yourPost).toEqual(false);
+    expect(inYourSubreddit).toEqual(false);
+  });
+
+  it("Test setPinnedPostsFlags with my post", async () => {
+    const { vote, yourPost, inYourSubreddit } = setPinnedPostsFlags(
+      user,
+      post1
+    );
+    expect(vote).toEqual(0);
+    expect(yourPost).toEqual(true);
+    expect(inYourSubreddit).toEqual(false);
+  });
+
+  it("Test setPinnedPostsFlags with my post & mod in subreddit", async () => {
+    user.moderatedSubreddits.push({
+      subredditId: subreddit.id,
+      name: subreddit.title,
+    });
+    await user.save();
+    const { vote, yourPost, inYourSubreddit } = setPinnedPostsFlags(
+      user,
+      post1
+    );
+    expect(vote).toEqual(0);
+    expect(yourPost).toEqual(true);
+    expect(inYourSubreddit).toEqual(true);
+  });
+
+  it("Test setPinnedPostsFlags with an upvoted post & my post", async () => {
+    user.upvotedPosts.push(post2.id);
+    await user.save();
+    const { vote, yourPost, inYourSubreddit } = setPinnedPostsFlags(
+      user,
+      post2
+    );
+    expect(vote).toEqual(1);
+    expect(yourPost).toEqual(true);
+    expect(inYourSubreddit).toEqual(true);
+  });
+
+  it("Test setPinnedPostsFlags with a different downvoted post", async () => {
+    loggedInUser.downvotedPosts.push(post2.id);
+    await user.save();
+    const { vote, yourPost, inYourSubreddit } = setPinnedPostsFlags(
+      loggedInUser,
+      post2
+    );
+    expect(vote).toEqual(-1);
+    expect(yourPost).toEqual(false);
+    expect(inYourSubreddit).toEqual(false);
+  });
+
+  it("Should have getPinnedPostDetails defined", () => {
+    expect(getPinnedPostDetails).toBeDefined();
+  });
+
+  it("Test setPinnedPostsFlags with another owner's post", async () => {
+    const postObj = getPinnedPostDetails(post1, {
+      vote: 0,
+      yourPost: true,
+      inYourSubreddit: true,
+    });
+    expect(postObj).toBeDefined();
+    expect(postObj.title).toEqual(post1.title);
+    expect(postObj.postedBy).toEqual(post1.ownerUsername);
+  });
 });
