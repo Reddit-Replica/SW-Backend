@@ -56,22 +56,3 @@ export async function readReceivedMessages(userId) {
     await message.save();
   }
 }
-
-/**
- * A function used to mark all unread messages of the user's collection as read
- * @param {string} userId User ID
- * @returns {void}
- */
-
-export async function readUnreadMessages(userId) {
-  const user = await User.findById(userId)?.populate("unreadMessages");
-  if (!user || user.deletedAt) {
-    const error = new Error("User not found");
-    error.statusCode = 401;
-    throw error;
-  }
-  for (let message of user.unreadMessages) {
-    message.isRead = true;
-    await message.save();
-  }
-}

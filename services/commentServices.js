@@ -10,6 +10,8 @@ import {
   checkIfMuted,
   checkIfModerator,
 } from "./subredditActionsServices.js";
+import { searchForUserService } from "./userServices.js";
+import PostReplies from "../models/PostReplies.js";
 
 /**
  * Function used to check if the id of the post is valid and if the post exists in the database
@@ -198,6 +200,18 @@ export async function createCommentService(data, post) {
   const comment = new Comment(commentObject);
   await comment.save();
 
+  if (comment.ownerUsername !== post.ownerUsername) {
+    const postOwner = await searchForUserService(post.ownerUsername);
+    const postReply = await new PostReplies({
+      commentId: comment.id,
+      postId: post.id,
+      receiverUsername: post.ownerUsername,
+      createdAt: Date.now(),
+    }).save();
+    postOwner.postReplies.push(postReply.id);
+    postOwner.save();
+  }
+
   // add the comment to upvoted comments
   user.upvotedComments.push(comment._id);
 
@@ -226,6 +240,10 @@ export async function createCommentService(data, post) {
     post.usersCommented.push(user._id);
   }
   post.numberOfComments = post.numberOfComments + 1;
+  post.hotScore =
+    post.hotTimingScore + post.numberOfVotes + post.numberOfComments;
+  post.bestScore =
+    post.bestTimingScore + post.numberOfVotes + post.numberOfComments;
   await post.save();
 
   createCommentNotification(comment);

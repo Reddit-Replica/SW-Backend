@@ -1,7 +1,7 @@
 import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
 import { postListing } from "../utils/preparePostListing.js";
-import { commentListing } from "../utils/prepareCommentListing.js";
+import { commentTreeListing } from "../utils/prepareCommentListing.js";
 /**
  * Search for a post given a query in a subreddit
  *
@@ -115,7 +115,7 @@ export async function searchForPosts(subreddit, query, listingParams) {
 // eslint-disable-next-line max-statements
 export async function searchForComments(subreddit, query, listingParams) {
   // Prepare Listing Parameters
-  const listingResult = await commentListing(listingParams);
+  const listingResult = await commentTreeListing(listingParams);
 
   const regex = new RegExp(query, "i");
   listingResult.find["subredditName"] = subreddit;

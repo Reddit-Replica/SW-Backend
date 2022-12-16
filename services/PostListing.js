@@ -138,13 +138,13 @@ export async function homePostsListing(
     const splitter = await searchForPost(listingParams.before);
     isBefore = true;
     posts = posts.filter((post) => {
-      return post[filteringString] > splitter[filteringString];
+      return post[filteringString] >= splitter[filteringString];
     });
     //THIS IS THE CASE OF AFTER THEN WE WILL DEAL NORMALLY WITHOUT ANY CHANGES IN THE FOR LOOP BOUNDARIES
   } else if (listingParams.after && !listingParams.before) {
     const splitter = await searchForPost(listingParams.after);
     posts = posts.filter(function (post) {
-      return post[filteringString] < splitter[filteringString];
+      return post[filteringString] <= splitter[filteringString];
     });
   }
   const uniquePosts = new Set();
@@ -192,7 +192,6 @@ export async function homePostsListing(
       });
     }
   }
-  console.log(posts);
   //THEN WE WILL GET OUR LIMIT
   let limit = await prepareLimit(listingParams.limit);
   const result = await extraPostsListing(
@@ -258,6 +257,8 @@ export async function homePostsListing(
     //EACH ELEMENT THAT IS RETURNED MUST BE MARKED AS READ
     //NEED TO BE EDITED
     const post = posts[startingIndex];
+    post.numberOfViews++;
+    post.save();
     const postId = post.id.toString();
     let vote = 0,
       saved = false,

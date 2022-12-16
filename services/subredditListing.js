@@ -25,7 +25,11 @@ export async function subredditCategoryListing(
   limit,
   withCategory
 ) {
-  await checkOnCategory(category);
+  console.log(withCategory);
+  if (withCategory) {
+    console.log("fe category",withCategory);
+    await checkOnCategory(category);
+  }
   const listingResult = await subredditListing(
     category,
     before,
@@ -49,12 +53,12 @@ export async function subredditCategoryListing(
       }
     }
     let subredditData = { id: subreddit.id.toString() };
-    // THEN WE WILL ADD DATA NEEDED TO THE MENTION
     subredditData.data = {
       title: subreddit.title,
       members: subreddit.members,
       description: subreddit.description,
       isMember: isMember,
+      picture: subreddit.picture,
     };
     children.push(subredditData);
   }
