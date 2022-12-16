@@ -156,7 +156,6 @@ export async function homePostsListing(
     }
     return false;
   });
-
   if (typeOfSorting === "top") {
     let filteringDate = new Date();
     let changed = false;
@@ -202,10 +201,12 @@ export async function homePostsListing(
     typeOfSorting,
     listingParams.time
   );
+  console.log(posts);
   //WE WILL GET EXTRA POSTS TO FILL THE GAP THAT IS BETWEEN THE FOLLOWED ONES AND THE LIMIT
   const extraPosts = await Post.find(result.query).limit(limit);
   //LOOPING OVER THE EXTRA POSTS TO ADD THE NEEDED NUMBER OF THEM TO THE POSTS THAT WE WILL RETURN
   let ctr = 0;
+  console.log(extraPosts);
   while (posts.length < limit) {
     if (ctr === extraPosts.length) {
       break;
@@ -222,7 +223,7 @@ export async function homePostsListing(
     });
     ctr++;
   }
-
+  console.log(posts);
   //SORTING THE POSTS THAT WE GOT USING THE TYPE OF SORTING
   if (typeOfSorting === "new") {
     posts.sort(compareNew);

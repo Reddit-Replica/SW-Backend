@@ -312,6 +312,18 @@ const userSchema = mongoose.Schema({
       ref: "Conversation",
     },
   ],
+  notifications: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Notification",
+    },
+  ],
+  webNotificationToken: {
+    type: String,
+  },
+  flutterNotificationToken: {
+    type: String,
+  },
 });
 
 const User = mongoose.model("User", userSchema);

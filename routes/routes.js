@@ -19,6 +19,7 @@ import postAndCommentActionsRouter from "./post-and-comment-actions.js";
 import commentActionsRouter from "./comment-action.js";
 import searchRouter from "./search.js";
 import listingRouter from "./listing.js";
+import notificationRouter from "./notification.js";
 // eslint-disable-next-line new-cap
 const mainRouter = express.Router();
 
@@ -42,6 +43,8 @@ mainRouter.use(postAndCommentActionsRouter);
 mainRouter.use(commentActionsRouter);
 mainRouter.use(searchRouter);
 mainRouter.use(listingRouter);
+mainRouter.use(notificationRouter);
+
 // ! should add your router before this middleware
 mainRouter.use((req, res) => {
   res.status(404).json(`Can't ${req.method} ${req.url}`);

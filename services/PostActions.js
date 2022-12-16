@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable max-statements */
+import mongoose from "mongoose";
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 import User from "../models/User.js";
@@ -15,10 +16,14 @@ import { searchForUserService } from "./userServices.js";
  * @returns {Object} Object contains the post or maybe the error that happened
  */
 export async function searchForPost(postId) {
-  //NEED TO ADD A CHECK ON THE ID
+  if (!mongoose.Types.ObjectId.isValid(postId)) {
+    let error = new Error("Invalid post id");
+    error.statusCode = 400;
+    throw error;
+  }
   const post = await Post.findById(postId);
   if (!post || post.deletedAt) {
-    let error = new Error("This Post isn't found");
+    let error = new Error("This post isn't found");
     error.statusCode = 404;
     throw error;
   }
@@ -50,8 +55,11 @@ export async function isUserMod(post, user) {
  * @returns {Object} Object contains the post or maybe the error that happened
  */
 export async function searchForComment(commentId) {
-  //NEED TO ADD A CHECK ON THE ID
-  console.log(commentId);
+  if (!mongoose.Types.ObjectId.isValid(commentId)) {
+    let error = new Error("Invalid comment id");
+    error.statusCode = 400;
+    throw error;
+  }
   const comment = await Comment.findById(commentId);
   if (!comment || comment.deletedAt) {
     let error = new Error("This comment isn't found");
@@ -821,7 +829,6 @@ export async function downVoteAComment(comment, user) {
 export async function setSuggestedSort(postId, user, sort) {
   const post = await searchForPost(postId);
   const postOwner = post.ownerId.toString();
-  console.log(user.id, post.ownerId);
   if (user.id !== postOwner) {
     let error = new Error("You don't have the right to do this action");
     error.statusCode = 401;
@@ -854,5 +861,23 @@ export async function clearSuggestedSort(postId, user) {
   return {
     statusCode: 200,
     message: "post-suggested sort is best now",
+  };
+}
+
+/**
+ * This function is used to get the commented users on a post
+ * @param {String} postId Id of the post that we will get people who commented on
+ * @returns {Object} success object that contains the message and status code
+ */
+export async function getCommentedUsers(postId) {
+  const post = await searchForPost(postId);
+  const users = new Set();
+  for (const user of post.usersCommented) {
+    const { username } = await User.findById(user);
+    users.add(username);
+  }
+  return {
+    data:{ usernames: [...users] },
+    statusCode: 200,
   };
 }

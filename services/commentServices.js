@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
+import { createCommentNotification } from "./notificationServices.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
 import {
   checkIfBanned,
@@ -241,6 +242,7 @@ export async function createCommentService(data, post) {
   post.numberOfComments = post.numberOfComments + 1;
   await post.save();
 
+  createCommentNotification(comment);
   return {
     statusCode: 201,
     data: { id: comment._id },

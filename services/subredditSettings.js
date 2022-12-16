@@ -14,6 +14,7 @@ export function prepareSubredditSettings(subreddit) {
     NSFW: subreddit.nsfw,
     mainTopic: subreddit.mainTopic,
     subTopics: subreddit.subTopics,
+    welcomeMessage: subreddit.subredditSettings.welcomeMessage,
   };
 
   if (subreddit.type === "Private") {
