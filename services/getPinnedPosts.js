@@ -100,6 +100,7 @@ export function setPinnedPostsFlags(loggedInUser, post) {
  * This function returns a pinned post details along with the flags associated with it
  * @param {object} post Pinned post object
  * @param {object} params three flags: vote, yourPost and inYourSubreddit
+ * @return {object} Post details object
  */
 export function getPinnedPostDetails(post, params) {
   return {
