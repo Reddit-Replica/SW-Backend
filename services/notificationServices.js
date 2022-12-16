@@ -415,7 +415,7 @@ export async function getUserNotifications(
  * @returns {response} the prepared response for the main service function
  */
 function getUserNotificationsFirstTime(notifcations, limit) {
-  const response = { children: [] };
+  const response = { children: [], unreadCount: 0 };
   const numberOfNotifications = notifcations.length;
   let myLimit;
   if (numberOfNotifications > limit) {
@@ -432,6 +432,9 @@ function getUserNotificationsFirstTime(notifcations, limit) {
       sendAt: notifcations[i].date,
       isRead: notifcations[i].read,
     });
+    if (notifcations[i].read === false) {
+      response.unreadCount++;
+    }
   }
   if (myLimit !== numberOfNotifications) {
     response.after = notifcations[myLimit - 1]._id;
@@ -447,7 +450,7 @@ function getUserNotificationsFirstTime(notifcations, limit) {
  */
 // eslint-disable-next-line max-statements
 function getUserNotificationsBefore(notifcations, limit, before) {
-  const response = { children: [] };
+  const response = { children: [], unreadCount: 0 };
   let myStart;
   const numberOfNotifications = notifcations.length;
   const neededIndex = notifcations.findIndex(
@@ -473,6 +476,9 @@ function getUserNotificationsBefore(notifcations, limit, before) {
       sendAt: notifcations[i].date,
       isRead: notifcations[i].read,
     });
+    if (notifcations[i].read === false) {
+      response.unreadCount++;
+    }
   }
   if (response.children.length >= 1) {
     if (myStart !== 0) {
@@ -493,7 +499,7 @@ function getUserNotificationsBefore(notifcations, limit, before) {
  */
 // eslint-disable-next-line max-statements
 function getUserNotificationsAfter(notifcations, limit, after) {
-  const response = { children: [] };
+  const response = { children: [], unreadCount: 0 };
   let myLimit;
   const numberOfNotifications = notifcations.length;
   const neededIndex = notifcations.findIndex(
@@ -519,6 +525,9 @@ function getUserNotificationsAfter(notifcations, limit, after) {
       sendAt: notifcations[i].date,
       isRead: notifcations[i].read,
     });
+    if (notifcations[i].read === false) {
+      response.unreadCount++;
+    }
   }
   if (response.children.length >= 1) {
     if (myLimit !== numberOfNotifications) {
