@@ -156,32 +156,43 @@ export async function homePostsListing(
     }
     return false;
   });
-
-  if (typeOfSorting==="top"){
-    let filteringDate=new Date();
-    let changed=false;
-    if (listingParams.time==="year"){
-      filteringDate.setFullYear(filteringDate.getFullYear()-1);
-      changed=true;
-    } else if (listingParams.time==="month"){
-      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth()-1);
-      changed=true;
-    } else if (listingParams.time==="week"){
-      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth(),filteringDate.getDate()-7);
-      changed=true;
-    }  else if (listingParams.time==="day"){
-      filteringDate.setFullYear(filteringDate.getFullYear(),filteringDate.getMonth(),filteringDate.getDate()-1);
-      changed=true;
-    } else if (listingParams.time==="hour"){
-      filteringDate.setHours(filteringDate.getHours()-1);
-      changed=true;
+  if (typeOfSorting === "top") {
+    let filteringDate = new Date();
+    let changed = false;
+    if (listingParams.time === "year") {
+      filteringDate.setFullYear(filteringDate.getFullYear() - 1);
+      changed = true;
+    } else if (listingParams.time === "month") {
+      filteringDate.setFullYear(
+        filteringDate.getFullYear(),
+        filteringDate.getMonth() - 1
+      );
+      changed = true;
+    } else if (listingParams.time === "week") {
+      filteringDate.setFullYear(
+        filteringDate.getFullYear(),
+        filteringDate.getMonth(),
+        filteringDate.getDate() - 7
+      );
+      changed = true;
+    } else if (listingParams.time === "day") {
+      filteringDate.setFullYear(
+        filteringDate.getFullYear(),
+        filteringDate.getMonth(),
+        filteringDate.getDate() - 1
+      );
+      changed = true;
+    } else if (listingParams.time === "hour") {
+      filteringDate.setHours(filteringDate.getHours() - 1);
+      changed = true;
     }
-    if (changed){
-    posts = posts.filter(function (post) {
-      return post.createdAt >= filteringDate ;
-    });
+    if (changed) {
+      posts = posts.filter(function (post) {
+        return post.createdAt >= filteringDate;
+      });
+    }
   }
-}
+  console.log(posts);
   //THEN WE WILL GET OUR LIMIT
   let limit = await prepareLimit(listingParams.limit);
   const result = await extraPostsListing(
@@ -189,13 +200,14 @@ export async function homePostsListing(
     listingParams.after,
     listingParams.limit,
     typeOfSorting,
-    listingParams.time,
+    listingParams.time
   );
+  console.log(posts);
   //WE WILL GET EXTRA POSTS TO FILL THE GAP THAT IS BETWEEN THE FOLLOWED ONES AND THE LIMIT
-  const extraPosts = await Post.find(result.query)
-    .limit(limit);
+  const extraPosts = await Post.find(result.query).limit(limit);
   //LOOPING OVER THE EXTRA POSTS TO ADD THE NEEDED NUMBER OF THEM TO THE POSTS THAT WE WILL RETURN
   let ctr = 0;
+  console.log(extraPosts);
   while (posts.length < limit) {
     if (ctr === extraPosts.length) {
       break;
@@ -212,7 +224,7 @@ export async function homePostsListing(
     });
     ctr++;
   }
-
+  console.log(posts);
   //SORTING THE POSTS THAT WE GOT USING THE TYPE OF SORTING
   if (typeOfSorting === "new") {
     posts.sort(compareNew);
@@ -225,7 +237,6 @@ export async function homePostsListing(
   } else if (typeOfSorting === "trending") {
     posts.sort(compareTrending);
   }
-
 
   if (posts.length < limit) {
     limit = posts.length;
@@ -266,7 +277,9 @@ export async function homePostsListing(
       if (user.downvotedPosts?.find((id) => id.toString() === postId)) {
         vote = -1;
       }
-      if (user.moderatedSubreddits?.find((sr) => sr.name === post.subredditName)) {
+      if (
+        user.moderatedSubreddits?.find((sr) => sr.name === post.subredditName)
+      ) {
         inYourSubreddit = true;
       }
       if (user.spammedPosts?.find((id) => id.toString() === postId)) {
