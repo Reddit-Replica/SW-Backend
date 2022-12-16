@@ -189,8 +189,29 @@ export async function createCommentNotification(comment) {
 
   // CHECK HERE FOR THE POST REPLIES
   // send notification to parent owner
-  if (comment.parentType === "post") {
-    if (parent.sendReplies === true) {
+  if (comment.ownerId.toString() !== parent.ownerId.toString()) {
+    if (comment.parentType === "post") {
+      if (parent.sendReplies === true) {
+        const notification = await new Notification({
+          ownerId: parent.ownerId,
+          type: "Comment",
+          data: title1,
+          link: link1,
+          date: Date.now(),
+        }).save();
+
+        const data1 = {
+          data: title1,
+          notificationId: notification._id,
+          link: notification.link,
+          createdAt: notification.date,
+        };
+        console.log("Entered 2");
+        console.log("Data1");
+        // send the notification to the owner of the parent
+        await sendNotification(user, title1, JSON.stringify(data1));
+      }
+    } else {
       const notification = await new Notification({
         ownerId: parent.ownerId,
         type: "Comment",
@@ -205,31 +226,11 @@ export async function createCommentNotification(comment) {
         link: notification.link,
         createdAt: notification.date,
       };
-      console.log("Entered 2");
       console.log("Data1");
       // send the notification to the owner of the parent
       await sendNotification(user, title1, JSON.stringify(data1));
     }
-  } else {
-    const notification = await new Notification({
-      ownerId: parent.ownerId,
-      type: "Comment",
-      data: title1,
-      link: link1,
-      date: Date.now(),
-    }).save();
-
-    const data1 = {
-      data: title1,
-      notificationId: notification._id,
-      link: notification.link,
-      createdAt: notification.date,
-    };
-    console.log("Data1");
-    // send the notification to the owner of the parent
-    await sendNotification(user, title1, JSON.stringify(data1));
   }
-
   await parent.populate("followingUsers.userId");
 
   // console.log(parent.followingUsers);
@@ -257,26 +258,27 @@ export async function createCommentNotification(comment) {
   }
   // send notification to post owner and post followers if the parent was a comment
   if (comment.parentType === "comment") {
-    if (comment.postId.sendReplies) {
-      const notification3 = await new Notification({
-        ownerId: comment.postId.ownerId,
-        type: "Comment",
-        data: title3,
-        link: link1,
-        date: Date.now(),
-      }).save();
-      const data3 = {
-        data: title3,
-        notificationId: notification3._id,
-        link: notification3.link,
-        createdAt: notification3.date,
-      };
+    if (comment.postId.ownerId.toString() !== comment.ownerId.toString()) {
+      if (comment.postId.sendReplies) {
+        const notification3 = await new Notification({
+          ownerId: comment.postId.ownerId,
+          type: "Comment",
+          data: title3,
+          link: link1,
+          date: Date.now(),
+        }).save();
+        const data3 = {
+          data: title3,
+          notificationId: notification3._id,
+          link: notification3.link,
+          createdAt: notification3.date,
+        };
 
-      const postOwnerUser = await User.findById(comment.postId.ownerId);
-      console.log("Data3");
-      await sendNotification(postOwnerUser, title3, JSON.stringify(data3));
+        const postOwnerUser = await User.findById(comment.postId.ownerId);
+        console.log("Data3");
+        await sendNotification(postOwnerUser, title3, JSON.stringify(data3));
+      }
     }
-
     await comment.populate("postId.followingUsers.userId");
     // send notification to post follwers
     for (let i = 0; i < comment.postId.followingUsers.length; i++) {
