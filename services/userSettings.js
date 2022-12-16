@@ -164,9 +164,9 @@ export function checkDuplicateSocialLink(user, type, displayText, link) {
 export function deleteFile(pathToFile) {
   try {
     fs.unlinkSync(pathToFile);
-    console.log("Successfully deleted the file.");
+    // console.log("Successfully deleted the file.");
   } catch (err) {
-    console.log("File was not found");
+    // console.log("File was not found");
   }
 }
 
