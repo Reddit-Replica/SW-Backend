@@ -194,11 +194,16 @@ const getUsernameMentions = async (req, res) => {
   try {
     let { before, after, limit } = req.query;
     const user = await searchForUserService(req.payload.username);
-    const result = await userMentionsListing(user, "usernameMentions", {
-      before,
-      after,
-      limit,
-    });
+    const result = await userMentionsListing(
+      user,
+      "usernameMentions",
+      {
+        before,
+        after,
+        limit,
+      },
+      false
+    );
     res.status(result.statusCode).json(result.data);
   } catch (error) {
     console.log(error);
@@ -214,13 +219,19 @@ const getpostReplies = async (req, res) => {
   try {
     const { before, after, limit } = req.query;
     const user = await searchForUserService(req.payload.username);
-    const result = await userMessageListing(user, "postReplies", {
-      before,
-      after,
-      limit,
-    });
+    const result = await userMentionsListing(
+      user,
+      "postReplies",
+      {
+        before,
+        after,
+        limit,
+      },
+      true
+    );
     res.status(result.statusCode).json(result.data);
   } catch (error) {
+    console.log(error);
     if (error.statusCode) {
       res.status(error.statusCode).json({ error: error.message });
     } else {
