@@ -7,6 +7,11 @@ import {
 } from "../services/postServices.js";
 import { homePostsListing } from "../services/PostListing.js";
 import { searchForUserService } from "../services/userServices.js";
+import {
+  checkUserPinnedPosts,
+  getPinnedPostDetails,
+  setPinnedPostsFlags,
+} from "../services/getPinnedPosts.js";
 const postIdValidator = [
   query("id").not().isEmpty().withMessage("Id can't be empty"),
 ];
@@ -66,77 +71,38 @@ const pinPost = async (req, res) => {
 const getPinnedPosts = async (req, res) => {
   const userId = req.payload?.userId;
   try {
-    let loggedInUser, user;
-    if (req.loggedIn) {
-      loggedInUser = await User.findById(userId)?.populate("pinnedPosts");
-      if (!loggedInUser || loggedInUser.deletedAt) {
-        return res.status(400).json({ error: "User not found/deleted" });
-      }
-      if (!req.query.username) {
-        user = loggedInUser;
-      } else {
-        user = await User.findOne({ username: req.query.username })?.populate(
-          "pinnedPosts"
-        );
-        // eslint-disable-next-line max-depth
-        if (!user || user.deletedAt) {
-          return res.status(400).json({ error: "User not found/deleted" });
-        }
-      }
-    } else if (!req.loggedIn && !req.query.username) {
-      return res.status(400).json({ error: "Username is needed" });
-    } else {
-      user = await User.findOne({ username: req.query.username })?.populate(
-        "pinnedPosts"
-      );
-      if (!user || user.deletedAt) {
-        return res.status(400).json({ error: "User not found/deleted" });
-      }
-      loggedInUser = user;
-    }
+    let { loggedInUser, user } = await checkUserPinnedPosts(
+      req.loggedIn,
+      userId,
+      req.query.username
+    );
     user.pinnedPosts = user.pinnedPosts.filter((post) => !post.deletedAt);
     const pinnedPosts = user.pinnedPosts.map((post) => {
-      let vote = 0;
-      if (
-        req.loggedIn &&
-        loggedInUser.upvotedPosts.find(
-          (postId) => postId.toString() === post.id.toString()
-        )
-      ) {
-        vote = 1;
-      } else if (
-        req.loggedIn &&
-        loggedInUser.downvotedPosts.find(
-          (postId) => postId.toString() === post.id.toString()
-        )
-      ) {
-        vote = -1;
+      let vote = 0,
+        yourPost = false,
+        inYourSubreddit = false;
+      if (req.loggedIn) {
+        const result = setPinnedPostsFlags(loggedInUser, post);
+        vote = result.vote;
+        yourPost = result.yourPost;
+        inYourSubreddit = result.inYourSubreddit;
       }
-      return {
-        id: post.id.toString(),
-        kind: post.kind,
-        subreddit: post.subredditName,
-        link: post.link,
-        images: post.images,
-        video: post.video,
-        content: post.content,
-        nsfw: post.nsfw,
-        spoiler: post.spoiler,
-        title: post.title,
-        sharePostId: post.sharePostId,
-        flair: post.flair,
-        comments: post.numberOfComments,
-        votes: post.numberOfVotes,
-        postedAt: post.createdAt,
-        postedBy: post.ownerUsername,
-        vote: vote,
-      };
+      return getPinnedPostDetails(post, { vote, yourPost, inYourSubreddit });
     });
     return res.status(200).json({
       pinnedPosts: pinnedPosts,
     });
-  } catch (err) {
-    res.status(500).json("Internal server error");
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
+    } else {
+      res.status(500).json("Internal server error");
+    }
   }
 };
 
