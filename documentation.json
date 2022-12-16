@@ -7091,9 +7091,18 @@
                       "description": "List of notifications",
                       "items": {
                         "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "id of the notification"
+                          },
                           "title": {
                             "type": "string",
                             "description": "title of the notification"
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "type of the notification",
+                            "enum": ["Comment", "Follow"]
                           },
                           "link": {
                             "type": "string",
@@ -7101,27 +7110,12 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "time of sending the notification"
-                          },
-                          "content": {
-                            "type": "string",
-                            "description": "content of the notification"
                           },
                           "isRead": {
                             "type": "boolean",
                             "description": "true if notification is read false if it's not"
-                          },
-                          "smallIcon": {
-                            "type": "string",
-                            "description": "the path of the icon of the notification"
-                          },
-                          "senderID": {
-                            "type": "string",
-                            "description": "Name of the sender of the notification"
-                          },
-                          "data": {
-                            "type": "object",
-                            "description": "the external data that you want to send with the notification"
                           }
                         }
                       }
@@ -7133,9 +7127,6 @@
           },
           "401": {
             "description": "User unauthorized to view this info"
-          },
-          "404": {
-            "description": "notifications not found"
           },
           "500": {
             "description": "Server Error"
@@ -7155,6 +7146,9 @@
         "responses": {
           "200": {
             "description": "Notification marked as read successfully"
+          },
+          "401": {
+            "description": "User unauthorized to make this action"
           },
           "500": {
             "description": "Server Error"
@@ -7241,6 +7235,9 @@
           "200": {
             "description": "Subscribed successfully"
           },
+          "401": {
+            "description": "User unauthorized to make this action"
+          },
           "500": {
             "description": "Server Error"
           }
@@ -7277,6 +7274,9 @@
         "responses": {
           "200": {
             "description": "Unsubscribed successfully"
+          },
+          "401": {
+            "description": "User unauthorized to make this action"
           },
           "500": {
             "description": "Server Error"
@@ -7919,7 +7919,7 @@
             "required": true,
             "name": "id",
             "schema": {
-              "type": "stringget"
+              "type": "string"
             },
             "description": "id of the post"
           }
@@ -7959,7 +7959,7 @@
             }
           },
           "401": {
-            "description": "User unauthorized to follow/unfollow this post"
+            "description": "User unauthorized to get the usernames"
           },
           "404": {
             "description": "Post not found"
