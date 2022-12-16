@@ -67,6 +67,9 @@ const communitiesRouter = express.Router();
  *                                isMember:
  *                                  type: boolean
  *                                  description: True if you are a member of the community , False if you are not a member of the community
+ *                                picture:
+ *                                  type: string
+ *                                  description: the path of the picture of the subreddit
  *          404:
  *              description: Page not found
  *          401:
