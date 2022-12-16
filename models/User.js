@@ -219,6 +219,12 @@ const userSchema = mongoose.Schema({
       ref: "Post",
     },
   ],
+  savedPostsOnly: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
   savedComments: [
     {
       type: Schema.Types.ObjectId,
