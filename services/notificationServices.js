@@ -408,12 +408,12 @@ function getUserNotificationsFirstTime(notifcations, limit) {
   }
   for (let i = 0; i < myLimit; i++) {
     response.children.push({
+      id: notifcations[i]._id,
       title: notifcations[i].data,
       type: notifcations[i].type,
       link: notifcations[i].link,
       sendAt: notifcations[i].date,
       isRead: notifcations[i].read,
-      // ownerId: notifcations[i].ownerId,
     });
   }
   if (myLimit !== numberOfNotifications) {
@@ -449,6 +449,7 @@ function getUserNotificationsBefore(notifcations, limit, before) {
   }
   for (let i = myStart; i < neededIndex; i++) {
     response.children.push({
+      id: notifcations[i]._id,
       title: notifcations[i].data,
       type: notifcations[i].type,
       link: notifcations[i].link,
@@ -494,6 +495,7 @@ function getUserNotificationsAfter(notifcations, limit, after) {
   }
   for (let i = neededIndex + 1; i < myLimit; i++) {
     response.children.push({
+      id: notifcations[i]._id,
       title: notifcations[i].data,
       type: notifcations[i].type,
       link: notifcations[i].link,
