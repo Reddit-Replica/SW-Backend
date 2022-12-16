@@ -96,24 +96,22 @@ async function sendNotification(user, title, data) {
   };
   if (user.webNotificationToken) {
     message.to = user.webNotificationToken;
-    fcm.send(message, (err, response) => {
+    fcm.send(message, (err) => {
       if (err) {
         console.log(err.message);
       } else {
         console.log("Sent web to " + user.username);
-        // console.log(response);
       }
     });
   }
   if (user.flutterNotificationToken) {
     message.to = user.flutterNotificationToken;
 
-    fcm.send(message, (err, response) => {
+    fcm.send(message, (err) => {
       if (err) {
         console.log(err.message);
       } else {
         console.log("Sent flutter to " + user.username);
-        // console.log(response);
       }
     });
   }
@@ -143,7 +141,6 @@ export async function createFollowUserNotification(
     link: `${process.env.FRONT_BASE}/user/${followingUsername}`,
     date: Date.now(),
   }).save();
-  // console.log(notification);
   const data = {
     data: title,
     notificationId: notification._id,
@@ -190,6 +187,7 @@ export async function createCommentNotification(comment) {
   // CHECK HERE FOR THE POST REPLIES
   // send notification to parent owner
   if (comment.ownerId.toString() !== parent.ownerId.toString()) {
+    // Check the parent type to make sure if it is a post that it allows sendReplies
     if (comment.parentType === "post") {
       if (parent.sendReplies === true) {
         const notification = await new Notification({
@@ -233,7 +231,6 @@ export async function createCommentNotification(comment) {
   }
   await parent.populate("followingUsers.userId");
 
-  // console.log(parent.followingUsers);
   // send notification to parent followers
   for (let i = 0; i < parent.followingUsers.length; i++) {
     const notification2 = await new Notification({
@@ -311,7 +308,6 @@ export async function createCommentNotification(comment) {
  * @returns {void}
  */
 export async function markAllNotificationsRead(userId) {
-  // console.log(userId);
   const result = await Notification.updateMany(
     { ownerId: userId, read: false },
     { $set: { read: true } }
@@ -329,9 +325,7 @@ export async function markAllNotificationsRead(userId) {
  * @returns {void}
  */
 export async function markNotificationRead(userId, notificationId) {
-  // console.log(userId);
   const notification = await Notification.findById(notificationId);
-  // console.log(notification);
   if (!notification) {
     const error = new Error("Notification not found");
     error.statusCode = 404;
@@ -355,9 +349,7 @@ export async function markNotificationRead(userId, notificationId) {
  * @returns {void}
  */
 export async function markNotificationHidden(userId, notificationId) {
-  // console.log(userId);
   const notification = await Notification.findById(notificationId);
-  // console.log(notification);
   if (!notification) {
     const error = new Error("Notification not found");
     error.statusCode = 404;
