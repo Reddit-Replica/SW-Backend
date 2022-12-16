@@ -3,14 +3,14 @@ import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import {
   searchForComments,
   searchForPosts,
-} from "../../services/searchInSubreddit";
+} from "../../services/searchInSubreddit.js";
 import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
 import Subreddit from "./../../models/Community.js";
 import Comment from "./../../models/Comment.js";
 
 // eslint-disable-next-line max-statements
-describe("Testing Search Service functions", () => {
+describe("Testing Search in Subreddit Service functions", () => {
   let user = {},
     subreddit = {},
     post1 = {},

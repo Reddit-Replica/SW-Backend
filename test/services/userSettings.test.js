@@ -21,7 +21,7 @@ import { fileURLToPath } from "url";
 import { hashPassword, comparePasswords } from "../../utils/passwordUtils.js";
 
 // eslint-disable-next-line max-statements
-describe("Testing Read Messages Service functions", () => {
+describe("Testing User settings Service functions", () => {
   let user1 = {},
     user2 = {},
     user3 = {};
