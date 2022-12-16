@@ -421,7 +421,7 @@ listingRouter.get("/r/:subreddit/random");
  *     security:
  *      - bearerAuth: []
  */
-listingRouter.get("/top", optionalToken, postController.getNewPosts);
+listingRouter.get("/top", optionalToken, postController.getTopPosts);
 
 /**
  * @swagger

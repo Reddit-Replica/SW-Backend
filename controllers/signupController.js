@@ -164,39 +164,47 @@ const verifyEmail = async (req, res) => {
 // eslint-disable-next-line max-statements
 const signinWithGoogleFacebook = async (req, res) => {
   try {
-    if (req.params.type.trim() === "google") {
-      // get the token and decode it
-      const decodedToken = jwtDecode(req.body.accessToken);
-      const email = decodedToken.email;
-
-      // check if the email was used before then login
-      const user = await User.findOne({ googleEmail: email, deletedAt: null });
-
-      if (user) {
-        const token = generateJWT(user);
-        return res.status(200).json({ username: user.username, token: token });
-      }
-
-      // generate random username
-      const randomUsername = await generateRandomUsernameUtil();
-      if (randomUsername === "Couldn't generate") {
-        throw new Error("Couldn't generate");
-      }
-      console.log(randomUsername);
-      // if not then create a new account
-      const newUser = new User({
-        username: randomUsername,
-        email: email,
-        googleEmail: email,
-        createdAt: Date.now(),
-      });
-      await newUser.save();
-
-      const result = await finalizeCreateUser(newUser);
-      res.status(result.statusCode).json(result.body);
-    } else {
-      // TODO facebook
+    const type = req.params.type.trim();
+    if (type !== "google" && type !== "facebook") {
+      res.statu(400).json({ error: "Invalid type" });
     }
+    // get the token and decode it
+    const decodedToken = jwtDecode(req.body.accessToken);
+    const email = decodedToken.email;
+
+    let user = null;
+    let emailType = "googleEmail";
+    if (type === "google") {
+      // check if the email was used before then login
+      user = await User.findOne({ googleEmail: email, deletedAt: null });
+    } else {
+      emailType = "facebookEmail";
+      user = await User.findOne({ facebookEmail: email, deletedAt: null });
+    }
+
+    if (user) {
+      // user signed up before
+      const token = generateJWT(user);
+      return res.status(200).json({ username: user.username, token: token });
+    }
+
+    // generate random username
+    const randomUsername = await generateRandomUsernameUtil();
+    if (randomUsername === "Couldn't generate") {
+      throw new Error("Couldn't generate");
+    }
+
+    // if not then create a new account
+    const newUser = new User({
+      username: randomUsername,
+      email: email,
+      createdAt: Date.now(),
+    });
+    newUser[emailType] = email;
+    await newUser.save();
+
+    const result = await finalizeCreateUser(newUser);
+    res.status(result.statusCode).json(result.body);
   } catch (error) {
     console.log(error);
     res.status(500).json("Internal server error");

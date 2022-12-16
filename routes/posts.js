@@ -543,15 +543,12 @@ postRouter.post(
  *  get:
  *      summary: Returns all posts pinned by the user (Token is optional)
  *      tags: [Posts]
- *      requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               username:
- *                 type: string
- *                 description: Username of the user who will have the pinned posts
+ *      parameters:
+ *          - in: query
+ *            name: username
+ *            schema:
+ *              type: string
+ *            description: Username of the user to get pinned posts
  *      responses:
  *          200:
  *              description: Pinned posts returned successfully

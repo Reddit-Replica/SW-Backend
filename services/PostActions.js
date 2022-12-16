@@ -685,7 +685,7 @@ export async function downVoteAPost(post, user) {
  * @param {Object} user the user object that we will search in
  * @returns {Boolean} detects if the post exists or not
  */
-function checkForUpVotedComments(comment, user) {
+export function checkForUpVotedComments(comment, user) {
   for (const smallComment of user.upvotedComments) {
     if (comment.id === smallComment.toString()) {
       return true;
@@ -699,7 +699,7 @@ function checkForUpVotedComments(comment, user) {
  * @param {Object} user the user object that we will search in
  * @returns {Boolean} detects if the post exists or not
  */
-function checkForDownVotedComments(comment, user) {
+export function checkForDownVotedComments(comment, user) {
   for (const smallComment of user.downvotedComments) {
     if (comment.id === smallComment.toString()) {
       return true;
