@@ -368,6 +368,8 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
 
   for (i; i < finish; i++) {
     const post = result["subredditPosts"][i];
+    post.numberOfViews += 1;
+    await post.save();
     const postId = post.id.toString();
     let vote = 0,
       saved = false,
