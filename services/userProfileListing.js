@@ -192,10 +192,10 @@ async function getPostComments(
 
   for (const i in preprocessedList) {
     const comment = preprocessedList[i];
-
+    const saved = user.savedComments.includes(comment._id);
     // check if the comment is saved if the listing is savedPosts
     if (typeOfListing === "savedPosts") {
-      if (!user.savedComments.includes(comment._id)) {
+      if (!saved) {
         continue;
       }
     }
@@ -210,6 +210,7 @@ async function getPostComments(
       parent: comment.parentId,
       level: comment.level,
       inYourSubreddit: false,
+      saved: saved,
     };
 
     // add parent data
@@ -347,12 +348,29 @@ export async function listingUserOverview(
         comments: [],
       },
     };
-    let type = "summaryPost";
-    if (user.posts.includes(post._id)) {
-      type = "fullPost";
-    }
-    if (!requestComments) {
-      postData.type = type;
+
+    // for saved overview if post was in savedPostsOnly and savedPosts => postAndComment
+    // if was in savedPostsOnly => post
+    // if was in savedPosts and not in savedPostsOnly => comment
+    if (typeOfListing === "savedPosts") {
+      const postSaved = loggedInUser.savedPostsOnly.includes(post._id);
+      const postAndCommentSaved = loggedInUser.savedPosts.includes(post._id);
+      if (postSaved && comments.length !== 0) {
+        postData.type = "postAndComment";
+      } else if (postSaved && comments.length === 0) {
+        postData.type = "post";
+      } else if (!postSaved && postAndCommentSaved) {
+        postData.type = "comment";
+      }
+    } else {
+      // overview
+      let type = "summaryPost";
+      if (user.posts.includes(post._id)) {
+        type = "fullPost";
+      }
+      if (!requestComments) {
+        postData.type = type;
+      }
     }
 
     postData.data.comments = comments;
@@ -368,7 +386,7 @@ export async function listingUserOverview(
       }
 
       // check if the post was saved before
-      if (loggedInUser.savedPosts.includes(post._id)) {
+      if (loggedInUser.savedPostsOnly.includes(post._id)) {
         postData.data.post.saved = true;
       } else {
         postData.data.post.saved = false;
