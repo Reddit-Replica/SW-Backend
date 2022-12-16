@@ -5,7 +5,6 @@ import notificationController from "../controllers/notificationController.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 // eslint-disable-next-line new-cap
 const notificationRouter = express.Router();
-// import { createFollowUserNotification } from "../services/notificationServices.js";
 /**
  * @swagger
  * tags:
@@ -57,32 +56,28 @@ const notificationRouter = express.Router();
  *                            description: List of notifications
  *                            items:
  *                              properties:
+ *                               id:
+ *                                 type: string
+ *                                 description: id of the notification
  *                               title:
  *                                 type: string
  *                                 description: title of the notification
+ *                               type:
+ *                                 type: string
+ *                                 description: type of the notification
+ *                                 enum:
+ *                                  - Comment
+ *                                  - Follow
  *                               link:
  *                                 type: string
  *                                 description: link to the full item in the notification
  *                               sendAt:
  *                                 type: string
+ *                                 format: date-time
  *                                 description: time of sending the notification
- *                               content:
- *                                 type: string
- *                                 description: content of the notification
  *                               isRead:
  *                                type: boolean
  *                                description: true if notification is read false if it's not
- *                               smallIcon:
- *                                 type: string
- *                                 description: the path of the icon of the notification
- *                               senderID:
- *                                 type: string
- *                                 description: Name of the sender of the notification
- *                               data:
- *                                 type: object
- *                                 description: the external data that you want to send with the notification
- *          404:
- *              description: notifications not found
  *          401:
  *              description: User unauthorized to view this info
  *          500:
@@ -91,7 +86,11 @@ const notificationRouter = express.Router();
  *       - bearerAuth: []
  */
 
-notificationRouter.get("/notifications");
+notificationRouter.get(
+  "/notifications",
+  verifyAuthToken,
+  notificationController.getAllNotifications
+);
 
 /**
  * @swagger
@@ -102,6 +101,8 @@ notificationRouter.get("/notifications");
  *      responses:
  *          200:
  *              description: Notification marked as read successfully
+ *          401:
+ *              description: User unauthorized to make this action
  *          500:
  *              description: Server Error
  *      security:
@@ -188,6 +189,8 @@ notificationRouter.patch(
  *      responses:
  *          200:
  *              description: Subscribed successfully
+ *          401:
+ *              description: User unauthorized to make this action
  *          500:
  *              description: Server Error
  *      security:
@@ -226,6 +229,8 @@ notificationRouter.post(
  *      responses:
  *          200:
  *              description: Unsubscribed successfully
+ *          401:
+ *              description: User unauthorized to make this action
  *          500:
  *              description: Server Error
  *      security:
@@ -239,11 +244,5 @@ notificationRouter.post(
   validateRequestSchema,
   notificationController.notificationSubscribe
 );
-
-// notificationRouter.post("/send", (req, res) => {
-//   createFollowUserNotification("ahmed", "63972839aea1062bb18835d4");
-//   console.log(process.env.FRONT_BASE);
-//   res.status(200).json("send");
-// });
 
 export default notificationRouter;

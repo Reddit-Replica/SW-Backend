@@ -3,10 +3,9 @@ import User from "../models/User.js";
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 import Notification from "../models/Notification.js";
-import { ObjectId } from "mongoose";
-const token =
-  // eslint-disable-next-line max-len
-  "cNkaHpkEvLgtUsIenOseE4:APA91bFz0c0A1TZzwGOG8Z8OCBexVQgg75QG4EwOxWtkC9god1pAKmu3p52CWa3vYVLOF5bQkR7y2rsByrYpLy7IhBiTvZduAZJt9dkrKF9R5n1lcLCuBOabhdlTV4id5Pxpz6Hk8KGp";
+import { validateId } from "./subredditFlairs.js";
+import { prepareLimit } from "../utils/prepareLimit.js";
+
 export const sendMessage = () => {
   const message1 = {
     to: token,
@@ -348,4 +347,165 @@ export async function markNotificationHidden(userId, notificationId) {
   }
   notification.hidden = true;
   await notification.save();
+}
+
+/**
+ * A Service function used to get the subreddit muted users for the controller
+ * @param {Number} limitReq the limit identified in the request
+ * @param {ObjectID} beforeReq Before id
+ * @param {ObjectID} afterReq After id
+ * @param {Subreddit} subreddit The subreddit object
+ * @returns {preparedResponse} the prepared response for the controller
+ */
+export async function getUserNotifications(
+  limitReq,
+  beforeReq,
+  afterReq,
+  userId
+) {
+  let preparedResponse;
+  let limit = prepareLimit(limitReq);
+  const notifcations = await Notification.find({
+    ownerId: userId,
+    hidden: false,
+  }).sort({ date: 1 });
+
+  if (!beforeReq && !afterReq) {
+    preparedResponse = getUserNotificationsFirstTime(notifcations, limit);
+  } else if (beforeReq && afterReq) {
+    const error = new Error("Can't set before and after");
+    error.statusCode = 400;
+    throw error;
+  } else if (beforeReq) {
+    validateId(beforeReq);
+    preparedResponse = getUserNotificationsBefore(
+      notifcations,
+      limit,
+      beforeReq
+    );
+  } else {
+    validateId(afterReq);
+    preparedResponse = getUserNotificationsAfter(notifcations, limit, afterReq);
+  }
+
+  return preparedResponse;
+}
+
+/**
+ * A Service helper function used to get the subreddit muted for the main service function in case of first time
+ * @param {Subreddit} subreddit The subreddit object
+ * @param {Number} limit the limit identified in the request
+ * @returns {response} the prepared response for the main service function
+ */
+function getUserNotificationsFirstTime(notifcations, limit) {
+  const response = { children: [] };
+  const numberOfNotifications = notifcations.length;
+  let myLimit;
+  if (numberOfNotifications > limit) {
+    myLimit = limit;
+  } else {
+    myLimit = numberOfNotifications;
+  }
+  for (let i = 0; i < myLimit; i++) {
+    response.children.push({
+      title: notifcations[i].data,
+      type: notifcations[i].type,
+      link: notifcations[i].link,
+      sendAt: notifcations[i].date,
+      isRead: notifcations[i].read,
+      // ownerId: notifcations[i].ownerId,
+    });
+  }
+  if (myLimit !== numberOfNotifications) {
+    response.after = notifcations[myLimit - 1]._id;
+  }
+  return response;
+}
+
+/**
+ * A Service helper function used to get the subreddit muted users for the main service function in case of before
+ * @param {Subreddit} subreddit The subreddit object
+ * @param {Number} limit the limit identified in the request
+ * @returns {response} the prepared response for the main service function
+ */
+// eslint-disable-next-line max-statements
+function getUserNotificationsBefore(notifcations, limit, before) {
+  const response = { children: [] };
+  let myStart;
+  const numberOfNotifications = notifcations.length;
+  const neededIndex = notifcations.findIndex(
+    (not) => not._id.toString() === before
+  );
+  if (neededIndex === -1) {
+    const error = new Error("invalid notification id");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (neededIndex - limit < 0) {
+    myStart = 0;
+  } else {
+    myStart = neededIndex - limit;
+  }
+  for (let i = myStart; i < neededIndex; i++) {
+    response.children.push({
+      title: notifcations[i].data,
+      type: notifcations[i].type,
+      link: notifcations[i].link,
+      sendAt: notifcations[i].date,
+      isRead: notifcations[i].read,
+    });
+  }
+  if (response.children.length >= 1) {
+    if (myStart !== 0) {
+      response.before = notifcations[myStart]._id;
+    }
+    if (neededIndex !== numberOfNotifications - 1) {
+      response.after = notifcations[neededIndex - 1]._id;
+    }
+  }
+  return response;
+}
+
+/**
+ * A Service helper function used to get the subreddit muted users for the main service function in case of after
+ * @param {Subreddit} subreddit The subreddit object
+ * @param {Number} limit the limit identified in the request
+ * @returns {response} the prepared response for the main service function
+ */
+// eslint-disable-next-line max-statements
+function getUserNotificationsAfter(notifcations, limit, after) {
+  const response = { children: [] };
+  let myLimit;
+  const numberOfNotifications = notifcations.length;
+  const neededIndex = notifcations.findIndex(
+    (not) => not._id.toString() === after
+  );
+  if (neededIndex === -1) {
+    const error = new Error("invalid notification id");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (neededIndex + limit + 1 >= numberOfNotifications) {
+    myLimit = numberOfNotifications;
+  } else {
+    myLimit = neededIndex + limit + 1;
+  }
+  for (let i = neededIndex + 1; i < myLimit; i++) {
+    response.children.push({
+      title: notifcations[i].data,
+      type: notifcations[i].type,
+      link: notifcations[i].link,
+      sendAt: notifcations[i].date,
+      isRead: notifcations[i].read,
+    });
+  }
+  if (response.children.length >= 1) {
+    if (myLimit !== numberOfNotifications) {
+      response.after = notifcations[myLimit - 1]._id;
+    }
+    response.before = notifcations[neededIndex + 1]._id;
+  }
+  return response;
 }
