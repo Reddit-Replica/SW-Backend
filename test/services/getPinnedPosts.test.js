@@ -222,7 +222,7 @@ describe("Testing Pinned Posts Service functions", () => {
     expect(getPinnedPostDetails).toBeDefined();
   });
 
-  it("Test setPinnedPostsFlags with another owner's post", async () => {
+  it("Test getPinnedPostDetails", async () => {
     const postObj = getPinnedPostDetails(post1, {
       vote: 0,
       yourPost: true,
