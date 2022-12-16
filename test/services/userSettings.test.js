@@ -17,6 +17,7 @@ import User from "./../../models/User.js";
 import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
+import jwt from "jsonwebtoken";
 import { fileURLToPath } from "url";
 import { hashPassword, comparePasswords } from "../../utils/passwordUtils.js";
 
@@ -257,6 +258,68 @@ describe("Testing User settings Service functions", () => {
       });
     } catch (err) {
       console.log(err);
+    }
+  });
+
+  it("Should have connectToGoogle defined", () => {
+    expect(connectToGoogle).toBeDefined();
+  });
+
+  it("Test connectToGoogle with a valid token", async () => {
+    try {
+      const token = jwt.sign(
+        { email: "abdelrahmanhamdy@gmail.com" },
+        process.env.TOKEN_SECRET
+      );
+      connectToGoogle(user1, token);
+      await user1.save();
+      expect(user1.googleEmail).toEqual("abdelrahmanhamdy@gmail.com");
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  it("Test connectToGoogle with the same google email", async () => {
+    try {
+      const token = jwt.sign(
+        { email: "abdelrahmanhamdy@gmail.com" },
+        process.env.TOKEN_SECRET
+      );
+      connectToGoogle(user1, token);
+    } catch (err) {
+      expect(err.statusCode).toEqual(400);
+      expect(err.message).toEqual("Google Email already set");
+    }
+  });
+
+  it("Should have connectToFacebook defined", () => {
+    expect(connectToFacebook).toBeDefined();
+  });
+
+  it("Test connectToFacebook with a valid token", async () => {
+    try {
+      const token = jwt.sign(
+        { email: "abdelrahmanhamdy@gmail.com" },
+        process.env.TOKEN_SECRET
+      );
+      connectToFacebook(user1, token);
+      await user1.save();
+      expect(user1.facebookEmail).toEqual("abdelrahmanhamdy@gmail.com");
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  it("Test connectToFacebook with the same facebook email", async () => {
+    try {
+      const token = jwt.sign(
+        { email: "abdelrahmanhamdy@gmail.com" },
+        process.env.TOKEN_SECRET
+      );
+      connectToFacebook(user1, token);
+    } catch (err) {
+      expect(err.statusCode).toEqual(400);
+      expect(err.message).toEqual("Facebook Email already set");
     }
   });
 });
