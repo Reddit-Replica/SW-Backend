@@ -3,7 +3,7 @@ import Comment from "../models/Comment.js";
 import User from "../models/User.js";
 import Subreddit from "../models/Community.js";
 import { postListing } from "../utils/preparePostListing.js";
-import { commentListing } from "../utils/prepareCommentListing.js";
+import { commentTreeListing } from "../utils/prepareCommentListing.js";
 import { userListing } from "../utils/prepareUserListing.js";
 import { subredditListing } from "../utils/prepareSubredditListing.js";
 
@@ -102,7 +102,7 @@ export async function searchPosts(query, listingParams) {
 // eslint-disable-next-line max-statements
 export async function searchComments(query, listingParams) {
   // Prepare Listing Parameters
-  const listingResult = await commentListing(listingParams);
+  const listingResult = await commentTreeListing(listingParams);
 
   const regex = new RegExp(query, "i");
   listingResult.find["$or"] = [

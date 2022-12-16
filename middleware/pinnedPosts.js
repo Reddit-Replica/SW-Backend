@@ -24,6 +24,9 @@ export async function checkPinnedPosts(req, res, next) {
     ) {
       return res.status(409).json("Post is already pinned");
     }
+    if (req.body.pin && user.pinnedPosts.length === 4) {
+      return res.status(409).json("Can only pin up to 4 posts");
+    }
     req.postId = postId;
     req.user = user;
     next();
@@ -47,7 +50,7 @@ export async function checkUnpinnedPosts(req, res, next) {
       !req.body.pin &&
       !req.user.pinnedPosts.find((id) => id.toString() === req.postId)
     ) {
-      return res.status(409).json("Post is already pinned");
+      return res.status(409).json("Post is already unpinned");
     }
     next();
   } catch (err) {

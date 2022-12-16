@@ -2,7 +2,7 @@ import Subreddit from "../models/Community.js";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import Flair from "../models/Flair.js";
-import { commentListing } from "../utils/prepareCommentListing.js";
+import { commentTreeListing } from "../utils/prepareCommentListing.js";
 import { postListing } from "../utils/preparePostListing.js";
 import mongoose from "mongoose";
 
@@ -158,7 +158,7 @@ export async function listingSubredditComments(
   listingParams
 ) {
   // Prepare Listing Parameters
-  const listingResult = await commentListing(listingParams);
+  const listingResult = await commentTreeListing(listingParams);
 
   const subreddit = await Subreddit.findOne({ title: subredditName });
   if (!subreddit || subreddit.deletedAt) {
