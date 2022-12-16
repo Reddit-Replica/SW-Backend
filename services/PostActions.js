@@ -276,7 +276,7 @@ export async function followPost(post, user) {
   }
   //ADD THE POST TO USER'S SAVED POSTS
   user.followedPosts.push(post.id);
-  post.followingUsers.push({ username:user.username,userId:user.id });
+  post.followingUsers.push({ username: user.username, userId: user.id });
   await user.save();
   await post.save();
   return {
