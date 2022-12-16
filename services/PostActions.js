@@ -268,7 +268,9 @@ export async function followPost(post, user) {
   }
   //ADD THE POST TO USER'S SAVED POSTS
   user.followedPosts.push(post.id);
+  post.followingUsers.push({ username:user.username,userId:user.id });
   await user.save();
+  await post.save();
   return {
     statusCode: 200,
     message: "Followed! You will get updates when there is new activity.",
@@ -291,7 +293,12 @@ export async function unfollowPost(post, user) {
   user.followedPosts = user.followedPosts.filter((smallPost) => {
     return smallPost.toString() !== post.id;
   });
+  post.followingUsers = post.followingUsers.filter((smallUser) => {
+    console.log(smallUser);
+    return smallUser.userId.toString() !== user.id;
+  });
   await user.save();
+  await post.save();
   return {
     statusCode: 200,
     message: "Unfollowed. You will not get updates on this post anymore.",
@@ -742,7 +749,7 @@ export async function upVoteAComment(comment, user) {
     commentWriter.upVotes++;
     result = {
       statusCode: 200,
-      message: "comment is Upvoted successfully",
+      message: "Comment is Upvoted successfully",
     };
   }
   commentWriter.karma = commentWriter.upVotes - commentWriter.downVotes;
@@ -793,7 +800,7 @@ export async function downVoteAComment(comment, user) {
     commentWriter.downVotes++;
     result = {
       statusCode: 200,
-      message: "Post is Downvoted successfully",
+      message: "Comment is Downvoted successfully",
     };
   }
   commentWriter.karma = commentWriter.upVotes - commentWriter.downVotes;
