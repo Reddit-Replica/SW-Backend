@@ -608,7 +608,11 @@ router.get("/message/unread", verifyAuthToken, messageController.getUnreadMsg);
  *       - bearerAuth: []
  */
 
-router.get("/message/post-reply");
+router.get(
+  "/message/post-reply",
+  verifyAuthToken,
+  messageController.getpostReplies
+);
 
 /**
  * @swagger

@@ -303,7 +303,7 @@ const userSchema = mongoose.Schema({
   postReplies: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Comment",
+      ref: "PostReplies",
     },
   ],
   conversations: [

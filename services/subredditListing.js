@@ -25,8 +25,8 @@ export async function subredditCategoryListing(
   limit,
   withCategory
 ) {
-  if (withCategory){
-  await checkOnCategory(category);
+  if (withCategory) {
+    await checkOnCategory(category);
   }
   const listingResult = await subredditListing(
     category,
@@ -56,7 +56,7 @@ export async function subredditCategoryListing(
       members: subreddit.members,
       description: subreddit.description,
       isMember: isMember,
-      picture:subreddit.picture,
+      picture: subreddit.picture,
     };
     children.push(subredditData);
   }

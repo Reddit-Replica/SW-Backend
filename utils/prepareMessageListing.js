@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import Mention from "../models/Mention.js";
 import Message from "../models/Message.js";
 import Conversation from "../models/Conversation.js";
-import Comment from "../models/Comment.js";
+import PostReplies from "../models/PostReplies.js";
 import { prepareLimit } from "./prepareLimit.js";
 
 /**
@@ -196,6 +196,44 @@ export async function mentionListing(listingParams) {
  * @param {Object} listingParams Listing parameters sent in the request query [sort, time, before, after, limit]
  * @returns {Object} The final results that will be used by mongoose to list posts
  */
+export async function postReplyListing(listingParams) {
+  let result = {};
+  result.query = {};
+  //PREPARING LIMIT OF NUMBER OF CONVERSATIONS
+  result.limit = prepareLimit(listingParams.limit);
+  //PREPARING KIND OF SORTING THE CONVERSATION
+  result.sort = { createdAt: -1 };
+  //PREPARING THE SPLITTER WERE WE WILL STOP TO OR START FROM
+  let splitterPostReply;
+  //IN CASE THERE IS BEFORE AND THERE IS NO AFTER OR THERE IS BEFORE AND AFTER THEN I WILL TAKE BEFORE
+  if (listingParams.before) {
+    splitterPostReply = await PostReplies.findById(listingParams.before);
+    if (!splitterPostReply) {
+      let error = new Error("Invalid before Id");
+      error.statusCode = 400;
+      throw error;
+    }
+    result.query.createdAt = { $gt: splitterPostReply.createdAt };
+    //IF THERE IS NO BEFORE BUT THERE IS AN AFTER
+  } else if (!listingParams.before && listingParams.after) {
+    splitterPostReply = await PostReplies.findById(listingParams.after);
+    if (!splitterPostReply) {
+      let error = new Error("Invalid after Id");
+      error.statusCode = 400;
+      throw error;
+    }
+    result.query.createdAt = { $lt: splitterPostReply.createdAt };
+  }
+  return result;
+}
+
+/**
+ * Function to create the exact condition that will be used by mongoose directly to list posts.
+ * Used to map every listing parameter to the exact query that mongoose will use later
+ *
+ * @param {Object} listingParams Listing parameters sent in the request query [sort, time, before, after, limit]
+ * @returns {Object} The final results that will be used by mongoose to list posts
+ */
 export async function conversationListing(listingParams) {
   let result = {};
   result.query = {};
@@ -255,7 +293,7 @@ export async function splitterOnType(Id) {
   if (!splitter) {
     splitter = await Mention.findById(Id);
     if (!splitter) {
-      splitter = await Comment.findById(Id);
+      splitter = await PostReplies.findById(Id);
       if (!splitter) {
         let error = new Error("Invalid Id");
         error.statusCode = 400;
