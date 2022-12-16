@@ -396,7 +396,7 @@ const subredditLeaderboard = async (req, res) => {
     const user = await searchForUserService(req.payload.username);
     const result = await subredditCategoryListing(
       user,
-      "Art",
+      "",
       before,
       after,
       limit,
