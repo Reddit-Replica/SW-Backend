@@ -240,6 +240,10 @@ export async function createCommentService(data, post) {
     post.usersCommented.push(user._id);
   }
   post.numberOfComments = post.numberOfComments + 1;
+  post.hotScore =
+    post.hotTimingScore + post.numberOfVotes + post.numberOfComments;
+  post.bestScore =
+    post.bestTimingScore + post.numberOfVotes + post.numberOfComments;
   await post.save();
 
   createCommentNotification(comment);

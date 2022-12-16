@@ -25,7 +25,9 @@ export async function subredditCategoryListing(
   limit,
   withCategory
 ) {
+  console.log(withCategory);
   if (withCategory) {
+    console.log("fe category",withCategory);
     await checkOnCategory(category);
   }
   const listingResult = await subredditListing(
