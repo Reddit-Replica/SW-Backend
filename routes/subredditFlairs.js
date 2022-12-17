@@ -2,7 +2,7 @@ import express from "express";
 
 import {
   verifyAuthToken,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
 } from "../middleware/verifyToken.js";
 import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
 // eslint-disable-next-line max-len
@@ -220,7 +220,7 @@ subredditFlairsRouter.post(
   verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.addSubredditFlair
 );
 
@@ -290,7 +290,7 @@ subredditFlairsRouter.put(
   verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.editSubredditFlair
 );
 
@@ -338,7 +338,7 @@ subredditFlairsRouter.delete(
   "/r/:subreddit/about/post-flairs/:flairId",
   verifyAuthToken,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.deleteSubredditFlair
 );
 
@@ -398,7 +398,7 @@ subredditFlairsRouter.post(
   "/r/:subreddit/about/post-flairs-order",
   verifyAuthToken,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.editFlairsOrder
 );
 
@@ -452,7 +452,7 @@ subredditFlairsRouter.get(
   verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.getFlairsSettings
 );
 
@@ -508,7 +508,7 @@ subredditFlairsRouter.post(
   verifyAuthToken,
   // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.editFlairsSettings
 );
 
