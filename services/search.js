@@ -24,7 +24,7 @@ export async function searchPosts(query, listingParams) {
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
 
-  const result = await Post.find(listingResult.find).sort(listingResult.sort);
+  let result = await Post.find(listingResult.find).sort(listingResult.sort);
 
   let limit = listingResult.limit;
 

@@ -29,7 +29,7 @@ export async function searchForPosts(subreddit, query, listingParams) {
     };
   }
 
-  const result = await Subreddit.findOne({ title: subreddit })
+  let result = await Subreddit.findOne({ title: subreddit })
     .select("subredditPosts")
     .populate({
       path: "subredditPosts",

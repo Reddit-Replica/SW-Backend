@@ -396,7 +396,7 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
   if (flair) {
     listingResult.find["flair"] = flair.id;
   }
-  const result = await Subreddit.findOne({ title: subredditName })
+  let result = await Subreddit.findOne({ title: subredditName })
     .select("subredditPosts")
     .populate({
       path: "subredditPosts",
