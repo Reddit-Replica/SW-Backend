@@ -96,24 +96,22 @@ async function sendNotification(user, title, data) {
   };
   if (user.webNotificationToken) {
     message.to = user.webNotificationToken;
-    fcm.send(message, (err, response) => {
+    fcm.send(message, (err) => {
       if (err) {
         console.log(err.message);
       } else {
         console.log("Sent web to " + user.username);
-        // console.log(response);
       }
     });
   }
   if (user.flutterNotificationToken) {
     message.to = user.flutterNotificationToken;
 
-    fcm.send(message, (err, response) => {
+    fcm.send(message, (err) => {
       if (err) {
         console.log(err.message);
       } else {
         console.log("Sent flutter to " + user.username);
-        // console.log(response);
       }
     });
   }
@@ -143,7 +141,6 @@ export async function createFollowUserNotification(
     link: `${process.env.FRONT_BASE}/user/${followingUsername}`,
     date: Date.now(),
   }).save();
-  // console.log(notification);
   const data = {
     data: title,
     notificationId: notification._id,
@@ -189,28 +186,51 @@ export async function createCommentNotification(comment) {
 
   // CHECK HERE FOR THE POST REPLIES
   // send notification to parent owner
-  // if(parent.type==="post")
-  const notification = await new Notification({
-    ownerId: parent.ownerId,
-    type: "Comment",
-    data: title1,
-    link: link1,
-    date: Date.now(),
-  }).save();
+  if (comment.ownerId.toString() !== parent.ownerId.toString()) {
+    // Check the parent type to make sure if it is a post that it allows sendReplies
+    if (comment.parentType === "post") {
+      if (parent.sendReplies === true) {
+        const notification = await new Notification({
+          ownerId: parent.ownerId,
+          type: "Comment",
+          data: title1,
+          link: link1,
+          date: Date.now(),
+        }).save();
 
-  const data1 = {
-    data: title1,
-    notificationId: notification._id,
-    link: notification.link,
-    createdAt: notification.date,
-  };
-  console.log("Data1");
-  // send the notification to the owner of the parent
-  await sendNotification(user, title1, JSON.stringify(data1));
+        const data1 = {
+          data: title1,
+          notificationId: notification._id,
+          link: notification.link,
+          createdAt: notification.date,
+        };
+        console.log("Entered 2");
+        console.log("Data1");
+        // send the notification to the owner of the parent
+        await sendNotification(user, title1, JSON.stringify(data1));
+      }
+    } else {
+      const notification = await new Notification({
+        ownerId: parent.ownerId,
+        type: "Comment",
+        data: title1,
+        link: link1,
+        date: Date.now(),
+      }).save();
 
+      const data1 = {
+        data: title1,
+        notificationId: notification._id,
+        link: notification.link,
+        createdAt: notification.date,
+      };
+      console.log("Data1");
+      // send the notification to the owner of the parent
+      await sendNotification(user, title1, JSON.stringify(data1));
+    }
+  }
   await parent.populate("followingUsers.userId");
 
-  // console.log(parent.followingUsers);
   // send notification to parent followers
   for (let i = 0; i < parent.followingUsers.length; i++) {
     const notification2 = await new Notification({
@@ -235,26 +255,28 @@ export async function createCommentNotification(comment) {
   }
   // send notification to post owner and post followers if the parent was a comment
   if (comment.parentType === "comment") {
-    const notification3 = await new Notification({
-      ownerId: comment.postId.ownerId,
-      type: "Comment",
-      data: title3,
-      link: link1,
-      date: Date.now(),
-    }).save();
-    const data3 = {
-      data: title3,
-      notificationId: notification3._id,
-      link: notification3.link,
-      createdAt: notification3.date,
-    };
+    if (comment.postId.ownerId.toString() !== comment.ownerId.toString()) {
+      if (comment.postId.sendReplies) {
+        const notification3 = await new Notification({
+          ownerId: comment.postId.ownerId,
+          type: "Comment",
+          data: title3,
+          link: link1,
+          date: Date.now(),
+        }).save();
+        const data3 = {
+          data: title3,
+          notificationId: notification3._id,
+          link: notification3.link,
+          createdAt: notification3.date,
+        };
 
-    // console.log();
-    const postOwnerUser = await User.findById(comment.postId.ownerId);
-    console.log("Data3");
-    await sendNotification(postOwnerUser, title3, JSON.stringify(data3));
+        const postOwnerUser = await User.findById(comment.postId.ownerId);
+        console.log("Data3");
+        await sendNotification(postOwnerUser, title3, JSON.stringify(data3));
+      }
+    }
     await comment.populate("postId.followingUsers.userId");
-    // console.log(comment.postId.followingUsers);
     // send notification to post follwers
     for (let i = 0; i < comment.postId.followingUsers.length; i++) {
       const notification4 = await new Notification({
@@ -286,7 +308,6 @@ export async function createCommentNotification(comment) {
  * @returns {void}
  */
 export async function markAllNotificationsRead(userId) {
-  // console.log(userId);
   const result = await Notification.updateMany(
     { ownerId: userId, read: false },
     { $set: { read: true } }
@@ -304,9 +325,7 @@ export async function markAllNotificationsRead(userId) {
  * @returns {void}
  */
 export async function markNotificationRead(userId, notificationId) {
-  // console.log(userId);
   const notification = await Notification.findById(notificationId);
-  // console.log(notification);
   if (!notification) {
     const error = new Error("Notification not found");
     error.statusCode = 404;
@@ -330,9 +349,7 @@ export async function markNotificationRead(userId, notificationId) {
  * @returns {void}
  */
 export async function markNotificationHidden(userId, notificationId) {
-  // console.log(userId);
   const notification = await Notification.findById(notificationId);
-  // console.log(notification);
   if (!notification) {
     const error = new Error("Notification not found");
     error.statusCode = 404;
@@ -398,7 +415,7 @@ export async function getUserNotifications(
  * @returns {response} the prepared response for the main service function
  */
 function getUserNotificationsFirstTime(notifcations, limit) {
-  const response = { children: [] };
+  const response = { children: [], unreadCount: 0 };
   const numberOfNotifications = notifcations.length;
   let myLimit;
   if (numberOfNotifications > limit) {
@@ -415,6 +432,9 @@ function getUserNotificationsFirstTime(notifcations, limit) {
       sendAt: notifcations[i].date,
       isRead: notifcations[i].read,
     });
+    if (notifcations[i].read === false) {
+      response.unreadCount++;
+    }
   }
   if (myLimit !== numberOfNotifications) {
     response.after = notifcations[myLimit - 1]._id;
@@ -430,7 +450,7 @@ function getUserNotificationsFirstTime(notifcations, limit) {
  */
 // eslint-disable-next-line max-statements
 function getUserNotificationsBefore(notifcations, limit, before) {
-  const response = { children: [] };
+  const response = { children: [], unreadCount: 0 };
   let myStart;
   const numberOfNotifications = notifcations.length;
   const neededIndex = notifcations.findIndex(
@@ -456,6 +476,9 @@ function getUserNotificationsBefore(notifcations, limit, before) {
       sendAt: notifcations[i].date,
       isRead: notifcations[i].read,
     });
+    if (notifcations[i].read === false) {
+      response.unreadCount++;
+    }
   }
   if (response.children.length >= 1) {
     if (myStart !== 0) {
@@ -476,7 +499,7 @@ function getUserNotificationsBefore(notifcations, limit, before) {
  */
 // eslint-disable-next-line max-statements
 function getUserNotificationsAfter(notifcations, limit, after) {
-  const response = { children: [] };
+  const response = { children: [], unreadCount: 0 };
   let myLimit;
   const numberOfNotifications = notifcations.length;
   const neededIndex = notifcations.findIndex(
@@ -502,6 +525,9 @@ function getUserNotificationsAfter(notifcations, limit, after) {
       sendAt: notifcations[i].date,
       isRead: notifcations[i].read,
     });
+    if (notifcations[i].read === false) {
+      response.unreadCount++;
+    }
   }
   if (response.children.length >= 1) {
     if (myLimit !== numberOfNotifications) {

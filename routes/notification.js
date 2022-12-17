@@ -51,6 +51,9 @@ const notificationRouter = express.Router();
  *                          after:
  *                           type: string
  *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
+ *                          unreadCount:
+ *                           type: number
+ *                           description: The number of unread notification returned
  *                          children:
  *                            type: array
  *                            description: List of notifications
