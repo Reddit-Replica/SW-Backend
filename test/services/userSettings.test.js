@@ -246,7 +246,7 @@ describe("Testing User settings Service functions", () => {
     try {
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = path.dirname(__filename);
-      fs.appendFile("waer\\services\\toBeDeleted.txt", "Hello", function (err) {
+      fs.appendFile("test/services/toBeDeleted.txt", "Hello", function (err) {
         if (err) {
           throw err;
         }
