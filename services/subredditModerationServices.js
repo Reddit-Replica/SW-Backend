@@ -718,6 +718,7 @@ export async function getTrafficService(user, subreddit) {
     days.push({
       day: new Date(new Date().setDate(new Date().getDate() - i)),
       numberOfJoined: 0,
+      numberOfLeft: 0,
     });
   }
 
@@ -797,11 +798,10 @@ export async function getTrafficService(user, subreddit) {
 
     // extract the days array => [today => today - 30]
     if (joinDate >= daysStart && joinDate <= daysEnd) {
-      if (new Date().getDate() - el.joinDate.getDate() < 0) {
-        days[30 + (new Date().getDate() - el.joinDate.getDate())]
-          .numberOfJoined++;
+      if (new Date().getDate() - joinDate.getDate() < 0) {
+        days[30 + (new Date().getDate() - joinDate.getDate())].numberOfJoined++;
       } else {
-        days[new Date().getDate() - el.joinDate.getDate()].numberOfJoined++;
+        days[new Date().getDate() - joinDate.getDate()].numberOfJoined++;
       }
     }
 
@@ -830,7 +830,6 @@ export async function getTrafficService(user, subreddit) {
       }
     }
 
-    /////////////////////////////////
     if (el.joinDate > day) {
       joinedLastDay++;
     }
@@ -848,6 +847,16 @@ export async function getTrafficService(user, subreddit) {
     leftLastMonth = 0;
 
   subreddit.leftUsers.forEach((el) => {
+    const leaveDate = new Date(el.leaveDate);
+
+    // extract the days array => [today => today - 30]
+    if (leaveDate >= daysStart && leaveDate <= daysEnd) {
+      if (new Date().getDate() - leaveDate.getDate() < 0) {
+        days[30 + (new Date().getDate() - leaveDate.getDate())].numberOfLeft++;
+      } else {
+        days[new Date().getDate() - leaveDate.getDate()].numberOfLeft++;
+      }
+    }
     if (el.leaveDate > day) {
       leftLastDay++;
     }
