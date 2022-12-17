@@ -99,6 +99,16 @@ export async function updateSubredditSettings(subreddit, settings) {
   if (settings.Region) {
     subreddit.subredditSettings.region = settings.Region;
   }
-  console.log(subreddit.subredditSettings);
+  if (settings.Type === "Private") {
+    subreddit.subredditSettings.acceptingRequestsToJoin =
+      settings.acceptingRequestsToJoin;
+  }
+  if (settings.Type === "Restricted") {
+    subreddit.subredditSettings.acceptingRequestsToPost =
+      settings.acceptingRequestsToPost;
+    subreddit.subredditSettings.approvedUsersHaveTheAbilityTo =
+      settings.approvedUsersHaveTheAbilityTo;
+  }
+  // console.log(subreddit.subredditSettings);
   await subreddit.save();
 }
