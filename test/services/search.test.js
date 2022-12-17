@@ -99,7 +99,7 @@ describe("Testing Search Service functions", () => {
       subredditName: "subreddit1",
       kind: "hybrid",
       numberOfVotes: 3,
-      createdAt: Date.now(),
+      createdAt: Date.now() + 10,
     });
     await post2.save();
 
@@ -110,7 +110,7 @@ describe("Testing Search Service functions", () => {
       ownerId: user1._id,
       kind: "hybrid",
       numberOfVotes: 1,
-      createdAt: Date.now(),
+      createdAt: Date.now() + 20,
     });
     await post3.save();
 
@@ -124,7 +124,7 @@ describe("Testing Search Service functions", () => {
       ownerUsername: user1.username,
       subredditName: "subreddit1",
       numberOfVotes: 4,
-      createdAt: Date.now(),
+      createdAt: Date.now() + 10,
     });
     await comment2.save();
 
@@ -137,7 +137,7 @@ describe("Testing Search Service functions", () => {
       ownerId: user1._id,
       ownerUsername: user1.username,
       numberOfVotes: 4,
-      createdAt: Date.now(),
+      createdAt: Date.now() + 20,
     });
     await comment3.save();
 
