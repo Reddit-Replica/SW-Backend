@@ -2,6 +2,7 @@ import express from "express";
 
 import {
   verifyAuthToken,
+  verifyAuthTokenModerator,
   verifyAuthTokenModeratorManageFlairs,
 } from "../middleware/verifyToken.js";
 import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
@@ -73,11 +74,6 @@ const subredditFlairsRouter = express.Router();
  */
 subredditFlairsRouter.get(
   "/r/:subreddit/about/post-flairs",
-  // verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
-  subredditDetailsMiddleware.checkSubreddit,
-  // TODO Think whether i should verify moderator or not? (maybe a user will need that details while creating a post)
-  // verifyAuthTokenModerator,
   subredditFlairsController.getAllFlairs
 );
 
@@ -145,11 +141,7 @@ subredditFlairsRouter.get(
  */
 subredditFlairsRouter.get(
   "/r/:subreddit/about/post-flairs/:flairId",
-  // verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  // TODO Think whether i should verify moderator or not? (maybe a user will need that details while creating a post)
-  // verifyAuthTokenModerator,
   subredditFlairsController.getFlairDetails
 );
 
@@ -218,7 +210,6 @@ subredditFlairsRouter.get(
 subredditFlairsRouter.post(
   "/r/:subreddit/about/post-flairs",
   verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
   verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.addSubredditFlair
@@ -288,7 +279,6 @@ subredditFlairsRouter.post(
 subredditFlairsRouter.put(
   "/r/:subreddit/about/post-flairs/:flairId",
   verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
   verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.editSubredditFlair
@@ -450,9 +440,8 @@ subredditFlairsRouter.post(
 subredditFlairsRouter.get(
   "/r/:subreddit/about/post-flairs-settings",
   verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModeratorManageFlairs,
+  verifyAuthTokenModerator,
   subredditFlairsController.getFlairsSettings
 );
 
@@ -506,7 +495,6 @@ subredditFlairsRouter.get(
 subredditFlairsRouter.post(
   "/r/:subreddit/about/post-flairs-settings",
   verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
   verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.editFlairsSettings
