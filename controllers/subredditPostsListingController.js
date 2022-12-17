@@ -111,7 +111,7 @@ const getTopSubredditPosts = async (req, res) => {
   try {
     const userId = req.payload?.userId;
     const subredditName = req.params.subreddit;
-    const { flairId, before, after, limit } = req.query;
+    const { flairId, before, after, limit, time } = req.query;
     let user = undefined;
     if (userId) {
       user = await getUser(userId);
@@ -123,6 +123,7 @@ const getTopSubredditPosts = async (req, res) => {
       before,
       after,
       limit,
+      time,
     });
 
     res.status(result.statusCode).json(result.data);
