@@ -60,7 +60,7 @@ describe("Testing Subreddit Items Listing Service functions", () => {
       subredditName: "subreddit",
       kind: "hybrid",
       numberOfVotes: 3,
-      createdAt: Date.now(),
+      createdAt: Date.now() + 10,
     });
     await post2.save();
 
@@ -71,7 +71,7 @@ describe("Testing Subreddit Items Listing Service functions", () => {
       subredditName: "subreddit",
       kind: "hybrid",
       numberOfVotes: 1,
-      createdAt: Date.now(),
+      createdAt: Date.now() + 20,
     });
     await post3.save();
 
@@ -99,7 +99,7 @@ describe("Testing Subreddit Items Listing Service functions", () => {
       ownerUsername: user.username,
       subredditName: "subreddit",
       numberOfVotes: 4,
-      createdAt: Date.now(),
+      createdAt: Date.now() + 10,
     });
     await comment2.save();
 
@@ -112,7 +112,7 @@ describe("Testing Subreddit Items Listing Service functions", () => {
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 4,
-      createdAt: Date.now(),
+      createdAt: Date.now() + 20,
     });
     await comment3.save();
 

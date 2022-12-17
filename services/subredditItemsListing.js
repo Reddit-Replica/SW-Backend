@@ -422,6 +422,7 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     let postData = { id: result["subredditPosts"][i]._id.toString() };
     postData.data = {
       id: post.id.toString(),
+      kind: post.kind,
       subreddit: post.subredditName,
       postedBy: post.ownerUsername,
       title: post.title,
