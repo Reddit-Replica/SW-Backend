@@ -6,6 +6,7 @@ import { postListing } from "../utils/preparePostListing.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
 import { userListing } from "../utils/prepareUserListing.js";
 import { subredditListing } from "../utils/prepareSubredditListing.js";
+import { fixSort } from "./subredditItemsListing.js";
 
 /**
  * Search for a post given a query in the whole of read-it
@@ -17,7 +18,8 @@ import { subredditListing } from "../utils/prepareSubredditListing.js";
 // eslint-disable-next-line max-statements
 export async function searchPosts(query, listingParams) {
   // Prepare Listing Parameters
-  const listingResult = await postListing(listingParams);
+  let listingResult = await postListing(listingParams);
+  listingResult = await fixSort(listingResult, listingParams);
 
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
@@ -25,6 +27,21 @@ export async function searchPosts(query, listingParams) {
   const result = await Post.find(listingResult.find).sort(listingResult.sort);
 
   let limit = listingResult.limit;
+
+  if (
+    (!listingParams.after && listingParams.before) ||
+    (!listingParams.before && listingParams.after)
+  ) {
+    const id = listingParams.after ?? listingParams.before;
+    const neededIndex = result.findIndex((post) => post._id.toString() === id);
+    if (neededIndex !== -1) {
+      if (listingParams.after) {
+        result = result.slice(neededIndex + 1, result.length);
+      } else {
+        result = result.slice(0, neededIndex);
+      }
+    }
+  }
 
   if (limit > result.length) {
     limit = result.length;
