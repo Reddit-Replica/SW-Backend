@@ -31,8 +31,10 @@ export async function subredditCategoryListing(
     await checkOnCategory(category);
   }
   let subreddits;
-  if (withCategory){
-  subreddits = await Subreddit.find({ category:category }).sort({ members: -1 });
+  if (withCategory) {
+    subreddits = await Subreddit.find({ category: category }).sort({
+      members: -1,
+    });
   } else {
     subreddits = await Subreddit.find().sort({ members: -1 });
   }
@@ -97,7 +99,7 @@ export async function subredditCategoryListing(
     data: {
       after: newAfter,
       before: newBefore,
-      length:children.length,
+      length: children.length,
       children: children,
     },
   };
@@ -239,7 +241,7 @@ export async function subredditTrendingListing(user, before, after, limit) {
     data: {
       after: newAfter,
       before: newBefore,
-      length:children.length,
+      length: children.length,
       children: children,
     },
   };
