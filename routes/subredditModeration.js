@@ -3,6 +3,7 @@ import express from "express";
 import {
   verifyAuthToken,
   verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
 } from "../middleware/verifyToken.js";
 
 import { validateRequestSchema } from "../middleware/validationResult.js";
@@ -213,7 +214,7 @@ subredditModerationsRouter.put(
   "/r/:subreddit/about/edit",
   verifyAuthToken,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   subredditModerationsController.subredditSettingsValidator,
   validateRequestSchema,
   subredditModerationsController.setSubredditSettings
@@ -275,7 +276,6 @@ subredditModerationsRouter.get(
   "/r/:subreddit/about/edit-post-settings",
   verifyAuthToken,
   subredditDetailsMiddleware.checkSubreddit,
-  // verifyAuthTokenModerator,
   subredditModerationsController.getSubredditPostSettings
 );
 
@@ -344,7 +344,7 @@ subredditModerationsRouter.put(
   "/r/:subreddit/about/edit-post-settings",
   verifyAuthToken,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   subredditModerationsController.subredditPostSettingsValidator,
   validateRequestSchema,
   subredditModerationsController.setSubredditPostSettings
@@ -475,6 +475,7 @@ subredditModerationsRouter.get(
   "/r/:subreddit/about/approved",
   verifyAuthToken,
   subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
   subredditModerationsController.getApprovedUsers
 );
 
@@ -539,6 +540,7 @@ subredditModerationsRouter.get(
   "/r/:subreddit/about/muted",
   verifyAuthToken,
   subredditDetailsMiddleware.checkSubreddit,
+  verifyAuthTokenModerator,
   subredditModerationsController.getMutedUsers
 );
 
@@ -635,6 +637,9 @@ subredditModerationsRouter.get(
  *                               members:
  *                                 type: number
  *                                 description: the number of members in that subreddit
+ *                               isFavorite:
+ *                                 type: boolean
+ *                                 description: to indicate if the user favorite this subreddit or not
  *          401:
  *              description: User unauthorized to view this info
  *          500:
@@ -676,6 +681,9 @@ subredditModerationsRouter.get(
  *                               members:
  *                                 type: number
  *                                 description: the number of members in that subreddit
+ *                               isFavorite:
+ *                                 type: boolean
+ *                                 description: to indicate if the user favorite this subreddit or not
  *          401:
  *              description: User unauthorized to view this info
  *          500:
