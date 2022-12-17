@@ -177,11 +177,11 @@ export async function searchComments(query, listingParams) {
       },
       comment: {
         id: comment.id.toString(),
-        content: comment.content,
-        parentId: comment.parentId.toString(),
+        commentBody: comment.content,
+        parent: comment.parentId.toString(),
         level: comment.level,
-        username: comment.ownerUsername,
-        createdAt: comment.createdAt,
+        commentedBy: comment.ownerUsername,
+        publishTime: comment.createdAt,
         votes: comment.numberOfVotes,
       },
     };
