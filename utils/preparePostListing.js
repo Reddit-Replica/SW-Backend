@@ -118,6 +118,8 @@ async function preparePostBeforeAfter(before, after, sort, sortingType) {
         // eslint-disable-next-line max-depth
         if (sort.createdAt === 1) {
           value = { $lt: post[sortingType.type] };
+        } else if (sort.createdAt === -1) {
+          value = { $gt: post[sortingType.type] };
         }
         result = {
           type: sortingType.type,
@@ -145,6 +147,8 @@ async function preparePostBeforeAfter(before, after, sort, sortingType) {
         // eslint-disable-next-line max-depth
         if (sort.createdAt === 1) {
           value = { $gt: post[sortingType.type] };
+        } else if (sort.createdAt === -1) {
+          value = { $lt: post[sortingType.type] };
         }
         result = {
           type: sortingType.type,
