@@ -11,7 +11,7 @@ import Post from "./../../models/Post.js";
 import Comment from "./../../models/Comment";
 import Message from "./../../models/Message.js";
 import Mention from "./../../models/Mention.js";
-// import PostReply from "./../../models/PostReply.js";
+import PostReplies from "./../../models/PostReplies.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing Read Messages Service functions", () => {
@@ -75,15 +75,12 @@ describe("Testing Read Messages Service functions", () => {
       receiverUsername: "ahmed",
     }).save();
 
-    // postReply = await new Message({
-    //   text: "Message Text",
-    //   createdAt: Date.now(),
-    //   senderUsername: "hamdy",
-    //   receiverUsername: "ahmed",
-    //   isSenderUser: true,
-    //   isReceiverUser: true,
-    //   type: "Message",
-    // }).save();
+    postReply = await new PostReplies({
+      postId: post.id,
+      commentId: comment.id,
+      createdAt: Date.now(),
+      receiverUsername: "ahmed",
+    }).save();
   });
 
   afterAll(async () => {
@@ -92,7 +89,7 @@ describe("Testing Read Messages Service functions", () => {
     await Post.deleteMany({});
     await Comment.deleteMany({});
     await Mention.deleteMany({});
-    // await PostReply.deleteMany({});
+    await PostReplies.deleteMany({});
     await closeDatabaseConnection();
   });
 
@@ -124,17 +121,17 @@ describe("Testing Read Messages Service functions", () => {
     expect(receiverUser.usernameMentions[0].isRead).toBeTruthy();
   });
 
-  //   it("Should have readPostReplies defined", () => {
-  //     expect(readPostReplies).toBeDefined();
-  //   });
+  it("Should have readPostReplies defined", () => {
+    expect(readPostReplies).toBeDefined();
+  });
 
-  //   it("Test Read readPostReplies", async () => {
-  //     receiverUser.postReplies = [postReply.id];
-  //     await receiverUser.save();
-  //     await readPostReplies(receiverUser.id);
-  //     receiverUser = await User.findOne({
-  //       username: receiverUser.username,
-  //     }).populate("postReplies");
-  //     expect(receiverUser.postReplies[0].isRead).toBeTruthy();
-  //   });
+  it("Test Read readPostReplies", async () => {
+    receiverUser.postReplies = [postReply.id];
+    await receiverUser.save();
+    await readPostReplies(receiverUser.id);
+    receiverUser = await User.findOne({
+      username: receiverUser.username,
+    }).populate("postReplies");
+    expect(receiverUser.postReplies[0].isRead).toBeTruthy();
+  });
 });
