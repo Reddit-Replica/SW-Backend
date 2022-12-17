@@ -182,7 +182,16 @@ export async function homePostsListing(
     extraPosts.sort(compareTrending);
   }
   posts=[...posts,...extraPosts];
-  console.log(posts.length);
+
+  const unique = new Set();
+  posts = posts.filter((post) => {
+    const isDuplicate = unique.has(post.id);
+    unique.add(post.id);
+    if (!isDuplicate) {
+      return true;
+    }
+    return false;
+  });
 
   if (posts.length < limit) {
     limit = posts.length;

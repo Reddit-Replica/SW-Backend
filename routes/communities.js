@@ -331,12 +331,6 @@ communitiesRouter.get("/trending-communities");
  *                          secondCategory:
  *                            type: string
  *                            description: the name of the first category
- *                          before:
- *                           type: string
- *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
- *                          after:
- *                           type: string
- *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
  *                          firstCategoryChildren:
  *                            type: array
  *                            description: List of [Things] to return
@@ -360,7 +354,10 @@ communitiesRouter.get("/trending-communities");
  *                                isMember:
  *                                  type: boolean
  *                                  description: True if you are a member of the community , False if you are not a member of the community
- *                          SecondCategoryChildren:
+ *                                picture:
+ *                                  type: string
+ *                                  description: the path of the picture of the subreddit
+ *                          secondCategoryChildren:
  *                            type: array
  *                            description: List of [Things] to return
  *                            items:
@@ -383,6 +380,9 @@ communitiesRouter.get("/trending-communities");
  *                                isMember:
  *                                  type: boolean
  *                                  description: True if you are a member of the community , False if you are not a member of the community
+ *                                picture:
+ *                                  type: string
+ *                                  description: the path of the picture of the subreddit
  *          404:
  *              description: Page not found
  *          401:
@@ -393,7 +393,8 @@ communitiesRouter.get("/trending-communities");
  *       - bearerAuth: []
  */
 
-communitiesRouter.get("/random-category");
+communitiesRouter.get("/random-category",  verifyAuthToken,
+subredditController.randomCategories);
 
 /**
  * @swagger
