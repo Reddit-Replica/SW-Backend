@@ -227,6 +227,14 @@ export async function searchUsers(query, listingParams, loggedInUser) {
   }
 
   const result = await User.find(listingResult.find).sort(listingResult.sort);
+  if (loggedInUser) {
+    result = result.filter((user) =>
+      loggedInUser.blocedUsers.find(
+        (blockedUser) =>
+          blockedUser.blockedUserId.toString() === user.id.toString()
+      )
+    );
+  }
 
   let limit = listingResult.limit;
 
