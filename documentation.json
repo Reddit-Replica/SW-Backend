@@ -12118,6 +12118,10 @@
                           "members": {
                             "type": "number",
                             "description": "the number of members in that subreddit"
+                          },
+                          "isFavorite": {
+                            "type": "boolean",
+                            "description": "to indicate if the user favorite this subreddit or not"
                           }
                         }
                       }
@@ -12169,6 +12173,10 @@
                           "members": {
                             "type": "number",
                             "description": "the number of members in that subreddit"
+                          },
+                          "isFavorite": {
+                            "type": "boolean",
+                            "description": "to indicate if the user favorite this subreddit or not"
                           }
                         }
                       }
