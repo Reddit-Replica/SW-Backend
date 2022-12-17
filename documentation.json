@@ -2582,14 +2582,6 @@
                       "type": "string",
                       "description": "the name of the first category"
                     },
-                    "before": {
-                      "type": "string",
-                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
-                    },
-                    "after": {
-                      "type": "string",
-                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
-                    },
                     "firstCategoryChildren": {
                       "type": "array",
                       "description": "List of [Things] to return",
@@ -2618,12 +2610,16 @@
                             "isMember": {
                               "type": "boolean",
                               "description": "True if you are a member of the community , False if you are not a member of the community"
+                            },
+                            "picture": {
+                              "type": "string",
+                              "description": "the path of the picture of the subreddit"
                             }
                           }
                         }
                       }
                     },
-                    "SecondCategoryChildren": {
+                    "secondCategoryChildren": {
                       "type": "array",
                       "description": "List of [Things] to return",
                       "items": {
@@ -2651,6 +2647,10 @@
                             "isMember": {
                               "type": "boolean",
                               "description": "True if you are a member of the community , False if you are not a member of the community"
+                            },
+                            "picture": {
+                              "type": "string",
+                              "description": "the path of the picture of the subreddit"
                             }
                           }
                         }
