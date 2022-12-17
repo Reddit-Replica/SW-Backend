@@ -15,7 +15,7 @@ const app = express();
 
 dotenv.config();
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "200mb" }));
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);

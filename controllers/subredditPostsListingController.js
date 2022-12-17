@@ -1,6 +1,5 @@
 import {
   checkSubredditFlair,
-  listingSubredditPosts,
   subredditHome,
 } from "../services/subredditItemsListing.js";
 import { getUser } from "../services/userSettings.js";
