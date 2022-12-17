@@ -345,6 +345,7 @@ export async function moderateSubreddit(username, subredditName) {
     username: username,
     userID: user.id,
     dateOfModeration: Date.now(),
+    permissions: ["Everything"],
   };
   for (const moderator of subreddit.moderators) {
     if (moderator.username === user.username) {

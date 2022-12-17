@@ -329,10 +329,23 @@ export async function getModeratedSubredditsService(userId) {
   await user.populate("moderatedSubreddits.subredditId");
   for (let i = 0; i < user.moderatedSubreddits.length; i++) {
     if (!user.moderatedSubreddits[i].subredditId.deletedAt) {
+      let fav = false;
+
+      const index = user.favoritesSubreddits.findIndex(
+        (subredditElement) =>
+          subredditElement.subredditId.toString() ===
+          user.moderatedSubreddits[i].subredditId._id.toString()
+      );
+
+      if (index !== -1) {
+        fav = true;
+      }
+
       response.push({
         title: user.moderatedSubreddits[i].subredditId.title,
         picture: user.moderatedSubreddits[i].subredditId.picture,
         members: user.moderatedSubreddits[i].subredditId.members,
+        isFavorite: fav,
       });
     }
   }
@@ -355,10 +368,23 @@ export async function getJoinedSubredditsService(userId) {
   await user.populate("joinedSubreddits.subredditId");
   for (let i = 0; i < user.joinedSubreddits.length; i++) {
     if (!user.joinedSubreddits[i].subredditId.deletedAt) {
+      let fav = false;
+
+      const index = user.favoritesSubreddits.findIndex(
+        (subredditElement) =>
+          subredditElement.subredditId.toString() ===
+          user.joinedSubreddits[i].subredditId._id.toString()
+      );
+
+      if (index !== -1) {
+        fav = true;
+      }
+
       response.push({
         title: user.joinedSubreddits[i].subredditId.title,
         picture: user.joinedSubreddits[i].subredditId.picture,
         members: user.joinedSubreddits[i].subredditId.members,
+        isFavorite: fav,
       });
     }
   }

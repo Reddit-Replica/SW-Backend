@@ -635,6 +635,9 @@ subredditModerationsRouter.get(
  *                               members:
  *                                 type: number
  *                                 description: the number of members in that subreddit
+ *                               isFavorite:
+ *                                 type: boolean
+ *                                 description: to indicate if the user favorite this subreddit or not
  *          401:
  *              description: User unauthorized to view this info
  *          500:
@@ -676,6 +679,9 @@ subredditModerationsRouter.get(
  *                               members:
  *                                 type: number
  *                                 description: the number of members in that subreddit
+ *                               isFavorite:
+ *                                 type: boolean
+ *                                 description: to indicate if the user favorite this subreddit or not
  *          401:
  *              description: User unauthorized to view this info
  *          500:
