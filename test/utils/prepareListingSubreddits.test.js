@@ -6,7 +6,6 @@ import {
 } from "../../utils/prepareSubredditListing";
 import User from "./../../models/User.js";
 import Subreddit from "./../../models/Community.js";
-import mongoose from "mongoose";
 
 // eslint-disable-next-line max-statements
 describe("Testing Listing Subreddits Utilities", () => {
