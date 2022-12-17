@@ -105,13 +105,11 @@ describe("Testing subreddit actions services functions", () => {
   });
   it("try to let the owner request traffic stats of a subreddit", async () => {
     const result = await getTrafficService(owner, subreddit);
-    expect(result.data).toEqual({
-      numberOfJoinedLastDay: 1,
-      numberOfJoinedLastWeek: 2,
-      numberOfJoinedLastMonth: 2,
-      numberOfLeftLastDay: 1,
-      numberOfLeftLastWeek: 1,
-      numberOfLeftLastMonth: 2,
-    });
+    expect(result.data.numberOfJoinedLastDay).toEqual(1);
+    expect(result.data.numberOfJoinedLastWeek).toEqual(2);
+    expect(result.data.numberOfJoinedLastMonth).toEqual(2);
+    expect(result.data.numberOfLeftLastDay).toEqual(1);
+    expect(result.data.numberOfLeftLastWeek).toEqual(1);
+    expect(result.data.numberOfLeftLastMonth).toEqual(2);
   });
 });

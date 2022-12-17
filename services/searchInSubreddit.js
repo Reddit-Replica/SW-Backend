@@ -2,6 +2,8 @@ import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
 import { postListing } from "../utils/preparePostListing.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
+import { fixSort } from "./subredditItemsListing.js";
+
 /**
  * Search for a post given a query in a subreddit
  *
@@ -13,7 +15,8 @@ import { commentTreeListing } from "../utils/prepareCommentListing.js";
 // eslint-disable-next-line max-statements
 export async function searchForPosts(subreddit, query, listingParams) {
   // Prepare Listing Parameters
-  const listingResult = await postListing(listingParams);
+  let listingResult = await postListing(listingParams);
+  listingResult = await fixSort(listingResult, listingParams);
 
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
@@ -26,7 +29,7 @@ export async function searchForPosts(subreddit, query, listingParams) {
     };
   }
 
-  const result = await Subreddit.findOne({ title: subreddit })
+  let result = await Subreddit.findOne({ title: subreddit })
     .select("subredditPosts")
     .populate({
       path: "subredditPosts",
@@ -37,6 +40,29 @@ export async function searchForPosts(subreddit, query, listingParams) {
     });
 
   let limit = listingResult.limit;
+
+  if (
+    (!listingParams.after && listingParams.before) ||
+    (!listingParams.before && listingParams.after)
+  ) {
+    const id = listingParams.after ?? listingParams.before;
+    const neededIndex = result["subredditPosts"].findIndex(
+      (post) => post._id.toString() === id
+    );
+    if (neededIndex !== -1) {
+      if (listingParams.after) {
+        result["subredditPosts"] = result["subredditPosts"].slice(
+          neededIndex + 1,
+          result["subredditPosts"].length
+        );
+      } else {
+        result["subredditPosts"] = result["subredditPosts"].slice(
+          0,
+          neededIndex
+        );
+      }
+    }
+  }
 
   if (limit > result["subredditPosts"].length) {
     limit = result["subredditPosts"].length;

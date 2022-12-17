@@ -56,7 +56,7 @@ export async function listingBannedUsers(
  * @param {Number} limit the limit identified in the request
  * @returns {response} the prepared response for the main service function
  */
-function getBannedUsersFirstTime(subreddit, limit) {
+export function getBannedUsersFirstTime(subreddit, limit) {
   const response = { children: [] };
   const numberOfBannedUsers = subreddit.bannedUsers.length;
   let myLimit;
@@ -91,7 +91,7 @@ function getBannedUsersFirstTime(subreddit, limit) {
  * @returns {response} the prepared response for the main service function
  */
 // eslint-disable-next-line max-statements
-function getBannedUsersBefore(subreddit, limit, before) {
+export function getBannedUsersBefore(subreddit, limit, before) {
   const response = { children: [] };
   let myStart;
   const numberOfBannedUsers = subreddit.bannedUsers.length;
@@ -140,7 +140,7 @@ function getBannedUsersBefore(subreddit, limit, before) {
  * @returns {response} the prepared response for the main service function
  */
 // eslint-disable-next-line max-statements
-function getBannedUsersAfter(subreddit, limit, after) {
+export function getBannedUsersAfter(subreddit, limit, after) {
   const response = { children: [] };
   let myLimit;
   const numberOfBannedUsers = subreddit.bannedUsers.length;
@@ -214,7 +214,7 @@ export async function listingBlockedUsers(limitReq, beforeReq, afterReq, user) {
  * @param {Number} limit the limit identified in the request
  * @returns {response} the prepared response for the main service function
  */
-function getBlockedUsersFirstTime(user, limit) {
+export function getBlockedUsersFirstTime(user, limit) {
   const response = { children: [] };
   const numberOfBlockedUsers = user.blockedUsers.length;
   let myLimit;
@@ -245,7 +245,7 @@ function getBlockedUsersFirstTime(user, limit) {
  * @returns {response} the prepared response for the main service function
  */
 // eslint-disable-next-line max-statements
-function getBlockedUsersBefore(user, limit, before) {
+export function getBlockedUsersBefore(user, limit, before) {
   const response = { children: [] };
   let myStart;
   const numberOfBlockedUsers = user.blockedUsers.length;
@@ -290,7 +290,7 @@ function getBlockedUsersBefore(user, limit, before) {
  * @returns {response} the prepared response for the main service function
  */
 // eslint-disable-next-line max-statements
-function getBlockedUsersAfter(user, limit, after) {
+export function getBlockedUsersAfter(user, limit, after) {
   const response = { children: [] };
   let myLimit;
   const numberOfBlockedUsers = user.blockedUsers.length;

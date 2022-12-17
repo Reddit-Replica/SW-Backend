@@ -703,12 +703,78 @@ export async function setSubredditPostSettingsService(
  * @param {Object} subreddit Subreddit Object that we need to get its traffic stats
  * @returns {Object} The response to that request containing [statusCode, data]
  */
+// eslint-disable-next-line max-statements
 export async function getTrafficService(user, subreddit) {
   const mod = checkIfModerator(user._id, subreddit);
   if (mod === -1) {
     let error = new Error("Unauthorized access");
     error.statusCode = 401;
     throw error;
+  }
+
+  // prepare the days array
+  let days = [];
+  for (let i = 0; i < 31; i++) {
+    days.push({
+      day: new Date(new Date().setDate(new Date().getDate() - i)),
+      numberOfJoined: 0,
+    });
+  }
+
+  // sunday => 0
+  const daysName = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  let weeks = [];
+  for (let i = 0; i < 7; i++) {
+    weeks.push({
+      day: daysName[
+        new Date(new Date().setDate(new Date().getDate() - i)).getDay()
+      ],
+      numberOfJoined: 0,
+    });
+  }
+
+  // jan => 0
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  let months = [];
+  let monthIntervals = [];
+  for (let i = 0; i < 12; i++) {
+    months.push({
+      month:
+        monthNames[
+          new Date(new Date().setMonth(new Date().getMonth() - i)).getMonth()
+        ],
+      numberOfJoined: 0,
+    });
+
+    monthIntervals.push({
+      start: new Date(
+        new Date(new Date().setMonth(new Date().getMonth() - i)).setDate(1)
+      ),
+      end: new Date(
+        new Date(new Date().setMonth(new Date().getMonth() - i)).setDate(31)
+      ),
+    });
   }
 
   const day = new Date().setDate(new Date().getDate() - 1);
@@ -720,7 +786,51 @@ export async function getTrafficService(user, subreddit) {
     joinedLastWeek = 0,
     joinedLastMonth = 0;
 
+  const weekDaysStart = new Date(new Date().setDate(new Date().getDate() - 7));
+  const weekDaysEnd = new Date();
+  const daysStart = new Date(new Date().setDate(new Date().getDate() - 31));
+  const daysEnd = new Date();
+
+  // eslint-disable-next-line max-statements
   subreddit.joinedUsers.forEach((el) => {
+    const joinDate = new Date(el.joinDate);
+
+    // extract the days array => [today => today - 30]
+    if (joinDate >= daysStart && joinDate <= daysEnd) {
+      if (new Date().getDate() - el.joinDate.getDate() < 0) {
+        days[30 + (new Date().getDate() - el.joinDate.getDate())]
+          .numberOfJoined++;
+      } else {
+        days[new Date().getDate() - el.joinDate.getDate()].numberOfJoined++;
+      }
+    }
+
+    // extract the week days => [today => today - 7]
+    if (joinDate >= weekDaysStart && joinDate <= weekDaysEnd) {
+      if (new Date().getDay() - joinDate.getDay() < 0) {
+        weeks[7 + (new Date().getDay() - joinDate.getDay())].numberOfJoined++;
+      } else {
+        weeks[new Date().getDay() - joinDate.getDay()].numberOfJoined++;
+      }
+    }
+
+    // extract the months => [this month => this month - 12]
+    for (const i in monthIntervals) {
+      if (
+        joinDate >= monthIntervals[i].start &&
+        joinDate <= monthIntervals[i].end
+      ) {
+        if (new Date().getMonth() - joinDate.getMonth() < 0) {
+          months[12 + (new Date().getMonth() - joinDate.getMonth())]
+            .numberOfJoined++;
+        } else {
+          months[new Date().getMonth() - joinDate.getMonth()].numberOfJoined++;
+        }
+        break;
+      }
+    }
+
+    /////////////////////////////////
     if (el.joinDate > day) {
       joinedLastDay++;
     }
@@ -748,6 +858,7 @@ export async function getTrafficService(user, subreddit) {
       leftLastMonth++;
     }
   });
+
   return {
     statusCode: 200,
     data: {
@@ -757,6 +868,9 @@ export async function getTrafficService(user, subreddit) {
       numberOfLeftLastDay: leftLastDay,
       numberOfLeftLastWeek: leftLastWeek,
       numberOfLeftLastMonth: leftLastMonth,
+      days: days,
+      weeks: weeks,
+      months: months,
     },
   };
 }

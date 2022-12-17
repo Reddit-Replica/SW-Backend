@@ -6,6 +6,7 @@ import {
   mentionListing,
   conversationListing,
   splitterOnType,
+  postReplyListing,
 } from "../utils/prepareMessageListing.js";
 import {
   checkForUpVotedComments,
@@ -48,6 +49,7 @@ export async function userMessageListing(
         sort: listingResult.sort,
       },
     });
+  console.log(listingResult);
   let limit = listingResult.limit;
   if (result[typeOfListing].length < limit) {
     limit = result[typeOfListing].length;
@@ -115,9 +117,19 @@ export async function userMessageListing(
   };
 }
 
-export async function userMentionsListing(user, typeOfListing, listingParams) {
+export async function userMentionsListing(
+  user,
+  typeOfListing,
+  listingParams,
+  isPostReply
+) {
   // GETTING FIND LIMIT SORT THAT WE NEED TO RETURN VALUES
-  const listingResult = await mentionListing(listingParams);
+  let listingResult;
+  if (isPostReply) {
+    listingResult = await postReplyListing(listingParams);
+  } else {
+    listingResult = await mentionListing(listingParams);
+  }
   // GETTING THE DESIRED FIELD THAT WE WOULD GET DATA FROM
   const result = await User.findOne({ username: user.username })
     .select(typeOfListing)
@@ -166,7 +178,7 @@ export async function userMentionsListing(user, typeOfListing, listingParams) {
     // THEN WE WILL ADD DATA NEEDED TO THE MENTION
     mentionData.data = {
       text: comment.content,
-      senderUsername: post.ownerUsername,
+      senderUsername: comment.ownerUsername,
       receiverUsername: mention.receiverUsername,
       sendAt: comment.createdAt,
       subredditName: post.subredditName,
@@ -245,6 +257,7 @@ export async function userConversationListing(
         sort: listingResult.sort,
       },
     });
+
   let limit = listingResult.limit;
   if (result[typeOfListing].length < limit) {
     limit = result[typeOfListing].length;
@@ -268,6 +281,9 @@ export async function userConversationListing(
     const messages = [];
     for (const smallMessage of conversation.messages) {
       const message = await Message.findById(smallMessage);
+      if (message.receiverUsername === user.username && message.deletedAt) {
+        continue;
+      }
       const messageData = {
         msgID: message.id.toString(),
         text: message.text,
@@ -336,7 +352,7 @@ export async function userInboxListing(user, listingParams) {
   //GETTING RECEIVED MESSAGES
   const { receivedMessages } = await User.findOne({ username: user.username })
     .select("receivedMessages")
-    .populate({ path: "receivedMessages" });
+    .populate({ path: "receivedMessages", match: { deletedAt: null } });
   //GETTING USERNAME MENTIONS
   const { usernameMentions } = await User.findOne({ username: user.username })
     .select("usernameMentions")
@@ -394,7 +410,7 @@ export async function userInboxListing(user, listingParams) {
     totalInbox[startingIndex].isRead = true;
     await totalInbox[startingIndex].save();
     //DEPENDING ON THE TYPE OF ELEMENT WE WILL SEND DIFFERENT DATA
-    if (totalInbox[startingIndex].type === "Mention") {
+    if (totalInbox[startingIndex].type !== "Message") {
       const post = await searchForPost(totalInbox[startingIndex].postId);
       const comment = await searchForComment(
         totalInbox[startingIndex].commentId
@@ -407,7 +423,7 @@ export async function userInboxListing(user, listingParams) {
       }
       messageData.data = {
         text: comment.content,
-        senderUsername: post.ownerUsername,
+        senderUsername: comment.ownerUsername,
         receiverUsername: totalInbox[startingIndex].receiverUsername,
         sendAt: comment.createdAt,
         subredditName: post.subredditName,
@@ -415,12 +431,12 @@ export async function userInboxListing(user, listingParams) {
         postId: totalInbox[startingIndex].postId,
         commentId: totalInbox[startingIndex].commentId,
         numOfComments: post.numberOfComments,
-        type: "Mentions",
+        type: totalInbox[startingIndex].type,
         isRead: isRead,
         vote: vote,
         postOwner: post.ownerUsername,
       };
-    } else if (totalInbox[startingIndex].type === "Message") {
+    } else {
       messageData.data = {
         text: totalInbox[startingIndex].text,
         subredditName: totalInbox[startingIndex].subredditName,

@@ -7,6 +7,7 @@ import { searchForComment, searchForPost } from "./PostActions.js";
 import { prepareLimit } from "../utils/prepareLimit.js";
 import { postListing } from "../utils/preparePostListing.js";
 import { extraPostsListing } from "../utils/prepareSubreddit.js";
+import { MinKey } from "mongodb";
 
 function compareNew(post1, post2) {
   if (post1.createdAt < post2.createdAt) {
@@ -113,40 +114,6 @@ export async function homePostsListing(
       }
     }
   }
-
-  let filteringString;
-  //SELECTING ON WHICH ELEMENT WE WILL FILTER
-  if (typeOfSorting === "new") {
-    filteringString = "createdAt";
-  } else if (typeOfSorting === "best") {
-    filteringString = "bestScore";
-  } else if (typeOfSorting === "hot") {
-    filteringString = "hotScore";
-  } else if (typeOfSorting === "top") {
-    filteringString = "numberOfVotes";
-  } else if (typeOfSorting === "trending") {
-    filteringString = "numberOfViews";
-  }
-
-  let isBefore = false;
-  //FILTERING THE POSTS ARRAY THAT WE MADE WITH BEFORE AND AFTER LIMITS
-  //IN CASE OF BEFORE WE NEED TO GET THE LIMIT ELEMENTS BEFORE THE SELECTED ITEM
-  //THEN WE NEED TO CHANGE THE VALUES OF STARTING AND ENDING INDICES OF THE POSTS
-  //IF THERE EXIST POSTS BEFORE THEN THEY WILL BE FILTERED ELSE WE WILL ADD EXTRA POSTS
-  if (listingParams.before) {
-    //HERE WE GET OUR SPLITTER
-    const splitter = await searchForPost(listingParams.before);
-    isBefore = true;
-    posts = posts.filter((post) => {
-      return post[filteringString] > splitter[filteringString];
-    });
-    //THIS IS THE CASE OF AFTER THEN WE WILL DEAL NORMALLY WITHOUT ANY CHANGES IN THE FOR LOOP BOUNDARIES
-  } else if (listingParams.after && !listingParams.before) {
-    const splitter = await searchForPost(listingParams.after);
-    posts = posts.filter(function (post) {
-      return post[filteringString] < splitter[filteringString];
-    });
-  }
   const uniquePosts = new Set();
   posts = posts.filter((post) => {
     const isDuplicate = uniquePosts.has(post.id);
@@ -156,6 +123,7 @@ export async function homePostsListing(
     }
     return false;
   });
+
   if (typeOfSorting === "top") {
     let filteringDate = new Date();
     let changed = false;
@@ -192,72 +160,62 @@ export async function homePostsListing(
       });
     }
   }
-  console.log(posts);
   //THEN WE WILL GET OUR LIMIT
   let limit = await prepareLimit(listingParams.limit);
-  const result = await extraPostsListing(
-    listingParams.before,
-    listingParams.after,
-    listingParams.limit,
-    typeOfSorting,
-    listingParams.time
-  );
-  console.log(posts);
   //WE WILL GET EXTRA POSTS TO FILL THE GAP THAT IS BETWEEN THE FOLLOWED ONES AND THE LIMIT
-  const extraPosts = await Post.find(result.query).limit(limit);
-  //LOOPING OVER THE EXTRA POSTS TO ADD THE NEEDED NUMBER OF THEM TO THE POSTS THAT WE WILL RETURN
-  let ctr = 0;
-  console.log(extraPosts);
-  while (posts.length < limit) {
-    if (ctr === extraPosts.length) {
-      break;
-    }
-    posts.push(extraPosts[ctr]);
-    const unique = new Set();
-    posts = posts.filter((post) => {
-      const isDuplicate = unique.has(post.id);
-      unique.add(post.id);
-      if (!isDuplicate) {
-        return true;
-      }
-      return false;
-    });
-    ctr++;
-  }
-  console.log(posts);
-  //SORTING THE POSTS THAT WE GOT USING THE TYPE OF SORTING
+  const extraPosts = await Post.find({});
+
   if (typeOfSorting === "new") {
     posts.sort(compareNew);
+    extraPosts.sort(compareNew);
   } else if (typeOfSorting === "best") {
     posts.sort(compareBest);
+    extraPosts.sort(compareBest);
   } else if (typeOfSorting === "hot") {
     posts.sort(compareHot);
+    extraPosts.sort(compareHot);
   } else if (typeOfSorting === "top") {
     posts.sort(compareTop);
+    extraPosts.sort(compareTop);
   } else if (typeOfSorting === "trending") {
     posts.sort(compareTrending);
+    extraPosts.sort(compareTrending);
   }
+  posts=[...posts,...extraPosts];
+  console.log(posts.length);
 
   if (posts.length < limit) {
     limit = posts.length;
   }
-  //INITIALLY WE WILL START FROM 0 UNTIL THE LIMIT
-  let startingIndex = 0,
-    finishIndex = limit;
-  //IN CASE OF BEFORE THEN WE WILL START FROM BEFORE INDEX-LIMIT TO THE BEFORE INDEX
-  if (isBefore) {
-    startingIndex = posts.length - limit;
-    finishIndex = posts.length;
+  let start,end,secondStart;
+  if (listingParams.before){
+    end=posts.findIndex((post)=> post.id.toString()===listingParams.before.toString());
+    start=end-limit;
+  } else if (listingParams.after&&!listingParams.before){
+    start=posts.findIndex((post)=> post.id.toString()===listingParams.after.toString())+1;
+    end=start+limit;
+  } else {
+    start=0;
+    end=limit;
   }
-  if (startingIndex < 0) {
-    startingIndex = 0;
+  if (start<0){
+    start=0;
   }
+  if (end>posts.length){
+end =posts.length;
+  }
+  secondStart=start;
+
+  console.log(start,end);
+
   //OUR CHILDREN ARRAY THAT WE WILL SEND AS RESPONSE
   const children = [];
-  for (startingIndex; startingIndex < finishIndex; startingIndex++) {
+  for (start; start < end; start++) {
     //EACH ELEMENT THAT IS RETURNED MUST BE MARKED AS READ
     //NEED TO BE EDITED
-    const post = posts[startingIndex];
+    const post = posts[start];
+    post.numberOfViews++;
+    post.save();
     const postId = post.id.toString();
     let vote = 0,
       saved = false,
@@ -318,14 +276,9 @@ export async function homePostsListing(
   }
   let after = "",
     before = "";
-  if (posts.length) {
-    if (isBefore) {
-      after = posts[posts.length - 1]._id.toString();
-      before = posts[posts.length - limit]._id.toString();
-    } else {
-      after = posts[limit - 1]._id.toString();
-      before = posts[0]._id.toString();
-    }
+  if (posts.length && secondStart<posts.length&&end>0) {
+      after = posts[end-1].id.toString();
+      before = posts[secondStart].id.toString();
   }
   return {
     statusCode: 200,

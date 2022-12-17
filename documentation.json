@@ -39,7 +39,7 @@
             "type": "string",
             "description": "Name of the flair"
           },
-          "order": {
+          "flairOrder": {
             "type": "number",
             "description": "Order of the flair among the rest"
           },
@@ -622,6 +622,182 @@
                             "type": "integer",
                             "description": "The level of the comment [level of nesting]"
                           },
+                          "saved": {
+                            "type": "integer",
+                            "description": "If true, then the comment was saved by the logged in user"
+                          },
+                          "inYourSubreddit": {
+                            "type": "boolean",
+                            "description": "If true, then you can approve, remove, or spam that post"
+                          },
+                          "moderation": {
+                            "type": "object",
+                            "description": "Moderate the post if you are a moderator in that subreddit",
+                            "properties": {
+                              "approve": {
+                                "type": "object",
+                                "description": "Approve the post",
+                                "properties": {
+                                  "approvedBy": {
+                                    "type": "string",
+                                    "description": "Username for the moderator who approved that post"
+                                  },
+                                  "approvedDate": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "Date when that post approved"
+                                  }
+                                }
+                              },
+                              "remove": {
+                                "type": "object",
+                                "description": "Remove the post",
+                                "properties": {
+                                  "removedBy": {
+                                    "type": "string",
+                                    "description": "Username for the moderator who removed that post"
+                                  },
+                                  "removedDate": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "Date when that post removed"
+                                  }
+                                }
+                              },
+                              "spam": {
+                                "type": "object",
+                                "description": "Spam the post",
+                                "properties": {
+                                  "spammedBy": {
+                                    "type": "string",
+                                    "description": "Username for the moderator who spamed that post"
+                                  },
+                                  "spammedDate": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "Date when that post spamed"
+                                  }
+                                }
+                              },
+                              "lock": {
+                                "type": "boolean",
+                                "description": "If true, then comments are locked in this post"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SavedOverview": {
+        "type": "object",
+        "properties": {
+          "before": {
+            "type": "string",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
+          },
+          "after": {
+            "type": "string",
+            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
+          },
+          "children": {
+            "type": "array",
+            "description": "List of [Things] to return",
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Id of the post or the post containing the comments"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["post", "comment", "postAndComment"],
+                  "description": "The type of the show [post = saved post only, comment = saved comment only, postAndComment = saved post with saved comments]"
+                },
+                "data": {
+                  "properties": {
+                    "post": {
+                      "type": "object",
+                      "description": "Post data",
+                      "$ref": "#/components/schemas/PostDetails"
+                    },
+                    "comments": {
+                      "type": "array",
+                      "description": "The comments writen by this user",
+                      "items": {
+                        "properties": {
+                          "commentId": {
+                            "type": "string",
+                            "description": "The id of the comment"
+                          },
+                          "commentedBy": {
+                            "type": "string",
+                            "description": "The username of the comment owner"
+                          },
+                          "commentBody": {
+                            "type": "Object",
+                            "description": "The comment itself"
+                          },
+                          "points": {
+                            "type": "integer",
+                            "description": "The points to that comment [up votes - down votes]"
+                          },
+                          "publishTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Publish time for the comment"
+                          },
+                          "editTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Edit time for the comment"
+                          },
+                          "parent": {
+                            "type": "object",
+                            "description": "Parent comment for that comment",
+                            "properties": {
+                              "commentId": {
+                                "type": "string",
+                                "description": "The id of the comment"
+                              },
+                              "commentedBy": {
+                                "type": "string",
+                                "description": "The username of the comment owner"
+                              },
+                              "commentBody": {
+                                "type": "Object",
+                                "description": "The comment itself"
+                              },
+                              "points": {
+                                "type": "integer",
+                                "description": "The points to that comment [up votes - down votes]"
+                              },
+                              "publishTime": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "Publish time for the comment"
+                              },
+                              "editTime": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "Edit time for the comment"
+                              }
+                            }
+                          },
+                          "level": {
+                            "type": "integer",
+                            "description": "The level of the comment [level of nesting]"
+                          },
+                          "saved": {
+                            "type": "integer",
+                            "description": "If true, then the comment was saved by the logged in user"
+                          },
                           "inYourSubreddit": {
                             "type": "boolean",
                             "description": "If true, then you can approve, remove, or spam that post"
@@ -756,6 +932,10 @@
                           "level": {
                             "type": "integer",
                             "description": "The level of the comment [level of nesting]"
+                          },
+                          "saved": {
+                            "type": "integer",
+                            "description": "If true, then the comment was saved by the logged in user"
                           },
                           "inYourSubreddit": {
                             "type": "boolean",
@@ -2037,6 +2217,10 @@
                             "isMember": {
                               "type": "boolean",
                               "description": "True if you are a member of the community , False if you are not a member of the community"
+                            },
+                            "picture": {
+                              "type": "string",
+                              "description": "the path of the picture of the subreddit"
                             }
                           }
                         }
@@ -4069,44 +4253,53 @@
                               },
                               "subject": {
                                 "type": "string",
-                                "description": "Subject of the message"
+                                "description": "Subject of the message (special for Messages)"
                               },
                               "type": {
                                 "type": "string",
-                                "description": "describes the type of message",
+                                "description": "describes the type of message check on the type of the message to know the kind of data that you need",
                                 "enum": ["Mentions", "Messages"]
                               },
                               "subredditName": {
                                 "type": "string",
                                 "description": "subreddit name that the reply or the mention was in"
                               },
-                              "isModerator": {
-                                "type": "boolean",
-                                "description": "true if the user is a moderator of the subreddit that the msg was sent via"
-                              },
                               "postTitle": {
                                 "type": "string",
-                                "description": "the title of the post that the reply or the mention happened in"
+                                "description": "the title of the post that the reply or the mention happened in (special for Mentions)"
                               },
-                              "postID": {
+                              "postId": {
                                 "type": "string",
-                                "description": "id of the post that the reply or the mention happened in"
+                                "description": "id of the post that the reply or the mention happened in (special for Mentions)"
                               },
-                              "commentID": {
+                              "commentId": {
                                 "type": "string",
-                                "description": "id of the comment that the reply or the mention happened ( to make it upvote or downvote)"
+                                "description": "id of the comment that the reply or the mention happened ( to make it upvote or downvote) (special for Mentions)"
                               },
                               "numOfComments": {
                                 "type": "number",
-                                "description": "total number of comments in the post that the mention or reply happened in"
+                                "description": "total number of comments in the post that the mention or reply happened in (special for Mentions)"
                               },
                               "isSenderUser": {
                                 "type": "boolean",
-                                "description": "true if the senderUsername is for a user , false if it's for a subreddit"
+                                "description": "true if the senderUsername is for a user , false if it's for a subreddit(special for Messages)"
                               },
                               "isReceiverUser": {
                                 "type": "boolean",
-                                "description": "true if the receiverUsername is for a user , false if it's for a subreddit"
+                                "description": "true if the receiverUsername is for a user , false if it's for a subreddit (special for Messages)"
+                              },
+                              "isRead": {
+                                "type": "boolean",
+                                "description": "true if the msg or mention is read , false if it's unread"
+                              },
+                              "vote": {
+                                "type": "number",
+                                "description": "describes if the mention was upvoted or downvoted or none by the user it will be 1 for upvoted, 0 for none , -1 for downvoted (special for Mentions)",
+                                "enum": [1, 0, -1]
+                              },
+                              "postOwner": {
+                                "type": "string",
+                                "description": "describes the username of the user that posted the post (special for Mentions)"
                               }
                             }
                           }
@@ -4234,6 +4427,10 @@
                                 "type": "string",
                                 "description": "Message Content as text"
                               },
+                              "subredditName": {
+                                "type": "string",
+                                "description": "name of the subreddit that you send or received the msg via"
+                              },
                               "senderUsername": {
                                 "type": "string",
                                 "description": "Username of the receiver"
@@ -4250,14 +4447,6 @@
                               "subject": {
                                 "type": "string",
                                 "description": "Subject of the message"
-                              },
-                              "subredditName": {
-                                "type": "string",
-                                "description": "name of the subreddit that you send or received the msg via"
-                              },
-                              "isModerator": {
-                                "type": "boolean",
-                                "description": "true if the user is a moderator of the subreddit that the msg was sent via"
                               },
                               "isSenderUser": {
                                 "type": "boolean",
@@ -4406,11 +4595,6 @@
                                 "format": "date-time",
                                 "description": "Time of sending the message"
                               },
-                              "type": {
-                                "type": "string",
-                                "description": "describes the type of message",
-                                "enum": ["Mentions", "Messages"]
-                              },
                               "subredditName": {
                                 "type": "string",
                                 "description": "subreddit name that the reply was in"
@@ -4419,17 +4603,30 @@
                                 "type": "string",
                                 "description": "the title of the post that the reply happened in"
                               },
-                              "postID": {
+                              "postId": {
                                 "type": "string",
                                 "description": "id of the post that the reply happened in"
                               },
-                              "commentID": {
+                              "commentId": {
                                 "type": "string",
                                 "description": "id of the comment that the reply happened in ( to make it upvote or downvote)"
                               },
                               "numOfComments": {
                                 "type": "number",
                                 "description": "total number of comments in the post that the mention or reply happened in"
+                              },
+                              "isRead": {
+                                "type": "boolean",
+                                "description": "true if the msg or mention is read , false if it's unread"
+                              },
+                              "vote": {
+                                "type": "number",
+                                "description": "describes if the mention was upvoted or downvoted or none by the user it will be 1 for upvoted, 0 for none , -1 for downvoted",
+                                "enum": [1, 0, -1]
+                              },
+                              "postOwner": {
+                                "type": "string",
+                                "description": "describes the username of the user that posted the post"
                               }
                             }
                           }
@@ -4578,17 +4775,30 @@
                                 "type": "string",
                                 "description": "the title of the post that the reply happened in"
                               },
-                              "postID": {
+                              "postId": {
                                 "type": "string",
                                 "description": "id of the post that the reply happened in"
                               },
-                              "commentID": {
+                              "commentId": {
                                 "type": "string",
                                 "description": "id of the comment that the reply happened in ( to make it upvote or downvote)"
                               },
                               "numOfComments": {
                                 "type": "number",
                                 "description": "total number of comments in the post that the mention or reply happened in"
+                              },
+                              "isRead": {
+                                "type": "boolean",
+                                "description": "true if the msg or mention is read , false if it's unread"
+                              },
+                              "vote": {
+                                "type": "number",
+                                "description": "describes if the mention was upvoted or downvoted or none by the user it will be 1 for upvoted, 0 for none , -1 for downvoted",
+                                "enum": [1, 0, -1]
+                              },
+                              "postOwner": {
+                                "type": "string",
+                                "description": "describes the username of the user that posted the post"
                               }
                             }
                           }
@@ -4705,55 +4915,64 @@
                       "description": "List of [Things] to return",
                       "items": {
                         "properties": {
-                          "subjectTitle": {
+                          "id": {
                             "type": "string",
-                            "description": "contains the username of the person or subreddit that you messaged or the subreddit you sent msg from"
+                            "description": "Message id"
                           },
-                          "isUser": {
-                            "type": "boolean",
-                            "description": "true if the subject title content is for a user , false if it is for a subreddit"
-                          },
-                          "subjectContent": {
-                            "type": "string",
-                            "description": "contains the content of the subject of the msg"
-                          },
-                          "messages": {
-                            "type": "array",
-                            "description": "List of the messages in that subject",
-                            "items": {
-                              "properties": {
-                                "msgID": {
-                                  "type": "string",
-                                  "description": "id of the msg"
-                                },
-                                "senderUsername": {
-                                  "type": "string",
-                                  "description": "Username of the sender"
-                                },
-                                "receiverUsername": {
-                                  "type": "string",
-                                  "description": "Username of the receiver"
-                                },
-                                "sendAt": {
-                                  "type": "string",
-                                  "format": "date-time",
-                                  "description": "Time of sending the message"
-                                },
-                                "subredditName": {
-                                  "type": "string",
-                                  "description": "Subreddit name that the message was sent via"
-                                },
-                                "isModerator": {
-                                  "type": "string",
-                                  "description": "true if the user is a moderator of the subreddit that the message was sent via"
-                                },
-                                "isSenderUser": {
-                                  "type": "boolean",
-                                  "description": "true if the senderUsername is for a user , false if it's for a subreddit"
-                                },
-                                "isReceiverUser": {
-                                  "type": "boolean",
-                                  "description": "true if the receiverUsername is for a user , false if it's for a subreddit"
+                          "data": {
+                            "type": "object",
+                            "properties": {
+                              "subjectTitle": {
+                                "type": "string",
+                                "description": "contains the username of the person or subreddit that you messaged or the subreddit you sent msg from"
+                              },
+                              "isUser": {
+                                "type": "boolean",
+                                "description": "true if the subject title content is for a user , false if it is for a subreddit"
+                              },
+                              "subjectContent": {
+                                "type": "string",
+                                "description": "contains the content of the subject of the msg"
+                              },
+                              "messages": {
+                                "type": "array",
+                                "description": "List of the messages in that subject",
+                                "items": {
+                                  "properties": {
+                                    "msgID": {
+                                      "type": "string",
+                                      "description": "id of the msg"
+                                    },
+                                    "senderUsername": {
+                                      "type": "string",
+                                      "description": "Username of the sender"
+                                    },
+                                    "text": {
+                                      "type": "string",
+                                      "description": "text of the message"
+                                    },
+                                    "receiverUsername": {
+                                      "type": "string",
+                                      "description": "Username of the receiver"
+                                    },
+                                    "sendAt": {
+                                      "type": "string",
+                                      "format": "date-time",
+                                      "description": "Time of sending the message"
+                                    },
+                                    "subredditName": {
+                                      "type": "string",
+                                      "description": "Subreddit name that the message was sent via"
+                                    },
+                                    "isSenderUser": {
+                                      "type": "boolean",
+                                      "description": "true if the senderUsername is for a user , false if it's for a subreddit"
+                                    },
+                                    "isReceiverUser": {
+                                      "type": "boolean",
+                                      "description": "true if the receiverUsername is for a user , false if it's for a subreddit"
+                                    }
+                                  }
                                 }
                               }
                             }
@@ -4966,12 +5185,7 @@
                   "type": {
                     "type": "string",
                     "description": "Type of messages to mark as read",
-                    "enum": [
-                      "Post Replies",
-                      "Messages",
-                      "Username Mentions",
-                      "Unread Messages"
-                    ]
+                    "enum": ["Post Replies", "Messages", "Username Mentions"]
                   }
                 }
               }
@@ -7056,9 +7270,18 @@
                       "description": "List of notifications",
                       "items": {
                         "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "id of the notification"
+                          },
                           "title": {
                             "type": "string",
                             "description": "title of the notification"
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "type of the notification",
+                            "enum": ["Comment", "Follow"]
                           },
                           "link": {
                             "type": "string",
@@ -7066,27 +7289,12 @@
                           },
                           "sendAt": {
                             "type": "string",
+                            "format": "date-time",
                             "description": "time of sending the notification"
-                          },
-                          "content": {
-                            "type": "string",
-                            "description": "content of the notification"
                           },
                           "isRead": {
                             "type": "boolean",
                             "description": "true if notification is read false if it's not"
-                          },
-                          "smallIcon": {
-                            "type": "string",
-                            "description": "the path of the icon of the notification"
-                          },
-                          "senderID": {
-                            "type": "string",
-                            "description": "Name of the sender of the notification"
-                          },
-                          "data": {
-                            "type": "object",
-                            "description": "the external data that you want to send with the notification"
                           }
                         }
                       }
@@ -7098,9 +7306,6 @@
           },
           "401": {
             "description": "User unauthorized to view this info"
-          },
-          "404": {
-            "description": "notifications not found"
           },
           "500": {
             "description": "Server Error"
@@ -7119,10 +7324,10 @@
         "tags": ["Notifications"],
         "responses": {
           "200": {
-            "description": "Notification is hidden successfully"
+            "description": "Notification marked as read successfully"
           },
           "401": {
-            "description": "Unauthorized to hide the notifications"
+            "description": "User unauthorized to make this action"
           },
           "500": {
             "description": "Server Error"
@@ -7135,20 +7340,70 @@
         ]
       }
     },
-    "/hide-noification": {
+    "/mark-notification-read/{notificationId}": {
+      "patch": {
+        "summary": "mark a notification as read",
+        "tags": ["Notifications"],
+        "responses": {
+          "200": {
+            "description": "Notification marked as read successfully"
+          },
+          "401": {
+            "description": "User unauthorized to mark this notification as read"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/hide-notification/{notificationId}": {
       "patch": {
         "summary": "mark a specific notification as hidden",
+        "tags": ["Notifications"],
+        "responses": {
+          "200": {
+            "description": "Notification marked as hidden successfully"
+          },
+          "401": {
+            "description": "User unauthorized to mark this notification as hidden"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/notification-subscribe": {
+      "post": {
+        "summary": "subscribe to notifications with the client token from firebase (after the login directly)",
         "tags": ["Notifications"],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
+                "required": ["type", "accessToken"],
                 "type": "object",
                 "properties": {
-                  "id": {
+                  "type": {
                     "type": "string",
-                    "description": "id of the notification you want to make hidden"
+                    "description": "web or flutter",
+                    "enum": ["web", "flutter"]
+                  },
+                  "accessToken": {
+                    "type": "string",
+                    "description": "the access token from firebase"
                   }
                 }
               }
@@ -7157,10 +7412,50 @@
         },
         "responses": {
           "200": {
-            "description": "Notifications are set to read successfully"
+            "description": "Subscribed successfully"
           },
           "401": {
-            "description": "Unauthorized to Read the notifications"
+            "description": "User unauthorized to make this action"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/notification-unsubscribe": {
+      "post": {
+        "summary": "unsubscribe from notifications (with signout)",
+        "tags": ["Notifications"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["type"],
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "web or flutter",
+                    "enum": ["web", "flutter"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Unsubscribed successfully"
+          },
+          "401": {
+            "description": "User unauthorized to make this action"
           },
           "500": {
             "description": "Server Error"
@@ -7793,6 +8088,72 @@
         ]
       }
     },
+    "/commented-users": {
+      "get": {
+        "summary": "returns the user that made a comment in a specific post",
+        "tags": ["Posts"],
+        "parameters": [
+          {
+            "in": "query",
+            "required": true,
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "description": "id of the post"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "usernames of the users that made comments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "usernames": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid. You may refer to response for details around why this happened.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to get the usernames"
+          },
+          "404": {
+            "description": "Post not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/follow-post": {
       "post": {
         "summary": "Follow or unfollow a post.",
@@ -8410,8 +8771,18 @@
     },
     "/pinned-posts": {
       "get": {
-        "summary": "Returns all posts pinned by the user",
+        "summary": "Returns all posts pinned by the user (Token is optional)",
         "tags": ["Posts"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "username",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Username of the user to get pinned posts"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Pinned posts returned successfully",
@@ -8508,6 +8879,18 @@
                           "vote": {
                             "type": "integer",
                             "description": "1 if the user upvoted this post, -1 for downvoted and 0 otherwise"
+                          },
+                          "yourPost": {
+                            "type": "boolean",
+                            "description": "True if the user owns this post"
+                          },
+                          "inYourSubreddit": {
+                            "type": "boolean",
+                            "description": "True if the user is a mod in this post's subreddit"
+                          },
+                          "locked": {
+                            "type": "boolean",
+                            "description": "True if the post is locked"
                           }
                         }
                       }
@@ -12495,6 +12878,10 @@
                       "description": "List of subreddits in which this user is moderator",
                       "items": {
                         "properties": {
+                          "subredditId": {
+                            "type": "string",
+                            "description": "Id of the subreddit"
+                          },
                           "subredditName": {
                             "type": "string",
                             "description": "Name of the subreddit"
@@ -13127,7 +13514,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserOverview"
+                  "$ref": "#/components/schemas/SavedOverview"
                 }
               }
             }
@@ -13216,6 +13603,56 @@
         ]
       }
     },
+    "/user-details/{username}": {
+      "get": {
+        "summary": "Return the details of the user",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "description": "The username of the user to get details",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "karma": {
+                      "type": "string",
+                      "description": "Karma of the user"
+                    },
+                    "joinDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Join date of the user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/account-settings": {
       "get": {
         "summary": "Return the preference settings of the logged in user",
@@ -13229,6 +13666,14 @@
                     "email": {
                       "type": "string",
                       "description": "Email of the user"
+                    },
+                    "googleEmail": {
+                      "type": "string",
+                      "description": "Google Email of the user"
+                    },
+                    "facebookEmail": {
+                      "type": "string",
+                      "description": "Facebook Email of the user"
                     },
                     "country": {
                       "type": "string",
