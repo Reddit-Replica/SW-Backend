@@ -22,7 +22,11 @@ import {
   searchForUserService,
 } from "../services/userServices.js";
 import { getSubredditService } from "../services/subredditActionsServices.js";
-import { subredditCategoryListing, twoRandomCategories } from "../services/subredditListing.js";
+import {
+  subredditCategoryListing,
+  twoRandomCategories,
+  subredditTrendingListing,
+} from "../services/subredditListing.js";
 export let MainTopics = [
   "Activism",
   "Addition Support",
@@ -417,9 +421,25 @@ const subredditLeaderboard = async (req, res) => {
 const randomCategories = async (req, res) => {
   try {
     const user = await searchForUserService(req.payload.username);
-    const result = await twoRandomCategories(
-      user,
-    );
+    const result = await twoRandomCategories(user);
+    return res.status(result.statusCode).json(result.data);
+  } catch (err) {
+    console.log(err);
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    } else {
+      return res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const trendingSubreddits = async (req, res) => {
+  try {
+    let { before, after, limit } = req.query;
+    const user = await searchForUserService(req.payload.username);
+    const result = await subredditTrendingListing(user, before, after, limit);
     return res.status(result.statusCode).json(result.data);
   } catch (err) {
     console.log(err);
@@ -451,4 +471,5 @@ export default {
   subredditNameValidator,
   leaveSubreddit,
   randomCategories,
+  trendingSubreddits,
 };

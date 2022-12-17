@@ -181,7 +181,7 @@ export async function homePostsListing(
     posts.sort(compareTrending);
     extraPosts.sort(compareTrending);
   }
-  posts=[...posts,...extraPosts];
+  posts = [...posts, ...extraPosts];
 
   const unique = new Set();
   posts = posts.filter((post) => {
@@ -196,26 +196,31 @@ export async function homePostsListing(
   if (posts.length < limit) {
     limit = posts.length;
   }
-  let start,end,secondStart;
-  if (listingParams.before){
-    end=posts.findIndex((post)=> post.id.toString()===listingParams.before.toString());
-    start=end-limit;
-  } else if (listingParams.after&&!listingParams.before){
-    start=posts.findIndex((post)=> post.id.toString()===listingParams.after.toString())+1;
-    end=start+limit;
+  let start, end, secondStart;
+  if (listingParams.before) {
+    end = posts.findIndex(
+      (post) => post.id.toString() === listingParams.before.toString()
+    );
+    start = end - limit;
+  } else if (listingParams.after && !listingParams.before) {
+    start =
+      posts.findIndex(
+        (post) => post.id.toString() === listingParams.after.toString()
+      ) + 1;
+    end = start + limit;
   } else {
-    start=0;
-    end=limit;
+    start = 0;
+    end = limit;
   }
-  if (start<0){
-    start=0;
+  if (start < 0) {
+    start = 0;
   }
-  if (end>posts.length){
-end =posts.length;
+  if (end > posts.length) {
+    end = posts.length;
   }
-  secondStart=start;
+  secondStart = start;
 
-  console.log(start,end);
+  console.log(start, end);
 
   //OUR CHILDREN ARRAY THAT WE WILL SEND AS RESPONSE
   const children = [];
@@ -285,9 +290,9 @@ end =posts.length;
   }
   let after = "",
     before = "";
-  if (posts.length && secondStart<posts.length&&end>0) {
-      after = posts[end-1].id.toString();
-      before = posts[secondStart].id.toString();
+  if (posts.length && secondStart < posts.length && end > 0) {
+    after = posts[end - 1].id.toString();
+    before = posts[secondStart].id.toString();
   }
   return {
     statusCode: 200,

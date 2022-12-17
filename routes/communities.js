@@ -309,7 +309,11 @@ communitiesRouter.get("/custom-random-category");
  *       - bearerAuth: []
  */
 
-communitiesRouter.get("/trending-communities");
+communitiesRouter.get(
+  "/trending-communities",
+  verifyAuthToken,
+  subredditController.trendingSubreddits
+);
 
 /**
  * @swagger
@@ -393,8 +397,11 @@ communitiesRouter.get("/trending-communities");
  *       - bearerAuth: []
  */
 
-communitiesRouter.get("/random-category",  verifyAuthToken,
-subredditController.randomCategories);
+communitiesRouter.get(
+  "/random-category",
+  verifyAuthToken,
+  subredditController.randomCategories
+);
 
 /**
  * @swagger

@@ -342,10 +342,10 @@ const communitySchema = mongoose.Schema({
       },
     },
   ],
-  numberOfViews:{
-    type:Number,
-    default:0,
-    required:true,
+  numberOfViews: {
+    type: Number,
+    default: 0,
+    required: true,
   },
   //NEEDS TO BE AUTO INCREMENT
   //Is used to get random subreddit from categories
