@@ -189,3 +189,37 @@ export function verifyAuthTokenModeratorManagePostsAndComments(req, res, next) {
     }
   }
 }
+
+/**
+ * A middleware used to verify that the user is a moderator in that subreddit having all permessions to manage subreddit
+ * If not it returns status code 401 Unauthorized Access
+ * Else it pass the request to the next middleware
+ *
+ * @param {Object} req Request object
+ * @param {Object} res Response object
+ * @param {function} next Next function
+ * @returns {void}
+ */
+export function verifyAuthTokenModeratorManageEverything(req, res, next) {
+  const moderators = req.subreddit.moderators;
+  const payload = req.payload;
+  const moderatorIndex = moderators.findIndex(
+    (mod) => mod.userID.toString() === payload.userId
+  );
+  if (moderatorIndex === -1) {
+    res.status(401).json({
+      error: "Unauthorized Access",
+    });
+  } else {
+    const permessionIndex = moderators[moderatorIndex].permissions.findIndex(
+      (permission) => permission === "Everything"
+    );
+    if (permessionIndex === -1) {
+      res.status(401).json({
+        error: "Unauthorized Access",
+      });
+    } else {
+      next();
+    }
+  }
+}
