@@ -3,14 +3,11 @@ import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import {
   listingSubredditPosts,
   listingSubredditComments,
-  checkSubredditFlair,
-  subredditHome,
 } from "../../services/subredditItemsListing.js";
 import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
 import Subreddit from "./../../models/Community.js";
 import Comment from "./../../models/Comment.js";
-import mongoose from "mongoose";
 
 // eslint-disable-next-line max-statements
 describe("Testing Subreddit Items Listing Service functions", () => {
