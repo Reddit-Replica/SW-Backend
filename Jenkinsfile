@@ -21,6 +21,7 @@ pipeline {
               sh "npm i "
               sh"""
               cp /Read-it/deployment/envfiles/backend_testing.env ./.env
+              cp /Read-it/Backend/private/privateKey.json ./private/
               """
               sh "npm run test"
       }

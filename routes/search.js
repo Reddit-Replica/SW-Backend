@@ -219,19 +219,19 @@ const searchRouter = express.Router();
  *                                              id:
  *                                                  type: string
  *                                                  description: Comment ID
- *                                              content:
+ *                                              commentBody:
  *                                                  type: object
  *                                                  description: Comment content
- *                                              parentId:
+ *                                              parent:
  *                                                  type: string
  *                                                  description: id of the post being replied to (parent)
  *                                              level:
  *                                                  type: number
  *                                                  description: Level of the comment (How deep is it in the comment tree)
- *                                              username:
+ *                                              commentedBy:
  *                                                  type: string
  *                                                  description: Name of the author of the comment
- *                                              createdAt:
+ *                                              publishTime:
  *                                                  type: string
  *                                                  format: time
  *                                                  description: How long ago the comment was written
@@ -750,19 +750,19 @@ searchRouter.get(
  *                                              id:
  *                                                  type: string
  *                                                  description: Comment ID
- *                                              content:
+ *                                              commentBody:
  *                                                  type: string
  *                                                  description: Comment content
- *                                              parentId:
+ *                                              parent:
  *                                                  type: string
  *                                                  description: id of the post being replied to (parent)
  *                                              level:
  *                                                  type: number
  *                                                  description: Level of the comment (How deep is it in the comment tree)
- *                                              username:
+ *                                              commentedBy:
  *                                                  type: string
  *                                                  description: Name of the author of the comment
- *                                              createdAt:
+ *                                              publishTime:
  *                                                  type: string
  *                                                  format: time
  *                                                  description: How long ago the comment was written

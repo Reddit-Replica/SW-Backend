@@ -305,69 +305,6 @@ export async function checkSubredditFlair(subreddit, flairId) {
 }
 
 /**
- * This function fixes the sort according to it's type. It means that it includes
- * the parameter which is going to be used as a condition in the find key as an
- * "or equal" behaviour
- *
- * @param {object} listingResult Listing Result to be filtered
- * @param {string} listingParams Listing Parameters (after, before, sort, time)
- * @returns {object} New listing results
- */
-// eslint-disable-next-line max-statements
-export async function fixSort(listingResult, listingParams) {
-  if (listingResult.find.hotScore) {
-    const score = listingParams.after
-      ? { $lte: listingResult.find.hotScore["$lt"] }
-      : { $gte: listingResult.find.hotScore["$gt"] };
-    listingResult.find["$or"] = [
-      {
-        hotScore: listingResult.find.hotScore,
-      },
-      {
-        hotScore: score,
-      },
-    ];
-    delete listingResult.find.hotScore;
-  } else if (listingResult.find.numberOfVotes) {
-    const score = listingParams.after
-      ? { $lte: listingResult.find.numberOfVotes["$lt"] }
-      : { $gte: listingResult.find.numberOfVotes["$gt"] };
-    listingResult.find["$or"] = [
-      {
-        numberOfVotes: listingResult.find.numberOfVotes,
-      },
-      {
-        numberOfVotes: score,
-      },
-    ];
-    delete listingResult.find.numberOfVotes;
-  } else if (listingParams.sort === "trending") {
-    listingResult.sort = { numberOfViews: -1 };
-    if (listingParams.after || listingParams.before) {
-      const id = listingParams.after ?? listingParams.before;
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        const error = new Error("Invalid ID");
-        error.statusCode = 400;
-        throw error;
-      }
-      const post = await Post.findById(id);
-      if (!post) {
-        const error = new Error("Invalid ID");
-        error.statusCode = 400;
-        throw error;
-      }
-      if (listingParams.after) {
-        listingResult.find = { $lte: post.numberOfViews };
-      } else if (listingParams.before) {
-        listingResult.find = { $gte: post.numberOfViews };
-      }
-      delete listingResult.find.createdAt;
-    }
-  }
-  return listingResult;
-}
-
-/**
  * This function returns all the subreddit's posts with a certain limit
  * and either after or before to cut form. It can also filter according to
  * a given flair.
@@ -382,7 +319,6 @@ export async function fixSort(listingResult, listingParams) {
 export async function subredditHome(user, subredditName, flair, listingParams) {
   // Prepare Listing Parameters
   let listingResult = await postListing(listingParams);
-  listingResult = await fixSort(listingResult, listingParams);
 
   const subreddit = await Subreddit.findOne({ title: subredditName });
   if (!subreddit || subreddit.deletedAt) {

@@ -13,9 +13,6 @@
     "lint": "eslint ./**/*.js",
     "prettier": "prettier ./**/*.js --write",
     "jsdoc": "jsdoc -c jsdoc.json",
-    "coverage": "nyc npm run test",
-    "test-cover": "istanbul cover --include-all-sources tests/utils/subredditRulesUtilSpec.js && istanbul check-coverage",
-    "coverage-report": "npx nyc report --reporter html --reporter text -t .nyc_output  --report-dir coverage/summary",
     "test-jasmine": "set NODE_ENV=testing && jasmine",
     "coverage-jest": "npm run test -- --coverage"
   },

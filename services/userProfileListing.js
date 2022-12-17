@@ -24,19 +24,57 @@ export async function listingUserProfileService(
   // prepare the listing parameters
   const listingResult = await postListing(listingParams);
 
-  const result = await User.findOne({ username: user.username })
+  let result = await User.findOne({ username: user.username })
     .select(typeOfListing)
     .populate({
       path: typeOfListing,
       match: listingResult.find,
-      limit: listingResult.limit,
       options: {
         sort: listingResult.sort,
       },
     });
 
+  let limit = listingResult.limit;
+
+  if (
+    (!listingParams.after && listingParams.before) ||
+    (!listingParams.before && listingParams.after)
+  ) {
+    const id = listingParams.after ?? listingParams.before;
+    const neededIndex = result[typeOfListing].findIndex(
+      (post) => post._id.toString() === id.toString()
+    );
+    console.log(neededIndex);
+    if (neededIndex !== -1) {
+      if (listingParams.after) {
+        result[typeOfListing] = result[typeOfListing].slice(
+          neededIndex + 1,
+          result[typeOfListing].length
+        );
+      } else {
+        result[typeOfListing] = result[typeOfListing].slice(0, neededIndex);
+      }
+    }
+  }
+
+  if (limit > result[typeOfListing].length) {
+    limit = result[typeOfListing].length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result[typeOfListing].length - limit;
+    finish = result[typeOfListing].length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
+
   let children = [];
-  for (const i in result[typeOfListing]) {
+  for (i; i < finish; i++) {
     const post = result[typeOfListing][i];
     if (
       loggedInUser &&
@@ -134,9 +172,8 @@ export async function listingUserProfileService(
   let after = "",
     before = "";
   if (result[typeOfListing].length) {
-    after =
-      result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
-    before = result[typeOfListing][0]._id.toString();
+    after = result[typeOfListing][finish - 1]._id.toString();
+    before = result[typeOfListing][start]._id.toString();
   }
   return {
     statusCode: 200,
@@ -288,14 +325,51 @@ export async function listingUserOverview(
     .populate({
       path: typeOfListing,
       match: listingResult.find,
-      limit: listingResult.limit,
       options: {
         sort: listingResult.sort,
       },
     });
 
+  let limit = listingResult.limit;
+
+  if (
+    (!listingParams.after && listingParams.before) ||
+    (!listingParams.before && listingParams.after)
+  ) {
+    const id = listingParams.after ?? listingParams.before;
+    const neededIndex = result[typeOfListing].findIndex(
+      (post) => post._id.toString() === id.toString()
+    );
+    if (neededIndex !== -1) {
+      if (listingParams.after) {
+        result[typeOfListing] = result[typeOfListing].slice(
+          neededIndex + 1,
+          result[typeOfListing].length
+        );
+      } else {
+        result[typeOfListing] = result[typeOfListing].slice(0, neededIndex);
+      }
+    }
+  }
+
+  if (limit > result[typeOfListing].length) {
+    limit = result[typeOfListing].length;
+  }
+
+  let start = 0,
+    finish = limit;
+
+  if (listingParams.before && !listingParams.after) {
+    start = result[typeOfListing].length - limit;
+    finish = result[typeOfListing].length;
+    if (start < 0) {
+      start = 0;
+    }
+  }
+  let i = start;
+
   let children = [];
-  for (const i in result[typeOfListing]) {
+  for (i; i < finish; i++) {
     const post = result[typeOfListing][i];
     if (typeOfListing !== "savedPosts") {
       // hidden posts can be displayed in saved posts and comments page
@@ -429,9 +503,8 @@ export async function listingUserOverview(
   let after = "",
     before = "";
   if (result[typeOfListing].length) {
-    after =
-      result[typeOfListing][result[typeOfListing].length - 1]._id.toString();
-    before = result[typeOfListing][0]._id.toString();
+    after = result[typeOfListing][finish - 1]._id.toString();
+    before = result[typeOfListing][start]._id.toString();
   }
   return {
     statusCode: 200,
