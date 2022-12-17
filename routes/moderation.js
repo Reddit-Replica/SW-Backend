@@ -11,8 +11,10 @@ import { checkId } from "../middleware/checkId.js";
 import {
   verifyAuthToken,
   verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageUsers,
 } from "../middleware/verifyToken.js";
 import subredditDetails from "../middleware/subredditDetails.js";
+import { getBodySubreddit } from "../middleware/getSubredditMiddleware.js";
 
 // eslint-disable-next-line new-cap
 const moderationRouter = express.Router();
@@ -678,6 +680,8 @@ moderationRouter.post(
   verifyAuthToken,
   subredditActionsController.inviteModeratorValidator,
   validateRequestSchema,
+  getBodySubreddit,
+  verifyAuthTokenModeratorManageUsers,
   subredditActionsController.inviteModerators
 );
 
@@ -728,6 +732,8 @@ moderationRouter.post(
   verifyAuthToken,
   subredditActionsController.unbanUserValidator,
   validateRequestSchema,
+  getBodySubreddit,
+  verifyAuthTokenModeratorManageUsers,
   subredditActionsController.cancelInvitation
 );
 
@@ -1111,6 +1117,8 @@ moderationRouter.post(
   verifyAuthToken,
   subredditActionsController.banUserValidator,
   validateRequestSchema,
+  getBodySubreddit,
+  verifyAuthTokenModeratorManageUsers,
   subredditActionsController.banUser
 );
 
@@ -1163,6 +1171,8 @@ moderationRouter.post(
   verifyAuthToken,
   subredditActionsController.unbanUserValidator,
   validateRequestSchema,
+  getBodySubreddit,
+  verifyAuthTokenModeratorManageUsers,
   subredditActionsController.unbanUser
 );
 
