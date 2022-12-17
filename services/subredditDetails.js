@@ -68,6 +68,8 @@ export async function getSubredditDetails(
     details.isMember = isMember;
     details.isFavorite = isFavorite;
   }
+  subreddit.numberOfViews++;
+  await subreddit.save();
 
   return details;
 }
