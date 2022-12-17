@@ -2,7 +2,6 @@ import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
 import { postListing } from "../utils/preparePostListing.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
-import { fixSort } from "./subredditItemsListing.js";
 
 /**
  * Search for a post given a query in a subreddit
@@ -16,7 +15,6 @@ import { fixSort } from "./subredditItemsListing.js";
 export async function searchForPosts(subreddit, query, listingParams) {
   // Prepare Listing Parameters
   let listingResult = await postListing(listingParams);
-  listingResult = await fixSort(listingResult, listingParams);
 
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
