@@ -23,7 +23,7 @@ pipeline {
               cp /Read-it/deployment/envfiles/backend_testing.env ./.env
               cp /Read-it/Backend/private/privateKey.json ./private/
               """
-              sh "sudo npm run test"
+              sh "npm run test"
       }
   }
 
