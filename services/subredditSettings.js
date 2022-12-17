@@ -35,7 +35,7 @@ export function prepareSubredditSettings(subreddit) {
  * @param {Object} settings the subreddit settings object
  * @returns {void}
  */
-function validateSubredditSettings(settings) {
+export function validateSubredditSettings(settings) {
   if (
     settings.Type === "Private" &&
     !settings.hasOwnProperty("acceptingRequestsToJoin")
@@ -46,8 +46,8 @@ function validateSubredditSettings(settings) {
   }
   if (
     settings.Type === "Restricted" &&
-    !settings.hasOwnProperty("acceptingRequestsToPost") &&
-    !settings.hasOwnProperty("approvedUsersHaveTheAbilityTo")
+    (!settings.hasOwnProperty("acceptingRequestsToPost") ||
+      !settings.hasOwnProperty("approvedUsersHaveTheAbilityTo"))
   ) {
     const error = new Error(
       "acceptingRequestsToPost and approvedUsersHaveTheAbilityTo is required"
