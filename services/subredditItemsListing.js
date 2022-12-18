@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import Flair from "../models/Flair.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
 import { postListing } from "../utils/preparePostListing.js";
+import { hpostListing } from "../utils/HpreparePostsListing.js";
 import mongoose from "mongoose";
 import { filterHiddenPosts } from "./search.js";
 
@@ -320,8 +321,9 @@ export async function checkSubredditFlair(subreddit, flairId) {
 // eslint-disable-next-line max-statements
 export async function subredditHome(user, subredditName, flair, listingParams) {
   // Prepare Listing Parameters
-  let listingResult = await postListing(listingParams);
+  let listingResult = hpostListing(listingParams);
 
+  // Check whether the subreddit exists & not deleted or not
   const subreddit = await Subreddit.findOne({ title: subredditName });
   if (!subreddit || subreddit.deletedAt) {
     return {
@@ -329,77 +331,49 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
       data: "Subreddit not found or deleted",
     };
   }
+
+  // Set subreddit name filter
   listingResult.find["subredditName"] = subredditName;
 
+  // Check for flair and set it if given
   if (flair) {
     listingResult.find["flair"] = flair.id;
   }
-  let result = await Subreddit.findOne({ title: subredditName })
-    .select("subredditPosts")
-    .populate({
-      path: "subredditPosts",
-      match: listingResult.find,
-      populate: {
-        path: "flair",
-        model: "Flair",
-      },
-      options: {
-        sort: listingResult.sort,
-      },
-    });
 
-  let limit = listingResult.limit;
-
+  // Filter Hidden Posts
   if (user) {
-    result["subredditPosts"] = filterHiddenPosts(
-      result["subredditPosts"],
-      user
-    );
+    listingResult.find["_id"] = { $nin: user.hiddenPosts };
   }
 
-  if (
-    (!listingParams.after && listingParams.before) ||
-    (!listingParams.before && listingParams.after)
-  ) {
-    const id = listingParams.after ?? listingParams.before;
-    const neededIndex = result["subredditPosts"].findIndex(
-      (post) => post._id.toString() === id
-    );
-    if (neededIndex !== -1) {
-      if (listingParams.after) {
-        result["subredditPosts"] = result["subredditPosts"].slice(
-          neededIndex + 1,
-          result["subredditPosts"].length
-        );
-      } else {
-        result["subredditPosts"] = result["subredditPosts"].slice(
-          0,
-          neededIndex
-        );
-      }
+  // Get results
+  let result;
+  if (listingParams.after !== undefined) {
+    let after = listingParams.after;
+    result = await Post.find(listingResult.find)
+      .sort(listingResult.sort)
+      .skip(after)
+      .limit(listingResult.limit);
+  } else if (listingParams.before !== undefined) {
+    let before = listingParams.before;
+    let limit = listingParams.limit;
+    if (before < 0) {
+      before = 0;
     }
-  }
-
-  if (limit > result["subredditPosts"].length) {
-    limit = result["subredditPosts"].length;
-  }
-
-  let start = 0,
-    finish = limit;
-
-  if (listingParams.before && !listingParams.after) {
-    start = result["subredditPosts"].length - limit;
-    finish = result["subredditPosts"].length;
-    if (start < 0) {
-      start = 0;
+    let skip = before - limit;
+    if (before - limit < 0) {
+      skip = 0;
+      limit = before;
     }
+    result = await Post.find(listingResult.find)
+      .sort(listingResult.sort)
+      .skip(skip)
+      .limit(limit);
   }
-  let i = start;
 
   let children = [];
 
-  for (i; i < finish; i++) {
-    const post = result["subredditPosts"][i];
+  for (let i = 0; i < result.length; i++) {
+    const post = result[i];
     post.numberOfViews += 1;
     await post.save();
     const postId = post.id.toString();
@@ -428,7 +402,7 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
         spammed = true;
       }
     }
-    let postData = { id: result["subredditPosts"][i]._id.toString() };
+    let postData = { id: result[i]._id.toString() };
     postData.data = {
       id: post.id.toString(),
       kind: post.kind,
@@ -460,17 +434,25 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     children.push(postData);
   }
 
-  let after = "",
-    before = "";
-  if (result["subredditPosts"].length) {
-    after = result["subredditPosts"][finish - 1]._id.toString();
-    before = result["subredditPosts"][start]._id.toString();
+  let newAfter = 0,
+    newBefore = 0;
+  if (children.length > 0) {
+    if (listingParams.after !== undefined) {
+      newAfter = parseInt(listingParams.after) + result.length;
+      newBefore = parseInt(listingParams.after);
+    } else if (listingParams.before !== undefined) {
+      newAfter = parseInt(listingParams.before);
+      newBefore = parseInt(listingParams.before) - listingParams.limit;
+      if (newBefore < 0) {
+        newBefore = 0;
+      }
+    }
   }
   return {
     statusCode: 200,
     data: {
-      after: after,
-      before: before,
+      after: newAfter,
+      before: newBefore,
       children: children,
     },
   };

@@ -55,7 +55,7 @@ function preparePostSort(listingSort) {
  * @param {String} sort Sorting type
  * @returns {Object} Object that will be used by mongoose to match the results
  */
-function preparePostTime(listingTime, sort) {
+export function preparePostTime(listingTime, sort) {
   let result = null;
   if (!listingTime) {
     return null;

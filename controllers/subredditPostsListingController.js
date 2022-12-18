@@ -9,13 +9,16 @@ const getHotSubredditPosts = async (req, res) => {
   try {
     const userId = req.payload?.userId;
     const subredditName = req.params.subreddit;
-    const { flairId, before, after, limit } = req.query;
+    let { flairId, before, after, limit } = req.query;
     let user = undefined;
     if (userId) {
       user = await getUser(userId);
     }
     const flair = await checkSubredditFlair(subredditName, flairId);
     const sort = "hot";
+    if (!before & !after) {
+      after = 0;
+    }
     const result = await subredditHome(user, subredditName, flair, {
       sort,
       before,
@@ -43,13 +46,16 @@ const getTrendingSubredditPosts = async (req, res) => {
   try {
     const userId = req.payload?.userId;
     const subredditName = req.params.subreddit;
-    const { flairId, before, after, limit } = req.query;
+    let { flairId, before, after, limit } = req.query;
     let user = undefined;
     if (userId) {
       user = await getUser(userId);
     }
     const flair = await checkSubredditFlair(subredditName, flairId);
     const sort = "trending";
+    if (!before & !after) {
+      after = 0;
+    }
     const result = await subredditHome(user, subredditName, flair, {
       sort,
       before,
@@ -77,13 +83,16 @@ const getNewSubredditPosts = async (req, res) => {
   try {
     const userId = req.payload?.userId;
     const subredditName = req.params.subreddit;
-    const { flairId, before, after, limit } = req.query;
+    let { flairId, before, after, limit } = req.query;
     let user = undefined;
     if (userId) {
       user = await getUser(userId);
     }
     const flair = await checkSubredditFlair(subredditName, flairId);
     const sort = "new";
+    if (!before & !after) {
+      after = 0;
+    }
     const result = await subredditHome(user, subredditName, flair, {
       sort,
       before,
@@ -111,13 +120,16 @@ const getTopSubredditPosts = async (req, res) => {
   try {
     const userId = req.payload?.userId;
     const subredditName = req.params.subreddit;
-    const { flairId, before, after, limit, time } = req.query;
+    let { flairId, before, after, limit, time } = req.query;
     let user = undefined;
     if (userId) {
       user = await getUser(userId);
     }
     const flair = await checkSubredditFlair(subredditName, flairId);
     const sort = "top";
+    if (!before & !after) {
+      after = 0;
+    }
     const result = await subredditHome(user, subredditName, flair, {
       sort,
       before,
