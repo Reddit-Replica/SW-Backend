@@ -785,6 +785,7 @@ searchRouter.get(
  */
 searchRouter.get(
   "/r/:subreddit/search",
+  optionalToken,
   searchController.searchSubredditValidator,
   validateRequestSchema,
   searchController.searchSubreddit

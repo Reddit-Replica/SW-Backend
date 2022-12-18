@@ -2,6 +2,7 @@ import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
 import { postListing } from "../utils/preparePostListing.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
+import { filterHiddenPosts } from "./search.js";
 
 /**
  * Search for a post given a query in a subreddit
@@ -9,10 +10,11 @@ import { commentTreeListing } from "../utils/prepareCommentListing.js";
  * @param {string} subreddit Subreddit name
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
+ * @param {object} user User object in case there's a logged in user
  * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
-export async function searchForPosts(subreddit, query, listingParams) {
+export async function searchForPosts(subreddit, query, listingParams, user) {
   // Prepare Listing Parameters
   let listingResult = await postListing(listingParams);
 
@@ -36,6 +38,13 @@ export async function searchForPosts(subreddit, query, listingParams) {
         sort: listingResult.sort,
       },
     });
+
+  if (user) {
+    result["subredditPosts"] = filterHiddenPosts(
+      result["subredditPosts"],
+      user
+    );
+  }
 
   let limit = listingResult.limit;
 

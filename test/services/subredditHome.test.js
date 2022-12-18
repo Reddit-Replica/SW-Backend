@@ -198,6 +198,11 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
     }
   });
 
+  it("Test checkSubredditFlair with no flair ID", async () => {
+    const result = await checkSubredditFlair(subreddit.title);
+    expect(result).toBeUndefined();
+  });
+
   it("Should have subredditHome defined", () => {
     expect(subredditHome).toBeDefined();
   });
@@ -399,5 +404,24 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
     expect(result.data.children.length).toEqual(4);
     expect(result.data.before.toString()).toEqual(post6.id.toString());
     expect(result.data.after.toString()).toEqual(post1.id.toString());
+  });
+
+  it("Test subredditHome with flags set", async () => {
+    user.savedPosts.push(post1.id);
+    user.upvotedPosts.push(post1.id);
+    user.downvotedPosts.push(post1.id);
+    user.spammedPosts.push(post1.id);
+    user.hiddenPosts.push(post4.id, post5.id, post6.id);
+    user.moderatedSubreddits.push({
+      subredditId: subreddit.id,
+      name: subreddit.title,
+    });
+    await user.save();
+    const result = await subredditHome(user, subreddit.title, undefined, {});
+    expect(result.data.children.length).toEqual(3);
+    expect(result.data.children[2].data.inYourSubreddit).toBeTruthy();
+    expect(result.data.children[2].data.votingType).toEqual(-1);
+    expect(result.data.children[2].data.saved).toBeTruthy();
+    expect(result.data.children[2].data.spammed).toBeTruthy();
   });
 });
