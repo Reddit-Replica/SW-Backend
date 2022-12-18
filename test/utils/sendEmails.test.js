@@ -44,7 +44,7 @@ describe("Testing send emails functions", () => {
 
   //   it("try to send reset password email", async () => {
   //     expect(
-  //       sendResetPasswordEmail(user.email, user.username, user._id, token.token)
+  //       sendResetPasswordEmail(user, token.token)
   //     ).toBeTruthy();
   //   });
 
@@ -53,7 +53,7 @@ describe("Testing send emails functions", () => {
   //   });
 
   //   it("try to send verify email", () => {
-  //     expect(sendVerifyEmail(user.email, user._id, token.token)).toBeTruthy();
+  //     expect(sendVerifyEmail(user, token.token)).toBeTruthy();
   //   });
 
   //   it("should have sendUsernameEmail method", () => {
@@ -61,6 +61,6 @@ describe("Testing send emails functions", () => {
   //   });
 
   //   it("try to send forget username email", () => {
-  //     expect(sendUsernameEmail(user.email, user.username)).toBeTruthy();
+  //     expect(sendUsernameEmail(user)).toBeTruthy();
   //   });
 });
