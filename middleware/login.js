@@ -114,12 +114,7 @@ export async function verifyUsernameAndEmail(req, res, next) {
 export async function ResetPasswordEmail(req, res, next) {
   try {
     const token = await generateVerifyToken(req.user.id, "forgetPassword");
-    const emailSent = sendResetPasswordEmail(
-      req.user.email,
-      req.user.username,
-      req.user.id,
-      token
-    );
+    const emailSent = sendResetPasswordEmail(req.user, token);
     req.emailSent = emailSent;
     next();
   } catch (err) {

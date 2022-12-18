@@ -11,7 +11,7 @@ import { sendVerifyEmail } from "./sendEmails.js";
 export async function finalizeCreateUser(user) {
   // Create the verify token and send an email to the user
   const verifyToken = await generateVerifyToken(user._id, "verifyEmail");
-  const sentEmail = sendVerifyEmail(user.email, user._id, verifyToken);
+  const sentEmail = sendVerifyEmail(user, verifyToken);
 
   if (!sentEmail) {
     return {
