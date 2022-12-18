@@ -247,7 +247,7 @@ export async function searchUsers(query, listingParams, loggedInUser) {
   ];
   if (loggedInUser) {
     listingResult.find["username"] = {
-      $not: { $regex: loggedInUser.username },
+      $ne: loggedInUser.username,
     };
   }
 
