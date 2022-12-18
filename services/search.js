@@ -247,15 +247,15 @@ export async function searchUsers(query, listingParams, loggedInUser) {
   ];
   if (loggedInUser) {
     listingResult.find["username"] = {
-      $not: { $regex: loggedInUser.username },
+      $ne: loggedInUser.username,
     };
   }
 
-  const result = await User.find(listingResult.find).sort(listingResult.sort);
+  let result = await User.find(listingResult.find).sort(listingResult.sort);
   if (loggedInUser) {
     result = result.filter(
       (user) =>
-        !loggedInUser.blocedUsers.find(
+        !loggedInUser.blockedUsers.find(
           (blockedUser) =>
             blockedUser.blockedUserId.toString() === user.id.toString()
         )
