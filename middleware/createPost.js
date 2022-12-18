@@ -99,6 +99,7 @@ export async function checkPostSubreddit(req, res, next) {
         });
       }
       req.subreddit = subreddit;
+      req.subredditId = postSubreddit.id;
     }
     req.user = user;
     next();
@@ -306,6 +307,7 @@ export async function postSubmission(req, res, next) {
       ownerUsername: username,
       ownerId: userId,
       subredditName: req.subreddit,
+      subredditId: req.subredditId,
       title: title,
       sharePostId: sharePostId,
       link: link,
