@@ -64,6 +64,7 @@ describe("Testing Read Messages Service functions", () => {
       createdAt: Date.now(),
       senderUsername: "hamdy",
       receiverUsername: "ahmed",
+      subject: "Subject",
       isSenderUser: true,
       isReceiverUser: true,
     }).save();

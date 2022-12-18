@@ -2,7 +2,7 @@ import express from "express";
 
 import {
   verifyAuthToken,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
 } from "../middleware/verifyToken.js";
 import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
 import subredditRulesMiddleware from "../middleware/subredditRules.js";
@@ -83,9 +83,8 @@ const subredditRulesRouter = express.Router();
 subredditRulesRouter.post(
   "/r/:subreddit/about/rules",
   verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   subredditRulesController.addSubredditRule
 );
 
@@ -155,10 +154,7 @@ subredditRulesRouter.post(
 
 subredditRulesRouter.get(
   "/r/:subreddit/about/rules",
-  // verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  // verifyAuthTokenModerator,
   subredditRulesController.getSubredditRules
 );
 
@@ -236,9 +232,8 @@ subredditRulesRouter.get(
 subredditRulesRouter.put(
   "/r/:subreddit/about/rules/:ruleId",
   verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   subredditRulesMiddleware.validateRuleId,
   subredditRulesMiddleware.checkRule,
   subredditRulesController.editSubredditRule
@@ -289,9 +284,8 @@ subredditRulesRouter.put(
 subredditRulesRouter.delete(
   "/r/:subreddit/about/rules/:ruleId",
   verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   subredditRulesMiddleware.validateRuleId,
   subredditRulesMiddleware.checkRule,
   subredditRulesController.deleteSubredditRule
@@ -356,9 +350,8 @@ subredditRulesRouter.delete(
 subredditRulesRouter.post(
   "/r/:subreddit/about/rules-order",
   verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   subredditRulesController.editRulesOrder
 );
 

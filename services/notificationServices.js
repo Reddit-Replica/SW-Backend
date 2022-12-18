@@ -204,8 +204,6 @@ export async function createCommentNotification(comment) {
           link: notification.link,
           createdAt: notification.date,
         };
-        console.log("Entered 2");
-        console.log("Data1");
         // send the notification to the owner of the parent
         await sendNotification(user, title1, JSON.stringify(data1));
       }
@@ -224,7 +222,6 @@ export async function createCommentNotification(comment) {
         link: notification.link,
         createdAt: notification.date,
       };
-      console.log("Data1");
       // send the notification to the owner of the parent
       await sendNotification(user, title1, JSON.stringify(data1));
     }
@@ -246,7 +243,6 @@ export async function createCommentNotification(comment) {
       link: notification2.link,
       createdAt: notification2.date,
     };
-    console.log("Data2");
     await sendNotification(
       parent.followingUsers[i].userId,
       title2,
@@ -272,7 +268,6 @@ export async function createCommentNotification(comment) {
         };
 
         const postOwnerUser = await User.findById(comment.postId.ownerId);
-        console.log("Data3");
         await sendNotification(postOwnerUser, title3, JSON.stringify(data3));
       }
     }
@@ -292,7 +287,6 @@ export async function createCommentNotification(comment) {
         link: notification4.link,
         createdAt: notification4.date,
       };
-      console.log("Data4");
       await sendNotification(
         comment.postId.followingUsers[i].userId,
         title4,
@@ -385,7 +379,7 @@ export async function getUserNotifications(
   const notifcations = await Notification.find({
     ownerId: userId,
     hidden: false,
-  }).sort({ date: 1 });
+  }).sort({ date: -1 });
 
   if (!beforeReq && !afterReq) {
     preparedResponse = getUserNotificationsFirstTime(notifcations, limit);

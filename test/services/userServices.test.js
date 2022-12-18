@@ -129,7 +129,7 @@ describe("Testing user services functions", () => {
 
   it("try to let the user block himself", async () => {
     try {
-      await blockUserService(mainUser, userToAction, true);
+      await blockUserService(mainUser, mainUser, true);
     } catch (error) {
       expect(error.statusCode).toEqual(400);
       expect(error.message).toEqual("User can not block himself");
@@ -144,8 +144,7 @@ describe("Testing user services functions", () => {
 
   it("try to block the same user again", async () => {
     const result = await blockUserService(mainUser, userToAction, true);
-    expect(result.statusCode).toEqual(200);
-    expect(result.message).toEqual("User blocked successfully");
+    expect(result.statusCode).toEqual(400);
   });
 
   it("try to unblock user", async () => {
@@ -156,8 +155,7 @@ describe("Testing user services functions", () => {
 
   it("try to unblock the same user again", async () => {
     const result = await blockUserService(mainUser, userToAction, false);
-    expect(result.statusCode).toEqual(200);
-    expect(result.message).toEqual("User unblocked successfully");
+    expect(result.statusCode).toEqual(400);
   });
 
   it("should have followUserService function", () => {

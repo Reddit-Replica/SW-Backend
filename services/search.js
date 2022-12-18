@@ -6,7 +6,6 @@ import { postListing } from "../utils/preparePostListing.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
 import { userListing } from "../utils/prepareUserListing.js";
 import { subredditListing } from "../utils/prepareSubredditListing.js";
-import { fixSort } from "./subredditItemsListing.js";
 
 /**
  * Search for a post given a query in the whole of read-it
@@ -19,7 +18,6 @@ import { fixSort } from "./subredditItemsListing.js";
 export async function searchPosts(query, listingParams) {
   // Prepare Listing Parameters
   let listingResult = await postListing(listingParams);
-  listingResult = await fixSort(listingResult, listingParams);
 
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
@@ -177,11 +175,11 @@ export async function searchComments(query, listingParams) {
       },
       comment: {
         id: comment.id.toString(),
-        content: comment.content,
-        parentId: comment.parentId.toString(),
+        commentBody: comment.content,
+        parent: comment.parentId.toString(),
         level: comment.level,
-        username: comment.ownerUsername,
-        createdAt: comment.createdAt,
+        commentedBy: comment.ownerUsername,
+        publishTime: comment.createdAt,
         votes: comment.numberOfVotes,
       },
     };
@@ -229,6 +227,14 @@ export async function searchUsers(query, listingParams, loggedInUser) {
   }
 
   const result = await User.find(listingResult.find).sort(listingResult.sort);
+  if (loggedInUser) {
+    result = result.filter((user) =>
+      loggedInUser.blocedUsers.find(
+        (blockedUser) =>
+          blockedUser.blockedUserId.toString() === user.id.toString()
+      )
+    );
+  }
 
   let limit = listingResult.limit;
 
