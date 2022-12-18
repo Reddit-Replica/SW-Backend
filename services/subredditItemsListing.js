@@ -345,6 +345,9 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     listingResult.find["_id"] = { $nin: user.hiddenPosts };
   }
 
+  listingResult.find["moderation.remove.removedBy"] = undefined;
+  listingResult.find["moderation.spam.spammedBy"] = undefined;
+
   // Get results
   let result;
   if (listingParams.after !== undefined) {
