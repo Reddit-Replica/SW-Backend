@@ -11,6 +11,7 @@ import { checkId } from "../middleware/checkId.js";
 import {
   verifyAuthToken,
   verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   verifyAuthTokenModeratorManageUsers,
 } from "../middleware/verifyToken.js";
 import subredditDetails from "../middleware/subredditDetails.js";
@@ -1354,7 +1355,7 @@ moderationRouter.post(
   "/r/:subreddit/profile-picture",
   verifyAuthToken,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   postModController.addProfilePicture
 );
 
@@ -1385,7 +1386,7 @@ moderationRouter.delete(
   "/r/:subreddit/profile-picture",
   verifyAuthToken,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   postModController.deleteProfilePicture
 );
 
@@ -1443,7 +1444,7 @@ moderationRouter.post(
   "/r/:subreddit/banner-image",
   verifyAuthToken,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   postModController.addBanner
 );
 
@@ -1474,7 +1475,7 @@ moderationRouter.delete(
   "/r/:subreddit/banner-image",
   verifyAuthToken,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   postModController.deleteBanner
 );
 
@@ -1531,7 +1532,7 @@ moderationRouter.post(
   postModController.usernameValidator,
   validateRequestSchema,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageUsers,
   postModController.approveUser
 );
 
@@ -1591,7 +1592,7 @@ moderationRouter.post(
   postModController.usernameValidator,
   validateRequestSchema,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageUsers,
   postModController.muteUser
 );
 
@@ -1648,7 +1649,7 @@ moderationRouter.post(
   postModController.usernameValidator,
   validateRequestSchema,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageUsers,
   postModController.removeUser
 );
 
@@ -1705,7 +1706,7 @@ moderationRouter.post(
   postModController.usernameValidator,
   validateRequestSchema,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageUsers,
   postModController.unmuteUser
 );
 

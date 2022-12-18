@@ -5,6 +5,7 @@ import {
   searchUsers,
   searchSubreddits,
   getLoggedInUser,
+  filterHiddenPosts,
 } from "../../services/search.js";
 import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
@@ -438,5 +439,13 @@ describe("Testing Search Service functions", () => {
     const userId = mongoose.Types.ObjectId("569ed8269353e9f4c51617aa");
     const result = await getLoggedInUser(userId);
     expect(result).toBeFalsy();
+  });
+
+  it("Test filterHiddenPosts", async () => {
+    user1.hiddenPosts.push(post1.id);
+    await user1.save();
+    let result = [post1, post2, post3];
+    result = filterHiddenPosts(result, user1);
+    expect(result.length).toEqual(2);
   });
 });
