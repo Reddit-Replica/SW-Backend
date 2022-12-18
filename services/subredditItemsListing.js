@@ -323,7 +323,7 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
   // Prepare Listing Parameters
   let listingResult = hpostListing(listingParams);
 
-  // Check whether the subreddit exists & not deleted or not
+  // Check whether the subreddit exists & deleted or not
   const subreddit = await Subreddit.findOne({ title: subredditName });
   if (!subreddit || subreddit.deletedAt) {
     return {
@@ -345,33 +345,32 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     listingResult.find["_id"] = { $nin: user.hiddenPosts };
   }
 
+  // Filter removed and spammed posts
   listingResult.find["moderation.remove.removedBy"] = undefined;
   listingResult.find["moderation.spam.spammedBy"] = undefined;
 
-  // Get results
-  let result;
+  // Prepare skip & limit
+  let skip, limit;
   if (listingParams.after !== undefined) {
-    let after = listingParams.after;
-    result = await Post.find(listingResult.find)
-      .sort(listingResult.sort)
-      .skip(after)
-      .limit(listingResult.limit);
+    skip = listingParams.after;
+    limit = listingResult.limit;
   } else if (listingParams.before !== undefined) {
-    let before = listingParams.before;
-    let limit = listingParams.limit;
-    if (before < 0) {
-      before = 0;
+    if (listingParams.before < 0) {
+      listingParams.before = 0;
     }
-    let skip = before - limit;
-    if (before - limit < 0) {
+    limit = listingResult.limit;
+    skip = listingParams.before - limit;
+    if (listingParams.before - limit < 0) {
       skip = 0;
-      limit = before;
+      limit = listingParams.before;
     }
-    result = await Post.find(listingResult.find)
-      .sort(listingResult.sort)
-      .skip(skip)
-      .limit(limit);
   }
+
+  // Get result
+  let result = await Post.find(listingResult.find)
+    .sort(listingResult.sort)
+    .skip(skip)
+    .limit(limit);
 
   let children = [];
 
@@ -445,7 +444,7 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
       newBefore = parseInt(listingParams.after);
     } else if (listingParams.before !== undefined) {
       newAfter = parseInt(listingParams.before);
-      newBefore = parseInt(listingParams.before) - listingParams.limit;
+      newBefore = parseInt(listingParams.before) - limit;
       if (newBefore < 0) {
         newBefore = 0;
       }
