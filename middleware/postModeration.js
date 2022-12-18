@@ -37,12 +37,26 @@ export async function checkThingMod(req, res, next) {
           return res.status(404).json("Subreddit not found");
         }
 
-        if (
-          !subreddit.moderators.find(
-            (mod) => mod.userID.toString() === userId.toString()
-          )
-        ) {
-          return res.status(401).json("User is not a mod in this subreddit");
+        const moderatorIndex = subreddit.moderators.findIndex(
+          (mod) => mod.userID.toString() === userId.toString()
+        );
+        if (moderatorIndex === -1) {
+          return res.status(401).json({
+            error: "Unauthorized Access",
+          });
+        } else {
+          const permessionIndex = subreddit.moderators[
+            moderatorIndex
+          ].permissions.findIndex(
+            (permission) =>
+              permission === "Everything" ||
+              permission === "Manage Posts & Comments"
+          );
+          if (permessionIndex === -1) {
+            return res.status(401).json({
+              error: "No permission",
+            });
+          }
         }
       } else {
         if (post.ownerUsername !== username) {
@@ -70,12 +84,26 @@ export async function checkThingMod(req, res, next) {
         if (!subreddit || subreddit.deletedAt) {
           return res.status(404).json("Subreddit not found");
         }
-        if (
-          !subreddit.moderators.find(
-            (mod) => mod.userID.toString() === userId.toString()
-          )
-        ) {
-          return res.status(401).json("User is not a mod in this subreddit");
+        const moderatorIndex = subreddit.moderators.findIndex(
+          (mod) => mod.userID.toString() === userId.toString()
+        );
+        if (moderatorIndex === -1) {
+          return res.status(401).json({
+            error: "Unauthorized Access",
+          });
+        } else {
+          const permessionIndex = subreddit.moderators[
+            moderatorIndex
+          ].permissions.findIndex(
+            (permission) =>
+              permission === "Everything" ||
+              permission === "Manage Posts & Comments"
+          );
+          if (permessionIndex === -1) {
+            return res.status(401).json({
+              error: "No permission",
+            });
+          }
         }
       } else {
         if (comment.ownerUsername !== username) {

@@ -8,6 +8,7 @@ import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
 import Subreddit from "./../../models/Community.js";
 import Comment from "./../../models/Comment.js";
+import mongoose from "mongoose";
 
 // eslint-disable-next-line max-statements
 describe("Testing Subreddit Items Listing Service functions", () => {
@@ -461,6 +462,84 @@ describe("Testing Subreddit Items Listing Service functions", () => {
     expect(result.data.after.toString()).toEqual(post1.id.toString());
   });
 
+  it("(UNMODERATED POSTS) Test new listingSubredditPosts with negative limit", async () => {
+    const result = await listingSubredditPosts(
+      user.id,
+      subreddit.title,
+      "unmoderatedPosts",
+      { sort: "new", limit: -5 }
+    );
+    expect(result.data.children.length).toEqual(1);
+    expect(result.data.before.toString()).toEqual(post3.id.toString());
+    expect(result.data.after.toString()).toEqual(post3.id.toString());
+  });
+
+  it("(UNMODERATED POSTS) Test new listingSubredditPosts with flags set", async () => {
+    user.savedPosts.push(post1.id);
+    user.upvotedPosts.push(post1.id);
+    user.downvotedPosts.push(post1.id);
+    await user.save();
+    const result = await listingSubredditPosts(
+      user.id,
+      subreddit.title,
+      "unmoderatedPosts",
+      { sort: "new" }
+    );
+    expect(result.data.children.length).toEqual(3);
+    expect(result.data.before.toString()).toEqual(post3.id.toString());
+    expect(result.data.after.toString()).toEqual(post1.id.toString());
+  });
+
+  it("Test listingSubredditPosts with invalid subreddit name", async () => {
+    const result = await listingSubredditPosts(
+      user.id,
+      "invalidSR",
+      "unmoderatedPosts",
+      { sort: "new", after: post3.id.toString(), before: post3.id.toString() }
+    );
+    expect(result.statusCode).toEqual(404);
+  });
+
+  it("Test listingSubredditPosts with invalid moderator ID", async () => {
+    const invalidId = mongoose.Types.ObjectId.generate(10);
+    const result = await listingSubredditPosts(
+      invalidId,
+      subreddit.title,
+      "unmoderatedPosts",
+      { sort: "new", after: post3.id.toString(), before: post3.id.toString() }
+    );
+    expect(result.statusCode).toEqual(404);
+  });
+
+  it("Test listingSubredditComments with invalid subreddit name", async () => {
+    const result = await listingSubredditComments(
+      user.id,
+      "invalidSR",
+      "spammedComments",
+      {
+        sort: "new",
+        after: comment3.id.toString(),
+        before: comment3.id.toString(),
+      }
+    );
+    expect(result.statusCode).toEqual(404);
+  });
+
+  it("Test listingSubredditComments with invalid moderator ID", async () => {
+    const invalidId = mongoose.Types.ObjectId.generate(10);
+    const result = await listingSubredditComments(
+      invalidId,
+      subreddit.title,
+      "spammedComments",
+      {
+        sort: "new",
+        after: comment3.id.toString(),
+        before: comment3.id.toString(),
+      }
+    );
+    expect(result.statusCode).toEqual(404);
+  });
+
   it("Should have listingSubredditComments defined", () => {
     expect(listingSubredditComments).toBeDefined();
   });
@@ -583,6 +662,22 @@ describe("Testing Subreddit Items Listing Service functions", () => {
         after: comment3.id.toString(),
         before: comment3.id.toString(),
       }
+    );
+    expect(result.data.children.length).toEqual(3);
+    expect(result.data.before.toString()).toEqual(comment3.id.toString());
+    expect(result.data.after.toString()).toEqual(comment1.id.toString());
+  });
+
+  it("(SPAMMED COMMENTS) Test new listingSubredditComments with flags set", async () => {
+    user.savedComments.push(comment1.id);
+    user.upvotedComments.push(comment1.id);
+    user.downvotedComments.push(comment1.id);
+    await user.save();
+    const result = await listingSubredditComments(
+      user.id,
+      subreddit.title,
+      "spammedComments",
+      { sort: "new" }
     );
     expect(result.data.children.length).toEqual(3);
     expect(result.data.before.toString()).toEqual(comment3.id.toString());

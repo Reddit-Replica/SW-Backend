@@ -58,6 +58,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
       subredditName: "subreddit",
       kind: "hybrid",
       numberOfVotes: 5,
+      flair: flair.id,
       hotScore: 10,
       numberOfViews: 10,
       createdAt: Date.now(),
@@ -72,7 +73,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
       kind: "hybrid",
       numberOfVotes: 3,
       hotScore: 10,
-      numberOfViews: 10,
+      numberOfViews: 20,
       createdAt: Date.now() + 10,
     });
     await post2.save();
@@ -84,6 +85,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
       subredditName: "subreddit",
       kind: "hybrid",
       numberOfVotes: 3,
+      flair: flair.id,
       hotScore: 10,
       numberOfViews: 30,
       createdAt: Date.now() + 20,
@@ -110,6 +112,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
       subredditName: "subreddit",
       kind: "link",
       numberOfVotes: 0,
+      flair: flair.id,
       hotScore: 15,
       numberOfViews: 0,
       createdAt: Date.now() + 40,
@@ -123,6 +126,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
       subredditName: "subreddit",
       kind: "link",
       numberOfVotes: 100,
+      flair: flair.id,
       hotScore: 20,
       numberOfViews: 100,
       createdAt: Date.now() + 50,
@@ -143,6 +147,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
     await Post.deleteMany({});
+    await Flair.deleteMany({});
     await closeDatabaseConnection();
   });
 
@@ -193,6 +198,11 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
     }
   });
 
+  it("Test checkSubredditFlair with no flair ID", async () => {
+    const result = await checkSubredditFlair(subreddit.title);
+    expect(result).toBeUndefined();
+  });
+
   it("Should have subredditHome defined", () => {
     expect(subredditHome).toBeDefined();
   });
@@ -202,5 +212,216 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
     expect(result.data.children.length).toEqual(6);
     expect(result.data.after.toString()).toEqual(post1.id.toString());
     expect(result.data.before.toString()).toEqual(post6.id.toString());
+  });
+
+  it("Test subredditHome for an invalid subreddit name", async () => {
+    const result = await subredditHome(user, "invalidSR", undefined, {});
+    expect(result.statusCode).toEqual(404);
+    expect(result.data).toEqual("Subreddit not found or deleted");
+  });
+
+  it("Test subredditHome with limit", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      limit: 3,
+    });
+    expect(result.data.children.length).toEqual(3);
+    expect(result.data.after.toString()).toEqual(post4.id.toString());
+    expect(result.data.before.toString()).toEqual(post6.id.toString());
+  });
+
+  it("Test subredditHome with after only", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      after: post4.id.toString(),
+    });
+    expect(result.data.children.length).toEqual(3);
+    expect(result.data.after.toString()).toEqual(post1.id.toString());
+    expect(result.data.before.toString()).toEqual(post3.id.toString());
+  });
+
+  it("Test subredditHome with before only", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      before: post4.id.toString(),
+    });
+    expect(result.data.children.length).toEqual(2);
+    expect(result.data.after.toString()).toEqual(post5.id.toString());
+    expect(result.data.before.toString()).toEqual(post6.id.toString());
+  });
+
+  it("Test subredditHome with before, after, and limit", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      before: post3.id.toString(),
+      after: post3.id.toString(),
+    });
+    expect(result.data.children.length).toEqual(6);
+    expect(result.data.after.toString()).toEqual(post1.id.toString());
+    expect(result.data.before.toString()).toEqual(post6.id.toString());
+  });
+
+  it("Test subredditHome with before & limit", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      before: post2.id.toString(),
+      limit: 4,
+    });
+    expect(result.data.children.length).toEqual(4);
+    expect(result.data.after.toString()).toEqual(post3.id.toString());
+    expect(result.data.before.toString()).toEqual(post6.id.toString());
+  });
+
+  it("Test subredditHome with after & limit", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      after: post6.id.toString(),
+      limit: 2,
+    });
+    expect(result.data.children.length).toEqual(2);
+    expect(result.data.after.toString()).toEqual(post4.id.toString());
+    expect(result.data.before.toString()).toEqual(post5.id.toString());
+  });
+
+  it("Test subredditHome with sort = new", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      after: post6.id.toString(),
+      sort: "new",
+    });
+    expect(result.data.children.length).toEqual(5);
+    expect(result.data.after.toString()).toEqual(post1.id.toString());
+    expect(result.data.before.toString()).toEqual(post5.id.toString());
+  });
+
+  it("Test subredditHome with sort = hot only", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      sort: "hot",
+    });
+    expect(result.data.children.length).toEqual(6);
+    expect(result.data.children[0].id).toEqual(post6.id.toString());
+    expect(result.data.before.toString()).toEqual(post6.id.toString());
+    expect(result.data.after).toBeDefined();
+  });
+
+  it("Test subredditHome with sort = hot & after", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      sort: "hot",
+      after: post1.id.toString(),
+      limit: 3,
+    });
+    expect(result.data.children.length).toEqual(3);
+    expect(result.data.children[2].id).toEqual(post4.id.toString());
+  });
+
+  it("Test subredditHome with sort = hot & before", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      sort: "hot",
+      before: post1.id.toString(),
+      limit: 3,
+    });
+    expect(result.data.children.length).toEqual(2);
+    expect(result.data.children[0].id).toEqual(post6.id.toString());
+  });
+
+  it("Test subredditHome with sort = top only", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      sort: "top",
+    });
+    expect(result.data.children.length).toEqual(6);
+    expect(result.data.children[0].id).toEqual(post6.id.toString());
+  });
+
+  it("Test subredditHome with sort = top (time = month) & after", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      sort: "top",
+      time: "month",
+      after: post4.id.toString(),
+      limit: 4,
+    });
+    expect(result.data.children.length).toEqual(4);
+    expect(result.data.children[3].id).toEqual(post5.id.toString());
+  });
+
+  it("Test subredditHome with sort = top (time = week) & after returning no results", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      sort: "top",
+      time: "week",
+      after: post5.id.toString(),
+      limit: 4,
+    });
+    expect(result.data.children.length).toEqual(0);
+    expect(result.data.before).toEqual("");
+    expect(result.data.after).toEqual("");
+  });
+
+  it("Test subredditHome with sort = top (time = year) & before", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      sort: "top",
+      time: "year",
+      before: post5.id.toString(),
+    });
+    expect(result.data.children.length).toEqual(5);
+    expect(result.data.children[4].data.votes).toEqual(3);
+    expect(result.data.children[3].data.votes).toEqual(3);
+    expect(result.data.children[2].data.votes).toEqual(5);
+    expect(result.data.children[1].data.votes).toEqual(7);
+    expect(result.data.children[0].id).toEqual(post6.id.toString());
+  });
+
+  it("Test subredditHome with sort = trending", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      sort: "trending",
+    });
+    expect(result.data.children.length).toEqual(6);
+    expect(result.data.children[0].id).toEqual(post6.id.toString());
+    expect(result.data.children[5].id).toEqual(post5.id.toString());
+  });
+
+  it("Test subredditHome with sort = trending & after", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      after: post6.id.toString(),
+      sort: "trending",
+    });
+    expect(result.data.children.length).toEqual(5);
+    expect(result.data.children[0].id).toEqual(post4.id.toString());
+    expect(result.data.children[4].id).toEqual(post5.id.toString());
+  });
+
+  it("Test subredditHome with sort = trending & before", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      before: post4.id.toString(),
+      sort: "trending",
+    });
+    expect(result.data.children.length).toEqual(1);
+    expect(result.data.before.toString()).toEqual(post6.id.toString());
+    expect(result.data.after.toString()).toEqual(post6.id.toString());
+  });
+
+  it("Test subredditHome with sort = trending returning no posts", async () => {
+    const result = await subredditHome(user, subreddit.title, undefined, {
+      after: post5.id.toString(),
+      sort: "trending",
+    });
+    expect(result.data.children.length).toEqual(0);
+  });
+
+  it("Test subredditHome with Flair", async () => {
+    const result = await subredditHome(user, subreddit.title, flair, {});
+    expect(result.data.children.length).toEqual(4);
+    expect(result.data.before.toString()).toEqual(post6.id.toString());
+    expect(result.data.after.toString()).toEqual(post1.id.toString());
+  });
+
+  it("Test subredditHome with flags set", async () => {
+    user.savedPosts.push(post1.id);
+    user.upvotedPosts.push(post1.id);
+    user.downvotedPosts.push(post1.id);
+    user.spammedPosts.push(post1.id);
+    user.hiddenPosts.push(post4.id, post5.id, post6.id);
+    user.moderatedSubreddits.push({
+      subredditId: subreddit.id,
+      name: subreddit.title,
+    });
+    await user.save();
+    const result = await subredditHome(user, subreddit.title, undefined, {});
+    expect(result.data.children.length).toEqual(3);
+    expect(result.data.children[2].data.inYourSubreddit).toBeTruthy();
+    expect(result.data.children[2].data.votingType).toEqual(-1);
+    expect(result.data.children[2].data.saved).toBeTruthy();
+    expect(result.data.children[2].data.spammed).toBeTruthy();
   });
 });

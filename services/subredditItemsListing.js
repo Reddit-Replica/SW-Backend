@@ -5,6 +5,7 @@ import Flair from "../models/Flair.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
 import { postListing } from "../utils/preparePostListing.js";
 import mongoose from "mongoose";
+import { filterHiddenPosts } from "./search.js";
 
 /**
  * This function returns the subreddit's typeOfListing posts with a given
@@ -44,6 +45,7 @@ export async function listingSubredditPosts(
         sort: listingResult.sort,
       },
     });
+
   const mod = await User.findById(modId);
   if (!mod || mod.deletedAt) {
     return {
@@ -347,6 +349,13 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     });
 
   let limit = listingResult.limit;
+
+  if (user) {
+    result["subredditPosts"] = filterHiddenPosts(
+      result["subredditPosts"],
+      user
+    );
+  }
 
   if (
     (!listingParams.after && listingParams.before) ||

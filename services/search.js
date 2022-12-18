@@ -8,14 +8,34 @@ import { userListing } from "../utils/prepareUserListing.js";
 import { subredditListing } from "../utils/prepareSubredditListing.js";
 
 /**
+ * This function is used to remove hidden posts from the listing
+ * that will be viewed by a logged in user.
+ *
+ * @param {Array} result Search query
+ * @param {object} user Logged in user object
+ * @returns {Array} Contains the new filtered results
+ */
+// eslint-disable-next-line max-statements
+export function filterHiddenPosts(result, user) {
+  result = result.filter(
+    (post) =>
+      !user.hiddenPosts.find(
+        (hiddenPostId) => hiddenPostId.toString() === post.id.toString()
+      )
+  );
+  return result;
+}
+
+/**
  * Search for a post given a query in the whole of read-it
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
+ * @param {object} user User object in case there's a logged in user
  * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
-export async function searchPosts(query, listingParams) {
+export async function searchPosts(query, listingParams, user) {
   // Prepare Listing Parameters
   let listingResult = await postListing(listingParams);
 
@@ -25,6 +45,10 @@ export async function searchPosts(query, listingParams) {
   let result = await Post.find(listingResult.find).sort(listingResult.sort);
 
   let limit = listingResult.limit;
+
+  if (user) {
+    result = filterHiddenPosts(result, user);
+  }
 
   if (
     (!listingParams.after && listingParams.before) ||
@@ -208,6 +232,7 @@ export async function searchComments(query, listingParams) {
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
+ * @param {object} loggedInUser User object in case there's a logged in user
  * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
@@ -222,17 +247,18 @@ export async function searchUsers(query, listingParams, loggedInUser) {
   ];
   if (loggedInUser) {
     listingResult.find["username"] = {
-      $not: { $regex: loggedInUser.username },
+      $ne: loggedInUser.username,
     };
   }
 
-  const result = await User.find(listingResult.find).sort(listingResult.sort);
+  let result = await User.find(listingResult.find).sort(listingResult.sort);
   if (loggedInUser) {
-    result = result.filter((user) =>
-      loggedInUser.blocedUsers.find(
-        (blockedUser) =>
-          blockedUser.blockedUserId.toString() === user.id.toString()
-      )
+    result = result.filter(
+      (user) =>
+        !loggedInUser.blockedUsers.find(
+          (blockedUser) =>
+            blockedUser.blockedUserId.toString() === user.id.toString()
+        )
     );
   }
 

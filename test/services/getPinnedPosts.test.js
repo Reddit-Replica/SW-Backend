@@ -145,7 +145,37 @@ describe("Testing Pinned Posts Service functions", () => {
     expect(users.user.username).toEqual(user.username);
   });
 
-  it("Test checkUserPinnedPosts witha not-found user", async () => {
+  it("Test checkUserPinnedPosts with the a deleted LoggedIn user", async () => {
+    try {
+      loggedInUser.deletedAt = Date.now();
+      await loggedInUser.save();
+      await checkUserPinnedPosts(
+        true,
+        loggedInUser.id.toString(),
+        loggedInUser.username
+      );
+    } catch (err) {
+      expect(err.statusCode).toEqual(400);
+      expect(err.message).toEqual("User not found or may be deleted");
+    }
+  });
+
+  it("Test checkUserPinnedPosts with the not-found visting user & loggedIn user ", async () => {
+    try {
+      loggedInUser.deletedAt = undefined;
+      await loggedInUser.save();
+      await checkUserPinnedPosts(
+        true,
+        loggedInUser.id.toString(),
+        "invalidUsername"
+      );
+    } catch (err) {
+      expect(err.statusCode).toEqual(400);
+      expect(err.message).toEqual("User not found or may be deleted");
+    }
+  });
+
+  it("Test checkUserPinnedPosts with a not-found user", async () => {
     try {
       const invalidId = mongoose.Types.ObjectId.generate(10);
       await checkUserPinnedPosts(true, invalidId);
@@ -153,6 +183,23 @@ describe("Testing Pinned Posts Service functions", () => {
       expect(err.statusCode).toEqual(400);
       expect(err.message).toEqual("User not found or may be deleted");
     }
+  });
+
+  it("Test checkUserPinnedPosts with no loggedIn user but an invalid username given ", async () => {
+    try {
+      loggedInUser.deletedAt = undefined;
+      await loggedInUser.save();
+      await checkUserPinnedPosts(false, undefined, "invalidUsername");
+    } catch (err) {
+      expect(err.statusCode).toEqual(400);
+      expect(err.message).toEqual("User not found or may be deleted");
+    }
+  });
+
+  it("Test checkUserPinnedPosts with no loggedIn user but a valid username given ", async () => {
+    const result = await checkUserPinnedPosts(false, undefined, user.username);
+    expect(result.loggedInUser.username).toEqual(user.username);
+    expect(result.user.username).toEqual(user.username);
   });
 
   it("Should have setPinnedPostsFlags defined", () => {
