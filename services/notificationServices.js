@@ -379,7 +379,7 @@ export async function getUserNotifications(
   const notifcations = await Notification.find({
     ownerId: userId,
     hidden: false,
-  }).sort({ date: 1 });
+  }).sort({ date: -1 });
 
   if (!beforeReq && !afterReq) {
     preparedResponse = getUserNotificationsFirstTime(notifcations, limit);
