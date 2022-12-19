@@ -66,9 +66,6 @@ export async function listingSubredditPosts(
   if (listingParams.before && !listingParams.after) {
     start = result[typeOfListing].length - limit;
     finish = result[typeOfListing].length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
   let children = [];
@@ -200,9 +197,6 @@ export async function listingSubredditComments(
   if (listingParams.before && !listingParams.after) {
     start = result[typeOfListing].length - limit;
     finish = result[typeOfListing].length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -330,6 +324,9 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     };
   }
   listingResult.find["subredditName"] = subredditName;
+  listingResult.find["moderation.remove.removedBy"] = undefined;
+  listingResult.find["moderation.spam.spammedBy"] = undefined;
+  user && (listingResult.find["nsfw"] = user.userSettings.nsfw);
 
   if (flair) {
     listingResult.find["flair"] = flair.id;
@@ -390,9 +387,6 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
   if (listingParams.before && !listingParams.after) {
     start = result["subredditPosts"].length - limit;
     finish = result["subredditPosts"].length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -405,15 +399,11 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     const postId = post.id.toString();
     let vote = 0,
       saved = false,
-      hidden = false,
       spammed = false,
       inYourSubreddit = false;
     if (user) {
       if (user.savedPosts?.find((id) => id.toString() === postId)) {
         saved = true;
-      }
-      if (user.hiddenPosts?.find((id) => id.toString() === postId)) {
-        hidden = true;
       }
       if (user.upvotedPosts?.find((id) => id.toString() === postId)) {
         vote = 1;
@@ -449,7 +439,6 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
       sharePostId: post.sharePostId,
       sendReplies: post.sendReplies,
       saved: saved,
-      hidden: hidden,
       votingType: vote,
       moderation: post.moderation,
       markedSpam: post.markedSpam,

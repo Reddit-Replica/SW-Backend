@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
 // eslint-disable-next-line new-cap
 const tokenSchema = mongoose.Schema({

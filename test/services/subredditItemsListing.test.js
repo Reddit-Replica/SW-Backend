@@ -61,7 +61,7 @@ describe("Testing Subreddit Items Listing Service functions", () => {
       subredditName: "subreddit",
       kind: "hybrid",
       numberOfVotes: 3,
-      createdAt: Date.now() + 10,
+      createdAt: Date.now() + 100,
     });
     await post2.save();
 
@@ -72,7 +72,7 @@ describe("Testing Subreddit Items Listing Service functions", () => {
       subredditName: "subreddit",
       kind: "hybrid",
       numberOfVotes: 1,
-      createdAt: Date.now() + 20,
+      createdAt: Date.now() + 200,
     });
     await post3.save();
 

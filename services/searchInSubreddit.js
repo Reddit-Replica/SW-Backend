@@ -20,6 +20,9 @@ export async function searchForPosts(subreddit, query, listingParams, user) {
 
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
+  listingResult.find["moderation.remove.removedBy"] = undefined;
+  listingResult.find["moderation.spam.spammedBy"] = undefined;
+  user && (listingResult.find["nsfw"] = user.userSettings.nsfw);
 
   const checkSubreddit = await Subreddit.findOne({ title: subreddit });
   if (!checkSubreddit) {
@@ -81,9 +84,6 @@ export async function searchForPosts(subreddit, query, listingParams, user) {
   if (listingParams.before && !listingParams.after) {
     start = result["subredditPosts"].length - limit;
     finish = result["subredditPosts"].length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -189,9 +189,6 @@ export async function searchForComments(subreddit, query, listingParams) {
   if (listingParams.before && !listingParams.after) {
     start = result.length - limit;
     finish = result.length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 

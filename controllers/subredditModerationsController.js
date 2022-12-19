@@ -14,6 +14,7 @@ import {
   getSubredditPostSettingsService,
   setSubredditPostSettingsService,
   getTrafficService,
+  getFavoriteSubredditsService,
 } from "../services/subredditModerationServices.js";
 import { getSubredditService } from "../services/subredditActionsServices.js";
 import { getUserFromJWTService } from "../services/userServices.js";
@@ -175,8 +176,22 @@ const getModeratedSubreddits = async (req, res) => {
 
 const getJoinedSubreddits = async (req, res) => {
   try {
-    const moderators = await getJoinedSubredditsService(req.payload.userId);
-    res.status(200).json({ children: moderators });
+    const subreddits = await getJoinedSubredditsService(req.payload.userId);
+    res.status(200).json({ children: subreddits });
+  } catch (err) {
+    console.log(err.message);
+    if (err.statusCode) {
+      res.status(err.statusCode).json({ error: err.message });
+    } else {
+      res.status(500).json("Internal Server Error");
+    }
+  }
+};
+
+const getFavoriteSubreddits = async (req, res) => {
+  try {
+    const subreddits = await getFavoriteSubredditsService(req.payload.userId);
+    res.status(200).json({ children: subreddits });
   } catch (err) {
     console.log(err.message);
     if (err.statusCode) {
@@ -290,4 +305,5 @@ export default {
   setSubredditPostSettings,
   subredditParamValidator,
   getTrafficStats,
+  getFavoriteSubreddits,
 };
