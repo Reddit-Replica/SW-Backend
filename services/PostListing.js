@@ -53,7 +53,7 @@ export async function homePostsListing(
         { ownerId: { $in: [...followedUsers] } },
       ],
       deletedAt: null,
-      createdAt:{ $gt:filteringProperties.filteringDate },
+      createdAt: { $gt: filteringProperties.filteringDate },
     }).sort(filteringProperties.sort);
     if (
       importantPosts.length >=
@@ -89,10 +89,10 @@ export async function homePostsListing(
   if (extraPostsLimit !== 0) {
     if (isLoggedIn) {
       extraPosts = await Post.find({
-        subredditName: { $nin: extraPostsSubredditFilter } ,
-        ownerId: { $nin: [...extraPostsUsersFilter] } ,
+        subredditName: { $nin: extraPostsSubredditFilter },
+        ownerId: { $nin: [...extraPostsUsersFilter] },
         deletedAt: null,
-        createdAt:{ $gt:filteringProperties.filteringDate },
+        createdAt: { $gt: filteringProperties.filteringDate },
       })
         .sort(filteringProperties.sort)
         .limit(extraPostsLimit)
@@ -100,7 +100,7 @@ export async function homePostsListing(
     } else {
       extraPosts = await Post.find({
         deletedAt: null,
-        createdAt:{ $gt:filteringProperties.filteringDate },
+        createdAt: { $gt: filteringProperties.filteringDate },
       })
         .sort(filteringProperties.sort)
         .limit(extraPostsLimit)
@@ -177,19 +177,19 @@ export async function homePostsListing(
   }
   let after = "",
     before = "";
-  if (!listingParams.after){
-    listingParams.after=0;
+  if (!listingParams.after) {
+    listingParams.after = 0;
   }
-  if (!listingParams.before){
-    listingParams.before=0;
+  if (!listingParams.before) {
+    listingParams.before = 0;
   }
   if (posts.length) {
-    if (listingParams.after){
+    if (listingParams.after) {
       after = parseInt(listingParams.after) + posts.length;
       before = parseInt(listingParams.after);
-    } else if (listingParams.before){
-      after=parseInt(listingParams.before);
-      before=parseInt(listingParams.before)-posts.length;
+    } else if (listingParams.before) {
+      after = parseInt(listingParams.before);
+      before = parseInt(listingParams.before) - posts.length;
     } else {
       after = parseInt(listingParams.after) + posts.length;
       before = parseInt(listingParams.after);
@@ -210,55 +210,55 @@ async function prepareFiltering(typeOfSorting, listingParams) {
   const result = {};
   result.sort = {};
   if (typeOfSorting === "new") {
-    result.sort = { createdAt: -1,title:1 };
+    result.sort = { createdAt: -1, title: 1 };
   } else if (typeOfSorting === "best") {
-    result.sort = { bestScore: -1,title:1  };
+    result.sort = { bestScore: -1, title: 1 };
   } else if (typeOfSorting === "hot") {
-    result.sort = { hotScore: -1,title:1  };
+    result.sort = { hotScore: -1, title: 1 };
   } else if (typeOfSorting === "top") {
-    result.sort = { numberOfVotes: -1,title:1  };
+    result.sort = { numberOfVotes: -1, title: 1 };
   } else if (typeOfSorting === "trending") {
-    result.sort = { numberOfViews: -1,title:1  };
+    result.sort = { numberOfViews: -1, title: 1 };
   }
 
   result.query = { deletedAt: null };
 
   let filteringDate = new Date();
 
-  let changed=false;
+  let changed = false;
   if (typeOfSorting === "top") {
     if (listingParams.time === "year") {
       filteringDate.setFullYear(filteringDate.getFullYear() - 1);
-      changed=true;
+      changed = true;
     } else if (listingParams.time === "month") {
       filteringDate.setFullYear(
         filteringDate.getFullYear(),
         filteringDate.getMonth() - 1
       );
-      changed=true;
+      changed = true;
     } else if (listingParams.time === "week") {
       filteringDate.setFullYear(
         filteringDate.getFullYear(),
         filteringDate.getMonth(),
         filteringDate.getDate() - 7
       );
-      changed=true;
+      changed = true;
     } else if (listingParams.time === "day") {
       filteringDate.setFullYear(
         filteringDate.getFullYear(),
         filteringDate.getMonth(),
         filteringDate.getDate() - 1
       );
-      changed=true;
+      changed = true;
     } else if (listingParams.time === "hour") {
       filteringDate.setHours(filteringDate.getHours() - 1);
-      changed=true;
+      changed = true;
     }
   }
-  if (!changed){
+  if (!changed) {
     filteringDate.setFullYear(1970);
   }
-  result.filteringDate=filteringDate;
+  result.filteringDate = filteringDate;
 
   result.limit = prepareLimit(parseInt(listingParams.limit));
 
@@ -276,13 +276,12 @@ async function prepareFiltering(typeOfSorting, listingParams) {
       parseInt(listingParams.before) - parseInt(listingParams.limit);
   }
 
-  if (result.skip<0){
-    result.skip=0;
+  if (result.skip < 0) {
+    result.skip = 0;
   }
-  if (listingParams.before<result.limit){
-    result.limit=listingParams.before;
+  if (listingParams.before < result.limit) {
+    result.limit = listingParams.before;
   }
-
 
   return result;
 }

@@ -7,6 +7,8 @@ import {
   insertCategoriesIfNotExists,
 } from "../services/categories.js";
 import { checkIfModerator } from "./subredditActionsServices.js";
+import Message from "../models/Message.js";
+import { addMessage } from "./messageServices.js";
 /**
  * This function is used to search for a subreddit with its name
  * it gets the subreddit from the database then it checks about it's validity
@@ -80,25 +82,7 @@ export async function searchForSubredditById(subredditId) {
   }
   return subreddit;
 }
-/**
- * This function is used to add a user to the waiting list of a subreddit if the requested subreddit was private
- * @param {Object} subreddit object that contains the data of the subreddit that we will push the user into its waited list
- * @param {String} username username of the user that wants to join the subreddit
- * @param {String} message message that the user sent while joining the subreddit
- * @returns {Object} success object that contains the msg describing what happened and its status code
- */
-export async function addUserToWaitingList(subreddit, username) {
-  const user1 = await searchForUserService(username);
-  if (subreddit.subredditSettings.acceptingRequestsToJoin){
 
-  }
-
-  await subreddit.save();
-  return {
-    statusCode: 200,
-    message: "Your request is sent successfully",
-  };
-}
 /**
  * This function is used to add a subreddit to the ones that the user joined
  * it adds the subreddit to joinedSubreddit list then increment the number of members of the subreddit
@@ -107,6 +91,22 @@ export async function addUserToWaitingList(subreddit, username) {
  * @returns {Object} success objects that contains the msg describing what happened and its status code
  */
 export async function addToJoinedSubreddit(user, subreddit) {
+  if (subreddit.subredditSettings.sendWelcomeMessage){
+    if (subreddit.subredditSettings.welcomeMessage){
+      let smallreq={};
+     smallreq.msg={
+      senderUsername:subreddit.title,
+      isSenderUser:false,
+      receiverUsername:user.username,
+      isReceiverUser:true,
+      text:subreddit.subredditSettings.welcomeMessage+` This message can not be replied to. If you have questions for the moderators of r/${subreddit.title} you can message them here.`,
+      subject:`Welcome to r/${subreddit.title}!`,
+      isReply:false,
+      isWaited:true,
+    };
+    addMessage(smallreq);
+  }
+  }
   user.joinedSubreddits.push({
     subredditId: subreddit.id,
     name: subreddit.title,
@@ -313,7 +313,7 @@ export async function addSubreddit(req, authPayload) {
     owner: owner,
     createdAt: Date.now(),
     joinedUsers: joinedUsers,
-    approvedUsers:approvedUsers,
+    approvedUsers: approvedUsers,
   }).save();
   const addedSubreddit = {
     subredditId: subreddit.id,
