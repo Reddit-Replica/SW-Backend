@@ -832,4 +832,47 @@ userRouter.get(
  */
 userRouter.get("/user-details/:username", userController.getUserDetails);
 
+/**
+ * @swagger
+ * /followed-users:
+ *   get:
+ *     summary: Return the followed users
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: object
+ *                        properties:
+ *                          children:
+ *                            type: array
+ *                            description: List of the subreddits that your are moderator in and their pictures
+ *                            items:
+ *                              properties:
+ *                               username:
+ *                                 type: string
+ *                                 description: the username of the user
+ *                               displayName:
+ *                                 type: string
+ *                                 description: the display name of the user
+ *                               picture:
+ *                                 type: string
+ *                                 description: Path of the picture of the user
+ *       401:
+ *         description: Access Denied
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ *     security:
+ *       - bearerAuth: []
+ */
+userRouter.get(
+  "/followed-users",
+  verifyAuthToken,
+  userController.getUserFollowedUsers
+);
+
 export default userRouter;

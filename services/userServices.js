@@ -283,3 +283,30 @@ export async function getUserDetailsService(username) {
     joinDate: neededUser.createdAt,
   };
 }
+
+/**
+ *  A Service function to get the user followed users
+ *
+ * @param {String} userId Id of the user
+ * @returns {Object} User found
+ */
+export async function getUserFollowedUsersService(userId) {
+  const preparedResponse = [];
+  const neededUser = await User.findById(userId);
+  if (!neededUser || neededUser.deletedAt) {
+    const error = new Error("User isn't found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  await neededUser.populate("followedUsers");
+  neededUser.followedUsers.forEach((user) => {
+    preparedResponse.push({
+      username: user.username,
+      displayName: user.displayName,
+      picture: user.avatar,
+    });
+  });
+
+  return preparedResponse;
+}
