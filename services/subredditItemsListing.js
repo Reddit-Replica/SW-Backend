@@ -322,6 +322,7 @@ export async function checkSubredditFlair(subreddit, flairId) {
 export async function subredditHome(user, subredditName, flair, listingParams) {
   // Prepare Listing Parameters
   let listingResult = hpostListing(listingParams);
+  const { after, before, limit, skip } = listingResult;
 
   // Check whether the subreddit exists & deleted or not
   const subreddit = await Subreddit.findOne({ title: subredditName });
@@ -349,23 +350,6 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
   listingResult.find["moderation.remove.removedBy"] = undefined;
   listingResult.find["moderation.spam.spammedBy"] = undefined;
 
-  // Prepare skip & limit
-  let skip, limit;
-  if (listingParams.after !== undefined) {
-    skip = listingParams.after;
-    limit = listingResult.limit;
-  } else if (listingParams.before !== undefined) {
-    if (listingParams.before < 0) {
-      listingParams.before = 0;
-    }
-    limit = listingResult.limit;
-    skip = listingParams.before - limit;
-    if (listingParams.before - limit < 0) {
-      skip = 0;
-      limit = listingParams.before;
-    }
-  }
-
   // Get result
   let result = await Post.find(listingResult.find)
     .sort(listingResult.sort)
@@ -374,6 +358,7 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
 
   let children = [];
 
+  // Prepare Post Data with necessary flags
   for (let i = 0; i < result.length; i++) {
     const post = result[i];
     post.numberOfViews += 1;
@@ -381,15 +366,11 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     const postId = post.id.toString();
     let vote = 0,
       saved = false,
-      hidden = false,
       spammed = false,
       inYourSubreddit = false;
     if (user) {
       if (user.savedPosts?.find((id) => id.toString() === postId)) {
         saved = true;
-      }
-      if (user.hiddenPosts?.find((id) => id.toString() === postId)) {
-        hidden = true;
       }
       if (user.upvotedPosts?.find((id) => id.toString() === postId)) {
         vote = 1;
@@ -425,7 +406,6 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
       sharePostId: post.sharePostId,
       sendReplies: post.sendReplies,
       saved: saved,
-      hidden: hidden,
       votingType: vote,
       moderation: post.moderation,
       markedSpam: post.markedSpam,
@@ -436,20 +416,28 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     children.push(postData);
   }
 
+  // Set new after & before
   let newAfter = 0,
     newBefore = 0;
   if (children.length > 0) {
-    if (listingParams.after !== undefined) {
-      newAfter = parseInt(listingParams.after) + result.length;
-      newBefore = parseInt(listingParams.after);
-    } else if (listingParams.before !== undefined) {
-      newAfter = parseInt(listingParams.before);
-      newBefore = parseInt(listingParams.before) - limit;
+    if (after !== undefined) {
+      newAfter = after + result.length;
+      newBefore = after;
+    } else if (before !== undefined) {
+      newAfter = before;
+      newBefore = before - limit;
       if (newBefore < 0) {
         newBefore = 0;
       }
     }
   }
+
+  // Handle both new after & before = 0
+  if (newAfter === 0 && newBefore === 0) {
+    children = [];
+  }
+
+  // Return final result
   return {
     statusCode: 200,
     data: {
