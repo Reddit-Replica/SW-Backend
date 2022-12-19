@@ -43,14 +43,13 @@ export async function searchPosts(query, listingParams, user) {
   listingResult.find["title"] = { $regex: regex };
   listingResult.find["moderation.remove.removedBy"] = undefined;
   listingResult.find["moderation.spam.spammedBy"] = undefined;
-
+  user && (listingResult.find["nsfw"] = user.userSettings.nsfw);
   let result = await Post.find(listingResult.find).sort(listingResult.sort);
 
   let limit = listingResult.limit;
 
   if (user) {
     result = filterHiddenPosts(result, user);
-    listingResult.find["nsfw"] = user.userSettings.nsfw;
   }
 
   if (

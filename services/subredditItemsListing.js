@@ -332,6 +332,7 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
   listingResult.find["subredditName"] = subredditName;
   listingResult.find["moderation.remove.removedBy"] = undefined;
   listingResult.find["moderation.spam.spammedBy"] = undefined;
+  user && (listingResult.find["nsfw"] = user.userSettings.nsfw);
 
   if (flair) {
     listingResult.find["flair"] = flair.id;
