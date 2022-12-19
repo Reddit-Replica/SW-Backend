@@ -308,8 +308,6 @@ function compareTrending(post1, post2) {
 }
 */
 
-//GET POSTS SORT SKIP LIMIT
-//GET FOLLOWED POSTS & SUBREDDITS IN ONE ARRAY THEN SORT SKIP LIMIT
 export async function homePostsListing(
   user,
   listingParams,
@@ -317,87 +315,103 @@ export async function homePostsListing(
   isLoggedIn
 ) {
   let posts = [];
-  const filteringProperties= await prepareFiltering(typeOfSorting,listingParams);
+  const filteringProperties = await prepareFiltering(
+    typeOfSorting,
+    listingParams
+  );
+  let extraPostsIndex = filteringProperties.skip;
+  let extraPostsLimit = filteringProperties.limit;
+  let extraPostsUsersFilter, extraPostsSubredditFilter;
   //WE WILL GET THE MOST IMPORTANT POSTS FIRST WHICH ARE SUBREDDIT POSTS AND FOLLOWING POSTS
   //GETTING SUBREDDIT POSTS
   if (isLoggedIn) {
-    const { joinedSubreddits } = await User.findOne({ username: user.username })
+    var { joinedSubreddits } = await User.findOne({ username: user.username })
       .select("joinedSubreddits")
       .populate({
         path: "joinedSubreddits",
         match: { deletedAt: null },
       });
     //GETTING FOLLOWED PEOPLE NEEDS TO BE EDITED TO FOLLOWING WHEN
-    const { followedUsers } = await User.findOne({ username: user.username })
+    var { followedUsers } = await User.findOne({ username: user.username })
       .select("followedUsers")
       .populate({
         path: "followedUsers",
         match: { deletedAt: null },
       });
 
-      const importantPostsQuery={{$or:[{sub},{}]}};
+    let userJoinedSubreddits = joinedSubreddits.map(
+      (subreddit) => subreddit.name
+    );
 
+    extraPostsUsersFilter = followedUsers;
+    extraPostsSubredditFilter = userJoinedSubreddits;
 
-      const importantPosts= await Post.find(filteringProperties.query)
+    const importantPosts = await Post.find({
+      $or: [
+        {
+          $and: [
+            { subredditName: { $in: userJoinedSubreddits } },
+            { ownerId: { $nin: [...followedUsers] } },
+          ],
+        },
+        { ownerId: { $in: [...followedUsers] } },
+      ],
+      deletedAt: null,
+      createdAt:{ $gt:filteringProperties.filteringDate },
+    }).sort(filteringProperties.sort);
+    if (
+      importantPosts.length >=
+      filteringProperties.skip + filteringProperties.limit
+    ) {
+      extraPostsLimit = 0;
+      posts = [
+        ...importantPosts.slice(
+          filteringProperties.skip,
+          filteringProperties.skip + filteringProperties.limit
+        ),
+      ];
+    } else if (importantPosts.length <= filteringProperties.skip) {
+      extraPostsIndex = filteringProperties.skip - importantPosts.length;
+    } else if (
+      importantPosts.length > filteringProperties.skip &&
+      importantPosts.length <
+        filteringProperties.skip + filteringProperties.limit
+    ) {
+      extraPostsIndex = 0;
+      extraPostsLimit =
+        filteringProperties.limit -
+        (importantPosts.length - filteringProperties.skip);
+      posts = [
+        ...importantPosts.slice(
+          filteringProperties.skip,
+          importantPosts.length
+        ),
+      ];
     }
-
-  const uniquePosts = new Set();
-  posts = posts.filter((post) => {
-    const isDuplicate = uniquePosts.has(post.id);
-    uniquePosts.add(post.id);
-    if (!isDuplicate) {
-      return true;
-    }
-    return false;
-  });
-  if (listingParams.after < posts.length) {
   }
-  if (!listingParams.after) {
-    listingParams.after = 0;
-  }
-
-  //THEN WE WILL GET OUR LIMIT
-  let limit = await prepareLimit(listingParams.limit);
-  //WE WILL GET EXTRA POSTS TO FILL THE GAP THAT IS BETWEEN THE FOLLOWED ONES AND THE LIMIT
   let extraPosts;
-  if (typeOfSorting === "new") {
-    extraPosts = await Post.find({})
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip(parseInt(listingParams.after));
-  } else if (typeOfSorting === "best") {
-    extraPosts = await Post.find({})
-      .sort({ bestScore: -1 })
-      .limit(limit)
-      .skip(parseInt(listingParams.after));
-  } else if (typeOfSorting === "hot") {
-    extraPosts = await Post.find({})
-      .sort({ hotScore: -1 })
-      .limit(limit)
-      .skip(parseInt(listingParams.after));
-  } else if (typeOfSorting === "top") {
-    extraPosts = await Post.find({ ownerUsername: { $in: ["Zeyad", "Hamdy"] } })
-      .sort({ numberOfViews: -1 })
-      .limit(limit)
-      .skip(parseInt(listingParams.after));
-  } else if (typeOfSorting === "trending") {
-    extraPosts = await Post.find({})
-      .sort({ numberOfVotes: -1 })
-      .limit(limit)
-      .skip(parseInt(listingParams.after));
-  }
-  posts = [...posts, ...extraPosts];
-
-
-  const unique = new Set();
-  posts = posts.filter((post) => {
-    const isDuplicate = unique.has(post.id);
-    unique.add(post.id);
-    if (!isDuplicate) {
-      return true;
+  if (extraPostsLimit !== 0) {
+    if (isLoggedIn) {
+      extraPosts = await Post.find({
+        subredditName: { $nin: extraPostsSubredditFilter } ,
+        ownerId: { $nin: [...extraPostsUsersFilter] } ,
+        deletedAt: null,
+        createdAt:{ $gt:filteringProperties.filteringDate },
+      })
+        .sort(filteringProperties.sort)
+        .limit(extraPostsLimit)
+        .skip(extraPostsIndex);
+    } else {
+      extraPosts = await Post.find({
+        deletedAt: null,
+        createdAt:{ $gt:filteringProperties.filteringDate },
+      })
+        .sort(filteringProperties.sort)
+        .limit(extraPostsLimit)
+        .skip(extraPostsIndex);
     }
-    return false;
-  });
+    posts = [...posts, ...extraPosts];
+  }
 
   //OUR CHILDREN ARRAY THAT WE WILL SEND AS RESPONSE
   const children = [];
@@ -467,9 +481,23 @@ export async function homePostsListing(
   }
   let after = "",
     before = "";
+  if (!listingParams.after){
+    listingParams.after=0;
+  }
+  if (!listingParams.before){
+    listingParams.before=0;
+  }
   if (posts.length) {
-    after = parseInt(listingParams.after) + posts.length;
-    before = parseInt(listingParams.before) - posts.length;
+    if (listingParams.after){
+      after = parseInt(listingParams.after) + posts.length;
+      before = parseInt(listingParams.after);
+    } else if (listingParams.before){
+      after=parseInt(listingParams.before);
+      before=parseInt(listingParams.before)-posts.length;
+    } else {
+      after = parseInt(listingParams.after) + posts.length;
+      before = parseInt(listingParams.after);
+    }
   }
   return {
     statusCode: 200,
@@ -483,67 +511,82 @@ export async function homePostsListing(
 }
 
 async function prepareFiltering(typeOfSorting, listingParams) {
-
   const result = {};
   result.sort = {};
   if (typeOfSorting === "new") {
-    result.sort = { createdAt: -1 };
+    result.sort = { createdAt: -1,title:1 };
   } else if (typeOfSorting === "best") {
-    result.sort = { bestScore: -1 };
+    result.sort = { bestScore: -1,title:1  };
   } else if (typeOfSorting === "hot") {
-    result.sort = { hotScore: -1 };
+    result.sort = { hotScore: -1,title:1  };
   } else if (typeOfSorting === "top") {
-    result.sort = { numberOfVotes: -1 };
+    result.sort = { numberOfVotes: -1,title:1  };
   } else if (typeOfSorting === "trending") {
-    result.sort = { numberOfViews: -1 };
+    result.sort = { numberOfViews: -1,title:1  };
   }
 
-  result.query = {deletedAt:null};
+  result.query = { deletedAt: null };
+
+  let filteringDate = new Date();
+
+  let changed=false;
   if (typeOfSorting === "top") {
-    let filteringDate = new Date();
-    let changed = false;
     if (listingParams.time === "year") {
       filteringDate.setFullYear(filteringDate.getFullYear() - 1);
-      changed = true;
+      changed=true;
     } else if (listingParams.time === "month") {
       filteringDate.setFullYear(
         filteringDate.getFullYear(),
         filteringDate.getMonth() - 1
       );
-      changed = true;
+      changed=true;
     } else if (listingParams.time === "week") {
       filteringDate.setFullYear(
         filteringDate.getFullYear(),
         filteringDate.getMonth(),
         filteringDate.getDate() - 7
       );
-      changed = true;
+      changed=true;
     } else if (listingParams.time === "day") {
       filteringDate.setFullYear(
         filteringDate.getFullYear(),
         filteringDate.getMonth(),
         filteringDate.getDate() - 1
       );
-      changed = true;
+      changed=true;
     } else if (listingParams.time === "hour") {
       filteringDate.setHours(filteringDate.getHours() - 1);
-      changed = true;
-    }
-    if (changed) {
-      result.query.createdAt={ $gte: filteringDate } ;
+      changed=true;
     }
   }
+  if (!changed){
+    filteringDate.setFullYear(1970);
+  }
+  result.filteringDate=filteringDate;
+
+  result.limit = prepareLimit(parseInt(listingParams.limit));
 
   result.skip = 0;
   if (listingParams.after) {
-    result.skip = listingParams.after;
+    if (parseInt(listingParams.after) < 0) {
+      listingParams.after = 0;
+    }
+    result.skip = parseInt(listingParams.after);
   } else if (listingParams.before) {
-    result.skip = listingParams.before - listingParams.limit;
+    if (parseInt(listingParams.before) < 0) {
+      listingParams.before = 0;
+    }
+    result.skip =
+      parseInt(listingParams.before) - parseInt(listingParams.limit);
   }
 
-  result.limit=prepareLimit(listingParams.limit);
+  if (result.skip<0){
+    result.skip=0;
+  }
+  if (listingParams.before<result.limit){
+    result.limit=listingParams.before;
+  }
+
 
   return result;
-
-
 }

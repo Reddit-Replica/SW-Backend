@@ -160,7 +160,6 @@ const joinSubreddit = async (req, res) => {
   //GETTING USER USERNAME
   const username = authPayload.username;
   try {
-    console.log("haa");
     //GETTING USER DATA,CHECKING FOR HIS EXISTENCE
     const user = await searchForUserService(username);
     //GETTING SUBREDDIT DATA,CHECKING FOR ITS EXISTENCE
