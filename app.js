@@ -14,7 +14,7 @@ import { fileStorage, fileFilter } from "./utils/files.js";
 import rateLimit from "express-rate-limit";
 const app = express();
 
-const REQUEST_LIMIT = process.env.REQUEST_LIMIT || 100;
+const REQUEST_LIMIT = parseInt(process.env.REQUEST_LIMIT) || 100;
 
 dotenv.config();
 
@@ -37,7 +37,7 @@ app.use(morgan("dev"));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  max: REQUEST_LIMIT, // Limit each IP to REQUEST_LIMIT requests per `window` (here, per 15 minutes)
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
