@@ -307,11 +307,7 @@ export async function splitterOnType(Id) {
 function setResult(listingParams) {
   const result = {};
   result.find = { deletedAt: null };
-  if (listingParams.listing === null) {
-    let error = new Error("Invalid Before or After Id");
-    error.statusCode = 401;
-    throw error;
-  }
+  console.log(listingParams);
   result.find[listingParams.listing.type] = listingParams.listing.value;
   result.limit = listingParams.limit;
   result.sort = listingParams.sort;

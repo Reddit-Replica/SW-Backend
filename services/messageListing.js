@@ -49,6 +49,7 @@ export async function userMessageListing(
         sort: listingResult.sort,
       },
     });
+  console.log(result);
   console.log(listingResult);
   let limit = listingResult.limit;
   if (result[typeOfListing].length < limit) {
