@@ -166,14 +166,15 @@ const joinSubreddit = async (req, res) => {
     const subreddit = await searchForSubredditById(req.body.subredditId);
     //IF THE REQUESTED SUBREDDIT IS PRIVATE,THEN THE USER WOULD BE ADDED TO THE WAITING LIST WAITING FOR MODERATOR TO APPROVE
     if (subreddit.type === "Private") {
-      const result = await addUserToWaitingList(
-        subreddit,
-        username,
-        req.body.message
-      );
-      res.status(result.statusCode).json(result.message);
+      if (subreddit.subredditSettings.acceptingRequestsToJoin){
+        const result = await addToJoinedSubreddit(user, subreddit);
+        res.status(result.statusCode).json(result.message);
+      } else {
+        let err=new Error("you are not allowed to join this subreddit");
+        err.statusCode=401;
+        throw err;
+      }
     } else {
-      //ADDING THIS SUBREDDIT TO JOINED SUBREDDITS LIST, INCREMENTING SUBREDDIT NUMBER OF MEMBERS
       const result = await addToJoinedSubreddit(user, subreddit);
       res.status(result.statusCode).json(result.message);
     }

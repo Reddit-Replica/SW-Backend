@@ -92,11 +92,7 @@ export async function addUserToWaitingList(subreddit, username) {
   if (subreddit.subredditSettings.acceptingRequestsToJoin){
 
   }
-  subreddit.waitedUsers.push({
-    username: username,
-    userID: user1.id,
-    message: message,
-  });
+
   await subreddit.save();
   return {
     statusCode: 200,
