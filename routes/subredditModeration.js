@@ -669,7 +669,7 @@ subredditModerationsRouter.get(
  *                        properties:
  *                          children:
  *                            type: array
- *                            description: List of the subreddits that your are moderator in and their pictures
+ *                            description: List of the subreddits that your are member in and their pictures
  *                            items:
  *                              properties:
  *                               title:
@@ -695,6 +695,47 @@ subredditModerationsRouter.get(
   "/joined-subreddits",
   verifyAuthToken,
   subredditModerationsController.getJoinedSubreddits
+);
+
+/**
+ * @swagger
+ * /favorite-subreddits:
+ *  get:
+ *      summary: Return all subreddits that you marked as favorite
+ *      tags: [Subreddit]
+ *      responses:
+ *          200:
+ *              description: Returned successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                        type: object
+ *                        properties:
+ *                          children:
+ *                            type: array
+ *                            description: List of the subreddits that your are moderator in and their pictures
+ *                            items:
+ *                              properties:
+ *                               title:
+ *                                 type: string
+ *                                 description: the title of the subreddits that the user can send messages from and his own username
+ *                               picture:
+ *                                 type: string
+ *                                 description: Path of the picture of the subreddit
+ *                               members:
+ *                                 type: number
+ *                                 description: the number of members in that subreddit
+ *          401:
+ *              description: User unauthorized to view this info
+ *          500:
+ *              description: Server Error
+ *      security:
+ *       - bearerAuth: []
+ */
+subredditModerationsRouter.get(
+  "/favorite-subreddits",
+  verifyAuthToken,
+  subredditModerationsController.getFavoriteSubreddits
 );
 
 /**
