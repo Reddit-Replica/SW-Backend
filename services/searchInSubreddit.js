@@ -20,6 +20,8 @@ export async function searchForPosts(subreddit, query, listingParams, user) {
 
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
+  listingResult.find["moderation.remove.removedBy"] = undefined;
+  listingResult.find["moderation.spam.spammedBy"] = undefined;
 
   const checkSubreddit = await Subreddit.findOne({ title: subreddit });
   if (!checkSubreddit) {

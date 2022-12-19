@@ -41,6 +41,8 @@ export async function searchPosts(query, listingParams, user) {
 
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
+  listingResult.find["moderation.remove.removedBy"] = undefined;
+  listingResult.find["moderation.spam.spammedBy"] = undefined;
 
   let result = await Post.find(listingResult.find).sort(listingResult.sort);
 
@@ -48,6 +50,7 @@ export async function searchPosts(query, listingParams, user) {
 
   if (user) {
     result = filterHiddenPosts(result, user);
+    listingResult.find["nsfw"] = user.userSettings.nsfw;
   }
 
   if (
@@ -346,6 +349,10 @@ export async function searchSubreddits(query, listingParams, loggedInUser) {
   listingResult.find["type"] = {
     $not: { $regex: "(?i)\\bprivate\\b" },
   };
+
+  if (loggedInUser) {
+    listingResult.find["nsfw"] = loggedInUser.userSettings.nsfw;
+  }
 
   const result = await Subreddit.find(listingResult.find).sort(
     listingResult.sort
