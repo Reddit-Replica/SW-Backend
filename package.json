@@ -33,6 +33,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
+    "express-rate-limit": "^6.7.0",
     "express-validator": "^6.14.2",
     "fcm-node": "^1.6.1",
     "jest-html-reporter": "^3.7.0",

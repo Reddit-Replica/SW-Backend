@@ -74,6 +74,7 @@ const subredditFlairsRouter = express.Router();
  */
 subredditFlairsRouter.get(
   "/r/:subreddit/about/post-flairs",
+  subredditDetailsMiddleware.checkSubreddit,
   subredditFlairsController.getAllFlairs
 );
 
