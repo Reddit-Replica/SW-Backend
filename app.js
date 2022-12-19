@@ -14,6 +14,8 @@ import { fileStorage, fileFilter } from "./utils/files.js";
 import rateLimit from "express-rate-limit";
 const app = express();
 
+const REQUEST_LIMIT = process.env.REQUEST_LIMIT || 100;
+
 dotenv.config();
 
 app.use(bodyParser.json({ limit: "200mb" }));
