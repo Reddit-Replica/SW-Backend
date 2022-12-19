@@ -225,66 +225,66 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
       limit: 3,
     });
     expect(result.data.children.length).toEqual(3);
-    expect(result.data.after.toString()).toEqual(post4.id.toString());
-    expect(result.data.before.toString()).toEqual(post6.id.toString());
+    expect(result.data.after).toEqual(3);
+    expect(result.data.before).toEqual(0);
   });
 
   it("Test subredditHome with after only", async () => {
     const result = await subredditHome(user, subreddit.title, undefined, {
-      after: post4.id.toString(),
+      after: 3,
     });
     expect(result.data.children.length).toEqual(3);
-    expect(result.data.after.toString()).toEqual(post1.id.toString());
-    expect(result.data.before.toString()).toEqual(post3.id.toString());
+    expect(result.data.after).toEqual(6);
+    expect(result.data.before).toEqual(3);
   });
 
   it("Test subredditHome with before only", async () => {
     const result = await subredditHome(user, subreddit.title, undefined, {
-      before: post4.id.toString(),
+      before: 2,
     });
     expect(result.data.children.length).toEqual(2);
-    expect(result.data.after.toString()).toEqual(post5.id.toString());
-    expect(result.data.before.toString()).toEqual(post6.id.toString());
+    expect(result.data.after).toEqual(2);
+    expect(result.data.before).toEqual(0);
   });
 
   it("Test subredditHome with before, after, and limit", async () => {
     const result = await subredditHome(user, subreddit.title, undefined, {
-      before: post3.id.toString(),
-      after: post3.id.toString(),
+      before: 0,
+      after: 0,
     });
     expect(result.data.children.length).toEqual(6);
-    expect(result.data.after.toString()).toEqual(post1.id.toString());
-    expect(result.data.before.toString()).toEqual(post6.id.toString());
+    expect(result.data.after).toEqual(6);
+    expect(result.data.before).toEqual(0);
   });
 
   it("Test subredditHome with before & limit", async () => {
     const result = await subredditHome(user, subreddit.title, undefined, {
-      before: post2.id.toString(),
+      before: 4,
       limit: 4,
     });
     expect(result.data.children.length).toEqual(4);
-    expect(result.data.after.toString()).toEqual(post3.id.toString());
-    expect(result.data.before.toString()).toEqual(post6.id.toString());
+    expect(result.data.after).toEqual(4);
+    expect(result.data.before).toEqual(0);
   });
 
   it("Test subredditHome with after & limit", async () => {
     const result = await subredditHome(user, subreddit.title, undefined, {
-      after: post6.id.toString(),
+      after: 1,
       limit: 2,
     });
     expect(result.data.children.length).toEqual(2);
-    expect(result.data.after.toString()).toEqual(post4.id.toString());
-    expect(result.data.before.toString()).toEqual(post5.id.toString());
+    expect(result.data.after).toEqual(3);
+    expect(result.data.before).toEqual(1);
   });
 
   it("Test subredditHome with sort = new", async () => {
     const result = await subredditHome(user, subreddit.title, undefined, {
-      after: post6.id.toString(),
+      after: 1,
       sort: "new",
     });
     expect(result.data.children.length).toEqual(5);
-    expect(result.data.after.toString()).toEqual(post1.id.toString());
-    expect(result.data.before.toString()).toEqual(post5.id.toString());
+    expect(result.data.after).toEqual(6);
+    expect(result.data.before).toEqual(1);
   });
 
   it("Test subredditHome with sort = hot only", async () => {
@@ -293,14 +293,14 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
     });
     expect(result.data.children.length).toEqual(6);
     expect(result.data.children[0].id).toEqual(post6.id.toString());
-    expect(result.data.before.toString()).toEqual(post6.id.toString());
-    expect(result.data.after).toBeDefined();
+    expect(result.data.before).toEqual(0);
+    expect(result.data.after).toEqual(6);
   });
 
   it("Test subredditHome with sort = hot & after", async () => {
     const result = await subredditHome(user, subreddit.title, undefined, {
       sort: "hot",
-      after: post1.id.toString(),
+      after: 3,
       limit: 3,
     });
     expect(result.data.children.length).toEqual(3);
@@ -310,7 +310,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
   it("Test subredditHome with sort = hot & before", async () => {
     const result = await subredditHome(user, subreddit.title, undefined, {
       sort: "hot",
-      before: post1.id.toString(),
+      before: 2,
       limit: 3,
     });
     expect(result.data.children.length).toEqual(2);
@@ -329,7 +329,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
     const result = await subredditHome(user, subreddit.title, undefined, {
       sort: "top",
       time: "month",
-      after: post4.id.toString(),
+      after: 2,
       limit: 4,
     });
     expect(result.data.children.length).toEqual(4);
@@ -340,19 +340,19 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
     const result = await subredditHome(user, subreddit.title, undefined, {
       sort: "top",
       time: "week",
-      after: post5.id.toString(),
+      after: 6,
       limit: 4,
     });
     expect(result.data.children.length).toEqual(0);
-    expect(result.data.before).toEqual("");
-    expect(result.data.after).toEqual("");
+    expect(result.data.before).toEqual(0);
+    expect(result.data.after).toEqual(0);
   });
 
   it("Test subredditHome with sort = top (time = year) & before", async () => {
     const result = await subredditHome(user, subreddit.title, undefined, {
       sort: "top",
       time: "year",
-      before: post5.id.toString(),
+      before: 5,
     });
     expect(result.data.children.length).toEqual(5);
     expect(result.data.children[4].data.votes).toEqual(3);
@@ -383,12 +383,12 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
 
   it("Test subredditHome with sort = trending & before", async () => {
     const result = await subredditHome(user, subreddit.title, undefined, {
-      before: post4.id.toString(),
+      before: 1,
       sort: "trending",
     });
     expect(result.data.children.length).toEqual(1);
-    expect(result.data.before.toString()).toEqual(post6.id.toString());
-    expect(result.data.after.toString()).toEqual(post6.id.toString());
+    expect(result.data.before).toEqual(0);
+    expect(result.data.after).toEqual(1);
   });
 
   it("Test subredditHome with sort = trending returning no posts", async () => {
@@ -402,8 +402,8 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
   it("Test subredditHome with Flair", async () => {
     const result = await subredditHome(user, subreddit.title, flair, {});
     expect(result.data.children.length).toEqual(4);
-    expect(result.data.before.toString()).toEqual(post6.id.toString());
-    expect(result.data.after.toString()).toEqual(post1.id.toString());
+    expect(result.data.before).toEqual(0);
+    expect(result.data.after).toEqual(4);
   });
 
   it("Test subredditHome with flags set", async () => {

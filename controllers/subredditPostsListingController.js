@@ -1,8 +1,16 @@
+import { query } from "express-validator";
 import {
   checkSubredditFlair,
   subredditHome,
 } from "../services/subredditItemsListing.js";
 import { getUser } from "../services/userSettings.js";
+
+const limitValidator = [
+  query("limit")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Limit can't be <= 0"),
+];
 
 // eslint-disable-next-line max-statements
 const getHotSubredditPosts = async (req, res) => {
@@ -154,6 +162,7 @@ const getTopSubredditPosts = async (req, res) => {
 };
 
 export default {
+  limitValidator,
   getHotSubredditPosts,
   getNewSubredditPosts,
   getTopSubredditPosts,

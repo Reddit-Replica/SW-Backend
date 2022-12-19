@@ -5,6 +5,7 @@ import postController from "../controllers/HpostController.js";
 import subredditDetails from "../middleware/subredditDetails.js";
 // eslint-disable-next-line max-len
 import subredditPostsListingController from "../controllers/subredditPostsListingController.js";
+import { validateRequestSchema } from "../middleware/validationResult.js";
 // eslint-disable-next-line new-cap
 const listingRouter = express.Router();
 
@@ -137,6 +138,8 @@ listingRouter.get("/hot", optionalToken, postController.getHotPosts);
 listingRouter.get(
   "/r/:subreddit/hot",
   optionalToken,
+  subredditPostsListingController.limitValidator,
+  validateRequestSchema,
   subredditDetails.checkSubreddit,
   subredditPostsListingController.getHotSubredditPosts
 );
@@ -227,6 +230,8 @@ listingRouter.get("/trending", optionalToken, postController.getTrendingPosts);
 listingRouter.get(
   "/r/:subreddit/trending",
   optionalToken,
+  subredditPostsListingController.limitValidator,
+  validateRequestSchema,
   subredditDetails.checkSubreddit,
   subredditPostsListingController.getTrendingSubredditPosts
 );
@@ -317,6 +322,8 @@ listingRouter.get("/new", optionalToken, postController.getNewPosts);
 listingRouter.get(
   "/r/:subreddit/new",
   optionalToken,
+  subredditPostsListingController.limitValidator,
+  validateRequestSchema,
   subredditDetails.checkSubreddit,
   subredditPostsListingController.getNewSubredditPosts
 );
@@ -486,6 +493,8 @@ listingRouter.get("/top", optionalToken, postController.getTopPosts);
 listingRouter.get(
   "/r/:subreddit/top",
   optionalToken,
+  subredditPostsListingController.limitValidator,
+  validateRequestSchema,
   subredditDetails.checkSubreddit,
   subredditPostsListingController.getTopSubredditPosts
 );
