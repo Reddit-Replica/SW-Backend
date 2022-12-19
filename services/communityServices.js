@@ -103,6 +103,7 @@ export async function addToJoinedSubreddit(user, subreddit) {
       subject:`Welcome to r/${subreddit.title}!`,
       isReply:false,
       isWaited:true,
+      createdAt:Date.now(),
     };
     addMessage(smallreq);
   }
