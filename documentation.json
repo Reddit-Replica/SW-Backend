@@ -2582,14 +2582,6 @@
                       "type": "string",
                       "description": "the name of the first category"
                     },
-                    "before": {
-                      "type": "string",
-                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
-                    },
-                    "after": {
-                      "type": "string",
-                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
-                    },
                     "firstCategoryChildren": {
                       "type": "array",
                       "description": "List of [Things] to return",
@@ -2618,12 +2610,16 @@
                             "isMember": {
                               "type": "boolean",
                               "description": "True if you are a member of the community , False if you are not a member of the community"
+                            },
+                            "picture": {
+                              "type": "string",
+                              "description": "the path of the picture of the subreddit"
                             }
                           }
                         }
                       }
                     },
-                    "SecondCategoryChildren": {
+                    "secondCategoryChildren": {
                       "type": "array",
                       "description": "List of [Things] to return",
                       "items": {
@@ -2651,6 +2647,10 @@
                             "isMember": {
                               "type": "boolean",
                               "description": "True if you are a member of the community , False if you are not a member of the community"
+                            },
+                            "picture": {
+                              "type": "string",
+                              "description": "the path of the picture of the subreddit"
                             }
                           }
                         }
@@ -7264,6 +7264,10 @@
                     "after": {
                       "type": "string",
                       "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
+                    },
+                    "unreadCount": {
+                      "type": "number",
+                      "description": "The number of unread notification returned"
                     },
                     "children": {
                       "type": "array",
@@ -12114,6 +12118,10 @@
                           "members": {
                             "type": "number",
                             "description": "the number of members in that subreddit"
+                          },
+                          "isFavorite": {
+                            "type": "boolean",
+                            "description": "to indicate if the user favorite this subreddit or not"
                           }
                         }
                       }
@@ -12165,6 +12173,10 @@
                           "members": {
                             "type": "number",
                             "description": "the number of members in that subreddit"
+                          },
+                          "isFavorite": {
+                            "type": "boolean",
+                            "description": "to indicate if the user favorite this subreddit or not"
                           }
                         }
                       }
@@ -12234,6 +12246,57 @@
                     "numberOfLeftLastMonth": {
                       "type": "number",
                       "description": "Number of users left that subreddit last month"
+                    },
+                    "days": {
+                      "type": "array",
+                      "description": "List of days on current month with the number of joined users",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "day": {
+                            "type": "string",
+                            "description": "Date of that day"
+                          },
+                          "numberOfJoined": {
+                            "type": "number",
+                            "description": "Number of joined users at this day"
+                          }
+                        }
+                      }
+                    },
+                    "weeks": {
+                      "type": "array",
+                      "description": "List of days on this week with the number of joined users",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "day": {
+                            "type": "string",
+                            "description": "Day name"
+                          },
+                          "numberOfJoined": {
+                            "type": "number",
+                            "description": "Number of joined users at this day"
+                          }
+                        }
+                      }
+                    },
+                    "months": {
+                      "type": "array",
+                      "description": "List of months with the number of joined users",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "month": {
+                            "type": "string",
+                            "description": "Name of the month"
+                          },
+                          "numberOfJoined": {
+                            "type": "number",
+                            "description": "Number of joined users at this month"
+                          }
+                        }
+                      }
                     }
                   }
                 }
