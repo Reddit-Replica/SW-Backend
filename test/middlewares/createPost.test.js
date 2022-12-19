@@ -130,6 +130,37 @@ describe("Testing createPost middleware", () => {
     expect(nextFunction).not.toHaveBeenCalled();
   });
 
+  it("Test checkPostSubreddit without subreddit", async () => {
+    mockRequest = {
+      body: {
+        inSubreddit: true,
+      },
+      payload: {
+        userId: user.id,
+      },
+    };
+    await checkPostSubreddit(mockRequest, mockResponse, nextFunction);
+    expect(nextFunction).not.toHaveBeenCalled();
+  });
+
+  it("Test checkPostSubreddit with a deleted user", async () => {
+    user.deletedAt = Date.now();
+    await user.save();
+    mockRequest = {
+      body: {
+        subreddit: subreddit.title,
+        inSubreddit: true,
+      },
+      payload: {
+        userId: user.id,
+      },
+    };
+    await checkPostSubreddit(mockRequest, mockResponse, nextFunction);
+    user.deletedAt = undefined;
+    await user.save();
+    expect(nextFunction).not.toHaveBeenCalled();
+  });
+
   it("Test checkPostSubreddit with an invalid subreddit name", async () => {
     mockRequest = {
       body: {
@@ -364,6 +395,20 @@ describe("Testing createPost middleware", () => {
 
   it("should have checkPostFlair function", () => {
     expect(checkPostFlair).toBeDefined();
+  });
+
+  it("Test checkPostFlair with an empty subreddit", async () => {
+    mockRequest = {
+      body: {
+        flairId: flair.id,
+        inSubreddit: true,
+      },
+      payload: {
+        userId: user.id,
+      },
+    };
+    await checkPostFlair(mockRequest, mockResponse, nextFunction);
+    expect(nextFunction).not.toHaveBeenCalled();
   });
 
   it("Test checkPostFlair with an invalid subreddit name", async () => {
