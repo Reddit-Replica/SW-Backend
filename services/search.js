@@ -41,7 +41,9 @@ export async function searchPosts(query, listingParams, user) {
 
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
-
+  listingResult.find["moderation.remove.removedBy"] = undefined;
+  listingResult.find["moderation.spam.spammedBy"] = undefined;
+  user && (listingResult.find["nsfw"] = user.userSettings.nsfw);
   let result = await Post.find(listingResult.find).sort(listingResult.sort);
 
   let limit = listingResult.limit;
@@ -75,9 +77,6 @@ export async function searchPosts(query, listingParams, user) {
   if (listingParams.before && !listingParams.after) {
     start = result.length - limit;
     finish = result.length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -173,9 +172,6 @@ export async function searchComments(query, listingParams) {
   if (listingParams.before && !listingParams.after) {
     start = result.length - limit;
     finish = result.length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -274,9 +270,6 @@ export async function searchUsers(query, listingParams, loggedInUser) {
   if (listingParams.before && !listingParams.after) {
     start = result.length - limit;
     finish = result.length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -347,6 +340,10 @@ export async function searchSubreddits(query, listingParams, loggedInUser) {
     $not: { $regex: "(?i)\\bprivate\\b" },
   };
 
+  if (loggedInUser) {
+    listingResult.find["nsfw"] = loggedInUser.userSettings.nsfw;
+  }
+
   const result = await Subreddit.find(listingResult.find).sort(
     listingResult.sort
   );
@@ -363,9 +360,6 @@ export async function searchSubreddits(query, listingParams, loggedInUser) {
   if (listingParams.before && !listingParams.after) {
     start = result.length - limit;
     finish = result.length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 

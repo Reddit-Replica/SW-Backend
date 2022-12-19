@@ -21,7 +21,8 @@ describe("Testing Read Messages Service functions", () => {
     message = {},
     post = {},
     comment = {},
-    mention = {},
+    mention1 = {},
+    mention2 = {},
     postReply = {};
   beforeAll(async () => {
     await connectDatabase();
@@ -70,7 +71,14 @@ describe("Testing Read Messages Service functions", () => {
       isReceiverUser: true,
     }).save();
 
-    mention = await new Mention({
+    mention1 = await new Mention({
+      postId: post.id,
+      commentId: comment.id,
+      createdAt: Date.now(),
+      receiverUsername: "ahmed",
+    }).save();
+
+    mention2 = await new Mention({
       postId: post.id,
       commentId: comment.id,
       createdAt: Date.now(),
@@ -124,13 +132,14 @@ describe("Testing Read Messages Service functions", () => {
   });
 
   it("Test readUsernameMentions", async () => {
-    receiverUser.usernameMentions = [mention.id];
+    receiverUser.usernameMentions = [mention1.id, mention2.id];
     await receiverUser.save();
     await readUsernameMentions(receiverUser.id);
     receiverUser = await User.findOne({
       username: receiverUser.username,
     }).populate("usernameMentions");
     expect(receiverUser.usernameMentions[0].isRead).toBeTruthy();
+    expect(receiverUser.usernameMentions[1].isRead).toBeTruthy();
   });
 
   it("Test readUsernameMentions with an invalid user ID", async () => {

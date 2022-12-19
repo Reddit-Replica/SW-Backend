@@ -75,7 +75,7 @@ describe("Testing Search in Subreddit Service functions", () => {
       subredditName: "subreddit",
       kind: "hybrid",
       numberOfVotes: 3,
-      createdAt: Date.now() + 10,
+      createdAt: Date.now() + 100,
     });
     await post2.save();
 
@@ -86,7 +86,7 @@ describe("Testing Search in Subreddit Service functions", () => {
       ownerId: user._id,
       kind: "hybrid",
       numberOfVotes: 1,
-      createdAt: Date.now() + 20,
+      createdAt: Date.now() + 200,
     });
     await post3.save();
 
@@ -97,7 +97,7 @@ describe("Testing Search in Subreddit Service functions", () => {
       subredditName: "subreddit",
       kind: "hybrid",
       numberOfVotes: 3,
-      createdAt: Date.now() + 30,
+      createdAt: Date.now() + 300,
     });
     await post4.save();
 
@@ -158,6 +158,17 @@ describe("Testing Search in Subreddit Service functions", () => {
     });
   });
 
+  it("Search for posts in a subreddit with an invalid name", async () => {
+    const query = "not-found";
+    const result = await searchForPosts("invalidSR", query, {
+      sort: "new",
+    });
+    expect(result).toEqual({
+      statusCode: 404,
+      data: "Subreddit not found",
+    });
+  });
+
   it("Search for posts in a subreddit with a valid query & after", async () => {
     const query = "post";
     const result = await searchForPosts(subreddit.title, query, {
@@ -167,6 +178,44 @@ describe("Testing Search in Subreddit Service functions", () => {
     expect(result.data.before).toEqual(post4.id.toString());
     expect(result.data.after).toEqual(post4.id.toString());
     expect(result.data.children.length).toEqual(1);
+  });
+
+  it("Search for posts in a subreddit with a loggedIn user & nsfw", async () => {
+    const query = "post";
+    post4.nsfw = true;
+    await post4.save();
+    const result = await searchForPosts(
+      subreddit.title,
+      query,
+      {
+        sort: "old",
+      },
+      user
+    );
+    post4.nsfw = false;
+    await post4.save();
+    expect(result.data.before).toEqual(post1.id.toString());
+    expect(result.data.after).toEqual(post2.id.toString());
+    expect(result.data.children.length).toEqual(2);
+  });
+
+  it("Search for posts in a subreddit with a loggedIn user & hidden", async () => {
+    const query = "post";
+    user.hiddenPosts.push(post1.id);
+    await user.save();
+    const result = await searchForPosts(
+      subreddit.title,
+      query,
+      {
+        sort: "old",
+      },
+      user
+    );
+    user.hiddenPosts.pop();
+    await user.save();
+    expect(result.data.before).toEqual(post2.id.toString());
+    expect(result.data.after).toEqual(post4.id.toString());
+    expect(result.data.children.length).toEqual(2);
   });
 
   it("Search for posts in a subreddit with a valid query & over-limit", async () => {
@@ -224,6 +273,17 @@ describe("Testing Search in Subreddit Service functions", () => {
     expect(result).toEqual({
       statusCode: 200,
       data: { before: "", after: "", children: [] },
+    });
+  });
+
+  it("Search for comments in a subreddit with an invalid name", async () => {
+    const query = "anything";
+    const result = await searchForComments("invalidSR", query, {
+      sort: "new",
+    });
+    expect(result).toEqual({
+      statusCode: 404,
+      data: "Subreddit not found",
     });
   });
 
