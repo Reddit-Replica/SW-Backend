@@ -84,9 +84,6 @@ export async function searchForPosts(subreddit, query, listingParams, user) {
   if (listingParams.before && !listingParams.after) {
     start = result["subredditPosts"].length - limit;
     finish = result["subredditPosts"].length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -192,9 +189,6 @@ export async function searchForComments(subreddit, query, listingParams) {
   if (listingParams.before && !listingParams.after) {
     start = result.length - limit;
     finish = result.length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
