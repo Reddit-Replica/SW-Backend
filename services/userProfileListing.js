@@ -371,9 +371,10 @@ export async function listingUserOverview(
   let children = [];
   for (i; i < finish; i++) {
     const post = result[typeOfListing][i];
+    const hiddenPost = loggedInUser.hiddenPosts.includes(post._id);
     if (typeOfListing !== "savedPosts") {
       // hidden posts can be displayed in saved posts and comments page
-      if (loggedInUser && loggedInUser.hiddenPosts.includes(post._id)) {
+      if (loggedInUser && hiddenPost) {
         continue;
       }
     }
@@ -417,6 +418,7 @@ export async function listingUserOverview(
           saved: false,
           followed: false,
           spammed: false,
+          hidden: hiddenPost,
           inYourSubreddit: false,
         },
         comments: [],
