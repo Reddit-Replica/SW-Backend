@@ -75,7 +75,7 @@ describe("Testing Search in Subreddit Service functions", () => {
       subredditName: "subreddit",
       kind: "hybrid",
       numberOfVotes: 3,
-      createdAt: Date.now() + 10,
+      createdAt: Date.now() + 100,
     });
     await post2.save();
 
@@ -86,7 +86,7 @@ describe("Testing Search in Subreddit Service functions", () => {
       ownerId: user._id,
       kind: "hybrid",
       numberOfVotes: 1,
-      createdAt: Date.now() + 20,
+      createdAt: Date.now() + 200,
     });
     await post3.save();
 
@@ -97,7 +97,7 @@ describe("Testing Search in Subreddit Service functions", () => {
       subredditName: "subreddit",
       kind: "hybrid",
       numberOfVotes: 3,
-      createdAt: Date.now() + 30,
+      createdAt: Date.now() + 300,
     });
     await post4.save();
 

@@ -100,7 +100,7 @@ describe("Testing Search Service functions", () => {
       subredditName: "subreddit1",
       kind: "hybrid",
       numberOfVotes: 3,
-      createdAt: Date.now() + 10,
+      createdAt: Date.now() + 100,
     });
     await post2.save();
 
@@ -111,7 +111,7 @@ describe("Testing Search Service functions", () => {
       ownerId: user1._id,
       kind: "hybrid",
       numberOfVotes: 1,
-      createdAt: Date.now() + 20,
+      createdAt: Date.now() + 200,
     });
     await post3.save();
 
@@ -199,8 +199,6 @@ describe("Testing Search Service functions", () => {
   it("Search for posts with a valid query returning > 1 post", async () => {
     const query = "post";
     const result = await searchPosts(query, { sort: "new" });
-    expect(result.data.before).toEqual(post3.id.toString());
-    expect(result.data.after).toEqual(post1.id.toString());
     expect(result.data.children.length).toEqual(3);
   });
 
@@ -210,8 +208,6 @@ describe("Testing Search Service functions", () => {
       sort: "new",
       after: post2.id.toString(),
     });
-    expect(result.data.before).toEqual(post1.id.toString());
-    expect(result.data.after).toEqual(post1.id.toString());
     expect(result.data.children.length).toEqual(1);
   });
 

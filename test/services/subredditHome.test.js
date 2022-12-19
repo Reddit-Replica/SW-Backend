@@ -74,7 +74,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
       numberOfVotes: 3,
       hotScore: 10,
       numberOfViews: 20,
-      createdAt: Date.now() + 10,
+      createdAt: Date.now() + 100,
     });
     await post2.save();
 
@@ -88,7 +88,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
       flair: flair.id,
       hotScore: 10,
       numberOfViews: 30,
-      createdAt: Date.now() + 20,
+      createdAt: Date.now() + 200,
     });
     await post3.save();
 
@@ -101,7 +101,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
       numberOfVotes: 7,
       hotScore: 5,
       numberOfViews: 40,
-      createdAt: Date.now() + 30,
+      createdAt: Date.now() + 300,
     });
     await post4.save();
 
@@ -115,7 +115,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
       flair: flair.id,
       hotScore: 15,
       numberOfViews: 0,
-      createdAt: Date.now() + 40,
+      createdAt: Date.now() + 400,
     });
     await post5.save();
 
@@ -129,7 +129,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
       flair: flair.id,
       hotScore: 20,
       numberOfViews: 100,
-      createdAt: Date.now() + 50,
+      createdAt: Date.now() + 500,
     });
     await post6.save();
 
