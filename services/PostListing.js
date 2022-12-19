@@ -3,11 +3,7 @@
 import User from "../models/User.js";
 import Subreddit from "../models/Community.js";
 import Post from "../models/Post.js";
-import { searchForComment, searchForPost } from "./PostActions.js";
 import { prepareLimit } from "../utils/prepareLimit.js";
-import { postListing } from "../utils/preparePostListing.js";
-import { extraPostsListing } from "../utils/prepareSubreddit.js";
-import { MinKey } from "mongodb";
 
 function compareNew(post1, post2) {
   if (post1.createdAt < post2.createdAt) {

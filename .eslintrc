@@ -9,6 +9,7 @@
     "camelcase": 1,
     "computed-property-spacing": [2, "never"],
     "curly": 2,
+    "indent": ["error", 2, { "SwitchCase": 1 }],
     "eol-last": 2,
     "eqeqeq": [2, "smart"],
     "max-depth": [1, 3],

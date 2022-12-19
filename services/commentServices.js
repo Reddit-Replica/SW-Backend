@@ -122,6 +122,11 @@ export async function createCommentService(data, post) {
   let parentComment = {};
   if (data.parentType === "comment") {
     parentComment = await checkCommentId(data.parentId);
+    if (parentComment.moderation.lock) {
+      let error = new Error("Can not add a comment to locked comment");
+      error.statusCode = 400;
+      throw error;
+    }
   }
 
   const commentObject = {
@@ -283,6 +288,7 @@ async function prepareComment(comment, user, checkChildren) {
     vote: 0,
     followed: false,
     saved: false,
+    locked: comment.moderation.lock,
   };
 
   // prepare saved, followed, vote flags

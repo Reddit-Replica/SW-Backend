@@ -11,6 +11,7 @@ import {
   getUserAboutDataService,
   clearHistoyService,
   getUserDetailsService,
+  getUserFollowedUsersService,
 } from "../services/userServices.js";
 
 const blockUserValidator = [
@@ -390,6 +391,22 @@ const getUserDetails = async (req, res) => {
   }
 };
 
+const getUserFollowedUsers = async (req, res) => {
+  try {
+    const userFollowedUsers = await getUserFollowedUsersService(
+      req.payload.userId
+    );
+    res.status(200).json({ children: userFollowedUsers });
+  } catch (error) {
+    console.log(error.message);
+    if (error.statusCode) {
+      res.status(error.statusCode).json({ error: error.message });
+    } else {
+      res.status(500).json("Internal server error");
+    }
+  }
+};
+
 export default {
   blockUserValidator,
   blockUser,
@@ -408,4 +425,5 @@ export default {
   userSavedPostsAndComments,
   userComments,
   getUserDetails,
+  getUserFollowedUsers,
 };
