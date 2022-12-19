@@ -312,6 +312,58 @@ describe("Testing comment services functions", () => {
     }
   });
 
+  it("try to create comment to locked post", async () => {
+    try {
+      post1.moderation.lock = true;
+      await post1.save();
+
+      await createCommentService(
+        {
+          content: { text: "Comment for testing" },
+          parentId: post1._id,
+          postId: post1._id,
+          parentType: "post",
+          level: 1,
+          haveSubreddit: true,
+          subredditName: "subreddit",
+          username: user.username,
+          userId: user._id,
+        },
+        post1
+      );
+    } catch (error) {
+      expect(error).toBeDefined();
+      post1.moderation.lock = false;
+      await post1.save();
+    }
+  });
+
+  it("try to create comment to locked comment", async () => {
+    try {
+      firstLevelComment1.moderation.lock = true;
+      await firstLevelComment1.save();
+
+      await createCommentService(
+        {
+          content: { text: "Comment for testing" },
+          parentId: firstLevelComment1._id,
+          postId: post1._id,
+          parentType: "comment",
+          level: 2,
+          haveSubreddit: true,
+          subredditName: "subreddit",
+          username: user.username,
+          userId: user._id,
+        },
+        post1
+      );
+    } catch (error) {
+      expect(error).toBeDefined();
+      firstLevelComment1.moderation.lock = false;
+      await firstLevelComment1.save();
+    }
+  });
+
   // eslint-disable-next-line max-len
   it("try to create comment with all valid parameters and without subreddit", async () => {
     const result = await createCommentService(
@@ -340,6 +392,26 @@ describe("Testing comment services functions", () => {
         postId: post1._id,
         parentType: "post",
         level: 1,
+        haveSubreddit: true,
+        subredditName: "subreddit",
+        username: user.username,
+        userId: user._id,
+      },
+      post1
+    );
+    expect(result.statusCode).toEqual(201);
+    await Comment.deleteOne({ content: { text: "Comment for testing" } });
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to create comment to another comment with all valid parameters and with subreddit", async () => {
+    const result = await createCommentService(
+      {
+        content: { text: "Comment for testing" },
+        parentId: firstLevelComment1._id,
+        postId: post1._id,
+        parentType: "comment",
+        level: 2,
         haveSubreddit: true,
         subredditName: "subreddit",
         username: user.username,
