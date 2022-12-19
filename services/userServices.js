@@ -288,7 +288,7 @@ export async function getUserDetailsService(username) {
  *  A Service function to get the user followed users
  *
  * @param {String} userId Id of the user
- * @returns {Object} User found
+ * @returns {Object} preparedResponse the prepared response for the controller
  */
 export async function getUserFollowedUsersService(userId) {
   const preparedResponse = [];
