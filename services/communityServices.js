@@ -87,8 +87,11 @@ export async function searchForSubredditById(subredditId) {
  * @param {String} message message that the user sent while joining the subreddit
  * @returns {Object} success object that contains the msg describing what happened and its status code
  */
-export async function addUserToWaitingList(subreddit, username, message = "") {
+export async function addUserToWaitingList(subreddit, username) {
   const user1 = await searchForUserService(username);
+  if (subreddit.subredditSettings.acceptingRequestsToJoin){
+
+  }
   subreddit.waitedUsers.push({
     username: username,
     userID: user1.id,
@@ -300,6 +303,11 @@ export async function addSubreddit(req, authPayload) {
     userId: owner.userID,
     joinDate: Date.now(),
   });
+  const approvedUsers = [];
+  approvedUsers.push({
+    userID: owner.userID,
+    dateOfApprove: Date.now(),
+  });
   const subreddit = await new Subreddit({
     title: subredditName,
     viewName: subredditName,
@@ -309,6 +317,7 @@ export async function addSubreddit(req, authPayload) {
     owner: owner,
     createdAt: Date.now(),
     joinedUsers: joinedUsers,
+    approvedUsers:approvedUsers,
   }).save();
   const addedSubreddit = {
     subredditId: subreddit.id,
