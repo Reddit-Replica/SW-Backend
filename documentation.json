@@ -1297,6 +1297,10 @@
                   "type": "boolean",
                   "description": "If true, then this comment was followed before by the logged-in user"
                 },
+                "locked": {
+                  "type": "boolean",
+                  "description": "If true, then this comment is locked and can not have another child comments"
+                },
                 "vote": {
                   "type": "integer",
                   "enum": [1, 0, -1],
@@ -1986,132 +1990,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CommentTree"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/comments/{postId}/{commentId}/parent-comments": {
-      "get": {
-        "summary": "Return the parents of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
-        "tags": ["Comments"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "postId",
-            "description": "The post id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "commentId",
-            "description": "The comment id to show its tree",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "sort",
-            "description": "Comments sorting algorithm",
-            "schema": {
-              "type": "string",
-              "default": "best",
-              "enum": ["best", "top", "new", "old"]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "parents": {
-                      "type": "array",
-                      "description": "All the parents for that specific comment",
-                      "items": {
-                        "properties": {
-                          "commentId": {
-                            "type": "string",
-                            "description": "The id of the comment"
-                          },
-                          "commentedBy": {
-                            "type": "string",
-                            "description": "The author of the comment"
-                          },
-                          "editTime": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "Edit time of the comment (if exists)"
-                          },
-                          "publishTime": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "Publish time of the comment"
-                          },
-                          "commentBody": {
-                            "type": "string",
-                            "description": "The comment itself"
-                          },
-                          "votes": {
-                            "type": "integer",
-                            "description": "Total number of votes to that post"
-                          },
-                          "saved": {
-                            "type": "boolean",
-                            "description": "If true, then this comment was saved before by the logged-in user"
-                          },
-                          "followed": {
-                            "type": "boolean",
-                            "description": "If true, then this comment was followed before by the logged-in user"
-                          },
-                          "vote": {
-                            "type": "integer",
-                            "enum": [1, 0, -1],
-                            "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
-                          },
-                          "parent": {
-                            "type": "string",
-                            "description": "The id of the parent comment in the tree"
-                          },
-                          "level": {
-                            "type": "integer",
-                            "description": "The level of the comment [level of nesting]"
-                          }
-                        }
-                      }
-                    }
-                  }
                 }
               }
             }
@@ -9190,11 +9068,11 @@
                                     "type": "string",
                                     "description": "Comment ID"
                                   },
-                                  "content": {
+                                  "commentBody": {
                                     "type": "object",
                                     "description": "Comment content"
                                   },
-                                  "parentId": {
+                                  "parent": {
                                     "type": "string",
                                     "description": "id of the post being replied to (parent)"
                                   },
@@ -9202,11 +9080,11 @@
                                     "type": "number",
                                     "description": "Level of the comment (How deep is it in the comment tree)"
                                   },
-                                  "username": {
+                                  "commentedBy": {
                                     "type": "string",
                                     "description": "Name of the author of the comment"
                                   },
-                                  "createdAt": {
+                                  "publishTime": {
                                     "type": "string",
                                     "format": "time",
                                     "description": "How long ago the comment was written"
@@ -9868,11 +9746,11 @@
                                     "type": "string",
                                     "description": "Comment ID"
                                   },
-                                  "content": {
+                                  "commentBody": {
                                     "type": "string",
                                     "description": "Comment content"
                                   },
-                                  "parentId": {
+                                  "parent": {
                                     "type": "string",
                                     "description": "id of the post being replied to (parent)"
                                   },
@@ -9880,11 +9758,11 @@
                                     "type": "number",
                                     "description": "Level of the comment (How deep is it in the comment tree)"
                                   },
-                                  "username": {
+                                  "commentedBy": {
                                     "type": "string",
                                     "description": "Name of the author of the comment"
                                   },
-                                  "createdAt": {
+                                  "publishTime": {
                                     "type": "string",
                                     "format": "time",
                                     "description": "How long ago the comment was written"
@@ -12159,7 +12037,7 @@
                   "properties": {
                     "children": {
                       "type": "array",
-                      "description": "List of the subreddits that your are moderator in and their pictures",
+                      "description": "List of the subreddits that your are member in and their pictures",
                       "items": {
                         "properties": {
                           "title": {
@@ -12177,6 +12055,57 @@
                           "isFavorite": {
                             "type": "boolean",
                             "description": "to indicate if the user favorite this subreddit or not"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to view this info"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/favorite-subreddits": {
+      "get": {
+        "summary": "Return all subreddits that you marked as favorite",
+        "tags": ["Subreddit"],
+        "responses": {
+          "200": {
+            "description": "Returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "children": {
+                      "type": "array",
+                      "description": "List of the subreddits that your are moderator in and their pictures",
+                      "items": {
+                        "properties": {
+                          "title": {
+                            "type": "string",
+                            "description": "the title of the subreddits that the user can send messages from and his own username"
+                          },
+                          "picture": {
+                            "type": "string",
+                            "description": "Path of the picture of the subreddit"
+                          },
+                          "members": {
+                            "type": "number",
+                            "description": "the number of members in that subreddit"
                           }
                         }
                       }
@@ -13701,6 +13630,60 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/followed-users": {
+      "get": {
+        "summary": "Return the followed users",
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "children": {
+                      "type": "array",
+                      "description": "List of the subreddits that your are moderator in and their pictures",
+                      "items": {
+                        "properties": {
+                          "username": {
+                            "type": "string",
+                            "description": "the username of the user"
+                          },
+                          "displayName": {
+                            "type": "string",
+                            "description": "the display name of the user"
+                          },
+                          "picture": {
+                            "type": "string",
+                            "description": "Path of the picture of the user"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied"
           },
           "404": {
             "description": "User not found"
