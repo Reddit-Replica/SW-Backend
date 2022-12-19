@@ -77,9 +77,6 @@ export async function searchPosts(query, listingParams, user) {
   if (listingParams.before && !listingParams.after) {
     start = result.length - limit;
     finish = result.length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -175,9 +172,6 @@ export async function searchComments(query, listingParams) {
   if (listingParams.before && !listingParams.after) {
     start = result.length - limit;
     finish = result.length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -276,9 +270,6 @@ export async function searchUsers(query, listingParams, loggedInUser) {
   if (listingParams.before && !listingParams.after) {
     start = result.length - limit;
     finish = result.length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -369,9 +360,6 @@ export async function searchSubreddits(query, listingParams, loggedInUser) {
   if (listingParams.before && !listingParams.after) {
     start = result.length - limit;
     finish = result.length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 

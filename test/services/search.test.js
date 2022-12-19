@@ -39,7 +39,7 @@ describe("Testing Search Service functions", () => {
       username: "ahmed",
       displayName: "HAMDY",
       email: "ahmed@gmail.com",
-      createdAt: Date.now(),
+      createdAt: Date.now() + 10,
     }).save();
 
     subreddit1 = await new Subreddit({
@@ -65,7 +65,7 @@ describe("Testing Search Service functions", () => {
         username: "hamdy",
         userID: user1.id,
       },
-      createdAt: Date.now(),
+      createdAt: Date.now() + 10,
     }).save();
 
     post1 = new Post({
@@ -174,6 +174,26 @@ describe("Testing Search Service functions", () => {
     expect(result.data.before).toEqual(post1.id.toString());
     expect(result.data.after).toEqual(post1.id.toString());
     expect(result.data.children.length).toEqual(1);
+  });
+
+  it("Search for posts with loggedIn user & nsfw", async () => {
+    post1.nsfw = true;
+    await post1.save();
+    const query = "first";
+    const result = await searchPosts(query, { sort: "new" }, user1);
+    expect(result.data.children.length).toEqual(0);
+  });
+
+  it("Search for posts with loggedIn user & hidden", async () => {
+    post1.nsfw = false;
+    user1.hiddenPosts.push(post1.id);
+    await post1.save();
+    await user1.save();
+    const query = "first";
+    const result = await searchPosts(query, { sort: "new" }, user1);
+    user1.hiddenPosts.pop();
+    await user1.save();
+    expect(result.data.children.length).toEqual(0);
   });
 
   it("Search for posts with a valid query returning > 1 post", async () => {
@@ -325,6 +345,36 @@ describe("Testing Search Service functions", () => {
   });
 
   // eslint-disable-next-line max-len
+  it("Search for users with a valid query where I can't find myself", async () => {
+    const query = "hamdy";
+    const result = await searchUsers(query, {}, user1);
+    expect(result.data.children.length).toEqual(1);
+    expect(result.data.children[0].data.username).toEqual("ahmed");
+  });
+
+  it("Search for users with a valid query & blocked user", async () => {
+    user1.blockedUsers.push({
+      blockedUserId: user2.id,
+      blockDate: Date.now(),
+    });
+    await user1.save();
+    const query = "ahmed";
+    const result = await searchUsers(query, { limit: 3 }, user1);
+    user1.blockedUsers.pop();
+    await user1.save();
+    expect(result.data.children.length).toEqual(0);
+  });
+
+  it("Search for users with a valid query & blocked user", async () => {
+    user2.followers.push(user1.id);
+    await user2.save();
+    const query = "ahm";
+    const result = await searchUsers(query, { limit: 3 }, user1);
+    expect(result.data.children.length).toEqual(1);
+    expect(result.data.children[0].data.following).toBeTruthy();
+  });
+
+  // eslint-disable-next-line max-len
   it("Search for users with a valid query with after & over-limit", async () => {
     const query = "DY";
     const result = await searchUsers(query, {
@@ -378,6 +428,34 @@ describe("Testing Search Service functions", () => {
     expect(result.data.before).toEqual(subreddit1.id.toString());
     expect(result.data.after).toEqual(subreddit2.id.toString());
     expect(result.data.children.length).toEqual(2);
+  });
+
+  // eslint-disable-next-line max-len
+  it("Search for subreddits with loggedIn user not returning nsfw SRs", async () => {
+    subreddit2.nsfw = true;
+    await subreddit2.save();
+    const query = "sr";
+    const result = await searchSubreddits(query, { limit: 3 }, user1);
+    subreddit2.nsfw = false;
+    await subreddit2.save();
+    expect(result.data.before).toEqual(subreddit1.id.toString());
+    expect(result.data.after).toEqual(subreddit1.id.toString());
+    expect(result.data.children.length).toEqual(1);
+  });
+
+  // eslint-disable-next-line max-len
+  it("Search for subreddits with loggedIn user joining a subreddit", async () => {
+    user1.joinedSubreddits.push({
+      name: subreddit1.title,
+      subredditId: subreddit1.id,
+    });
+    await user1.save();
+    const query = "sr";
+    const result = await searchSubreddits(query, { limit: 3 }, user1);
+    expect(result.data.before).toEqual(subreddit1.id.toString());
+    expect(result.data.after).toEqual(subreddit2.id.toString());
+    expect(result.data.children.length).toEqual(2);
+    expect(result.data.children[0].data.joined).toEqual(true);
   });
 
   // eslint-disable-next-line max-len
