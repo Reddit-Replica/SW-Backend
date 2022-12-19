@@ -262,6 +262,7 @@ function compareTrending(post1, post2) {
     let postData = { id: postId };
     postData.data = {
       id: postId,
+      kind: post.kind,
       subreddit: post.subredditName,
       postedBy: post.ownerUsername,
       title: post.title,

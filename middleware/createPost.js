@@ -99,6 +99,7 @@ export async function checkPostSubreddit(req, res, next) {
         });
       }
       req.subreddit = subreddit;
+      req.subredditId = postSubreddit.id;
     }
     req.user = user;
     next();
@@ -265,6 +266,10 @@ export async function sharePost(req, res, next) {
       if (!sharedPost || sharedPost.deletedAt) {
         return res.status(404).json("Shared post not found or deleted");
       }
+      req.sharePostId = sharePostId;
+      if (sharedPost.sharePostId) {
+        req.sharePostId = sharedPost.sharePostId;
+      }
       sharedPost.insights.totalShares += 1;
       await sharedPost.save();
     }
@@ -293,7 +298,6 @@ export async function postSubmission(req, res, next) {
     spoiler,
     flairId,
     sendReplies,
-    sharePostId,
     scheduleDate,
     scheduleTime,
     scheduleTimeZone,
@@ -306,8 +310,8 @@ export async function postSubmission(req, res, next) {
       ownerUsername: username,
       ownerId: userId,
       subredditName: req.subreddit,
+      subredditId: req.subredditId,
       title: title,
-      sharePostId: sharePostId,
       link: link,
       video: req.video,
       images: req.images,
@@ -317,7 +321,7 @@ export async function postSubmission(req, res, next) {
       content: req.content,
       sendReplies: sendReplies,
       suggestedSort: req.suggestedSort,
-      sharePostId: sharePostId,
+      sharePostId: req.sharePostId,
       scheduleDate: scheduleDate,
       scheduleTime: scheduleTime,
       scheduleTimeZone: scheduleTimeZone,

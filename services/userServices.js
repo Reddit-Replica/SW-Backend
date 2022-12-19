@@ -51,6 +51,7 @@ export async function getUserFromJWTService(userId) {
  * @param {Boolean} block Flag to know if the operation is block or unblock
  * @returns {Object} Response to the request containing [statusCode, message]
  */
+// eslint-disable-next-line max-statements
 export async function blockUserService(user, userToBlock, block) {
   if (user._id.toString() === userToBlock._id.toString()) {
     let error = new Error("User can not block himself");
@@ -70,20 +71,30 @@ export async function blockUserService(user, userToBlock, block) {
         blockDate: Date.now(),
       });
       await user.save();
+      return {
+        statusCode: 200,
+        message: "User blocked successfully",
+      };
+    } else {
+      return {
+        statusCode: 400,
+        message: "User has been already blocked",
+      };
     }
-    return {
-      statusCode: 200,
-      message: "User blocked successfully",
-    };
   } else {
     if (index !== -1) {
       user.blockedUsers.splice(index, 1);
       await user.save();
+      return {
+        statusCode: 200,
+        message: "User unblocked successfully",
+      };
+    } else {
+      return {
+        statusCode: 400,
+        message: "User was not blocked",
+      };
     }
-    return {
-      statusCode: 200,
-      message: "User unblocked successfully",
-    };
   }
 }
 
@@ -271,4 +282,31 @@ export async function getUserDetailsService(username) {
     karma: neededUser.karma,
     joinDate: neededUser.createdAt,
   };
+}
+
+/**
+ *  A Service function to get the user followed users
+ *
+ * @param {String} userId Id of the user
+ * @returns {Object} preparedResponse the prepared response for the controller
+ */
+export async function getUserFollowedUsersService(userId) {
+  const preparedResponse = [];
+  const neededUser = await User.findById(userId);
+  if (!neededUser || neededUser.deletedAt) {
+    const error = new Error("User isn't found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  await neededUser.populate("followedUsers");
+  neededUser.followedUsers.forEach((user) => {
+    preparedResponse.push({
+      username: user.username,
+      displayName: user.displayName,
+      picture: user.avatar,
+    });
+  });
+
+  return preparedResponse;
 }

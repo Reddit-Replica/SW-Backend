@@ -15,6 +15,10 @@ const postSchema = mongoose.Schema({
     required: true,
     ref: "User",
   },
+  subredditId: {
+    type: Schema.Types.ObjectId,
+    ref: "Subreddit",
+  },
   subredditName: {
     type: String,
   },

@@ -51,13 +51,17 @@ const search = async (req, res) => {
       type = "post";
     }
     if (type === "post") {
-      result = await searchPosts(query, {
-        after,
-        before,
-        limit,
-        sort,
-        time,
-      });
+      result = await searchPosts(
+        query,
+        {
+          after,
+          before,
+          limit,
+          sort,
+          time,
+        },
+        loggedInUser
+      );
     } else if (type === "comment") {
       result = await searchComments(query, {
         after,
@@ -99,18 +103,30 @@ const searchSubreddit = async (req, res) => {
   const query = req.query.q;
   const { after, before, limit, sort, time } = req.query;
   try {
+    let loggedInUser = undefined;
+    if (req.loggedIn) {
+      const user = await getLoggedInUser(req.userId);
+      if (user) {
+        loggedInUser = user;
+      }
+    }
     let result;
     if (!type) {
       type = "post";
     }
     if (type === "post") {
-      result = await searchForPosts(subreddit, query, {
-        after,
-        before,
-        limit,
-        sort,
-        time,
-      });
+      result = await searchForPosts(
+        subreddit,
+        query,
+        {
+          after,
+          before,
+          limit,
+          sort,
+          time,
+        },
+        loggedInUser
+      );
     } else {
       result = await searchForComments(subreddit, query, {
         after,

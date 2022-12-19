@@ -2,6 +2,7 @@ import Comment from "../models/Comment.js";
 import Subreddit from "../models/Community.js";
 import { postListing } from "../utils/preparePostListing.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
+import { filterHiddenPosts } from "./search.js";
 
 /**
  * Search for a post given a query in a subreddit
@@ -9,15 +10,19 @@ import { commentTreeListing } from "../utils/prepareCommentListing.js";
  * @param {string} subreddit Subreddit name
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
+ * @param {object} user User object in case there's a logged in user
  * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
-export async function searchForPosts(subreddit, query, listingParams) {
+export async function searchForPosts(subreddit, query, listingParams, user) {
   // Prepare Listing Parameters
   let listingResult = await postListing(listingParams);
 
   const regex = new RegExp(query, "i");
   listingResult.find["title"] = { $regex: regex };
+  listingResult.find["moderation.remove.removedBy"] = undefined;
+  listingResult.find["moderation.spam.spammedBy"] = undefined;
+  user && (listingResult.find["nsfw"] = user.userSettings.nsfw);
 
   const checkSubreddit = await Subreddit.findOne({ title: subreddit });
   if (!checkSubreddit) {
@@ -36,6 +41,13 @@ export async function searchForPosts(subreddit, query, listingParams) {
         sort: listingResult.sort,
       },
     });
+
+  if (user) {
+    result["subredditPosts"] = filterHiddenPosts(
+      result["subredditPosts"],
+      user
+    );
+  }
 
   let limit = listingResult.limit;
 
@@ -72,9 +84,6 @@ export async function searchForPosts(subreddit, query, listingParams) {
   if (listingParams.before && !listingParams.after) {
     start = result["subredditPosts"].length - limit;
     finish = result["subredditPosts"].length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -180,9 +189,6 @@ export async function searchForComments(subreddit, query, listingParams) {
   if (listingParams.before && !listingParams.after) {
     start = result.length - limit;
     finish = result.length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 

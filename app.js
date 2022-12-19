@@ -11,7 +11,10 @@ import mainRouter from "./routes/routes.js";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import { fileStorage, fileFilter } from "./utils/files.js";
+import rateLimit from "express-rate-limit";
 const app = express();
+
+const REQUEST_LIMIT = parseInt(process.env.REQUEST_LIMIT) || 100;
 
 dotenv.config();
 
@@ -31,6 +34,16 @@ app.use(
 // That's morgan for tracking the api in the terminal
 // Will be removed later
 app.use(morgan("dev"));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: REQUEST_LIMIT, // Limit each IP to REQUEST_LIMIT requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+// Apply the rate limiting middleware to all requests
+app.use(limiter);
 
 // Log stream for morgan to make the log file in the server
 const accessLogStream = fs.createWriteStream(

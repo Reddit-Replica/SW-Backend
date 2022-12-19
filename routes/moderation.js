@@ -11,8 +11,11 @@ import { checkId } from "../middleware/checkId.js";
 import {
   verifyAuthToken,
   verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
+  verifyAuthTokenModeratorManageUsers,
 } from "../middleware/verifyToken.js";
 import subredditDetails from "../middleware/subredditDetails.js";
+import { getBodySubreddit } from "../middleware/getSubredditMiddleware.js";
 
 // eslint-disable-next-line new-cap
 const moderationRouter = express.Router();
@@ -678,6 +681,8 @@ moderationRouter.post(
   verifyAuthToken,
   subredditActionsController.inviteModeratorValidator,
   validateRequestSchema,
+  getBodySubreddit,
+  verifyAuthTokenModeratorManageUsers,
   subredditActionsController.inviteModerators
 );
 
@@ -728,6 +733,8 @@ moderationRouter.post(
   verifyAuthToken,
   subredditActionsController.unbanUserValidator,
   validateRequestSchema,
+  getBodySubreddit,
+  verifyAuthTokenModeratorManageUsers,
   subredditActionsController.cancelInvitation
 );
 
@@ -1111,6 +1118,8 @@ moderationRouter.post(
   verifyAuthToken,
   subredditActionsController.banUserValidator,
   validateRequestSchema,
+  getBodySubreddit,
+  verifyAuthTokenModeratorManageUsers,
   subredditActionsController.banUser
 );
 
@@ -1163,6 +1172,8 @@ moderationRouter.post(
   verifyAuthToken,
   subredditActionsController.unbanUserValidator,
   validateRequestSchema,
+  getBodySubreddit,
+  verifyAuthTokenModeratorManageUsers,
   subredditActionsController.unbanUser
 );
 
@@ -1344,7 +1355,7 @@ moderationRouter.post(
   "/r/:subreddit/profile-picture",
   verifyAuthToken,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   postModController.addProfilePicture
 );
 
@@ -1375,7 +1386,7 @@ moderationRouter.delete(
   "/r/:subreddit/profile-picture",
   verifyAuthToken,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   postModController.deleteProfilePicture
 );
 
@@ -1433,7 +1444,7 @@ moderationRouter.post(
   "/r/:subreddit/banner-image",
   verifyAuthToken,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   postModController.addBanner
 );
 
@@ -1464,7 +1475,7 @@ moderationRouter.delete(
   "/r/:subreddit/banner-image",
   verifyAuthToken,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageSettings,
   postModController.deleteBanner
 );
 
@@ -1521,7 +1532,7 @@ moderationRouter.post(
   postModController.usernameValidator,
   validateRequestSchema,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageUsers,
   postModController.approveUser
 );
 
@@ -1581,7 +1592,7 @@ moderationRouter.post(
   postModController.usernameValidator,
   validateRequestSchema,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageUsers,
   postModController.muteUser
 );
 
@@ -1638,7 +1649,7 @@ moderationRouter.post(
   postModController.usernameValidator,
   validateRequestSchema,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageUsers,
   postModController.removeUser
 );
 
@@ -1695,7 +1706,7 @@ moderationRouter.post(
   postModController.usernameValidator,
   validateRequestSchema,
   subredditDetails.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageUsers,
   postModController.unmuteUser
 );
 
