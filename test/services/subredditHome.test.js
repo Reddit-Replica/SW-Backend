@@ -8,7 +8,6 @@ import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
 import Subreddit from "./../../models/Community.js";
 import Flair from "./../../models/Flair.js";
-import Comment from "./../../models/Comment.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing Subreddit Posts Listing Service functions", () => {
