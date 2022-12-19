@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import Message from "../models/Message.js";
 import Mention from "../models/Mention.js";
-import PostReplies from "../models/PostReplies";
+import PostReplies from "../models/PostReplies.js";
 
 /**
  * A function used to mark all username mentions of the user's collection as read
