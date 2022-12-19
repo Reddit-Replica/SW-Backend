@@ -262,13 +262,22 @@ export async function sharePost(req, res, next) {
           error: "Kind for sharing a post should be 'post'",
         });
       }
-      const sharedPost = await Post.findById(sharePostId);
+      let sharedPost = await Post.findById(sharePostId);
       if (!sharedPost || sharedPost.deletedAt) {
         return res.status(404).json("Shared post not found or deleted");
       }
       req.sharePostId = sharePostId;
       if (sharedPost.sharePostId) {
         req.sharePostId = sharedPost.sharePostId;
+        const originalSharedPost = await Post.findById(sharePostId);
+        // eslint-disable-next-line max-depth
+        if (!originalSharedPost || originalSharedPost.deletedAt) {
+          return res
+            .status(404)
+            .json("Original shared post not found or deleted");
+        }
+        sharedPost = undefined;
+        sharedPost = originalSharedPost;
       }
       sharedPost.insights.totalShares += 1;
       await sharedPost.save();
