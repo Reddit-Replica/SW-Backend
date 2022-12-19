@@ -392,6 +392,32 @@ export async function getJoinedSubredditsService(userId) {
 }
 
 /**
+ * A Service function used to get the Favorite subreddits for the controller
+ * @param {ObjectID} userId the user id
+ * @returns {response} the prepared response for the controller
+ */
+export async function getFavoriteSubredditsService(userId) {
+  const response = [];
+  const user = await User.findById(userId);
+  if (!user || user.deletedAt) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  await user.populate("favoritesSubreddits.subredditId");
+  for (let i = 0; i < user.favoritesSubreddits.length; i++) {
+    if (!user.favoritesSubreddits[i].subredditId.deletedAt) {
+      response.push({
+        title: user.favoritesSubreddits[i].subredditId.title,
+        picture: user.favoritesSubreddits[i].subredditId.picture,
+        members: user.favoritesSubreddits[i].subredditId.members,
+      });
+    }
+  }
+  return response;
+}
+
+/**
  * A Service function used to get the subreddit approved users for the controller
  * @param {Number} limitReq the limit identified in the request
  * @param {ObjectID} beforeReq Before id
