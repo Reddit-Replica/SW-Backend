@@ -51,27 +51,25 @@ const search = async (req, res) => {
       type = "post";
     }
     if (type === "post") {
-      result = await searchPosts(query, {
-        after,
-        before,
-        limit,
-        sort,
-        time,
-      });
+      result = await searchPosts(
+        query,
+        {
+          after,
+          before,
+          limit,
+          sort,
+          time,
+        },
+        loggedInUser
+      );
     } else if (type === "comment") {
       result = await searchComments(query, {
         after,
         before,
         limit,
-        sort,
-        time,
       });
     } else if (type === "user") {
-      result = await searchUsers(
-        query,
-        { after, before, limit, time },
-        loggedInUser
-      );
+      result = await searchUsers(query, { after, before, limit }, loggedInUser);
     } else {
       result = await searchSubreddits(
         query,
@@ -79,7 +77,6 @@ const search = async (req, res) => {
           after,
           before,
           limit,
-          time,
         },
         loggedInUser
       );
@@ -106,25 +103,35 @@ const searchSubreddit = async (req, res) => {
   const query = req.query.q;
   const { after, before, limit, sort, time } = req.query;
   try {
+    let loggedInUser = undefined;
+    if (req.loggedIn) {
+      const user = await getLoggedInUser(req.userId);
+      if (user) {
+        loggedInUser = user;
+      }
+    }
     let result;
     if (!type) {
       type = "post";
     }
     if (type === "post") {
-      result = await searchForPosts(subreddit, query, {
-        after,
-        before,
-        limit,
-        sort,
-        time,
-      });
+      result = await searchForPosts(
+        subreddit,
+        query,
+        {
+          after,
+          before,
+          limit,
+          sort,
+          time,
+        },
+        loggedInUser
+      );
     } else {
       result = await searchForComments(subreddit, query, {
         after,
         before,
         limit,
-        sort,
-        time,
       });
     }
     res.status(result.statusCode).json(result.data);

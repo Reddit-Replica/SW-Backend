@@ -3,6 +3,7 @@ import express from "express";
 import {
   verifyAuthToken,
   verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
 } from "../middleware/verifyToken.js";
 import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
 // eslint-disable-next-line max-len
@@ -73,11 +74,7 @@ const subredditFlairsRouter = express.Router();
  */
 subredditFlairsRouter.get(
   "/r/:subreddit/about/post-flairs",
-  // verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  // TODO Think whether i should verify moderator or not? (maybe a user will need that details while creating a post)
-  // verifyAuthTokenModerator,
   subredditFlairsController.getAllFlairs
 );
 
@@ -145,11 +142,7 @@ subredditFlairsRouter.get(
  */
 subredditFlairsRouter.get(
   "/r/:subreddit/about/post-flairs/:flairId",
-  // verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  // TODO Think whether i should verify moderator or not? (maybe a user will need that details while creating a post)
-  // verifyAuthTokenModerator,
   subredditFlairsController.getFlairDetails
 );
 
@@ -218,9 +211,8 @@ subredditFlairsRouter.get(
 subredditFlairsRouter.post(
   "/r/:subreddit/about/post-flairs",
   verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.addSubredditFlair
 );
 
@@ -288,9 +280,8 @@ subredditFlairsRouter.post(
 subredditFlairsRouter.put(
   "/r/:subreddit/about/post-flairs/:flairId",
   verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.editSubredditFlair
 );
 
@@ -338,7 +329,7 @@ subredditFlairsRouter.delete(
   "/r/:subreddit/about/post-flairs/:flairId",
   verifyAuthToken,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.deleteSubredditFlair
 );
 
@@ -398,7 +389,7 @@ subredditFlairsRouter.post(
   "/r/:subreddit/about/post-flairs-order",
   verifyAuthToken,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.editFlairsOrder
 );
 
@@ -450,7 +441,6 @@ subredditFlairsRouter.post(
 subredditFlairsRouter.get(
   "/r/:subreddit/about/post-flairs-settings",
   verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
   verifyAuthTokenModerator,
   subredditFlairsController.getFlairsSettings
@@ -506,9 +496,8 @@ subredditFlairsRouter.get(
 subredditFlairsRouter.post(
   "/r/:subreddit/about/post-flairs-settings",
   verifyAuthToken,
-  // subredditDetailsMiddleware.createSubreddit,
   subredditDetailsMiddleware.checkSubreddit,
-  verifyAuthTokenModerator,
+  verifyAuthTokenModeratorManageFlairs,
   subredditFlairsController.editFlairsSettings
 );
 

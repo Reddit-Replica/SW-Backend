@@ -13,9 +13,6 @@
     "lint": "eslint ./**/*.js",
     "prettier": "prettier ./**/*.js --write",
     "jsdoc": "jsdoc -c jsdoc.json",
-    "coverage": "nyc npm run test",
-    "test-cover": "istanbul cover --include-all-sources tests/utils/subredditRulesUtilSpec.js && istanbul check-coverage",
-    "coverage-report": "npx nyc report --reporter html --reporter text -t .nyc_output  --report-dir coverage/summary",
     "test-jasmine": "set NODE_ENV=testing && jasmine",
     "coverage-jest": "npm run test -- --coverage"
   },
@@ -36,6 +33,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
+    "express-rate-limit": "^6.7.0",
     "express-validator": "^6.14.2",
     "fcm-node": "^1.6.1",
     "jest-html-reporter": "^3.7.0",

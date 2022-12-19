@@ -3,7 +3,7 @@ export default {
   testEnvironment: "jest-environment-node",
   transform: {},
   coverageReporters: ["clover", "json", "lcov", ["text", { skipFull: true }]],
-  collectCoverageFrom: ["./services/**", "./utils/**"],
+  collectCoverageFrom: ["./services/**", "./utils/**", "./middleware/**"],
   coverageReporters: ["text-summary", "html"],
   reporters: [
     "default",
