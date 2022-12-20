@@ -100,7 +100,7 @@ describe("Testing Search Service functions", () => {
       subredditName: "subreddit1",
       kind: "hybrid",
       numberOfVotes: 3,
-      createdAt: Date.now() + 100,
+      createdAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
     });
     await post2.save();
 
@@ -111,7 +111,7 @@ describe("Testing Search Service functions", () => {
       ownerId: user1._id,
       kind: "hybrid",
       numberOfVotes: 1,
-      createdAt: Date.now() + 200,
+      createdAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
     });
     await post3.save();
 
