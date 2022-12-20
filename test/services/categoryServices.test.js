@@ -194,7 +194,7 @@ describe("Testing Category services", () => {
     try {
       const subreddits = await getRandomSubreddits();
       expect(subreddits.first.category).not.toEqual(subreddits.second.category);
-      expect(subreddits.first.subreddits[0].joined).toBeUndefined();
+      expect(subreddits.first.subreddits[0].data.joined).toBeUndefined();
       expect(subreddits.first.subreddits.length).toEqual(1);
     } catch (err) {
       return false;
@@ -207,7 +207,7 @@ describe("Testing Category services", () => {
       expect(subreddits.first.subreddits.length).toEqual(1);
       expect(subreddits.second.subreddits.length).toEqual(1);
       expect(subreddits.first.category).not.toEqual(subreddits.second.category);
-      expect(subreddits.first.subreddits[0].joined).toBeDefined();
+      expect(subreddits.first.subreddits[0].data.joined).toBeDefined();
     } catch (err) {
       return false;
     }
@@ -234,8 +234,8 @@ describe("Testing Category services", () => {
       expect(subreddits.first.subreddits.length).toEqual(1);
       expect(subreddits.second.subreddits.length).toEqual(1);
       expect(subreddits.first.category).not.toEqual(subreddits.second.category);
-      expect(subreddits.first.subreddits[0].joined).toBeTruthy();
-      expect(subreddits.second.subreddits[0].joined).toBeTruthy();
+      expect(subreddits.first.subreddits[0].data.joined).toBeTruthy();
+      expect(subreddits.second.subreddits[0].data.joined).toBeTruthy();
     } catch (err) {
       return false;
     }
@@ -290,7 +290,10 @@ describe("Testing Category services", () => {
       const subreddits = await getRandomSubreddits();
       expect(subreddits.first.category).toEqual("Sports");
       expect(subreddits.first.subreddits.length).toEqual(2);
-      expect(subreddits.first.subreddits[0].members).toEqual(9);
+      expect(subreddits.first.subreddits[0].id).toEqual(
+        subreddit1.id.toString()
+      );
+      expect(subreddits.first.subreddits[0].data.members).toEqual(9);
       expect(subreddits.second).toBeUndefined();
       await Category.updateOne({ name: "News" }, { $set: { visited: true } });
       await Category.updateOne({ name: "Travel" }, { $set: { visited: true } });
