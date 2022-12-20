@@ -1,6 +1,7 @@
 import {
   getSortedCategories,
   insertCategoriesIfNotExists,
+  getRandomSubreddits,
 } from "../services/categories.js";
 
 const getAllCategories = async (_req, res) => {
@@ -13,6 +14,16 @@ const getAllCategories = async (_req, res) => {
   }
 };
 
+const getSubredditsFromRandomCategories = async (_req, res) => {
+  try {
+    const result = await getRandomSubreddits();
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(500).json("Internal server error");
+  }
+};
+
 export default {
   getAllCategories,
+  getSubredditsFromRandomCategories,
 };

@@ -4,6 +4,7 @@ import subredditDetailsMiddleware from "../middleware/subredditDetails.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
 import { optionalToken } from "../middleware/optionalToken.js";
 import subredditController from "../controllers/NcommunityController.js";
+import categoryController from "../controllers/categoryController.js";
 // eslint-disable-next-line new-cap
 const communitiesRouter = express.Router();
 
@@ -237,7 +238,10 @@ communitiesRouter.get(
  *       - bearerAuth: []
  */
 
-communitiesRouter.get("/custom-random-category");
+communitiesRouter.get(
+  "/custom-random-category",
+  categoryController.getSubredditsFromRandomCategories
+);
 
 /**
  * @swagger

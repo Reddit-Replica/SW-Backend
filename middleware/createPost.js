@@ -13,7 +13,8 @@ import mongoose from "mongoose";
 /**
  * Middleware used to check the post is being submitted in a subreddit
  * and if yes, it verifies the subreddit exists and that the user
- * is either a member of it or a moderator.
+ * is either a member of it or a moderator. Then checks for the ability to post in it,
+ * the spoiler enabled, suggested sort, and if the user is banned/muted.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -87,13 +88,14 @@ export async function checkPostSubreddit(req, res, next) {
         postSubreddit.subredditPostSettings.suggestedSort !== "none"
           ? postSubreddit.subredditPostSettings.suggestedSort
           : req.suggestedSort;
+
       // Check banned & muted
-      if (checkIfBanned(userId, postSubreddit) === true) {
+      if (await checkIfBanned(userId, postSubreddit)) {
         return res.status(400).json({
           error: "User is banned from this subreddit",
         });
       }
-      if (checkIfMuted(userId, postSubreddit) === true) {
+      if (await checkIfMuted(userId, postSubreddit)) {
         return res.status(400).json({
           error: "User is muted from this subreddit",
         });
@@ -240,7 +242,8 @@ export function checkImagesAndVideos(req, res, next) {
 /**
  * Middleware used to verify that if the id of the post being shared exists, if yes
  * then it verifies that the kind is 'post'. The shared post is obtained from the DB
- * to increment it's totalShares in the insights then save it.
+ * to increment it's totalShares in the insights then save it. An extra check is also made
+ * in case there is an original shared post (stemmed from it)
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -248,7 +251,7 @@ export function checkImagesAndVideos(req, res, next) {
  * @returns {void}
  */
 export async function sharePost(req, res, next) {
-  const sharePostId = req.body.sharePostId;
+  let sharePostId = req.body.sharePostId;
   const kind = req.body.kind;
   try {
     if (kind === "post" && !sharePostId) {
@@ -266,9 +269,8 @@ export async function sharePost(req, res, next) {
       if (!sharedPost || sharedPost.deletedAt) {
         return res.status(404).json("Shared post not found or deleted");
       }
-      req.sharePostId = sharePostId;
       if (sharedPost.sharePostId) {
-        req.sharePostId = sharedPost.sharePostId;
+        sharePostId = sharedPost.sharePostId;
         const originalSharedPost = await Post.findById(sharePostId);
         // eslint-disable-next-line max-depth
         if (!originalSharedPost || originalSharedPost.deletedAt) {
@@ -279,6 +281,7 @@ export async function sharePost(req, res, next) {
         sharedPost = undefined;
         sharedPost = originalSharedPost;
       }
+      req.sharePostId = sharePostId;
       sharedPost.insights.totalShares += 1;
       await sharedPost.save();
     }
