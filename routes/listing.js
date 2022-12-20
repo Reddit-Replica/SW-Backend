@@ -323,59 +323,6 @@ listingRouter.get(
 
 /**
  * @swagger
- * /random:
- *   get:
- *     summary: Return the id of a random post. [can be used to get the post and the comment tree later] (Here the token is optional if the user is logged in add a token if not don't add it)
- *     tags: [Listing]
- *     responses:
- *       200:
- *         content:
- *           application/json:
- *             schema:
- *                properties:
- *                  postId:
- *                    type: string
- *                    description: Post id that can be used to request for the post and its comments
- *       500:
- *         description: Internal server error
- *     security:
- *      - bearerAuth: []
- */
-listingRouter.get("/random");
-
-/**
- * @swagger
- * /r/{subreddit}/random:
- *   get:
- *     summary: Return the id of a random post from a specific subreddit. [can be used to get the post and the comment tree later] (Here the token is optional if the user is logged in add a token if not don't add it)
- *     tags: [Listing]
- *     parameters:
- *       - in: path
- *         name: subreddit
- *         description: The name of the subreddit
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         content:
- *           application/json:
- *             schema:
- *                properties:
- *                  postId:
- *                    type: string
- *                    description: Post id that can be used to request for the post and its comments
- *       404:
- *         description: Didn't find a subreddit with that name
- *       500:
- *         description: Internal server error
- *     security:
- *      - bearerAuth: []
- */
-listingRouter.get("/r/:subreddit/random");
-
-/**
- * @swagger
  * /top:
  *   get:
  *     summary: Return the top posts based on [votes] (Here the token is optional if the user is logged in add a token if not don't add it)

@@ -38,6 +38,7 @@ describe("Testing item actions services functions", () => {
       ownerUsername: user.username,
       ownerId: user._id,
       kind: "hybrid",
+      numberOfComments: 3,
       createdAt: Date.now(),
     });
     await post.save();
