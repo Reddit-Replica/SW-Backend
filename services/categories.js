@@ -154,10 +154,13 @@ export async function getRandomSubreddits(loggedInUser) {
         }
       }
       topSubreddits[i].push({
-        id: subreddits[i][j].id,
-        title: subreddits[i][j].title,
-        members: subreddits[i][j].members,
-        joined: joined,
+        id: subreddits[i][j].id.toString(),
+        data: {
+          title: subreddits[i][j].title,
+          picture: subreddits[i][j].picture,
+          members: subreddits[i][j].members,
+          joined: joined,
+        },
       });
     }
     if (firstCategory === secondCategory) {
