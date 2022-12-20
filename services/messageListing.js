@@ -45,7 +45,6 @@ export async function userMessageListing(
         sort: { createdAt: -1, text: 1 },
       },
     });
-  console.log(listingParams);
   if (listingParams.before) {
     const getMsg = await Message.findById(listingParams.before);
     result[typeOfListing] = result[typeOfListing].filter((msg) => {
@@ -57,7 +56,6 @@ export async function userMessageListing(
       return getMsg.createdAt > msg.createdAt;
     });
   }
-  console.log(result);
   if (isUnread) {
     result[typeOfListing] = result[typeOfListing].filter((msg) => {
       return msg.isRead === false;
@@ -73,7 +71,6 @@ export async function userMessageListing(
   //IN CASE OF BEFORE THEN WE WILL START FROM BEFORE INDEX-LIMIT TO THE BEFORE INDEX
   if (listingParams.before) {
     startingIndex = result[typeOfListing].length - limit;
-    console.log(result[typeOfListing].length, limit);
     finishIndex = result[typeOfListing].length;
   }
   if (startingIndex < 0) {
@@ -153,7 +150,6 @@ export async function userMentionsListing(
         sort: listingResult.sort,
       },
     });
-  console.log(result);
   let limit = listingResult.limit;
   if (result[typeOfListing].length < limit) {
     limit = result[typeOfListing].length;
@@ -164,7 +160,6 @@ export async function userMentionsListing(
   //IN CASE OF BEFORE THEN WE WILL START FROM BEFORE INDEX-LIMIT TO THE BEFORE INDEX
   if (listingParams.before) {
     startingIndex = result[typeOfListing].length - limit;
-    console.log(result[typeOfListing].length, limit);
     finishIndex = result[typeOfListing].length;
   }
   if (startingIndex < 0) {
@@ -289,7 +284,6 @@ export async function userConversationListing(
   //IN CASE OF BEFORE THEN WE WILL START FROM BEFORE INDEX-LIMIT TO THE BEFORE INDEX
   if (listingParams.before) {
     startingIndex = result[typeOfListing].length - limit;
-    console.log(result[typeOfListing].length, limit);
     finishIndex = result[typeOfListing].length;
   }
   if (startingIndex < 0) {
