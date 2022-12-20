@@ -146,12 +146,13 @@ export async function homePostsListing(
       }
     }
     let flair;
-    if (post.flair){
-      flair= await flair.findById(post.flair);
+    if (post.flair) {
+      flair = await flair.findById(post.flair);
     }
     let postData = { id: postId };
     postData.data = {
       id: postId,
+      kind: post.kind,
       subreddit: post.subredditName,
       postedBy: post.ownerUsername,
       title: post.title,
