@@ -82,7 +82,7 @@ export async function getSortedCategories() {
 export async function getTwoRandomCategories() {
   const len = Categories.length;
   let firstIndex, secondIndex, visited;
-  if ((await Subreddit.countDocuments({})) === 0) {
+  if ((await Subreddit.countDocuments({ deletedAt: null })) === 0) {
     return {};
   }
   const categoryCount = await Category.countDocuments({ visited: true });
