@@ -1,4 +1,5 @@
 import Category from "../models/Category.js";
+import Subreddit from "../models/Community.js";
 
 let Categories = [
   "Sports",
@@ -23,7 +24,7 @@ let Categories = [
   "Health & Fitness",
   "Learning",
   "Mindblowing",
-  "ourdoors",
+  "Outdoors",
   "parenting",
   "Photography",
   "Relationships",
@@ -69,4 +70,56 @@ export async function getSortedCategories() {
       name: category.name,
     };
   });
+}
+
+/**
+ * This function is used to get two random categories from the array of
+ * Categories we have in read-it
+ *
+ * @returns {object} Object containing the two random categories together
+ */
+export function getTwoRandomCategories() {
+  const len = Categories.length;
+  let firstIndex, secondIndex;
+  firstIndex = Math.floor(Math.random() * len);
+  secondIndex = firstIndex;
+  while (firstIndex === secondIndex) {
+    secondIndex = Math.floor(Math.random() * len);
+  }
+  return {
+    firstCategory: Categories[firstIndex],
+    secondCategory: Categories[secondIndex],
+  };
+}
+
+/**
+ * This function gets random subreddits from two random categories
+ * from, sets a limit for both and inserts them in an array with only the
+ * title and number of members to be displayed
+ *
+ * @returns {Array} Array of objects containing random subreddits
+ */
+export async function getRandomSubreddits() {
+  const { firstCategory, secondCategory } = getTwoRandomCategories();
+
+  let subreddits = [
+    await Subreddit.find({ category: firstCategory }),
+    await Subreddit.find({ category: secondCategory }),
+  ];
+  let randomSubreddits = [];
+  for (let i = 0; i < 2; i++) {
+    let limit = 25;
+    if (subreddits[i].length < 25) {
+      limit = subreddits[i].length;
+    }
+    while (limit--) {
+      const randIndex = Math.floor(Math.random() * subreddits[i].length);
+      randomSubreddits.push({
+        title: subreddits[i][randIndex].title,
+        members: subreddits[i][randIndex].members,
+      });
+      subreddits[i].splice(randIndex, 1);
+    }
+  }
+  return randomSubreddits;
 }
