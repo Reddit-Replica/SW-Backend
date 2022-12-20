@@ -242,6 +242,7 @@ communitiesRouter.get(
 
 communitiesRouter.get(
   "/custom-random-category",
+  optionalToken,
   categoryController.getSubredditsFromRandomCategories
 );
 
