@@ -160,7 +160,7 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
     }
 
     const modeIndex = subreddit.moderators.findIndex(
-      (elem) => elem.userId.toString() === userToBan._id.toString()
+      (elem) => elem.userID.toString() === userToBan._id.toString()
     );
     if (modeIndex !== -1) {
       subreddit.moderators.splice(modeIndex, 1);
@@ -171,6 +171,28 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
       subreddit.members = subreddit.members - 1;
     }
 
+    const joinedUserIndex = userToBan.joinedSubreddits.findIndex(
+      (elem) => elem.subredditId.toString() === subreddit._id.toString()
+    );
+    if (joinedUserIndex !== -1) {
+      userToBan.joinedSubredditss.splice(joinedUserIndex, 1);
+    }
+
+    const favIndex = userToBan.favoritesSubreddits.findIndex(
+      (elem) => elem.subredditId.toString() === subreddit._id.toString()
+    );
+    if (favIndex !== -1) {
+      userToBan.favoritesSubreddits.splice(favIndex, 1);
+    }
+
+    const modUserIndex = userToBan.moderatedSubreddits.findIndex(
+      (elem) => elem.subredditId.toString() === subreddit._id.toString()
+    );
+    if (modUserIndex !== -1) {
+      userToBan.moderatedSubreddits.splice(modUserIndex, 1);
+    }
+
+    await userToBan.save();
     await subreddit.save();
   } else {
     // user was blocked before and need to edit his data
