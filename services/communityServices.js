@@ -8,7 +8,6 @@ import {
   insertCategoriesIfNotExists,
 } from "../services/categories.js";
 import { checkIfModerator } from "./subredditActionsServices.js";
-import Message from "../models/Message.js";
 import { addMessage } from "./messageServices.js";
 /**
  * This function is used to search for a subreddit with its name
@@ -45,6 +44,11 @@ export async function searchForSubreddit(subredditName) {
  */
 //ADD EXTRA CHECK ON REGULAR EXPRESSIONS
 export async function subredditNameAvailable(subredditName) {
+  if (!subredditName.match(/^[A-Za-z0-9\-\_]+$/)){
+    let error = new Error("subreddit name can only contain letters, numbers, or underscores.");
+    error.statusCode = 400;
+    throw error;
+  }
   if (subredditName.length < 3 || subredditName.length > 21) {
     let error = new Error("Community names must be between 3–21 characters");
     error.statusCode = 409;
@@ -301,6 +305,11 @@ export async function addSubreddit(req, authPayload) {
   const creatorId = authPayload.userId;
   const moderator = await searchForUserService(creatorUsername);
   const { subredditName, category, type, nsfw } = req.body;
+  if (!subredditName.match(/^[A-Za-z0-9\-\_]+$/)){
+    let error = new Error("subreddit name can only contain letters, numbers, or underscores.");
+    error.statusCode = 400;
+    throw error;
+  }
   await checkOnCategory(category);
   const owner = {
     username: creatorUsername,
@@ -396,6 +405,7 @@ export async function checkOnCategory(category) {
   for (const smallCategory of categories) {
     if (smallCategory.name === category) {
       includes = true;
+      break;
     }
   }
   if (!includes) {

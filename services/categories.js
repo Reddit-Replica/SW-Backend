@@ -159,7 +159,7 @@ export async function getRandomSubreddits(loggedInUser) {
           title: subreddits[i][j].title,
           picture: subreddits[i][j].picture,
           members: subreddits[i][j].members,
-          joined: joined,
+          isMember: joined,
         },
       });
     }
