@@ -19,6 +19,7 @@ import Comment from "./../../models/Comment.js";
 // eslint-disable-next-line max-statements
 describe("Testing Posts Moderation Service functions", () => {
   let user = {},
+    mod = {},
     subreddit = {},
     post = {},
     comment = {};
@@ -28,6 +29,12 @@ describe("Testing Posts Moderation Service functions", () => {
     user = await new User({
       username: "hamdy",
       email: "hamdy@gmail.com",
+      createdAt: Date.now(),
+    }).save();
+
+    mod = await new User({
+      username: "mod",
+      email: "mod@gmail.com",
       createdAt: Date.now(),
     }).save();
 
@@ -41,7 +48,7 @@ describe("Testing Posts Moderation Service functions", () => {
         username: "hamdy",
         userID: user.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     post = new Post({
@@ -150,7 +157,7 @@ describe("Testing Posts Moderation Service functions", () => {
   });
 
   it("Test addToApprovedUsers with no joined subreddits & no approved users", async () => {
-    await addToApprovedUsers(subreddit, user);
+    await addToApprovedUsers(subreddit, user, mod);
     user = await User.findOne({ username: user.username });
     subreddit = await Subreddit.findOne({ title: subreddit.title });
     expect(user.joinedSubreddits.length).toEqual(1);
@@ -163,7 +170,7 @@ describe("Testing Posts Moderation Service functions", () => {
       subreddit.joinedUsers = [];
       await subreddit.save();
       await user.save();
-      await addToApprovedUsers(subreddit, user);
+      await addToApprovedUsers(subreddit, user, mod);
       user = await User.findOne({ username: user.username });
       subreddit = await Subreddit.findOne({ title: subreddit.title });
     } catch (err) {
@@ -174,7 +181,7 @@ describe("Testing Posts Moderation Service functions", () => {
   it("Test addToApprovedUsers with the same joined subreddit", async () => {
     subreddit.approvedUsers = [];
     await subreddit.save();
-    await addToApprovedUsers(subreddit, user);
+    await addToApprovedUsers(subreddit, user, mod);
     user = await User.findOne({ username: user.username });
     subreddit = await Subreddit.findOne({ title: subreddit.title });
     expect(user.joinedSubreddits.length).toEqual(1);

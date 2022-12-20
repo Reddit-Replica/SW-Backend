@@ -981,6 +981,9 @@
  *               followed:
  *                 type: boolean
  *                 description: If true, then this comment was followed before by the logged-in user
+ *               locked:
+ *                 type: boolean
+ *                 description: If true, then this comment is locked and can not have another child comments
  *               vote:
  *                 type: integer
  *                 enum:

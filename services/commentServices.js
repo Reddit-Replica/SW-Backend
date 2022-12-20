@@ -136,6 +136,7 @@ export async function createCommentService(data, post) {
     postId: post._id,
     parentType: data.parentType,
     level: data.level,
+    nsfw: post.nsfw,
     content: data.content,
     ownerUsername: data.username,
     ownerId: data.userId,

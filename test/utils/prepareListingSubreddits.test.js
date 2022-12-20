@@ -34,7 +34,7 @@ describe("Testing Listing Subreddits Utilities", () => {
         username: "hamdy",
         userID: user.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     subreddit2 = await new Subreddit({
@@ -47,7 +47,7 @@ describe("Testing Listing Subreddits Utilities", () => {
         username: "hamdy",
         userID: user.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     subreddit3 = await new Subreddit({
@@ -60,7 +60,7 @@ describe("Testing Listing Subreddits Utilities", () => {
         username: "hamdy",
         userID: user.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     subreddit4 = await new Subreddit({
@@ -73,7 +73,7 @@ describe("Testing Listing Subreddits Utilities", () => {
         username: "hamdy",
         userID: user.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
   });
   afterAll(async () => {

@@ -132,11 +132,16 @@ export async function followUserService(user, userToFollow, follow) {
         user.username,
         userToFollow._id.toString()
       );
+      return {
+        statusCode: 200,
+        message: "User followed successfully",
+      };
+    } else {
+      return {
+        statusCode: 400,
+        message: "User has been already followed",
+      };
     }
-    return {
-      statusCode: 200,
-      message: "User followed successfully",
-    };
   } else {
     if (index !== -1) {
       userToFollow.followers.splice(index, 1);
@@ -147,11 +152,16 @@ export async function followUserService(user, userToFollow, follow) {
       );
       user.followedUsers.splice(followIndex, 1);
       await user.save();
+      return {
+        statusCode: 200,
+        message: "User unfollowed successfully",
+      };
+    } else {
+      return {
+        statusCode: 400,
+        message: "User was not followed",
+      };
     }
-    return {
-      statusCode: 200,
-      message: "User unfollowed successfully",
-    };
   }
 }
 

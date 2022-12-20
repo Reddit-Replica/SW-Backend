@@ -52,7 +52,7 @@ describe("Testing Search Service functions", () => {
         username: "hamdy",
         userID: user1.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     subreddit2 = await new Subreddit({
@@ -65,7 +65,7 @@ describe("Testing Search Service functions", () => {
         username: "hamdy",
         userID: user1.id,
       },
-      createdAt: Date.now() + 10,
+      dateOfCreation: Date.now() + 10,
     }).save();
 
     post1 = new Post({
@@ -100,7 +100,7 @@ describe("Testing Search Service functions", () => {
       subredditName: "subreddit1",
       kind: "hybrid",
       numberOfVotes: 3,
-      createdAt: Date.now() + 100,
+      createdAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
     });
     await post2.save();
 
@@ -111,7 +111,7 @@ describe("Testing Search Service functions", () => {
       ownerId: user1._id,
       kind: "hybrid",
       numberOfVotes: 1,
-      createdAt: Date.now() + 200,
+      createdAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
     });
     await post3.save();
 

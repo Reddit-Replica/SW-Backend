@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable max-statements */
 import Subreddit from "./../models/Community.js";
+import Category from "./../models/Category.js";
 import { searchForUserService } from "../services/userServices.js";
 import {
   getSortedCategories,
@@ -331,10 +332,11 @@ export async function addSubreddit(req, authPayload) {
     type: type,
     nsfw: nsfw,
     owner: owner,
-    createdAt: Date.now(),
+    dateOfCreation: Date.now(),
     joinedUsers: joinedUsers,
     approvedUsers: approvedUsers,
   }).save();
+  await Category.updateOne({ name: category }, { $set: { visited: true } });
   const addedSubreddit = {
     subredditId: subreddit.id,
     name: subredditName,

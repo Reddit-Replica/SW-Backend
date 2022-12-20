@@ -54,6 +54,11 @@ const commentSchema = mongoose.Schema({
     required: true,
     default: false,
   },
+  nsfw: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   children: [
     {
       type: Schema.Types.ObjectId,
