@@ -174,7 +174,6 @@ communitiesRouter.get(
  *  get:
  *      summary: Returns the top 5 subreddits of 2 random categories
  *      tags: [Subreddit]
- *      parameters:
  *      responses:
  *          200:
  *              description: Returned successfully
