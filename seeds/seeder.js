@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import User from "../models/User.js";
 import Category from "../models/Category.js";
+import { Categories } from "../services/categories.js";
 import Subreddit from "../models/Community.js";
 import Comment from "../models/Comment.js";
 import Post from "../models/Post.js";
@@ -13,7 +14,6 @@ const DB_URL = process.env.MONGO_URL_SEED.trim();
 
 export let userIds;
 export let subredditsId;
-// let users = [];
 
 async function connectDatabase() {
   try {
@@ -36,7 +36,7 @@ function createRandomUser() {
 }
 function createUsers() {
   const users = [];
-  Array.from({ length: 10 }).forEach(() => {
+  Array.from({ length: 20 }).forEach(() => {
     users.push(createRandomUser());
   });
   return users;
@@ -46,8 +46,6 @@ async function seedUsers() {
   const users = createUsers();
   await User.deleteMany();
   const usersInserted = await User.insertMany(users);
-  //  usersInserted.map((d) => d._id);
-  // console.log(userIds);
   return usersInserted;
 }
 
@@ -57,16 +55,20 @@ async function seedCategories() {
   return cateogries;
 }
 
-// let subreddits = [];
+let visitedCategories = [];
 
 function createRandomSubreddit(users) {
-  const userIndex = Math.round(Math.random(0, 10));
+  const userIndex = Math.floor(Math.random() * 10);
+  const categoryIndex = Math.floor(Math.random() * Categories.length);
+  if (!visitedCategories.includes(Categories[categoryIndex])) {
+    visitedCategories.push(Categories[categoryIndex]);
+  }
   const randomDate = faker.date.past();
   const name = faker.internet.userName();
   return {
     title: name,
     viewName: name,
-    category: categories[Math.round(Math.random(0, 5))].name,
+    category: categories[categoryIndex].name,
     type: "Public",
     nsfw: "false",
     owner: {
@@ -82,7 +84,7 @@ function createRandomSubreddit(users) {
 }
 function createSubreddits(users) {
   let subreddits = [];
-  Array.from({ length: 5 }).forEach(() => {
+  Array.from({ length: 10 }).forEach(() => {
     subreddits.push(createRandomSubreddit(users));
   });
 
@@ -92,12 +94,16 @@ async function seedSubreddits(users) {
   const subreddits = createSubreddits(users);
   await Subreddit.deleteMany();
   const subredditsCreated = await Subreddit.insertMany(subreddits);
+  await Category.updateMany(
+    { name: { $in: visitedCategories } },
+    { $set: { visited: true } }
+  );
   return subredditsCreated;
 }
 
 function createRandomPost(users, subreddits) {
-  const userIndex = Math.round(Math.random(0, 10));
-  const subredditIndex = Math.round(Math.random(0, 5));
+  const userIndex = Math.floor(Math.random() * users.length);
+  const subredditIndex = Math.floor(Math.random() * subreddits.length);
   return {
     kind: "link",
     ownerUsername: users[userIndex].username,
@@ -127,9 +133,9 @@ async function seedPosts(users, subreddits) {
 
 function createRandomMessage(users) {
   let i, j;
-  i = Math.round(Math.random(0, users.length));
+  i = Math.floor(Math.random() * users.length);
   do {
-    j = Math.round(Math.random(0, users.length));
+    j = Math.floor(Math.random() * users.length);
   } while (i === j);
   return {
     text: faker.lorem.paragraph(),
@@ -159,9 +165,8 @@ async function seedMessages(users) {
 }
 
 function createRandomComment(users, subreddits, posts) {
-  const userIndex = Math.round(Math.random(0, users.length));
-  const subredditIndex = Math.round(Math.random(0, subreddits.length));
-  const postIndex = Math.round(Math.random(0, posts.length));
+  const userIndex = Math.floor(Math.random() * users.length);
+  const postIndex = Math.floor(Math.random() * posts.length);
   return {
     parentId: posts[postIndex]._id,
     postId: posts[postIndex]._id,
