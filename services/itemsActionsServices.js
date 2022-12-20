@@ -1,3 +1,4 @@
+import Post from "./../models/Post.js";
 import Comment from "../models/Comment.js";
 import Message from "../models/Message.js";
 import mongoose from "mongoose";
@@ -36,20 +37,24 @@ async function deletePost(userId, postId) {
  * It deletes the children of the comment at all levels.
  *
  * @param {Array} children Array of comments that we want to delete
+ * @returns {Number} Number of deleted comments
  */
 async function deleteCommentChildren(children) {
   if (!children.length) {
-    return;
+    return 0;
   }
 
+  let count = children.length;
   children.forEach(async (comment) => {
     await Comment.updateMany(
       { parentId: comment },
       { $set: { deletedAt: Date.now() } }
     );
     const innerChildren = await Comment.findById(comment).select("children");
-    await deleteCommentChildren(innerChildren.children);
+    count += await deleteCommentChildren(innerChildren.children);
   });
+
+  return count;
 }
 
 /**
@@ -59,6 +64,7 @@ async function deleteCommentChildren(children) {
  * @param {String} userId User id (owner of the comment)
  * @param {String} commentId Comment id that we want to delete
  */
+// eslint-disable-next-line max-statements
 async function deleteComment(userId, commentId) {
   const comment = await checkCommentId(commentId);
 
@@ -68,15 +74,26 @@ async function deleteComment(userId, commentId) {
     throw error;
   }
 
+  const post = await Post.findById(comment.postId);
+  if (!post || post.deletedAt) {
+    let error = new Error("Can not find a post with that id");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  let numOfDeleted = 1;
   // delete all child comments to that comment
   await Comment.updateMany(
     { parentId: comment.id },
     { $set: { deletedAt: Date.now() } }
   );
-  await deleteCommentChildren(comment.children);
+  numOfDeleted += await deleteCommentChildren(comment.children);
 
   comment.deletedAt = Date.now();
   await comment.save();
+
+  post.numberOfComments = post.numberOfComments - numOfDeleted;
+  await post.save();
 }
 
 /**
