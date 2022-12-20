@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-import User from "../models/User.js";
 import { body, check, query } from "express-validator";
 import {
   checkSameUserEditing,

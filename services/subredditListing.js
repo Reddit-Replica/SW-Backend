@@ -3,7 +3,6 @@
 /* eslint-disable max-statements */
 import Subreddit from "../models/Community.js";
 import Category from "../models/Category.js";
-import { subredditListing } from "../utils/prepareSubreddit.js";
 import { checkOnCategory } from "./communityServices.js";
 import { prepareLimit } from "../utils/prepareLimit.js";
 /**

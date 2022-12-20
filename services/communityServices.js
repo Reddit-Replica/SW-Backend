@@ -7,7 +7,6 @@ import {
   insertCategoriesIfNotExists,
 } from "../services/categories.js";
 import { checkIfModerator } from "./subredditActionsServices.js";
-import Topics from "../models/Topics.js";
 import { addMessage } from "./messageServices.js";
 /**
  * This function is used to search for a subreddit with its name
@@ -402,28 +401,6 @@ export async function checkOnCategory(category) {
   const categories = await getSortedCategories();
   let includes = false;
   for (const smallCategory of categories) {
-    if (smallCategory.name === category) {
-      includes = true;
-      break;
-    }
-  }
-  if (!includes) {
-    let error = new Error(`${category} is not available as a category`);
-    error.statusCode = 404;
-    throw error;
-  }
-}
-
-/**
- * This function is used to check if the input category is valid or not
- * @param {String} category username of the user
- * @returns {Object} error object that contains the msg describing what happened and its status code
- */
-export async function checkOnTopics(topic) {
-  await insertTopicsIfNotExists();
-  const { topics } = await Topics.find();
-  let includes = false;
-  for (const smallTopic of topics) {
     if (smallCategory.name === category) {
       includes = true;
       break;

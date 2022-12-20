@@ -18,9 +18,6 @@ import {
   userInboxListing,
 } from "../services/messageListing.js";
 import { searchForUserService } from "../services/userServices.js";
-import { ConsoleReporter } from "jasmine";
-import Mention from "../models/Mention.js";
-import Message from "../models/Message.js";
 //CHECKING ON MESSAGE CONTENT
 const messageValidator = [
   body("text")
