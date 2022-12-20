@@ -173,12 +173,12 @@ export async function userMentionsListing(
     // AS THIS MENTION IS RETURNED THEN IT SHOULD BE MARKED AS READ
     const post = await Post.findById(mention.postId);
     const comment = await Comment.findById(mention.commentId);
-    if (!post || !comment){
-      let err=new Error("This post or comment has not found");
-      err.statusCode=400;
+    if (!post || !comment) {
+      let err = new Error("This post or comment has not found");
+      err.statusCode = 400;
       throw err;
     }
-    if (post.deletedAt||comment.deletedAt){
+    if (post.deletedAt || comment.deletedAt) {
       continue;
     }
     let vote = 0;
@@ -441,13 +441,15 @@ export async function userInboxListing(user, listingParams) {
     //DEPENDING ON THE TYPE OF ELEMENT WE WILL SEND DIFFERENT DATA
     if (totalInbox[startingIndex].type !== "Message") {
       const post = await Post.findById(totalInbox[startingIndex].postId);
-      const comment = await Comment.findById(totalInbox[startingIndex].commentId);
-      if (!post || !comment){
-        let err=new Error("This post or comment has not found");
-        err.statusCode=400;
+      const comment = await Comment.findById(
+        totalInbox[startingIndex].commentId
+      );
+      if (!post || !comment) {
+        let err = new Error("This post or comment has not found");
+        err.statusCode = 400;
         throw err;
       }
-      if (post.deletedAt||comment.deletedAt){
+      if (post.deletedAt || comment.deletedAt) {
         continue;
       }
       let vote = 0;

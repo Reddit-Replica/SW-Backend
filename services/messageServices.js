@@ -13,6 +13,7 @@ import { searchForUserService } from "./userServices.js";
 import { searchForSubreddit } from "./communityServices.js";
 import Mention from "../models/Mention.js";
 import { searchForComment, searchForPost } from "./PostActions.js";
+import { sendMentionMail } from "../utils/sendEmails.js";
 /**
  * This function is used to add a message
  * it add the msg to sender's sent messages and to the receiver's received messages
@@ -66,14 +67,25 @@ export async function addMention(req) {
     throw error;
   }
   const comment = await searchForComment(req.mention.commentId);
-  if (comment.ownerUsername !== req.payload.username) {
+
+  console.log(comment.content,req.mention.receiverUsername);
+  if (!comment.content.includes(req.mention.receiverUsername)) {
+    let error = new Error("The comment doesn't contain the name of the receiver username");
+    error.statusCode = 400;
+    throw error;
+  }
+if (comment.ownerUsername !== req.payload.username) {
     let error = new Error("The user sent the request isn't the comment owner");
     error.statusCode = 400;
     throw error;
   }
+
+  const post = await searchForPost(req.mention.postId);
   const mention = await new Mention(req.mention).save();
   const receiver = await searchForUserService(mention.receiverUsername);
-  const post = await searchForPost(req.mention.postId);
+  if (!receiver.userSettings.unsubscribeFromEmails&& comment.ownerUsername!==req.mention.receiverUsername) {
+    sendMentionMail(receiver, post, comment);
+  }
   for (const smallUser of post.usersCommented) {
     if (smallUser.toString() === receiver.id) {
       await addUserMention(receiver.id, mention);
