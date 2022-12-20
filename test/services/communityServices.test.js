@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
 import {
   searchForSubreddit,
-  addUserToWaitingList,
   addToDescription,
   addToSubtopics,
   addToMainTopic,
@@ -246,45 +245,6 @@ describe("Testing community service functions", () => {
       expect(error.message).toEqual("This subreddit isn't found");
     }
   });
-  it("should have  addUserToWaitingList function", () => {
-    expect(addUserToWaitingList).toBeDefined();
-  });
-
-  it("try addUserToWaitingList function with a valid data", async () => {
-    subreddit = await searchForSubreddit("Hunter");
-    const result = await addUserToWaitingList(
-      subreddit,
-      "SecondNormalUser",
-      "Please let me in"
-    );
-    expect(result.statusCode).toEqual(200);
-    expect(result.message).toEqual("Your request is sent successfully");
-  });
-
-  it("try addUserToWaitingList function with a invalid User data", async () => {
-    try {
-      subreddit = await searchForSubreddit("Hunter");
-      await addUserToWaitingList(
-        subreddit,
-        "AnonymousUser",
-        "Please let me in"
-      );
-    } catch (error) {
-      expect(error.statusCode).toEqual(404);
-      expect(error.message).toEqual("Didn't find a user with that username");
-    }
-  });
-
-  it("try addUserToWaitingList function with a deleted User data", async () => {
-    try {
-      subreddit = await searchForSubreddit("Hunter");
-      await addUserToWaitingList(subreddit, "DeletedUser", "Please let me in");
-    } catch (error) {
-      expect(error.statusCode).toEqual(404);
-      expect(error.message).toEqual("Didn't find a user with that username");
-    }
-  });
-
   it("should have addToDescription function", () => {
     expect(addToDescription).toBeDefined();
   });

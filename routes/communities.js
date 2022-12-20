@@ -83,7 +83,7 @@ const communitiesRouter = express.Router();
 
 communitiesRouter.get(
   "/subreddits/leaderboard",
-  verifyAuthToken,
+  optionalToken,
   subredditController.subredditLeaderboard
 );
 
@@ -164,7 +164,7 @@ communitiesRouter.get(
 
 communitiesRouter.get(
   "/subreddits/leaderboard/:categoryName",
-  verifyAuthToken,
+  optionalToken,
   subredditController.subredditLeaderboardWithCategory
 );
 
@@ -315,7 +315,7 @@ communitiesRouter.get(
 
 communitiesRouter.get(
   "/trending-communities",
-  verifyAuthToken,
+  optionalToken,
   subredditController.trendingSubreddits
 );
 
@@ -403,7 +403,7 @@ communitiesRouter.get(
 
 communitiesRouter.get(
   "/random-category",
-  verifyAuthToken,
+  optionalToken,
   subredditController.randomCategories
 );
 
