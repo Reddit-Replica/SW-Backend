@@ -7,6 +7,7 @@ import Post from "../models/Post.js";
 dotenv.config();
 import { faker } from "@faker-js/faker";
 import { categories } from "./categories.js";
+import Message from "../models/Message.js";
 const DB_URL = process.env.MONGO_URL_SEED.trim();
 
 export let userIds;
@@ -123,6 +124,39 @@ async function seedPosts(users, subreddits) {
   return postsCreated;
 }
 
+function createRandomMessage(users) {
+  let i, j;
+  i = Math.round(Math.random(0, users.length));
+  do {
+    j = Math.round(Math.random(0, users.length));
+  } while (i === j);
+  return {
+    text: faker.lorem.paragraph(),
+    createdAt: faker.date.past(),
+    receiverId: users[j].id,
+    senderUsername: users[i].username,
+    isSenderUser: true,
+    receiverUsername: users[j].username,
+    isReceiverUser: true,
+    subject: faker.internet.userName(),
+  };
+}
+
+function createMessages(users) {
+  let messages = [];
+  Array.from({ length: 20 }).forEach(() => {
+    messages.push(createRandomMessage(users));
+  });
+  return messages;
+}
+
+async function seedMessages(users) {
+  const messages = createMessages(users);
+  await Message.deleteMany();
+  const messagesCreated = await Message.insertMany(messages);
+  return messagesCreated;
+}
+
 (async function () {
   console.log("Entered");
 
@@ -134,6 +168,7 @@ async function seedPosts(users, subreddits) {
   const subreddits = await seedSubreddits(users);
   // subreddits = await Subreddit.find({});
   const posts = await seedPosts(users, subreddits);
+  const messages = await seedMessages(users);
 
   closeDatabaseConnection();
   console.log("✅ Seeds executed successfully");
