@@ -17,7 +17,7 @@ export async function homePostsListing(
   );
   let extraPostsIndex = filteringProperties.skip;
   let extraPostsLimit = filteringProperties.limit;
-  let extraPostsUsersFilter, extraPostsSubredditFilter;
+  let extraPostsUsersFilter, extraPostsSubredditFilter,hiddenPostsFilter;
   //WE WILL GET THE MOST IMPORTANT POSTS FIRST WHICH ARE SUBREDDIT POSTS AND FOLLOWING POSTS
   //GETTING SUBREDDIT POSTS
   if (isLoggedIn) {
@@ -38,9 +38,15 @@ export async function homePostsListing(
     let userJoinedSubreddits = joinedSubreddits.map(
       (subreddit) => subreddit.name
     );
+    var hiddenArr=[];
+    var { hiddenPosts }=await User.findOne({ username:user.username }).select("hiddenPosts");
+    for (let i=0;i<hiddenPosts.length;i++){
+      hiddenArr.push(hiddenPosts[i].toString());
+    }
 
     extraPostsUsersFilter = followedUsers;
     extraPostsSubredditFilter = userJoinedSubreddits;
+    hiddenPostsFilter=hiddenArr;
 
     const importantPosts = await Post.find({
       $or: [
@@ -54,6 +60,7 @@ export async function homePostsListing(
       ],
       deletedAt: null,
       createdAt: { $gt: filteringProperties.filteringDate },
+      _id:{ $nin:[...hiddenArr] },
     }).sort(filteringProperties.sort);
     if (
       importantPosts.length >=
@@ -93,6 +100,7 @@ export async function homePostsListing(
         ownerId: { $nin: [...extraPostsUsersFilter] },
         deletedAt: null,
         createdAt: { $gt: filteringProperties.filteringDate },
+        _id:{ $nin:[...hiddenPostsFilter] },
       })
         .sort(filteringProperties.sort)
         .limit(extraPostsLimit)
@@ -189,8 +197,8 @@ export async function homePostsListing(
   }
   if (posts.length) {
     if (listingParams.after) {
-      after = parseInt(listingParams.after) + posts.length;
-      before = parseInt(listingParams.after);
+      after = parseInt(filteringProperties.skip) + posts.length;
+      before = parseInt(filteringProperties.skip);
     } else if (listingParams.before) {
       after = parseInt(listingParams.before);
       before = parseInt(listingParams.before) - posts.length;
@@ -271,13 +279,18 @@ async function prepareFiltering(typeOfSorting, listingParams) {
     if (parseInt(listingParams.after) < 0) {
       listingParams.after = 0;
     }
+    if (!isNaN(parseInt(listingParams.after))) {
     result.skip = parseInt(listingParams.after);
+    }
+
   } else if (listingParams.before) {
     if (parseInt(listingParams.before) < 0) {
       listingParams.before = 0;
     }
-    result.skip =
+    if (!isNaN(parseInt(listingParams.before))&&!isNaN(parseInt(listingParams.limit))) {
+result.skip =
       parseInt(listingParams.before) - parseInt(listingParams.limit);
+}
   }
 
   if (result.skip < 0) {
