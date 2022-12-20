@@ -93,6 +93,8 @@ export async function searchForSubredditById(subredditId) {
 export async function addToJoinedSubreddit(user, subreddit) {
   if (subreddit.subredditSettings.sendWelcomeMessage){
     if (subreddit.subredditSettings.welcomeMessage){
+      let sendingDate=new Date();
+      sendingDate.setHours(sendingDate.getHours()+1);
       let smallreq={};
      smallreq.msg={
       senderUsername:subreddit.title,
@@ -103,8 +105,7 @@ export async function addToJoinedSubreddit(user, subreddit) {
       text:subreddit.subredditSettings.welcomeMessage+` This message can not be replied to. If you have questions for the moderators of r/${subreddit.title} you can message them here.`,
       subject:`Welcome to r/${subreddit.title}!`,
       isReply:false,
-      isWaited:true,
-      createdAt:Date.now(),
+      createdAt:sendingDate,
     };
     addMessage(smallreq);
   }

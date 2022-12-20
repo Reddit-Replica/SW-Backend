@@ -67,11 +67,6 @@ const messageSchema = mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: "Message",
   },
-  isWaited:{
-    type: Boolean,
-    required: true,
-    default: false,
-  }
 });
 
 const Message = mongoose.model("Message", messageSchema);

@@ -34,14 +34,11 @@ export async function userMessageListing(
   listingParams,
   isUnread
 ) {
-  // prepare the listing parameters
-  let date=new Date();
-  date.setHours(date.getHours() - 1);
   const result = await User.findOne({ username: user.username })
     .select(typeOfListing)
     .populate({
       path: typeOfListing,
-      match: { $or:[{ isWaited:false },{ isWaited:true , createdAt:{ $lte:date } }] },
+      match: { createdAt : { $lte:Date.now() } },
       options: {
         sort:{ createdAt:-1,text:1 },
       },
@@ -290,13 +287,19 @@ export async function userConversationListing(
   }
   //OUR CHILDREN ARRAY THAT WE WILL SEND AS RESPONSE
   const children = [];
+  let skipConv;
   for (startingIndex; startingIndex < finishIndex; startingIndex++) {
+    skipConv=false;
     const conversation = result[typeOfListing][startingIndex];
     const messages = [];
     for (const smallMessage of conversation.messages) {
       const message = await Message.findById(smallMessage);
       if (message.receiverUsername === user.username && message.deletedAt) {
         continue;
+      }
+      if (message.createdAt > Date.now()) {
+        skipConv=true;
+        break;
       }
       const messageData = {
         msgID: message.id.toString(),
@@ -314,6 +317,9 @@ export async function userConversationListing(
         message.isRead = true;
         await message.save();
       }
+    }
+    if (skipConv){
+      continue;
     }
     messages.sort(compareMsgs);
     // GETTING THE DATA THAT WE NEED TO RETURN TO THE USERS , FIRST WE WILL ADD THE ID OF EACH MENTION
@@ -368,7 +374,7 @@ export async function userInboxListing(user, listingParams) {
   date.setHours(date.getHours() - 1);
   const { receivedMessages } = await User.findOne({ username: user.username })
     .select("receivedMessages")
-    .populate({ path: "receivedMessages", match: { deletedAt: null } });
+    .populate({ path: "receivedMessages", match: { deletedAt: null,createdAt: { $lte:Date.now() } } });
   //GETTING USERNAME MENTIONS
   const { usernameMentions } = await User.findOne({ username: user.username })
     .select("usernameMentions")
