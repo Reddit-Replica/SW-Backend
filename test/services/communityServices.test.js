@@ -60,7 +60,7 @@ describe("Testing community service functions", () => {
         username: "Noaman",
         userID: normalUser.Id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     subredditToJoin = await new Subreddit({
@@ -73,7 +73,7 @@ describe("Testing community service functions", () => {
         username: moderatorUser.username,
         userID: moderatorUser._id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
   });
 

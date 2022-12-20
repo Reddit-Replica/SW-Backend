@@ -52,7 +52,7 @@ describe("Testing Search Service functions", () => {
         username: "hamdy",
         userID: user1.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     subreddit2 = await new Subreddit({
@@ -65,7 +65,7 @@ describe("Testing Search Service functions", () => {
         username: "hamdy",
         userID: user1.id,
       },
-      createdAt: Date.now() + 10,
+      dateOfCreation: Date.now() + 10,
     }).save();
 
     post1 = new Post({
