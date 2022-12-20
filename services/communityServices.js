@@ -323,7 +323,7 @@ export async function addSubreddit(req, authPayload) {
     type: type,
     nsfw: nsfw,
     owner: owner,
-    createdAt: Date.now(),
+    dateOfCreation: Date.now(),
     joinedUsers: joinedUsers,
     approvedUsers: approvedUsers,
   }).save();
