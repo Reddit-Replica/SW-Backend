@@ -1,6 +1,7 @@
 /* eslint-disable max-statements */
 /* eslint-disable max-len */
 import User from "../models/User.js";
+import mongoose from "mongoose";
 import Message from "../models/Message.js";
 import Conversation from "../models/Conversation.js";
 import {
@@ -37,7 +38,6 @@ export async function addMessage(req) {
     addReceivedMessages(receiver.id, message);
   }
   let conversationId;
-  console.log(message);
   //CREATING A NEW CONVERSATIONS USING THE MESSAGE SENT
   if (!message.isReply) {
     conversationId = await createNewConversation(message);
@@ -89,6 +89,7 @@ export async function addMention(req) {
  * @param {Object} msg msg object from which we will get our data to check if the conversation was created before or not
  * @returns {String} it return the id of the created conversation or the already existing one
  */
+//DONE
 export async function createNewConversation(msg) {
   //IF THERE IS NO CONVERSATION WITH THESE DATA THEN WE WILL CREATE A NEW ONE AND RETURN ITS ID , BUT IF THERE IS SO WE WILL RETURN THE ID OF THE EXISTING ONE
   const createdConversation = await new Conversation({
@@ -110,12 +111,24 @@ export async function createNewConversation(msg) {
  * @param {Object} msg msg object from which we will get our data to check if the conversation was created before or not
  * @returns {String} it return the id of the created conversation or the already existing one
  */
+
+//DONE
 export async function getExistingConversation(repliedMsgId) {
   //IF THERE IS NO CONVERSATION WITH THESE DATA THEN WE WILL CREATE A NEW ONE AND RETURN ITS ID , BUT IF THERE IS SO WE WILL RETURN THE ID OF THE EXISTING ONE
+  if (!mongoose.Types.ObjectId.isValid(repliedMsgId)) {
+    let error = new Error("Invalid Message id");
+    error.statusCode = 400;
+    throw error;
+  }
+  console.log(repliedMsgId);
   const existedConversation = await Conversation.findOne({
     messages: repliedMsgId.toString(),
   });
-  console.log(existedConversation);
+  if (!existedConversation) {
+    let err = new Error("This conversation is not found");
+    err.statusCode = 400;
+    throw err;
+  }
   return existedConversation.id;
 }
 /**
@@ -125,7 +138,13 @@ export async function getExistingConversation(repliedMsgId) {
  * @param {Object} conversationId the id of the conversation we want to add that message to
  * @returns {Object} defines if there is an error or not and specifies the kind of the error if there was
  */
+//DONE
 export async function addToConversation(msg, conversationId) {
+  if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+    let error = new Error("Invalid conversation id");
+    error.statusCode = 400;
+    throw error;
+  }
   //HERE WE NEED TO ADD THE MSG TO THE CONVERSATION
   const conversation = await Conversation.findById(conversationId);
   if (!conversation) {
@@ -133,9 +152,17 @@ export async function addToConversation(msg, conversationId) {
     err.statusCode = 400;
     throw err;
   }
+  for (const msg of conversation.messages) {
+    if (msg.toString() === msg.id.toString()) {
+      let err = new Error("This Message already exists in the conversation");
+      err.statusCode = 400;
+      throw err;
+    }
+  }
   conversation.messages.push(msg.id);
   conversation.latestDate = Date.now();
   await conversation.save();
+  return true;
 }
 /**
  * This function is used to check if the user has already that conversation or we will need to add a new one for him
@@ -143,7 +170,8 @@ export async function addToConversation(msg, conversationId) {
  * @param {Object} conversationId the id of the conversation we want to check if the user had it or not
  * @returns {Boolean} defines if the user has already that conversation or not
  */
-async function checkExistingConversation(user, conversationId) {
+//DONE
+export async function checkExistingConversation(user, conversationId) {
   //CHECKING IF THE USER HAVE ALREADY THAT CONVERSATION OR WE NEED TO ADD IT
   for (const conversation of user.conversations) {
     if (conversation.toString() === conversationId) {
@@ -159,7 +187,8 @@ async function checkExistingConversation(user, conversationId) {
  * @param {Object} convId the id of the conversation we want to check if the user had it or not
  * @returns {string} defines if the conversation was added successfully or not
  */
-async function addConversationToUsers(message, convId) {
+//DONE
+export async function addConversationToUsers(message, convId) {
   // WE SEARCH FOR THE SENDER TO CHECK IF HE HAS THE CONVERSATION OR NOT
   if (message.isSenderUser) {
     const sender = await User.findOne({ username: message.senderUsername });
@@ -184,6 +213,7 @@ async function addConversationToUsers(message, convId) {
       await receiver.save();
     }
   }
+  return true;
 }
 
 /**
@@ -319,6 +349,13 @@ export async function validateMention(req) {
     err.statusCode = 400;
     throw err;
   }
+  if (!req.body.receiverUsername) {
+    let err = new Error("receiverUsername is needed");
+    err.statusCode = 400;
+    throw err;
+  }
+  const post = searchForPost(req.body.postId);
+  const comment = searchForComment(req.body.commentId);
   //CREATING THE MAIN STRUCTURE OF THE MENTION
   const mention = {
     commentId: req.body.commentId,

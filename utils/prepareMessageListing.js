@@ -288,7 +288,6 @@ export async function inboxListing(listingParams) {
 
 export async function splitterOnType(Id) {
   let splitter;
-  console.log(Id);
   splitter = await Message.findById(Id);
   if (!splitter) {
     splitter = await Mention.findById(Id);
@@ -307,11 +306,6 @@ export async function splitterOnType(Id) {
 function setResult(listingParams) {
   const result = {};
   result.find = { deletedAt: null };
-  if (listingParams.listing === null) {
-    let error = new Error("Invalid Before or After Id");
-    error.statusCode = 401;
-    throw error;
-  }
   result.find[listingParams.listing.type] = listingParams.listing.value;
   result.limit = listingParams.limit;
   result.sort = listingParams.sort;
