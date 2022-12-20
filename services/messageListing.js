@@ -2,7 +2,6 @@
 /* eslint-disable max-statements */
 import User from "../models/User.js";
 import {
-  messageListing,
   mentionListing,
   conversationListing,
   splitterOnType,
@@ -36,22 +35,36 @@ export async function userMessageListing(
   isUnread
 ) {
   // prepare the listing parameters
-  const listingResult = await messageListing(listingParams);
-  if (isUnread) {
-    listingResult.find.isRead = false;
-  }
+  let date=new Date();
+  date.setHours(date.getHours() - 1);
   const result = await User.findOne({ username: user.username })
     .select(typeOfListing)
     .populate({
       path: typeOfListing,
-      match: listingResult.find,
+      match: { $or:[{ isWaited:false },{ isWaited:true , createdAt:{ $lte:date } }] },
       options: {
-        sort: listingResult.sort,
+        sort:{ createdAt:-1,text:1 },
       },
     });
-  console.log(result);
-  console.log(listingResult);
-  let limit = listingResult.limit;
+    console.log(listingParams);
+    if (listingParams.before){
+      const getMsg=await Message.findById(listingParams.before);
+      result[typeOfListing]=result[typeOfListing].filter((msg)=>{
+        return getMsg.createdAt<msg.createdAt;
+      });
+      } else if (listingParams.after){
+      const getMsg=await Message.findById(listingParams.after);
+      result[typeOfListing]=result[typeOfListing].filter((msg)=>{
+        return getMsg.createdAt>msg.createdAt;
+      });
+      }
+      console.log(result);
+    if (isUnread) {
+      result[typeOfListing]=result[typeOfListing].filter((msg)=>{
+        return msg.isRead===false;
+      });
+    }
+  let limit = await prepareLimit(listingParams.limit);
   if (result[typeOfListing].length < limit) {
     limit = result[typeOfListing].length;
   }
@@ -351,6 +364,8 @@ export async function userConversationListing(
 
 export async function userInboxListing(user, listingParams) {
   //GETTING RECEIVED MESSAGES
+  let date=new Date();
+  date.setHours(date.getHours() - 1);
   const { receivedMessages } = await User.findOne({ username: user.username })
     .select("receivedMessages")
     .populate({ path: "receivedMessages", match: { deletedAt: null } });

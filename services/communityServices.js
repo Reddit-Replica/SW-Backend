@@ -99,6 +99,7 @@ export async function addToJoinedSubreddit(user, subreddit) {
       isSenderUser:false,
       receiverUsername:user.username,
       isReceiverUser:true,
+      receiverId:user.id,
       text:subreddit.subredditSettings.welcomeMessage+` This message can not be replied to. If you have questions for the moderators of r/${subreddit.title} you can message them here.`,
       subject:`Welcome to r/${subreddit.title}!`,
       isReply:false,
