@@ -204,6 +204,9 @@ communitiesRouter.get(
  *                                    members:
  *                                     type: number
  *                                     description: number of members of the community
+ *                                    joined:
+ *                                     type: boolean
+ *                                     description: Indicates whether the logged in user joined this subreddit or not
  *                          second:
  *                            type: object
  *                            properties:
@@ -225,6 +228,9 @@ communitiesRouter.get(
  *                                    members:
  *                                     type: number
  *                                     description: number of members of the community
+ *                                    joined:
+ *                                     type: boolean
+ *                                     description: Indicates whether the logged in user joined this subreddit or not
  *          404:
  *              description: Page not found
  *          401:
