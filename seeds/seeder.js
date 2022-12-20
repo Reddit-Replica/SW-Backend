@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import User from "../models/User.js";
 import Category from "../models/Category.js";
 import Subreddit from "../models/Community.js";
+import Comment from "../models/Comment.js";
 import Post from "../models/Post.js";
 dotenv.config();
 import { faker } from "@faker-js/faker";
@@ -94,7 +95,7 @@ async function seedSubreddits(users) {
   return subredditsCreated;
 }
 
-async function createRandomPost(users, subreddits) {
+function createRandomPost(users, subreddits) {
   const userIndex = Math.round(Math.random(0, 10));
   const subredditIndex = Math.round(Math.random(0, 5));
   return {
@@ -111,8 +112,8 @@ async function createRandomPost(users, subreddits) {
 
 function createPosts(users, subreddits) {
   let posts = [];
-  Array.from({ length: 20 }).forEach(async () => {
-    posts.push(await createRandomPost(users, subreddits));
+  Array.from({ length: 200 }).forEach(() => {
+    posts.push(createRandomPost(users, subreddits));
   });
   return posts;
 }
@@ -157,6 +158,38 @@ async function seedMessages(users) {
   return messagesCreated;
 }
 
+function createRandomComment(users, subreddits, posts) {
+  const userIndex = Math.round(Math.random(0, users.length));
+  const subredditIndex = Math.round(Math.random(0, subreddits.length));
+  const postIndex = Math.round(Math.random(0, posts.length));
+  return {
+    parentId: posts[postIndex]._id,
+    postId: posts[postIndex]._id,
+    parentType: "post",
+    level: 0,
+    nsfw: "false",
+    content: faker.hacker.phrase() + faker.hacker.phrase(),
+    ownerUsername: users[userIndex].username,
+    ownerId: users[userIndex]._id,
+    createdAt: faker.date.past(),
+  };
+}
+
+function createComments(users, subreddits, posts) {
+  let comments = [];
+  Array.from({ length: 20 }).forEach(() => {
+    comments.push(createRandomComment(users, subreddits, posts));
+  });
+  return comments;
+}
+
+async function seedComments(users, subreddits, posts) {
+  const comments = createComments(users, subreddits, posts);
+  await Comment.deleteMany();
+  const commentsCreated = await Comment.insertMany(comments);
+  return commentsCreated;
+}
+
 (async function () {
   console.log("Entered");
 
@@ -168,6 +201,7 @@ async function seedMessages(users) {
   const subreddits = await seedSubreddits(users);
   // subreddits = await Subreddit.find({});
   const posts = await seedPosts(users, subreddits);
+  const comments = await seedComments(users, subreddits, posts);
   const messages = await seedMessages(users);
 
   closeDatabaseConnection();
