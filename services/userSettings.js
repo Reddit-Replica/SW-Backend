@@ -91,6 +91,7 @@ export async function setNewPassword(user, newPassword, confirmNewPassword) {
  */
 export async function setNewEmail(user, userId, toEmail) {
   const verifyToken = await generateVerifyToken(userId, "verifyEmail");
+  user.email = toEmail;
   const sentEmail = sendVerifyEmail(user, verifyToken);
 
   if (!sentEmail) {
