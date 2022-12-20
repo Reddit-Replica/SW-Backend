@@ -12,6 +12,12 @@ import { categories } from "./categories.js";
 import Message from "../models/Message.js";
 const DB_URL = process.env.MONGO_URL_SEED.trim();
 
+const USERS_NUMBER = 5;
+const POSTS_NUMBER = 200;
+const MESSAGES_NUMBER = 200;
+const SUBREDDITS_NUMBER = 20;
+const COMMENTS_NUMBER = 200;
+
 export let userIds;
 export let subredditsId;
 
@@ -36,7 +42,7 @@ function createRandomUser() {
 }
 function createUsers() {
   const users = [];
-  Array.from({ length: 20 }).forEach(() => {
+  Array.from({ length: USERS_NUMBER }).forEach(() => {
     users.push(createRandomUser());
   });
   return users;
@@ -58,7 +64,7 @@ async function seedCategories() {
 let visitedCategories = [];
 
 function createRandomSubreddit(users) {
-  const userIndex = Math.floor(Math.random() * 10);
+  const userIndex = Math.floor(Math.random() * users.length);
   const categoryIndex = Math.floor(Math.random() * Categories.length);
   if (!visitedCategories.includes(Categories[categoryIndex])) {
     visitedCategories.push(Categories[categoryIndex]);
@@ -84,7 +90,7 @@ function createRandomSubreddit(users) {
 }
 function createSubreddits(users) {
   let subreddits = [];
-  Array.from({ length: 10 }).forEach(() => {
+  Array.from({ length: SUBREDDITS_NUMBER }).forEach(() => {
     subreddits.push(createRandomSubreddit(users));
   });
 
@@ -118,7 +124,7 @@ function createRandomPost(users, subreddits) {
 
 function createPosts(users, subreddits) {
   let posts = [];
-  Array.from({ length: 200 }).forEach(() => {
+  Array.from({ length: POSTS_NUMBER }).forEach(() => {
     posts.push(createRandomPost(users, subreddits));
   });
   return posts;
@@ -151,7 +157,7 @@ function createRandomMessage(users) {
 
 function createMessages(users) {
   let messages = [];
-  Array.from({ length: 20 }).forEach(() => {
+  Array.from({ length: MESSAGES_NUMBER }).forEach(() => {
     messages.push(createRandomMessage(users));
   });
   return messages;
@@ -182,7 +188,7 @@ function createRandomComment(users, subreddits, posts) {
 
 function createComments(users, subreddits, posts) {
   let comments = [];
-  Array.from({ length: 20 }).forEach(() => {
+  Array.from({ length: COMMENTS_NUMBER }).forEach(() => {
     comments.push(createRandomComment(users, subreddits, posts));
   });
   return comments;
