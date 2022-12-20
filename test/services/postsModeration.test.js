@@ -48,7 +48,7 @@ describe("Testing Posts Moderation Service functions", () => {
         username: "hamdy",
         userID: user.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     post = new Post({

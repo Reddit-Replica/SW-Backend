@@ -40,7 +40,7 @@ describe("Testing Subreddit Items Listing Service functions", () => {
         username: "hamdy",
         userID: user.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     post1 = new Post({
