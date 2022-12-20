@@ -365,8 +365,6 @@ export async function getUserNotifications(
     }
   }
 
-  console.log(skipValue, limit);
-
   const notifcations = await Notification.find({
     ownerId: userId,
     hidden: false,
