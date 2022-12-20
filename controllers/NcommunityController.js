@@ -3,7 +3,6 @@
 import { body } from "express-validator";
 import {
   searchForSubreddit,
-  addUserToWaitingList,
   addToJoinedSubreddit,
   addToDescription,
   addToSubtopics,
@@ -144,7 +143,6 @@ const createSubreddit = async (req, res) => {
     const result = await addSubreddit(req, req.payload);
     res.status(result.statusCode).json(result.message);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -160,26 +158,25 @@ const joinSubreddit = async (req, res) => {
   //GETTING USER USERNAME
   const username = authPayload.username;
   try {
-    console.log("haa");
     //GETTING USER DATA,CHECKING FOR HIS EXISTENCE
     const user = await searchForUserService(username);
     //GETTING SUBREDDIT DATA,CHECKING FOR ITS EXISTENCE
     const subreddit = await searchForSubredditById(req.body.subredditId);
     //IF THE REQUESTED SUBREDDIT IS PRIVATE,THEN THE USER WOULD BE ADDED TO THE WAITING LIST WAITING FOR MODERATOR TO APPROVE
     if (subreddit.type === "Private") {
-      const result = await addUserToWaitingList(
-        subreddit,
-        username,
-        req.body.message
-      );
-      res.status(result.statusCode).json(result.message);
+      if (subreddit.subredditSettings.acceptingRequestsToJoin) {
+        const result = await addToJoinedSubreddit(user, subreddit);
+        res.status(result.statusCode).json(result.message);
+      } else {
+        let err = new Error("you are not allowed to join this subreddit");
+        err.statusCode = 401;
+        throw err;
+      }
     } else {
-      //ADDING THIS SUBREDDIT TO JOINED SUBREDDITS LIST, INCREMENTING SUBREDDIT NUMBER OF MEMBERS
       const result = await addToJoinedSubreddit(user, subreddit);
       res.status(result.statusCode).json(result.message);
     }
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -286,32 +283,6 @@ const availableSubredditName = async (req, res) => {
   }
 };
 
-/* we need to add moderated subreddits in user then we will push this user to them
-const moderate = async(req,res)=>{
-  const authPayload = verifyUser(req);
-  if (!authPayload) {
-    return res.status(401).send("Token may be invalid or not found");
-  }
-  const ModeratorId=authPayload.userId;
-  try {
-    const moderator=await User.findById(ModeratorId);
-    moderator.joinedSubreddits.push({
-      id:req.body.subredditID,
-      name:req.body.title,
-    });
-    await moderator.save();
-
-    res.status(200).send({
-      moderator:moderator.joinedSubreddits,
-    });
-
-  } catch (err) {
-    res.status(400).send({
-      error:err,
-    });
-  }
-};
-*/
 const addToFavorite = async (req, res) => {
   try {
     const subreddit = await searchForSubreddit(req.params.subreddit);
@@ -373,14 +344,18 @@ const removeFromFavorite = async (req, res) => {
 const subredditLeaderboardWithCategory = async (req, res) => {
   try {
     let { before, after, limit } = req.query;
-    const user = await searchForUserService(req.payload.username);
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
     const result = await subredditCategoryListing(
       user,
       req.params.categoryName,
       before,
       after,
       limit,
-      true
+      true,
+      req.loggedIn
     );
     return res.status(result.statusCode).json(result.data);
   } catch (err) {
@@ -397,14 +372,18 @@ const subredditLeaderboardWithCategory = async (req, res) => {
 const subredditLeaderboard = async (req, res) => {
   try {
     let { before, after, limit } = req.query;
-    const user = await searchForUserService(req.payload.username);
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
     const result = await subredditCategoryListing(
       user,
       "",
       before,
       after,
       limit,
-      false
+      false,
+      req.loggedIn
     );
     return res.status(result.statusCode).json(result.data);
   } catch (err) {
@@ -420,11 +399,13 @@ const subredditLeaderboard = async (req, res) => {
 
 const randomCategories = async (req, res) => {
   try {
-    const user = await searchForUserService(req.payload.username);
-    const result = await twoRandomCategories(user);
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const result = await twoRandomCategories(user, req.loggedIn);
     return res.status(result.statusCode).json(result.data);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
@@ -438,11 +419,19 @@ const randomCategories = async (req, res) => {
 const trendingSubreddits = async (req, res) => {
   try {
     let { before, after, limit } = req.query;
-    const user = await searchForUserService(req.payload.username);
-    const result = await subredditTrendingListing(user, before, after, limit);
+    let user;
+    if (req.loggedIn) {
+      user = await searchForUserService(req.payload.username);
+    }
+    const result = await subredditTrendingListing(
+      user,
+      before,
+      after,
+      limit,
+      req.loggedIn
+    );
     return res.status(result.statusCode).json(result.data);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       return res.status(err.statusCode).json({
         error: err.message,
