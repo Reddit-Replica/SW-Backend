@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import mongoose from "mongoose";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
@@ -217,7 +218,10 @@ export async function createCommentService(data, post) {
     postOwner.postReplies.push(postReply.id);
     postOwner.save();
     const emailReceiver = await User.findOne({ username: post.ownerUsername });
-    if (!emailReceiver.userSettings.unsubscribeFromEmails) {
+    if (
+      !emailReceiver.userSettings.unsubscribeFromEmails &&
+      !emailReceiver.facebookEmail
+    ) {
       sendPostReplyMail(emailReceiver, post, comment);
     }
   }

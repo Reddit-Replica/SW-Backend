@@ -498,7 +498,7 @@ export async function sendPostReplyMail(user, post, comment) {
 	  <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	  <tbody><tr>
 	  <td class="m_8901276260374497905w-104" width="112" style="font-size:0pt;line-height:0pt;text-align:left">
-	  <a href="https://click.redditmail.com/CL0/https:%2F%2Fwww.reddit.com%2F/1/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/C9SA6ev9fQNgWg8ZkRbP44Gr53JVhyl1TH4ktN3MqDo=279" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252F/1/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/C9SA6ev9fQNgWg8ZkRbP44Gr53JVhyl1TH4ktN3MqDo%3D279&amp;source=gmail&amp;ust=1671629384633000&amp;usg=AOvVaw35C4DLgdBsFRWE5XTJAE8k"><img src="https://ci4.googleusercontent.com/proxy/ek_YRst9zhrJAPOUNmdD7HcqXKAwKpnhjx-qvaID79g0_xu34epyVQCXQT76z3cp3KKi-COutsgegnXI5R4rXZNNhwb5HDo=s0-d-e1-ft#https://www.redditstatic.com/emaildigest/logo@2x.png" width="112" height="39" border="0" alt="" class="CToWUd" data-bit="iit"></a>
+	  <a href="${FRONT_BASE}/" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252F/1/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/C9SA6ev9fQNgWg8ZkRbP44Gr53JVhyl1TH4ktN3MqDo%3D279&amp;source=gmail&amp;ust=1671629384633000&amp;usg=AOvVaw35C4DLgdBsFRWE5XTJAE8k"><img src="https://ci4.googleusercontent.com/proxy/ek_YRst9zhrJAPOUNmdD7HcqXKAwKpnhjx-qvaID79g0_xu34epyVQCXQT76z3cp3KKi-COutsgegnXI5R4rXZNNhwb5HDo=s0-d-e1-ft#https://www.redditstatic.com/emaildigest/logo@2x.png" width="112" height="39" border="0" alt="" class="CToWUd" data-bit="iit"></a>
 	  </td>
 	  <td width="20" style="font-size:0pt;line-height:0pt;text-align:left"></td>
 	  <td style="font-size:0pt;line-height:0pt;text-align:left">
@@ -591,12 +591,12 @@ export async function sendPostReplyMail(user, post, comment) {
 	  </tr>
 	  <tr>
 	  <td class="m_8901276260374497905mpb-12" style="font-size:12px;line-height:14px;font-family:Helvetica,Arial,sans-serif;text-align:left;min-width:auto!important;color:#7a9299;padding-bottom:14px">
-	  <a href="https://click.redditmail.com/CL0/https:%2F%2Fwww.reddit.com%2Fr%2Fu_RequirementOrnery717%2Fcomments%2Fzmlbfs%2Fnmnm%2F%3F$deep_link=true%26correlation_id=2c447f12-3bc5-44bb-9f43-9109fe4facf2%26ref=email_post_reply%26ref_campaign=email_post_reply%26ref_source=email/3/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/SCAP7U257K1zXZNpqsJv1x9TpXUsVKOLuGo_ihIA6a0=279" style="text-decoration:none;color:#7a9299" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Fu_RequirementOrnery717%252Fcomments%252Fzmlbfs%252Fnmnm%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/3/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/SCAP7U257K1zXZNpqsJv1x9TpXUsVKOLuGo_ihIA6a0%3D279&amp;source=gmail&amp;ust=1671629384633000&amp;usg=AOvVaw08gMak5iEbixf0_3vjZw2y">
+	  <a style="text-decoration:none;color:#7a9299" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Fu_RequirementOrnery717%252Fcomments%252Fzmlbfs%252Fnmnm%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/3/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/SCAP7U257K1zXZNpqsJv1x9TpXUsVKOLuGo_ihIA6a0%3D279&amp;source=gmail&amp;ust=1671629384633000&amp;usg=AOvVaw08gMak5iEbixf0_3vjZw2y">
 	  <span style="text-decoration:none;color:#7a9299">${comment.numberOfVotes}
 	  points</span>
 	  </a>
 	  ·
-	  <a href="https://click.redditmail.com/CL0/https:%2F%2Fwww.reddit.com%2Fr%2Fu_RequirementOrnery717%2Fcomments%2Fzmlbfs%2Fnmnm%2F%3F$deep_link=true%26correlation_id=2c447f12-3bc5-44bb-9f43-9109fe4facf2%26ref=email_post_reply%26ref_campaign=email_post_reply%26ref_source=email/4/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/Qcfj-Fr9XBwrNwR9XOQCvQ5ikFhUTQIV_N63YlPEPxs=279" style="text-decoration:none;color:#7a9299" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Fu_RequirementOrnery717%252Fcomments%252Fzmlbfs%252Fnmnm%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/4/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/Qcfj-Fr9XBwrNwR9XOQCvQ5ikFhUTQIV_N63YlPEPxs%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw2jpA17eOs3j70FMEKcgW7s">
+	  <a style="text-decoration:none;color:#7a9299" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Fu_RequirementOrnery717%252Fcomments%252Fzmlbfs%252Fnmnm%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/4/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/Qcfj-Fr9XBwrNwR9XOQCvQ5ikFhUTQIV_N63YlPEPxs%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw2jpA17eOs3j70FMEKcgW7s">
 	  <span style="text-decoration:none;color:#7a9299">${post.numberOfComments}
 	  comments</span>
 	  </a>
@@ -610,11 +610,11 @@ export async function sendPostReplyMail(user, post, comment) {
 	  <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	  <tbody><tr>
 	  <td style="font-size:12px;line-height:14px;font-family:Helvetica,Arial,sans-serif;text-align:left;min-width:auto!important;color:#7a9299;padding-bottom:4px;font-style:normal;font-weight:400">
-	  <a href="https://click.redditmail.com/CL0/https:%2F%2Fwww.reddit.com%2Fuser%2FBlaze428%2F%3F$deep_link=true%26correlation_id=2c447f12-3bc5-44bb-9f43-9109fe4facf2%26ref=email_post_reply%26ref_campaign=email_post_reply%26ref_source=email/3/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/hDl2XP1jo8IBsHzWwGWMXQS3jruqGnYcMoxy_6DgAd4=279" style="text-decoration:none;color:#7a9299" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fuser%252FBlaze428%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/3/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/hDl2XP1jo8IBsHzWwGWMXQS3jruqGnYcMoxy_6DgAd4%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw2WH6z5IFMx3FIEo9pLaJV1">
+	  <a target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fuser%252FBlaze428%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/3/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/hDl2XP1jo8IBsHzWwGWMXQS3jruqGnYcMoxy_6DgAd4%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw2WH6z5IFMx3FIEo9pLaJV1">
 	  <span style="text-decoration:none;color:#7a9299">u/${comment.ownerUsername}</span>
 	  </a>
 	  ·
-	  <a href="https://click.redditmail.com/CL0/https:%2F%2Fwww.reddit.com%2Fr%2Fu_RequirementOrnery717%2Fcomments%2Fzmlbfs%2Fnmnm%2Fj0bkrs5%2F%3F$deep_link=true%26correlation_id=2c447f12-3bc5-44bb-9f43-9109fe4facf2%26ref=email_post_reply%26ref_campaign=email_post_reply%26ref_source=email/1/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/JZ8LSucn1C-0OHtTlqoyJtGsZmscFdRWWtv9bP3X42o=279" style="text-decoration:none;color:#7a9299" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Fu_RequirementOrnery717%252Fcomments%252Fzmlbfs%252Fnmnm%252Fj0bkrs5%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/1/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/JZ8LSucn1C-0OHtTlqoyJtGsZmscFdRWWtv9bP3X42o%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw0rsxWlCDXtWud591bf2flo">
+	  <a style="text-decoration:none;color:#7a9299" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Fu_RequirementOrnery717%252Fcomments%252Fzmlbfs%252Fnmnm%252Fj0bkrs5%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/1/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/JZ8LSucn1C-0OHtTlqoyJtGsZmscFdRWWtv9bP3X42o%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw0rsxWlCDXtWud591bf2flo">
 	  <span style="text-decoration:none;color:#7a9299">${comment.numberOfVotes} 
 	  votes</span>
 	  </a>
@@ -622,7 +622,7 @@ export async function sendPostReplyMail(user, post, comment) {
 	  </tr>
 	  <tr>
 	  <td class="m_8901276260374497905mpb-28 m_8901276260374497905mfz-14 m_8901276260374497905mlh-18" style="font-size:16px;line-height:21px;font-family:Helvetica,Arial,sans-serif;text-align:left;min-width:auto!important;color:#1b2426;padding-bottom:35px;font-style:normal;font-weight:400">
-	  <a href="https://click.redditmail.com/CL0/https:%2F%2Fwww.reddit.com%2Fr%2Fu_RequirementOrnery717%2Fcomments%2Fzmlbfs%2Fnmnm%2Fj0bkrs5%2F%3F$deep_link=true%26correlation_id=2c447f12-3bc5-44bb-9f43-9109fe4facf2%26ref=email_post_reply%26ref_campaign=email_post_reply%26ref_source=email/2/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/eTPOPgjSfUzcE54cMVOx5_ZH_Sx5_Pme_ECXqnIh5GE=279" style="text-decoration:none;color:#1b2426" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Fu_RequirementOrnery717%252Fcomments%252Fzmlbfs%252Fnmnm%252Fj0bkrs5%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/2/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/eTPOPgjSfUzcE54cMVOx5_ZH_Sx5_Pme_ECXqnIh5GE%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw3THsFNPuFUvR6flSUmLo_h">
+	  <a style="text-decoration:none;color:#1b2426" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Fu_RequirementOrnery717%252Fcomments%252Fzmlbfs%252Fnmnm%252Fj0bkrs5%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/2/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/eTPOPgjSfUzcE54cMVOx5_ZH_Sx5_Pme_ECXqnIh5GE%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw3THsFNPuFUvR6flSUmLo_h">
 	  <span style="text-decoration:none;color:#1b2426">${comment.content}</span>
 	  </a>
 	  </td>
@@ -632,7 +632,7 @@ export async function sendPostReplyMail(user, post, comment) {
 	  <table width="180" border="0" cellspacing="0" cellpadding="0">
 	  <tbody><tr>
 	  <td class="m_8901276260374497905btn-14" bgcolor="#0079d3" style="border-radius:4px;font-size:14px;line-height:18px;color:#ffffff;font-family:Helvetica,Arial,sans-serif;text-align:center;min-width:auto!important">
-	  <a href="https://click.redditmail.com/CL0/https:%2F%2Fwww.reddit.com%2Fr%2Fu_RequirementOrnery717%2Fcomments%2Fzmlbfs%2Fnmnm%2Fj0bkrs5%2F%3F$deep_link=true%26correlation_id=2c447f12-3bc5-44bb-9f43-9109fe4facf2%26ref=email_post_reply%26ref_campaign=email_post_reply%26ref_source=email/3/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/aWOaHB3N9P2ZsKnhguwIskSGCJvqJ1ezn1wMR0TkqqQ=279" style="display:block;padding:8px;text-decoration:none;color:#ffffff" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Fu_RequirementOrnery717%252Fcomments%252Fzmlbfs%252Fnmnm%252Fj0bkrs5%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/3/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/aWOaHB3N9P2ZsKnhguwIskSGCJvqJ1ezn1wMR0TkqqQ%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw0TTHAAcaOCB6UreGcXpSg3">
+	  <a style="display:block;padding:8px;text-decoration:none;color:#ffffff" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Fu_RequirementOrnery717%252Fcomments%252Fzmlbfs%252Fnmnm%252Fj0bkrs5%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/3/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/aWOaHB3N9P2ZsKnhguwIskSGCJvqJ1ezn1wMR0TkqqQ%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw0TTHAAcaOCB6UreGcXpSg3">
 	  <span style="text-decoration:none;color:#ffffff">
 	  <strong>
 	  View Reply
@@ -733,7 +733,7 @@ export async function sendMentionMail(user, post, comment) {
     mg.messages().send({
       from: SENDER_EMAIL,
       to: user.email,
-      subject: `u/${comment.ownerUsername } mentioned you in r/${postPlace}`,
+      subject: `u/${comment.ownerUsername} mentioned you in r/${postPlace}`,
       html: `
 	  <div class=""><div class="aHl"></div><div id=":1ap" tabindex="-1"></div><div id=":1bi" class="ii gt" jslog="20277; u014N:xr6bB; 4:W251bGwsbnVsbCxbXV0."><div id=":1bj" class="a3s aiL "><u></u>
 	  <div style="padding:0!important;margin:0 auto!important;display:block!important;min-width:100%!important;width:100%!important;background:#ffffff">
@@ -758,7 +758,7 @@ export async function sendMentionMail(user, post, comment) {
 	  <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	  <tbody><tr>
 	  <td width="112" style="font-size:0pt;line-height:0pt;text-align:left">
-	  <a target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252F/1/010001851607fcfd-b5ed1c5b-ecc5-4e9a-a879-1c014a7c0445-000000/svqCiO4D0440dnp6QUrIX7CbvXw51ghEmd-_XiUTApQ%3D279&amp;source=gmail&amp;ust=1671639394563000&amp;usg=AOvVaw1cc0yP-3L7FY8BAXmleB_s"><img src="https://ci4.googleusercontent.com/proxy/ek_YRst9zhrJAPOUNmdD7HcqXKAwKpnhjx-qvaID79g0_xu34epyVQCXQT76z3cp3KKi-COutsgegnXI5R4rXZNNhwb5HDo=s0-d-e1-ft#https://www.redditstatic.com/emaildigest/logo@2x.png" width="112" height="39" border="0" alt="" class="CToWUd" data-bit="iit"></a>
+	  <a href="${FRONT_BASE}/" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252F/1/010001851607fcfd-b5ed1c5b-ecc5-4e9a-a879-1c014a7c0445-000000/svqCiO4D0440dnp6QUrIX7CbvXw51ghEmd-_XiUTApQ%3D279&amp;source=gmail&amp;ust=1671639394563000&amp;usg=AOvVaw1cc0yP-3L7FY8BAXmleB_s"><img src="https://ci4.googleusercontent.com/proxy/ek_YRst9zhrJAPOUNmdD7HcqXKAwKpnhjx-qvaID79g0_xu34epyVQCXQT76z3cp3KKi-COutsgegnXI5R4rXZNNhwb5HDo=s0-d-e1-ft#https://www.redditstatic.com/emaildigest/logo@2x.png" width="112" height="39" border="0" alt="" class="CToWUd" data-bit="iit"></a>
 	  </td>
 	  <td width="20" style="font-size:0pt;line-height:0pt;text-align:left"></td>
 	  <td style="font-size:0pt;line-height:0pt;text-align:left">
@@ -913,7 +913,7 @@ export async function sendMentionMail(user, post, comment) {
         <table width="180" border="0" cellspacing="0" cellpadding="0">
         <tbody><tr>
         <td bgcolor="#0079d3" style="border-radius:4px;font-size:14px;line-height:18px;color:#ffffff;font-family:Helvetica,Arial,sans-serif;text-align:center;min-width:auto!important">
-        <a href="https://click.redditmail.com/CL0/https:%2F%2Fwww.reddit.com%2Fr%2Flearnprogramming%2Fcomments%2Fzltmxa%2Fschool_offers_a_cc_path_and_a_java_path_which_one%2Fj0bl83f%2F%3F$deep_link=true%26correlation_id=101e32a6-615c-49ee-a9de-ca773b6d724c%26ref=email_username_mention%26ref_campaign=email_username_mention%26ref_source=email/6/010001851607fcfd-b5ed1c5b-ecc5-4e9a-a879-1c014a7c0445-000000/45txkkwd4NLUtcm8e7TLsBL_YRpCJWeGAewDEcOvDeQ=279" style="display:block;padding:8px;text-decoration:none;color:#ffffff" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Flearnprogramming%252Fcomments%252Fzltmxa%252Fschool_offers_a_cc_path_and_a_java_path_which_one%252Fj0bl83f%252F%253F$deep_link%3Dtrue%2526correlation_id%3D101e32a6-615c-49ee-a9de-ca773b6d724c%2526ref%3Demail_username_mention%2526ref_campaign%3Demail_username_mention%2526ref_source%3Demail/6/010001851607fcfd-b5ed1c5b-ecc5-4e9a-a879-1c014a7c0445-000000/45txkkwd4NLUtcm8e7TLsBL_YRpCJWeGAewDEcOvDeQ%3D279&amp;source=gmail&amp;ust=1671639394564000&amp;usg=AOvVaw05T71sUR9qXuWuUb7WNeRR">
+        <a href="${FRONT_BASE}" style="display:block;padding:8px;text-decoration:none;color:#ffffff" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Flearnprogramming%252Fcomments%252Fzltmxa%252Fschool_offers_a_cc_path_and_a_java_path_which_one%252Fj0bl83f%252F%253F$deep_link%3Dtrue%2526correlation_id%3D101e32a6-615c-49ee-a9de-ca773b6d724c%2526ref%3Demail_username_mention%2526ref_campaign%3Demail_username_mention%2526ref_source%3Demail/6/010001851607fcfd-b5ed1c5b-ecc5-4e9a-a879-1c014a7c0445-000000/45txkkwd4NLUtcm8e7TLsBL_YRpCJWeGAewDEcOvDeQ%3D279&amp;source=gmail&amp;ust=1671639394564000&amp;usg=AOvVaw05T71sUR9qXuWuUb7WNeRR">
         <span style="text-decoration:none;color:#ffffff">
         <strong>Reply</strong>
 	  </span>
@@ -985,6 +985,185 @@ export async function sendMentionMail(user, post, comment) {
 	  </center>
 	  <img alt="" src="https://ci4.googleusercontent.com/proxy/UGNdR4aGFt4W17ncL6fhzy8InqTEvG5V7M_yVZk9bVkdQXk60pNgXSe8bX_PbZ192X5L7YBQ3LxwhnCuiDfadr9PSSLvbwEFEwCRMMIz8KApOvW_tYSicMMeiCmhTmL-dZ12llM_GYTDg9vnemS4BZZIjPLc-qSB6fsV7f0GVppdKYvHDVvWUHQVQriEmcqzLuF24JPdDqz0bTVOhMFIFA=s0-d-e1-ft#http://click.redditmail.com/CI0/010001851607fcfd-b5ed1c5b-ecc5-4e9a-a879-1c014a7c0445-000000/FZokUY2zTRrStV0_CuP8niBT2Ig5ki83_UDBcHI_TkE=279" style="display:none;width:1px;height:1px" class="CToWUd" data-bit="iit"><div class="yj6qo"></div><div class="adL">
 	  </div></div><div class="adL">`,
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+export async function sendMessageMail(user, message) {
+  try {
+    const sender = await User.find({ username: message.senderUsername });
+    const picture = sender.picture;
+    let senderIndicator;
+    if (message.isSenderUser) {
+      senderIndicator = "u";
+    } else {
+      senderIndicator = "r";
+    }
+    mg.messages().send({
+      from: SENDER_EMAIL,
+      to: user.email,
+      subject: `New message from ${senderIndicator}/${message.senderUsername}`,
+      html: `
+	  <div class=""><div class="aHl"></div><div id=":1at" tabindex="-1"></div><div id=":1c8" class="ii gt" jslog="20277; u014N:xr6bB; 4:W251bGwsbnVsbCxbXV0."><div id=":1c9" class="a3s aiL msg8747937118570989382"><u></u>
+	  <div class="m_8747937118570989382body" style="padding:0!important;margin:0 auto!important;display:block!important;min-width:100%!important;width:100%!important;background:#ffffff">
+	  <center>
+	  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin:0;padding:0;width:100%" bgcolor="#ffffff" class="m_8747937118570989382gwfw">
+	  <tbody><tr>
+	  <td style="margin:0;padding:0;width:100%" align="center">
+	  <table width="600" border="0" cellspacing="0" cellpadding="0" class="m_8747937118570989382m-shell">
+	  <tbody><tr>
+	  <td class="m_8747937118570989382td" style="width:600px;min-width:600px;font-size:0pt;line-height:0pt;padding:0;margin:0;font-weight:normal">
+	  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	  
+	  
+	  <tbody><tr>
+	  <td style="font-size:0pt;line-height:0pt;text-align:left">
+	  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	  <tbody><tr>
+	  <td class="m_8747937118570989382mpx-16" style="padding-left:32px;padding-right:32px">
+	  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	  <tbody><tr>
+	  <td style="border-bottom:1px solid #ebeef0;padding-top:16px">
+	  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	  <tbody><tr>
+	  <td class="m_8747937118570989382mpb-48" style="padding-bottom:55px">
+	  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	  <tbody><tr>
+	  <td class="m_8747937118570989382w-104" width="112" style="font-size:0pt;line-height:0pt;text-align:left"><a href="${FRONT_BASE}/" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252F/1/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/XQvijQ1dfO6dKw0JnB2fsKvl1Jmsph9UQvtVt35s_QQ%3D279&amp;source=gmail&amp;ust=1671649120785000&amp;usg=AOvVaw2kn3UFmgYS0RTZtdIXCkxb"><img src="https://ci4.googleusercontent.com/proxy/ek_YRst9zhrJAPOUNmdD7HcqXKAwKpnhjx-qvaID79g0_xu34epyVQCXQT76z3cp3KKi-COutsgegnXI5R4rXZNNhwb5HDo=s0-d-e1-ft#https://www.redditstatic.com/emaildigest/logo@2x.png" width="112" height="39" border="0" alt="" class="CToWUd" data-bit="iit"></a>
+	  </td>
+	  <td width="20" style="font-size:0pt;line-height:0pt;text-align:left"></td>
+	  <td style="font-size:0pt;line-height:0pt;text-align:left">
+	  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	  <tbody><tr>
+	  <td align="right">
+	  <table border="0" cellspacing="0" cellpadding="0">
+	  <tbody><tr>
+	  <td width="16" valign="top" style="font-size:0pt;line-height:0pt;text-align:left"><img src="${FRONT_BASE}/api/{user.avatar}" width="16" height="16" border="0" alt="" class="CToWUd" data-bit="iit"></td>
+	  <td width="4" style="font-size:0pt;line-height:0pt;text-align:left"></td>
+	  <td style="font-size:12px;line-height:14px;font-family:Helvetica,Arial,sans-serif;text-align:left;min-width:auto!important;color:#7a9299">
+	  <a href="${FRONT_BASE}/user/${message.receiverUsername}" style="text-decoration:none;color:#7a9299" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fuser%252FRequirementOrnery717%252F%253F$deep_link%3Dtrue%2526correlation_id%3Dd9140790-189b-4c6a-90f7-50c47b819b5f%2526ref%3Demail_private_message%2526ref_campaign%3Demail_private_message%2526ref_source%3Demail/1/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/liHDLYzKjyrrDoVBEuosdvyJL6FRii-WKazvnfasno8%3D279&amp;source=gmail&amp;ust=1671649120785000&amp;usg=AOvVaw0tjZOObYNIH5wcawABSj8h"><span style="text-decoration:none;color:#7a9299">u/${message.receiverUsername}</span></a>
+	  </td>
+	  </tr>
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  <tr>
+	  <td style="font-size:0pt;line-height:0pt;text-align:center;padding-bottom:14px">
+	  <a href="${FRONT_BASE}/user/${message.senderUsername}" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fuser%252FBlaze428%252F%253F$deep_link%3Dtrue%2526correlation_id%3Dd9140790-189b-4c6a-90f7-50c47b819b5f%2526ref%3Demail_private_message%2526ref_campaign%3Demail_private_message%2526ref_source%3Demail/1/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/hsh81Pt2VWAdUOLHHVydT15Ur400eXDbVkvEOVmawWM%3D279&amp;source=gmail&amp;ust=1671649120785000&amp;usg=AOvVaw3FWSaEqnb54bBfMZtww0gZ">
+	  <div style="border:1px solid #edeff1;border-radius:50%;margin:auto;width:88px;height:88px;background-position:center;background-repeat:no-repeat;background-size:100% 100%;background-image:url('${FRONT_BASE}/api/${picture}')">
+	  <img src="https://ci3.googleusercontent.com/proxy/Cobf4p_lbXplTO8od-xD6o0eE8psBeG0f5k7IEgPWyE9jDHylpFPk2vK7C0xX8Bg6hQSPDzE2QHa_z4fvnFIJuf2QbDqe2NumccKn7Z6TwwTHOWBOrlH=s0-d-e1-ft#https://www.redditstatic.com/emaildigest/private_message_icon@4x.png" alt="" style="border:0;width:41px;height:41px;padding-top:56px;padding-left:56px" class="CToWUd" data-bit="iit">
+	  </div>
+	  </a>
+	  </td>
+	  </tr>
+	  <tr>
+	  <td class="m_8747937118570989382mfz-16 m_8747937118570989382mlh-18 m_8747937118570989382mpb-27 m_8747937118570989382mpb-20" style="font-size:20px;line-height:23px;color:#313e42;font-family:Helvetica,Arial,sans-serif;font-weight:normal;min-width:auto!important;text-align:center;padding-bottom:28px">
+	  You have a new message from <a href="${FRONT_BASE}/user/${message.senderUsername}" style="text-decoration:none;color:#006cbf" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fuser%252FBlaze428%252F%253F$deep_link%3Dtrue%2526correlation_id%3Dd9140790-189b-4c6a-90f7-50c47b819b5f%2526ref%3Demail_private_message%2526ref_campaign%3Demail_private_message%2526ref_source%3Demail/2/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/a_WU7fn-rndfIu7uuBEhhmX9ItAJwmWOR5xs5UBAcFk%3D279&amp;source=gmail&amp;ust=1671649120785000&amp;usg=AOvVaw0PpbzpQvXV1oYYdNOMQbOF"><span style="text-decoration:none;color:#006cbf"><strong style="color:#006cbf">${senderIndicator}/${message.senderUsername}</strong></span></a>
+	  <span style="color:#a7b4b8">· </span></td>
+	  </tr>
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  <tr>
+	  <td class="m_8747937118570989382mpt-8 m_8747937118570989382mpb-12" style="padding-top:8px;padding-bottom:48px">
+	  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	  <tbody><tr>
+	  <td style="font-size:12px;line-height:14px;font-family:Helvetica,Arial,sans-serif;text-align:left;min-width:auto!important;color:#7a9299;padding-bottom:4px;font-style:normal;font-weight:400">
+	  <a href="${FRONT_BASE}/user/${message.senderUsername}" style="text-decoration:none;color:#7a9299" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fuser%252FBlaze428%252F%253F$deep_link%3Dtrue%2526correlation_id%3Dd9140790-189b-4c6a-90f7-50c47b819b5f%2526ref%3Demail_private_message%2526ref_campaign%3Demail_private_message%2526ref_source%3Demail/3/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/Eh4f2yNp5IyOLgLnbmCWjjsqSgaZH80jh1rVFILK3w0%3D279&amp;source=gmail&amp;ust=1671649120785000&amp;usg=AOvVaw3OI_B2TVeclmwNCYOVKEEH"><span style="text-decoration:none;color:#7a9299">${senderIndicator}/${message.senderUsername}</span></a>
+	  </td>
+	  </tr>
+	  <tr>
+	  <td class="m_8747937118570989382mpb-28 m_8747937118570989382mfz-14 m_8747937118570989382mlh-18" style="font-size:16px;line-height:21px;font-family:Helvetica,Arial,sans-serif;text-align:left;min-width:auto!important;color:#1b2426;padding-bottom:35px;font-style:normal;font-weight:400">
+	  <a style="text-decoration:none;color:#1b2426" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fmessage%252Fmessages%252F1o1r83a%253F$deep_link%3Dtrue%2526correlation_id%3Dd9140790-189b-4c6a-90f7-50c47b819b5f%2526ref%3Demail_private_message%2526ref_campaign%3Demail_private_message%2526ref_source%3Demail/1/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/gssudT67IZNlORef-0FqU0QpS4aqgmgmKVTXVGK6Nic%3D279&amp;source=gmail&amp;ust=1671649120785000&amp;usg=AOvVaw3fzw9bHyhdSbbH7motsENt"><span style="text-decoration:none;color:#1b2426"><p>${message.text}</p></span></a>
+	  </td>
+	  </tr>
+	  <tr>
+	  <td align="center">
+	  <table width="180" border="0" cellspacing="0" cellpadding="0">
+	  <tbody><tr>
+	  <td class="m_8747937118570989382btn-14" bgcolor="#0079d3" style="border-radius:4px;font-size:14px;line-height:18px;color:#ffffff;font-family:Helvetica,Arial,sans-serif;text-align:center;min-width:auto!important">
+	  <a href="${FRONT_BASE}/" style="display:block;padding:8px;text-decoration:none;color:#ffffff" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fmessage%252Fmessages%252F1o1r83a%253F$deep_link%3Dtrue%2526correlation_id%3Dd9140790-189b-4c6a-90f7-50c47b819b5f%2526ref%3Demail_private_message%2526ref_campaign%3Demail_private_message%2526ref_source%3Demail/2/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/vFO5Ny5C9PsSvcs1SfcONLFsYiTo3UwL0hojv0spI7Y%3D279&amp;source=gmail&amp;ust=1671649120785000&amp;usg=AOvVaw2dfN4rPTFYY32vZXaGkiGV"><span style="text-decoration:none;color:#ffffff"><strong>View Message</strong></span></a></td>
+	  </tr>
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  
+	  
+	  
+	  <tr>
+	  <td class="m_8747937118570989382mpb-20" bgcolor="#f1f5f6" style="padding-bottom:28px">
+	  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	  <tbody><tr>
+	  <td class="m_8747937118570989382fluid-img m_8747937118570989382mpb-28" style="font-size:0pt;line-height:0pt;text-align:left;padding-bottom:0px">
+	  <a href="${FRONT_BASE}/" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252F/2/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/Ppq8R3cXZ57ygEJ9OVEufEps5qnTi_Zyk9riCaBqqYY%3D279&amp;source=gmail&amp;ust=1671649120785000&amp;usg=AOvVaw1BwR1OhIyANiDag8oGXyS2"><img src="https://ci4.googleusercontent.com/proxy/Flb5Y5Y-P6rvdRZv0owO2as9IRP-Os3S3vxeJimvST-JKs-9lrCr6OuH1685ql8qDSuMfldFHNEz6cpcRuyI2xVNzGDu5SRwXq1EfFp_KQ=s0-d-e1-ft#https://www.redditstatic.com/emaildigest/email_footer@2x.png" width="600" height="126" border="0" alt="" class="CToWUd" data-bit="iit"></a>
+	  </td>
+	  </tr>
+	  <tr>
+	  <td class="m_8747937118570989382mpb-28" align="center" style="padding-bottom:19px">
+	  <table border="0" cellspacing="0" cellpadding="0">
+	  <tbody><tr>
+	  <td class="m_8747937118570989382w-114" valign="top" style="font-size:0pt;line-height:0pt;text-align:left">
+	  <a  target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Freddit.app.link%252F%253Faction%3Dclick%2526publisher_id%3D293679%2526site_id%3D122129%2526site_id_ios%3D121809%2526utm_content%3Dinstall_app/1/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/2J_ElXcOTrJf4tjL30673u9Ru26aeMjUDWmIFulc06U%3D279&amp;source=gmail&amp;ust=1671649120785000&amp;usg=AOvVaw0Bdjs-PTl98cCLhHCW1mkf"><img src="https://ci3.googleusercontent.com/proxy/WCfQhJ75f51I8PenoK_3M5aYD-BJgHiZ__GdcoDoFmT4CF2eRkiYtrLn4iM9MENRYBAR7DzBe4qPytr0PZ_8jTlsfKsGkXFpo_aTJprPNBmv=s0-d-e1-ft#https://www.redditstatic.com/emaildigest/button_applestore.png" width="119" height="38" border="0" alt="" class="CToWUd" data-bit="iit"></a>
+	  </td>
+	  <td class="m_8747937118570989382w-8" width="10" style="font-size:0pt;line-height:0pt;text-align:left">
+	  </td>
+	  <td class="m_8747937118570989382w-114" valign="top" style="font-size:0pt;line-height:0pt;text-align:left">
+	  <a  target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Freddit.app.link%252F%253Faction%3Dclick%2526publisher_id%3D293679%2526site_id%3D122129%2526site_id_ios%3D121809%2526utm_content%3Dinstall_app/2/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/_9O6E_MY2hjykaNwnROHOsUqC3dafHXAiYcAPsocOjA%3D279&amp;source=gmail&amp;ust=1671649120786000&amp;usg=AOvVaw1G0sozc_YrOGCo72vCHvbW"><img src="https://ci5.googleusercontent.com/proxy/8T1diAP66cNDS8iGt6hA-5N19ln1wIYvYT2cOIC-rV_d0UOApdO3iQFNNoOnvbhqNPfoJBdb23rI1jQM_4SwnY6SBa-VYPaEaxab3r0qcHim=s0-d-e1-ft#https://www.redditstatic.com/emaildigest/button_googleplay.png" width="119" height="38" border="0" alt="" class="CToWUd" data-bit="iit"></a>
+	  </td>
+	  </tr>
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  <tr>
+	  <td class="m_8747937118570989382mpx-12 m_8747937118570989382mpb-20" style="padding-bottom:30px;padding-left:81px;padding-right:64px">
+	  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	  <tbody><tr>
+	  <td class="m_8747937118570989382mfz-12 m_8747937118570989382mlh-18" style="font-size:16px;line-height:18px;font-family:Helvetica,Arial,sans-serif;font-style:normal;font-weight:400;min-width:auto!important;text-align:center;color:#687981">
+	  This email was intended for u/${message.receiverUsername}. <a href="${FRONT_BASE}/user/${message.receiverUsername}" style="text-decoration:none;color:#006cbf" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fmail%252Funsubscribe%252F9qajrecy%252F6%252Fe3909c444b3bc442e07a01a3088b5e0311d4113fe6bba4f3c3b52479a1803446%253F$web_only%3Dtrue%2526correlation_id%3Dd9140790-189b-4c6a-90f7-50c47b819b5f%2526ref%3Demail_private_message%2526ref_campaign%3Demail_private_message%2526ref_source%3Demail%2526utm_content%3Dunsubscribe/1/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/-q4ip6vtWHd9aS1AK_MbY9As9g68Naj-Frud9S_Mbdo%3D279&amp;source=gmail&amp;ust=1671649120786000&amp;usg=AOvVaw0gObzAyqoMZstir2pcJerx"><span style="text-decoration:none;color:#006cbf">Unsubscribe</span></a> from private message messages, or visit your settings to manage what emails <span class="il">Reddit</span> sends you.
+	  </td>
+	  </tr>
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  <tr>
+	  <td class="m_8747937118570989382mfz-12 m_8747937118570989382mlh-18 m_8747937118570989382mpx-12" style="font-size:16px;line-height:18px;font-family:Helvetica,Arial,sans-serif;font-style:normal;font-weight:400;min-width:auto!important;color:#222222;text-align:center;padding-left:53px;padding-right:36px">
+	  Faculty Of Engineering Cairo University</td>
+	  </tr>
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  </tbody></table>
+	  </td>
+	  </tr>
+	  </tbody></table>
+	  </center>
+	  <img alt="" src="https://ci5.googleusercontent.com/proxy/5Wzb579wm0ou3ckowgWEqgPvNFeoMxVj95s_ksb3VAFJMSmprE2pbID_IVHFiD7AxhUYbXdqE-4DUnv0y_Iu26jIwC23QTKrajSr0f0TyQA37tBJYQh4KHxBX-bSuM60dSJEyDbXc9yPGD-9Z1z_XZN_aFYydFRAMdIhEDWLaYJo4pXKhAKDU9QbMXpil6vruDFXu4MyEokyMmJnO0NThQ=s0-d-e1-ft#http://click.redditmail.com/CI0/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/0a_Zb7pRkWgf4TrjOypNWLFzMlTM0j0_IjXq6ZgrT8w=279" style="display:none;width:1px;height:1px" class="CToWUd" data-bit="iit"><div class="yj6qo"></div><div class="adL">
+	  </div></div><div class="adL">
+	  
+	  
+	  </div></div></div><div id=":1bv" class="ii gt" style="display:none"><div id=":1bu" class="a3s aiL "></div></div><div class="hi"></div></div>`,
     });
     return true;
   } catch (err) {
