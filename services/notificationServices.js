@@ -95,8 +95,10 @@ export async function createFollowUserNotification(
   followingUsername,
   followedUserId
 ) {
-  const followingUser = await User.findOne({ username, deletedAt: null });
-
+  const followingUser = await User.findOne({
+    username: followingUsername,
+    deletedAt: null,
+  });
   if (!followingUser) {
     const error = new Error("User not found");
     error.statusCode = 404;
@@ -117,6 +119,7 @@ export async function createFollowUserNotification(
     link: `${process.env.FRONT_BASE}/user/${followingUsername}`,
     date: Date.now(),
     sendingUserId: followingUser._id,
+    followingUsername: followingUsername,
   }).save();
   const data = {
     data: title,
@@ -149,8 +152,10 @@ export async function createCommentNotification(comment) {
     title3 += " replied to a comment in your post!";
     title4 += " replied to a comment in a post you are following!";
     parent = await Comment.findById(comment.parentId);
+    console.log(parent);
   } else {
     parent = await Post.findById(comment.parentId);
+    console.log(parent);
     title1 += " commented on your post!";
     title2 += " commented on a post you are following!";
   }
@@ -174,6 +179,8 @@ export async function createCommentNotification(comment) {
           link: link1,
           date: Date.now(),
           sendingUserId: comment.ownerId,
+          commentId: comment._id,
+          postId: comment.parentId,
         }).save();
 
         const data1 = {
@@ -399,6 +406,9 @@ export async function getUserNotifications(
       sendAt: notification.date,
       isRead: notification.read,
       photo: user.avatar,
+      followingUsername: notification.followingUsername,
+      postId: notification.postId,
+      commentId: notification.commentId,
     });
     if (notification.read === false) {
       preparedResponse.unreadCount++;
