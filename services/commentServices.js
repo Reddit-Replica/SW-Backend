@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import mongoose from "mongoose";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
@@ -12,6 +13,7 @@ import {
 } from "./subredditActionsServices.js";
 import { searchForUserService } from "./userServices.js";
 import PostReplies from "../models/PostReplies.js";
+import { sendPostReplyMail } from "../utils/sendEmails.js";
 
 /**
  * Function used to check if the id of the post is valid and if the post exists in the database
@@ -216,6 +218,13 @@ export async function createCommentService(data, post) {
     }).save();
     postOwner.postReplies.push(postReply.id);
     postOwner.save();
+    const emailReceiver = await User.findOne({ username: post.ownerUsername });
+    if (
+      !emailReceiver.userSettings.unsubscribeFromEmails &&
+      !emailReceiver.facebookEmail
+    ) {
+      sendPostReplyMail(emailReceiver, post, comment);
+    }
   }
 
   // add the comment to upvoted comments

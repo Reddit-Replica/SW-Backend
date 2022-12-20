@@ -108,10 +108,10 @@ export async function subredditCategoryListing(
 }
 
 export async function twoRandomCategories(user, isLoggedIn) {
-  const randomOne = Math.floor(Math.random() * 30);
-  let randomTwo = Math.floor(Math.random() * 30);
+  const randomOne = Math.floor(Math.random() * 29);
+  let randomTwo = Math.floor(Math.random() * 29);
   while (randomTwo === randomOne) {
-    randomTwo = Math.floor(Math.random() * 30);
+    randomTwo = Math.floor(Math.random() * 29);
   }
   const categoryOne = await Category.findOne({ randomIndex: randomOne });
   const categoryTwo = await Category.findOne({ randomIndex: randomTwo });
