@@ -56,7 +56,7 @@ const communitySchema = mongoose.Schema({
   dateOfCreation: {
     type: Date,
     required: true,
-    default: Date.now(),
+    // default: Date.now(),
   },
   deletedAt: {
     type: Date,

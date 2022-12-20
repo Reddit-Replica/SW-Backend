@@ -1,24 +1,26 @@
-import { faker } from "@faker-js/faker";
-import { users } from "./users.js";
-import { subreddits } from "./subreddits.js";
-
 export const posts = [];
 
-function createRandomPost() {
-  const randomUserIndex = Math.round(Math.random() * users.length);
-  const randomSubredditIndex = Math.round(Math.random() * subreddits.length);
+import { faker } from "@faker-js/faker";
+import User from "../models/User.js";
+import Subreddit from "../models/Community.js";
+
+async function createRandomPost() {
+  const users = await User.find({});
+  const subreddits = await Subreddit.find({});
+  const userIndex = Math.round(Math.random(0, users.length));
+  const subredditIndex = Math.round(Math.random(0, subreddits.length));
   return {
     kind: "link",
-    ownerUsername: users[randomUserIndex].username,
-    ownerId: users[randomUserIndex].id,
-    subredditName: subreddits[randomSubredditIndex].title,
-    subredditId: subreddits[randomSubredditIndex].id,
+    ownerUsername: users[userIndex].username,
+    ownerId: users[userIndex]._id,
+    subredditName: subreddits[subredditIndex].title,
+    subredditId: subreddits[subredditIndex]._id,
     title: faker.internet.userName(),
     link: faker.internet.url(),
     createdAt: faker.date.past(),
   };
 }
 
-Array.from({ length: 20 }).forEach(() => {
-  posts.push(createRandomPost());
+Array.from({ length: 3 }).forEach(async () => {
+  posts.push(await createRandomPost());
 });
