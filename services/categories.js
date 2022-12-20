@@ -83,15 +83,11 @@ export async function getTwoRandomCategories() {
   const len = Categories.length;
   let firstIndex, secondIndex, visited;
   if ((await Subreddit.countDocuments({})) === 0) {
-    const error = new Error("There are no subreddits found");
-    error.statusCode = 404;
-    throw error;
+    return {};
   }
   const categoryCount = await Category.countDocuments({ visited: true });
   if (categoryCount === 0) {
-    const error = new Error("There are no visited categories");
-    error.statusCode = 404;
-    throw error;
+    return {};
   }
   do {
     firstIndex = Math.floor(Math.random() * len);
@@ -125,6 +121,9 @@ export async function getTwoRandomCategories() {
 // eslint-disable-next-line max-statements
 export async function getRandomSubreddits(loggedInUser) {
   const { firstCategory, secondCategory } = await getTwoRandomCategories();
+  if (!firstCategory && !secondCategory) {
+    return {};
+  }
 
   let subreddits = [
     await Subreddit.find({ category: firstCategory, deletedAt: null }).sort({
@@ -170,6 +169,6 @@ export async function getRandomSubreddits(loggedInUser) {
     second:
       topSubreddits[1].length > 0
         ? { category: secondCategory, subreddits: topSubreddits[1] }
-        : {},
+        : undefined,
   };
 }
