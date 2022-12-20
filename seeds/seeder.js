@@ -11,7 +11,7 @@ const DB_URL = process.env.MONGO_URL_SEED.trim();
 
 export let userIds;
 export let subredditsId;
-let users = [];
+// let users = [];
 
 async function connectDatabase() {
   try {
@@ -25,22 +25,39 @@ function closeDatabaseConnection() {
   mongoose.connection.close();
 }
 
+function createRandomUser() {
+  return {
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    createdAt: faker.date.past(),
+  };
+}
+function createUsers() {
+  const users = [];
+  Array.from({ length: 10 }).forEach(() => {
+    users.push(createRandomUser());
+  });
+  return users;
+}
+
 async function seedUsers() {
+  const users = createUsers();
   await User.deleteMany();
   const usersInserted = await User.insertMany(users);
-  userIds = usersInserted.map((d) => d._id);
+  //  usersInserted.map((d) => d._id);
   // console.log(userIds);
-  return userIds;
+  return usersInserted;
 }
 
 async function seedCategories() {
   await Category.deleteMany();
-  await Category.insertMany(categories);
+  const cateogries = await Category.insertMany(categories);
+  return cateogries;
 }
 
-let subreddits = [];
+// let subreddits = [];
 
-function createRandomSubreddit() {
+function createRandomSubreddit(users) {
   const userIndex = Math.round(Math.random(0, 10));
   const randomDate = faker.date.past();
   const name = faker.internet.userName();
@@ -61,17 +78,22 @@ function createRandomSubreddit() {
     ],
   };
 }
+function createSubreddits(users) {
+  let subreddits = [];
+  Array.from({ length: 5 }).forEach(() => {
+    subreddits.push(createRandomSubreddit(users));
+  });
 
-Array.from({ length: 5 }).forEach(() => {
-  subreddits.push(createRandomSubreddit());
-});
-
-async function seedSubreddits() {
+  return subreddits;
+}
+async function seedSubreddits(users) {
+  const subreddits = createSubreddits(users);
   await Subreddit.deleteMany();
-  await Subreddit.insertMany(subreddits);
+  const subredditsCreated = await Subreddit.insertMany(subreddits);
+  return subredditsCreated;
 }
 
-async function createRandomPost() {
+async function createRandomPost(users, subreddits) {
   const userIndex = Math.round(Math.random(0, 10));
   const subredditIndex = Math.round(Math.random(0, 5));
   return {
@@ -85,15 +107,20 @@ async function createRandomPost() {
     createdAt: faker.date.past(),
   };
 }
-let posts = [];
 
-Array.from({ length: 20 }).forEach(async () => {
-  posts.push(await createRandomPost());
-});
+function createPosts(users, subreddits) {
+  let posts = [];
+  Array.from({ length: 20 }).forEach(async () => {
+    posts.push(await createRandomPost(users, subreddits));
+  });
+  return posts;
+}
 
-async function seedPosts() {
+async function seedPosts(users, subreddits) {
+  const posts = createPosts(users, subreddits);
   await Post.deleteMany();
-  await Post.insertMany(posts);
+  const postsCreated = await Post.insertMany(posts);
+  return postsCreated;
 }
 
 (async function () {
@@ -101,12 +128,12 @@ async function seedPosts() {
 
   await connectDatabase();
 
-  await seedUsers();
-  users = await User.find({});
-  await seedCategories();
-  await seedSubreddits();
-  subreddits = await Subreddit.find({});
-  await seedPosts();
+  const users = await seedUsers();
+  // users = await User.find({});
+  const categories = await seedCategories();
+  const subreddits = await seedSubreddits(users);
+  // subreddits = await Subreddit.find({});
+  const posts = await seedPosts(users, subreddits);
 
   closeDatabaseConnection();
   console.log("✅ Seeds executed successfully");
