@@ -78,14 +78,21 @@ export async function getSortedCategories() {
  *
  * @returns {object} Object containing the two random categories together
  */
-export function getTwoRandomCategories() {
+export async function getTwoRandomCategories() {
   const len = Categories.length;
-  let firstIndex, secondIndex;
-  firstIndex = Math.floor(Math.random() * len);
-  secondIndex = firstIndex;
-  while (firstIndex === secondIndex) {
+  let firstIndex, secondIndex, count;
+  do {
+    firstIndex = Math.floor(Math.random() * len);
+    count = await Subreddit.countDocuments({
+      category: Categories[firstIndex],
+    });
+  } while (count === 0);
+  do {
     secondIndex = Math.floor(Math.random() * len);
-  }
+    count = await Subreddit.countDocuments({
+      category: Categories[secondIndex],
+    });
+  } while (firstIndex === secondIndex || count === 0);
   return {
     firstCategory: Categories[firstIndex],
     secondCategory: Categories[secondIndex],
@@ -100,7 +107,7 @@ export function getTwoRandomCategories() {
  * @returns {Array} Array of objects containing random subreddits
  */
 export async function getRandomSubreddits() {
-  const { firstCategory, secondCategory } = getTwoRandomCategories();
+  const { firstCategory, secondCategory } = await getTwoRandomCategories();
 
   let subreddits = [
     await Subreddit.find({ category: firstCategory }),
