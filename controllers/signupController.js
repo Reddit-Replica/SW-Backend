@@ -169,7 +169,12 @@ const signinWithGoogleFacebook = async (req, res) => {
       res.statu(400).json({ error: "Invalid type" });
     }
     // get the token and decode it
-    const decodedToken = jwtDecode(req.body.accessToken);
+    let decodedToken;
+    try {
+      decodedToken = jwtDecode(req.body.accessToken);
+    } catch (error) {
+      return res.status(400).json({ error: "Invalid token" });
+    }
     const email = decodedToken.email;
 
     let user = null;
