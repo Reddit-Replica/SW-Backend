@@ -89,6 +89,7 @@ describe("Testing item actions services functions", () => {
       isSenderUser: true,
       receiverUsername: user1.username,
       isReceiverUser: true,
+      subject: "Subject",
     });
     await message.save();
   });
