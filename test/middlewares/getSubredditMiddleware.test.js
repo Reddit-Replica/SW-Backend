@@ -21,7 +21,7 @@ describe("Testing getBodySubreddit middleware", () => {
       owner: {
         username: "Beshoy",
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
   });
 

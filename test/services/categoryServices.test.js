@@ -36,7 +36,7 @@ describe("Testing Category services", () => {
         username: "hamdy",
         userID: user.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
     await Category.updateOne({ name: "Sports" }, { $set: { visited: true } });
 
@@ -51,7 +51,7 @@ describe("Testing Category services", () => {
         username: "hamdy",
         userID: user.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
     await Category.updateOne({ name: "Travel" }, { $set: { visited: true } });
 
@@ -66,7 +66,7 @@ describe("Testing Category services", () => {
         username: "hamdy",
         userID: user.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
     await Category.updateOne({ name: "News" }, { $set: { visited: true } });
   });
@@ -285,7 +285,7 @@ describe("Testing Category services", () => {
           username: "hamdy",
           userID: user.id,
         },
-        createdAt: Date.now(),
+        dateOfCreation: Date.now(),
       }).save();
       const subreddits = await getRandomSubreddits();
       expect(subreddits.first.category).toEqual("Sports");

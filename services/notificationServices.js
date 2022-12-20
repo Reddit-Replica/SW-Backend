@@ -198,6 +198,9 @@ export async function createCommentNotification(comment) {
         link: link1,
         date: Date.now(),
         sendingUserId: comment.ownerId,
+        sendingUserId: comment.ownerId,
+        commentId: comment._id,
+        postId: comment.parentId,
       }).save();
 
       const data1 = {
@@ -221,6 +224,8 @@ export async function createCommentNotification(comment) {
       link: link1,
       date: Date.now(),
       sendingUserId: comment.ownerId,
+      commentId: comment._id,
+      postId: comment.parentId,
     }).save();
     const data2 = {
       data: title2,
@@ -245,6 +250,8 @@ export async function createCommentNotification(comment) {
           link: link1,
           date: Date.now(),
           sendingUserId: comment.ownerId,
+          commentId: comment._id,
+          postId: comment.parentId,
         }).save();
         const data3 = {
           data: title3,
@@ -267,6 +274,8 @@ export async function createCommentNotification(comment) {
         link: link1,
         date: Date.now(),
         sendingUserId: comment.ownerId,
+        commentId: comment._id,
+        postId: comment.parentId,
       }).save();
       const data4 = {
         data: title4,

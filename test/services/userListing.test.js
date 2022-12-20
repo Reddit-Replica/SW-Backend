@@ -64,7 +64,7 @@ describe("Testing User Listing Service functions", () => {
         username: "hamdy",
         userID: user1.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     subreddit.bannedUsers.push(
