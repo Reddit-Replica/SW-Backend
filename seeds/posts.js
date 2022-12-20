@@ -1,12 +1,16 @@
 export const posts = [];
+let users, subreddits;
 
 import { faker } from "@faker-js/faker";
 import User from "../models/User.js";
 import Subreddit from "../models/Community.js";
 
+(async function () {
+  users = await User.find({});
+  subreddits = await Subreddit.find({});
+})();
+
 async function createRandomPost() {
-  const users = await User.find({});
-  const subreddits = await Subreddit.find({});
   const userIndex = Math.round(Math.random(0, users.length));
   const subredditIndex = Math.round(Math.random(0, subreddits.length));
   return {
@@ -21,6 +25,6 @@ async function createRandomPost() {
   };
 }
 
-Array.from({ length: 3 }).forEach(async () => {
+Array.from({ length: 20 }).forEach(async () => {
   posts.push(await createRandomPost());
 });
