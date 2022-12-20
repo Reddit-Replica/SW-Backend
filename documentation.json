@@ -1297,6 +1297,10 @@
                   "type": "boolean",
                   "description": "If true, then this comment was followed before by the logged-in user"
                 },
+                "locked": {
+                  "type": "boolean",
+                  "description": "If true, then this comment is locked and can not have another child comments"
+                },
                 "vote": {
                   "type": "integer",
                   "enum": [1, 0, -1],
@@ -2016,132 +2020,6 @@
         ]
       }
     },
-    "/comments/{postId}/{commentId}/parent-comments": {
-      "get": {
-        "summary": "Return the parents of a specific comment (Here the token is optional if the user is logged in add a token if not don't add it)",
-        "tags": ["Comments"],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "postId",
-            "description": "The post id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": "commentId",
-            "description": "The comment id to show its tree",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "sort",
-            "description": "Comments sorting algorithm",
-            "schema": {
-              "type": "string",
-              "default": "best",
-              "enum": ["best", "top", "new", "old"]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "parents": {
-                      "type": "array",
-                      "description": "All the parents for that specific comment",
-                      "items": {
-                        "properties": {
-                          "commentId": {
-                            "type": "string",
-                            "description": "The id of the comment"
-                          },
-                          "commentedBy": {
-                            "type": "string",
-                            "description": "The author of the comment"
-                          },
-                          "editTime": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "Edit time of the comment (if exists)"
-                          },
-                          "publishTime": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "Publish time of the comment"
-                          },
-                          "commentBody": {
-                            "type": "string",
-                            "description": "The comment itself"
-                          },
-                          "votes": {
-                            "type": "integer",
-                            "description": "Total number of votes to that post"
-                          },
-                          "saved": {
-                            "type": "boolean",
-                            "description": "If true, then this comment was saved before by the logged-in user"
-                          },
-                          "followed": {
-                            "type": "boolean",
-                            "description": "If true, then this comment was followed before by the logged-in user"
-                          },
-                          "vote": {
-                            "type": "integer",
-                            "enum": [1, 0, -1],
-                            "description": "Used to know if the user voted up [1] or down [-1] or didn't vote [0] to that post"
-                          },
-                          "parent": {
-                            "type": "string",
-                            "description": "The id of the parent comment in the tree"
-                          },
-                          "level": {
-                            "type": "integer",
-                            "description": "The level of the comment [level of nesting]"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid. You may refer to response for details around why the request was invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Type of error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/subreddits/leaderboard": {
       "get": {
         "summary": "Return a listing of all the Communities",
@@ -2360,35 +2238,8 @@
     },
     "/custom-random-category": {
       "get": {
-        "summary": "Return a listing of random communities with random category",
+        "summary": "Returns the top 5 subreddits of 2 random categories",
         "tags": ["Subreddit"],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "before",
-            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "after",
-            "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "description": "Maximum number of items desired [Maximum = 100]",
-            "schema": {
-              "type": "integer",
-              "default": 25
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Returned successfully",
@@ -2397,26 +2248,23 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "before": {
-                      "type": "string",
-                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
-                    },
-                    "after": {
-                      "type": "string",
-                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
-                    },
-                    "children": {
-                      "type": "array",
-                      "description": "List of [Things] to return",
-                      "items": {
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "description": "id of the subreddit"
-                          },
-                          "data": {
+                    "first": {
+                      "type": "object",
+                      "properties": {
+                        "category": {
+                          "type": "string",
+                          "description": "Name of the first category"
+                        },
+                        "subreddits": {
+                          "type": "array",
+                          "description": "List of top subreddits from the first random category",
+                          "items": {
                             "type": "object",
                             "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "id of the subreddit"
+                              },
                               "title": {
                                 "type": "string",
                                 "description": "Name of the community"
@@ -2424,15 +2272,45 @@
                               "members": {
                                 "type": "number",
                                 "description": "number of members of the community"
+                              },
+                              "joined": {
+                                "type": "boolean",
+                                "description": "Indicates whether the logged in user joined this subreddit or not"
                               }
-                            },
-                            "description": {
-                              "type": "string",
-                              "description": "A brief description of the community"
-                            },
-                            "isMember": {
-                              "type": "boolean",
-                              "description": "True if you are a member of the community , False if you are not a member of the community"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "second": {
+                      "type": "object",
+                      "properties": {
+                        "category": {
+                          "type": "string",
+                          "description": "Name of the second category"
+                        },
+                        "subreddits": {
+                          "type": "array",
+                          "description": "List of top subreddits from the second random category",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "id of the subreddit"
+                              },
+                              "title": {
+                                "type": "string",
+                                "description": "Name of the community"
+                              },
+                              "members": {
+                                "type": "number",
+                                "description": "number of members of the community"
+                              },
+                              "joined": {
+                                "type": "boolean",
+                                "description": "Indicates whether the logged in user joined this subreddit or not"
+                              }
                             }
                           }
                         }
@@ -2582,14 +2460,6 @@
                       "type": "string",
                       "description": "the name of the first category"
                     },
-                    "before": {
-                      "type": "string",
-                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things."
-                    },
-                    "after": {
-                      "type": "string",
-                      "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
-                    },
                     "firstCategoryChildren": {
                       "type": "array",
                       "description": "List of [Things] to return",
@@ -2618,12 +2488,16 @@
                             "isMember": {
                               "type": "boolean",
                               "description": "True if you are a member of the community , False if you are not a member of the community"
+                            },
+                            "picture": {
+                              "type": "string",
+                              "description": "the path of the picture of the subreddit"
                             }
                           }
                         }
                       }
                     },
-                    "SecondCategoryChildren": {
+                    "secondCategoryChildren": {
                       "type": "array",
                       "description": "List of [Things] to return",
                       "items": {
@@ -2651,6 +2525,10 @@
                             "isMember": {
                               "type": "boolean",
                               "description": "True if you are a member of the community , False if you are not a member of the community"
+                            },
+                            "picture": {
+                              "type": "string",
+                              "description": "the path of the picture of the subreddit"
                             }
                           }
                         }
@@ -7265,6 +7143,10 @@
                       "type": "string",
                       "description": "Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things."
                     },
+                    "unreadCount": {
+                      "type": "number",
+                      "description": "The number of unread notification returned"
+                    },
                     "children": {
                       "type": "array",
                       "description": "List of notifications",
@@ -7277,6 +7159,10 @@
                           "title": {
                             "type": "string",
                             "description": "title of the notification"
+                          },
+                          "photo": {
+                            "type": "string",
+                            "description": "the photo of the following user if follow type or the photo of the comment owner in case of comment (maybe empty if the owner didn't have a photo)"
                           },
                           "type": {
                             "type": "string",
@@ -7291,6 +7177,18 @@
                             "type": "string",
                             "format": "date-time",
                             "description": "time of sending the notification"
+                          },
+                          "followingUsername": {
+                            "type": "string",
+                            "description": "the following username in case of type Follow"
+                          },
+                          "postId": {
+                            "type": "string",
+                            "description": "the post id in case of type comment"
+                          },
+                          "commentId": {
+                            "type": "string",
+                            "description": "the comment id in case of type comment"
                           },
                           "isRead": {
                             "type": "boolean",
@@ -9186,11 +9084,11 @@
                                     "type": "string",
                                     "description": "Comment ID"
                                   },
-                                  "content": {
+                                  "commentBody": {
                                     "type": "object",
                                     "description": "Comment content"
                                   },
-                                  "parentId": {
+                                  "parent": {
                                     "type": "string",
                                     "description": "id of the post being replied to (parent)"
                                   },
@@ -9198,11 +9096,11 @@
                                     "type": "number",
                                     "description": "Level of the comment (How deep is it in the comment tree)"
                                   },
-                                  "username": {
+                                  "commentedBy": {
                                     "type": "string",
                                     "description": "Name of the author of the comment"
                                   },
-                                  "createdAt": {
+                                  "publishTime": {
                                     "type": "string",
                                     "format": "time",
                                     "description": "How long ago the comment was written"
@@ -9864,11 +9762,11 @@
                                     "type": "string",
                                     "description": "Comment ID"
                                   },
-                                  "content": {
+                                  "commentBody": {
                                     "type": "string",
                                     "description": "Comment content"
                                   },
-                                  "parentId": {
+                                  "parent": {
                                     "type": "string",
                                     "description": "id of the post being replied to (parent)"
                                   },
@@ -9876,11 +9774,11 @@
                                     "type": "number",
                                     "description": "Level of the comment (How deep is it in the comment tree)"
                                   },
-                                  "username": {
+                                  "commentedBy": {
                                     "type": "string",
                                     "description": "Name of the author of the comment"
                                   },
-                                  "createdAt": {
+                                  "publishTime": {
                                     "type": "string",
                                     "format": "time",
                                     "description": "How long ago the comment was written"
@@ -12114,6 +12012,10 @@
                           "members": {
                             "type": "number",
                             "description": "the number of members in that subreddit"
+                          },
+                          "isFavorite": {
+                            "type": "boolean",
+                            "description": "to indicate if the user favorite this subreddit or not"
                           }
                         }
                       }
@@ -12140,6 +12042,61 @@
     "/joined-subreddits": {
       "get": {
         "summary": "Return all subreddits that you are member in ( usecase to post in )",
+        "tags": ["Subreddit"],
+        "responses": {
+          "200": {
+            "description": "Returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "children": {
+                      "type": "array",
+                      "description": "List of the subreddits that your are member in and their pictures",
+                      "items": {
+                        "properties": {
+                          "title": {
+                            "type": "string",
+                            "description": "the title of the subreddits that the user can send messages from and his own username"
+                          },
+                          "picture": {
+                            "type": "string",
+                            "description": "Path of the picture of the subreddit"
+                          },
+                          "members": {
+                            "type": "number",
+                            "description": "the number of members in that subreddit"
+                          },
+                          "isFavorite": {
+                            "type": "boolean",
+                            "description": "to indicate if the user favorite this subreddit or not"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized to view this info"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/favorite-subreddits": {
+      "get": {
+        "summary": "Return all subreddits that you marked as favorite",
         "tags": ["Subreddit"],
         "responses": {
           "200": {
@@ -12234,6 +12191,57 @@
                     "numberOfLeftLastMonth": {
                       "type": "number",
                       "description": "Number of users left that subreddit last month"
+                    },
+                    "days": {
+                      "type": "array",
+                      "description": "List of days on current month with the number of joined users",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "day": {
+                            "type": "string",
+                            "description": "Date of that day"
+                          },
+                          "numberOfJoined": {
+                            "type": "number",
+                            "description": "Number of joined users at this day"
+                          }
+                        }
+                      }
+                    },
+                    "weeks": {
+                      "type": "array",
+                      "description": "List of days on this week with the number of joined users",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "day": {
+                            "type": "string",
+                            "description": "Day name"
+                          },
+                          "numberOfJoined": {
+                            "type": "number",
+                            "description": "Number of joined users at this day"
+                          }
+                        }
+                      }
+                    },
+                    "months": {
+                      "type": "array",
+                      "description": "List of months with the number of joined users",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "month": {
+                            "type": "string",
+                            "description": "Name of the month"
+                          },
+                          "numberOfJoined": {
+                            "type": "number",
+                            "description": "Number of joined users at this month"
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -13638,6 +13646,60 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/followed-users": {
+      "get": {
+        "summary": "Return the followed users",
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "children": {
+                      "type": "array",
+                      "description": "List of the subreddits that your are moderator in and their pictures",
+                      "items": {
+                        "properties": {
+                          "username": {
+                            "type": "string",
+                            "description": "the username of the user"
+                          },
+                          "displayName": {
+                            "type": "string",
+                            "description": "the display name of the user"
+                          },
+                          "picture": {
+                            "type": "string",
+                            "description": "Path of the picture of the user"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied"
           },
           "404": {
             "description": "User not found"

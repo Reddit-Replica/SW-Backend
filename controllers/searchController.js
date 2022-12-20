@@ -63,11 +63,15 @@ const search = async (req, res) => {
         loggedInUser
       );
     } else if (type === "comment") {
-      result = await searchComments(query, {
-        after,
-        before,
-        limit,
-      });
+      result = await searchComments(
+        query,
+        {
+          after,
+          before,
+          limit,
+        },
+        loggedInUser
+      );
     } else if (type === "user") {
       result = await searchUsers(query, { after, before, limit }, loggedInUser);
     } else {
@@ -128,11 +132,16 @@ const searchSubreddit = async (req, res) => {
         loggedInUser
       );
     } else {
-      result = await searchForComments(subreddit, query, {
-        after,
-        before,
-        limit,
-      });
+      result = await searchForComments(
+        subreddit,
+        query,
+        {
+          after,
+          before,
+          limit,
+        },
+        loggedInUser
+      );
     }
     res.status(result.statusCode).json(result.data);
   } catch (error) {

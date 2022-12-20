@@ -10,6 +10,11 @@ const categorySchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  visited: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 const Category = mongoose.model("Category", categorySchema);
