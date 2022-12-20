@@ -45,7 +45,7 @@ describe("Testing Pinned Posts Service functions", () => {
         username: "hamdy",
         userID: loggedInUser.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     post1 = new Post({

@@ -83,7 +83,7 @@ describe("Testing subreddit actions services functions", () => {
           leaveDate: new Date().setDate(new Date().getDate() - 8),
         },
       ],
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
   });
   afterAll(async () => {

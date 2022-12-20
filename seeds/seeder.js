@@ -7,9 +7,8 @@ import Post from "../models/Post.js";
 dotenv.config();
 import { users } from "./users.js";
 import { categories } from "./categories.js";
-import { createRandomSubreddit, subreddits } from "./subreddits.js";
+import { subreddits } from "./subreddits.js";
 import { posts } from "./posts.js";
-
 const DB_URL = process.env.MONGO_URL_SEED.trim();
 
 export let userIds;
@@ -40,8 +39,7 @@ async function seedCategories() {
   await Category.insertMany(categories);
 }
 
-async function seedSubreddits(userIds) {
-  createRandomSubreddit(userIds);
+async function seedSubreddits() {
   await Subreddit.deleteMany();
   await Subreddit.insertMany(subreddits);
 }
@@ -56,9 +54,9 @@ async function seedPosts() {
 
   await connectDatabase();
 
-  userIds = await seedUsers();
+  await seedUsers();
   await seedCategories();
-  await seedSubreddits(userIds);
+  await seedSubreddits();
   await seedPosts();
 
   closeDatabaseConnection();

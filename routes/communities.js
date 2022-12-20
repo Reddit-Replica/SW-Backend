@@ -197,15 +197,21 @@ communitiesRouter.get(
  *                                    id:
  *                                     type: string
  *                                     description: id of the subreddit
- *                                    title:
- *                                     type: string
- *                                     description: Name of the community
- *                                    members:
- *                                     type: number
- *                                     description: number of members of the community
- *                                    joined:
- *                                     type: boolean
- *                                     description: Indicates whether the logged in user joined this subreddit or not
+ *                                    data:
+ *                                      type: object
+ *                                      properties:
+ *                                        title:
+ *                                          type: string
+ *                                          description: Name of the community
+ *                                        members:
+ *                                          type: number
+ *                                          description: number of members of the community
+ *                                        joined:
+ *                                          type: boolean
+ *                                          description: Indicates whether the logged in user joined this subreddit or not
+ *                                        picture:
+ *                                          type: string
+ *                                          description: Path of the subreddit picture
  *                          second:
  *                            type: object
  *                            properties:
@@ -221,15 +227,21 @@ communitiesRouter.get(
  *                                    id:
  *                                     type: string
  *                                     description: id of the subreddit
- *                                    title:
- *                                     type: string
- *                                     description: Name of the community
- *                                    members:
- *                                     type: number
- *                                     description: number of members of the community
- *                                    joined:
- *                                     type: boolean
- *                                     description: Indicates whether the logged in user joined this subreddit or not
+ *                                    data:
+ *                                      type: object
+ *                                      properties:
+ *                                        title:
+ *                                          type: string
+ *                                          description: Name of the community
+ *                                        members:
+ *                                          type: number
+ *                                          description: number of members of the community
+ *                                        joined:
+ *                                          type: boolean
+ *                                          description: Indicates whether the logged in user joined this subreddit or not
+ *                                        picture:
+ *                                          type: string
+ *                                          description: Path of the subreddit picture
  *          404:
  *              description: Page not found
  *          401:
@@ -242,6 +254,7 @@ communitiesRouter.get(
 
 communitiesRouter.get(
   "/custom-random-category",
+  optionalToken,
   categoryController.getSubredditsFromRandomCategories
 );
 

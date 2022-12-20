@@ -5,7 +5,10 @@ import postActionsController from "../controllers/NpostActionsController.js";
 import { optionalToken } from "../middleware/optionalToken.js";
 import { validateRequestSchema } from "../middleware/validationResult.js";
 import { verifyAuthToken } from "../middleware/verifyToken.js";
-import { verifyPostActions } from "../middleware/verifyPostActions.js";
+import {
+  verifyPostActions,
+  verifyPostInsights,
+} from "../middleware/verifyPostActions.js";
 import { checkId } from "../middleware/checkId.js";
 import {
   addPost,
@@ -477,7 +480,7 @@ postRouter.get(
   checkId,
   postController.postIdValidator,
   validateRequestSchema,
-  verifyPostActions,
+  verifyPostInsights,
   postController.postInsights
 );
 

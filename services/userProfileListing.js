@@ -44,7 +44,6 @@ export async function listingUserProfileService(
     const neededIndex = result[typeOfListing].findIndex(
       (post) => post._id.toString() === id.toString()
     );
-    console.log(neededIndex);
     if (neededIndex !== -1) {
       if (listingParams.after) {
         result[typeOfListing] = result[typeOfListing].slice(

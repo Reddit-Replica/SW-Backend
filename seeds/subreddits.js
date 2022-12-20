@@ -6,8 +6,6 @@ import { users } from "./users.js";
 export function createRandomSubreddit() {
   const userIndex = Math.round(Math.random(0, 10));
   const randomDate = faker.date.past();
-  console.log(randomDate);
-  console.log(randomDate.toISOString());
   const name = faker.internet.userName();
   return {
     title: name,

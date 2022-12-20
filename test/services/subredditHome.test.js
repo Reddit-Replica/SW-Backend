@@ -40,7 +40,7 @@ describe("Testing Subreddit Posts Listing Service functions", () => {
         username: "hamdy",
         userID: user.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     flair = await new Flair({
