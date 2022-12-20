@@ -18,8 +18,16 @@ const getSubredditsFromRandomCategories = async (_req, res) => {
   try {
     const result = await getRandomSubreddits();
     return res.status(200).json(result);
-  } catch (err) {
-    return res.status(500).json("Internal server error");
+  } catch (error) {
+    if (error.statusCode) {
+      if (error.statusCode === 400) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(error.statusCode).json(error.message);
+      }
+    } else {
+      res.status(500).json("Internal server error");
+    }
   }
 };
 
