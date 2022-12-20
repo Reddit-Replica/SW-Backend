@@ -60,7 +60,7 @@ export async function removeFromSpammedComments(id, subredditName) {
  * @param {object} user User object
  * @returns {void}
  */
-export async function addToApprovedUsers(subreddit, user, payload) {
+export async function addToApprovedUsers(subreddit, user) {
   if (!user.joinedSubreddits.find((sr) => sr.name === subreddit.title)) {
     user.joinedSubreddits.push({
       subredditId: subreddit.id,
@@ -98,8 +98,8 @@ export async function addToApprovedUsers(subreddit, user, payload) {
       createdAt: Date.now(),
       receiverId: user.id,
       receiverUsername: user.username,
-      senderUsername: payload.username,
-      isSenderUser: true,
+      senderUsername: subreddit.title,
+      isSenderUser: false,
       isReceiverUser: true,
       subject: "You are an approved user",
       // eslint-disable-next-line max-len

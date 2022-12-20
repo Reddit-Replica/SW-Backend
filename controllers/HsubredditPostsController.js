@@ -240,7 +240,7 @@ const approveUser = async (req, res) => {
   try {
     const subreddit = req.subreddit;
     const user = await getUserByUsername(req.body.username);
-    await addToApprovedUsers(subreddit, user, req.payload);
+    await addToApprovedUsers(subreddit, user);
     return res.status(200).json("User successfully approved");
   } catch (error) {
     console.log(error.message);
