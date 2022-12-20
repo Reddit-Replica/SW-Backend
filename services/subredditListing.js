@@ -1,3 +1,4 @@
+/* eslint-disable max-depth */
 /* eslint-disable max-len */
 /* eslint-disable max-statements */
 import Subreddit from "../models/Community.js";
@@ -25,7 +26,8 @@ export async function subredditCategoryListing(
   before,
   after,
   limit,
-  withCategory
+  withCategory,
+  isLoggedIn
 ) {
   if (withCategory) {
     await checkOnCategory(category);
@@ -70,11 +72,12 @@ export async function subredditCategoryListing(
     const subreddit = subreddits[start];
     // lOOPING OVER EACH SUBREDDIT THAT WE RETURNED
     let isMember = false;
-
-    for (const smallSubreddit of user.joinedSubreddits) {
-      if (subreddit.id === smallSubreddit.subredditId.toString()) {
-        isMember = true;
-        break;
+    if (isLoggedIn) {
+      for (const smallSubreddit of user.joinedSubreddits) {
+        if (subreddit.id === smallSubreddit.subredditId.toString()) {
+          isMember = true;
+          break;
+        }
       }
     }
     let subredditData = { id: subreddit.id.toString() };
@@ -105,11 +108,11 @@ export async function subredditCategoryListing(
   };
 }
 
-export async function twoRandomCategories(user) {
-  const randomOne = Math.floor(Math.random() * 29);
-  let randomTwo = Math.floor(Math.random() * 29);
+export async function twoRandomCategories(user, isLoggedIn) {
+  const randomOne = Math.floor(Math.random() * 30);
+  let randomTwo = Math.floor(Math.random() * 30);
   while (randomTwo === randomOne) {
-    randomTwo = Math.floor(Math.random() * 29);
+    randomTwo = Math.floor(Math.random() * 30);
   }
   const categoryOne = await Category.findOne({ randomIndex: randomOne });
   const categoryTwo = await Category.findOne({ randomIndex: randomTwo });
@@ -125,11 +128,12 @@ export async function twoRandomCategories(user) {
     const subreddit = resultOne[i];
     // lOOPING OVER EACH SUBREDDIT THAT WE RETURNED
     let isMember = false;
-
-    for (const smallSubreddit of user.joinedSubreddits) {
-      if (subreddit.id === smallSubreddit.subredditId.toString()) {
-        isMember = true;
-        break;
+    if (isLoggedIn) {
+      for (const smallSubreddit of user.joinedSubreddits) {
+        if (subreddit.id === smallSubreddit.subredditId.toString()) {
+          isMember = true;
+          break;
+        }
       }
     }
     let subredditData = { id: subreddit.id.toString() };
@@ -177,7 +181,13 @@ export async function twoRandomCategories(user) {
   };
 }
 
-export async function subredditTrendingListing(user, before, after, limit) {
+export async function subredditTrendingListing(
+  user,
+  before,
+  after,
+  limit,
+  isLoggedIn
+) {
   const subreddits = await Subreddit.find().sort({ numberOfViews: -1 });
 
   limit = await prepareLimit(limit);
@@ -212,11 +222,12 @@ export async function subredditTrendingListing(user, before, after, limit) {
     const subreddit = subreddits[start];
     // lOOPING OVER EACH SUBREDDIT THAT WE RETURNED
     let isMember = false;
-
-    for (const smallSubreddit of user.joinedSubreddits) {
-      if (subreddit.id === smallSubreddit.subredditId.toString()) {
-        isMember = true;
-        break;
+    if (isLoggedIn) {
+      for (const smallSubreddit of user.joinedSubreddits) {
+        if (subreddit.id === smallSubreddit.subredditId.toString()) {
+          isMember = true;
+          break;
+        }
       }
     }
     let subredditData = { id: subreddit.id.toString() };

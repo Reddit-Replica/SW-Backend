@@ -38,29 +38,29 @@ export async function userMessageListing(
     .select(typeOfListing)
     .populate({
       path: typeOfListing,
-      match: { createdAt : { $lte:Date.now() } },
+      match: { createdAt: { $lte: Date.now() } },
       options: {
-        sort:{ createdAt:-1,text:1 },
+        sort: { createdAt: -1, text: 1 },
       },
     });
-    console.log(listingParams);
-    if (listingParams.before){
-      const getMsg=await Message.findById(listingParams.before);
-      result[typeOfListing]=result[typeOfListing].filter((msg)=>{
-        return getMsg.createdAt<msg.createdAt;
-      });
-      } else if (listingParams.after){
-      const getMsg=await Message.findById(listingParams.after);
-      result[typeOfListing]=result[typeOfListing].filter((msg)=>{
-        return getMsg.createdAt>msg.createdAt;
-      });
-      }
-      console.log(result);
-    if (isUnread) {
-      result[typeOfListing]=result[typeOfListing].filter((msg)=>{
-        return msg.isRead===false;
-      });
-    }
+  console.log(listingParams);
+  if (listingParams.before) {
+    const getMsg = await Message.findById(listingParams.before);
+    result[typeOfListing] = result[typeOfListing].filter((msg) => {
+      return getMsg.createdAt < msg.createdAt;
+    });
+  } else if (listingParams.after) {
+    const getMsg = await Message.findById(listingParams.after);
+    result[typeOfListing] = result[typeOfListing].filter((msg) => {
+      return getMsg.createdAt > msg.createdAt;
+    });
+  }
+  console.log(result);
+  if (isUnread) {
+    result[typeOfListing] = result[typeOfListing].filter((msg) => {
+      return msg.isRead === false;
+    });
+  }
   let limit = await prepareLimit(listingParams.limit);
   if (result[typeOfListing].length < limit) {
     limit = result[typeOfListing].length;
@@ -289,7 +289,7 @@ export async function userConversationListing(
   const children = [];
   let skipConv;
   for (startingIndex; startingIndex < finishIndex; startingIndex++) {
-    skipConv=false;
+    skipConv = false;
     const conversation = result[typeOfListing][startingIndex];
     const messages = [];
     for (const smallMessage of conversation.messages) {
@@ -298,7 +298,7 @@ export async function userConversationListing(
         continue;
       }
       if (message.createdAt > Date.now()) {
-        skipConv=true;
+        skipConv = true;
         break;
       }
       const messageData = {
@@ -318,7 +318,7 @@ export async function userConversationListing(
         await message.save();
       }
     }
-    if (skipConv){
+    if (skipConv) {
       continue;
     }
     messages.sort(compareMsgs);
@@ -370,11 +370,14 @@ export async function userConversationListing(
 
 export async function userInboxListing(user, listingParams) {
   //GETTING RECEIVED MESSAGES
-  let date=new Date();
+  let date = new Date();
   date.setHours(date.getHours() - 1);
   const { receivedMessages } = await User.findOne({ username: user.username })
     .select("receivedMessages")
-    .populate({ path: "receivedMessages", match: { deletedAt: null,createdAt: { $lte:Date.now() } } });
+    .populate({
+      path: "receivedMessages",
+      match: { deletedAt: null, createdAt: { $lte: Date.now() } },
+    });
   //GETTING USERNAME MENTIONS
   const { usernameMentions } = await User.findOne({ username: user.username })
     .select("usernameMentions")

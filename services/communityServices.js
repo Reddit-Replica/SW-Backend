@@ -42,7 +42,13 @@ export async function searchForSubreddit(subredditName) {
  * @param {String} subredditName subreddit Name
  * @returns {Object} error object that contains the msg describing why there is an error and its status code , or if there is no error then it returns the subreddit itself
  */
+//ADD EXTRA CHECK ON REGULAR EXPRESSIONS
 export async function subredditNameAvailable(subredditName) {
+  if (subredditName.length < 3 || subredditName.length > 21) {
+    let error = new Error("Community names must be between 3–21 characters");
+    error.statusCode = 409;
+    throw error;
+  }
   const subreddit = await Subreddit.findOne({ title: subredditName });
   if (!subreddit) {
     return {
@@ -91,24 +97,26 @@ export async function searchForSubredditById(subredditId) {
  * @returns {Object} success objects that contains the msg describing what happened and its status code
  */
 export async function addToJoinedSubreddit(user, subreddit) {
-  if (subreddit.subredditSettings.sendWelcomeMessage){
-    if (subreddit.subredditSettings.welcomeMessage){
-      let sendingDate=new Date();
-      sendingDate.setHours(sendingDate.getHours()+1);
-      let smallreq={};
-     smallreq.msg={
-      senderUsername:subreddit.title,
-      isSenderUser:false,
-      receiverUsername:user.username,
-      isReceiverUser:true,
-      receiverId:user.id,
-      text:subreddit.subredditSettings.welcomeMessage+` This message can not be replied to. If you have questions for the moderators of r/${subreddit.title} you can message them here.`,
-      subject:`Welcome to r/${subreddit.title}!`,
-      isReply:false,
-      createdAt:sendingDate,
-    };
-    addMessage(smallreq);
-  }
+  if (subreddit.subredditSettings.sendWelcomeMessage) {
+    if (subreddit.subredditSettings.welcomeMessage) {
+      let sendingDate = new Date();
+      sendingDate.setHours(sendingDate.getHours() + 1);
+      let smallreq = {};
+      smallreq.msg = {
+        senderUsername: subreddit.title,
+        isSenderUser: false,
+        receiverUsername: user.username,
+        isReceiverUser: true,
+        receiverId: user.id,
+        text:
+          subreddit.subredditSettings.welcomeMessage +
+          ` This message can not be replied to. If you have questions for the moderators of r/${subreddit.title} you can message them here.`,
+        subject: `Welcome to r/${subreddit.title}!`,
+        isReply: false,
+        createdAt: sendingDate,
+      };
+      addMessage(smallreq);
+    }
   }
   user.joinedSubreddits.push({
     subredditId: subreddit.id,

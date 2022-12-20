@@ -145,6 +145,10 @@ export async function homePostsListing(
         spammed = true;
       }
     }
+    let flair;
+    if (post.flair){
+      flair= await flair.findById(post.flair);
+    }
     let postData = { id: postId };
     postData.data = {
       id: postId,
@@ -159,7 +163,7 @@ export async function homePostsListing(
       spoiler: post.spoiler,
       votes: post.numberOfVotes,
       comments: post.numberOfComments,
-      flair: post.flair,
+      flair: flair,
       postedAt: post.createdAt,
       editedAt: post.editedAt,
       sharePostId: post.sharePostId,

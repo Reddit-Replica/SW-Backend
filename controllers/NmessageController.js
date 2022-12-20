@@ -117,19 +117,19 @@ const unreadMsg = async (req, res) => {
 
 const getSentMsg = async (req, res) => {
   try {
-      let { before,after,limit }=req.query;
+    let { before, after, limit } = req.query;
     const user = await searchForUserService(req.payload.username);
-      const result = await userMessageListing(
-        user,
-        "sentMessages",
-        {
-          before,
-          after,
-          limit,
-        },
-        false
-      );
-      res.status(result.statusCode).json(result.data);
+    const result = await userMessageListing(
+      user,
+      "sentMessages",
+      {
+        before,
+        after,
+        limit,
+      },
+      false
+    );
+    res.status(result.statusCode).json(result.data);
   } catch (error) {
     console.log(error);
     if (error.statusCode) {
@@ -144,17 +144,17 @@ const getUnreadMsg = async (req, res) => {
   try {
     let { before, after, limit } = req.query;
     const user = await searchForUserService(req.payload.username);
-      const result = await userMessageListing(
-        user,
-        "receivedMessages",
-        {
-          before,
-          after,
-          limit,
-        },
-        true
-      );
-      res.status(result.statusCode).json(result.data);
+    const result = await userMessageListing(
+      user,
+      "receivedMessages",
+      {
+        before,
+        after,
+        limit,
+      },
+      true
+    );
+    res.status(result.statusCode).json(result.data);
   } catch (error) {
     console.log(error);
     if (error.statusCode) {
