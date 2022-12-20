@@ -8,6 +8,8 @@ import { categories } from "./categories.js";
 
 const DB_URL = process.env.MONGO_URL_SEED.trim();
 
+export let userIds;
+
 async function connectDatabase() {
   try {
     await mongoose.connect(DB_URL, { useNewUrlParser: true });
@@ -22,7 +24,9 @@ function closeDatabaseConnection() {
 
 async function seedUsers() {
   await User.deleteMany();
-  await User.insertMany(users);
+  const usersInserted = await User.insertMany(users);
+  userIds = usersInserted.map((d) => d._id);
+  // console.log(userIds);
 }
 
 async function seedCategories() {
