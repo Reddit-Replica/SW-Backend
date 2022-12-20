@@ -83,7 +83,7 @@ const communitiesRouter = express.Router();
 
 communitiesRouter.get(
   "/subreddits/leaderboard",
-  verifyAuthToken,
+  optionalToken,
   subredditController.subredditLeaderboard
 );
 
@@ -164,7 +164,7 @@ communitiesRouter.get(
 
 communitiesRouter.get(
   "/subreddits/leaderboard/:categoryName",
-  verifyAuthToken,
+  optionalToken,
   subredditController.subredditLeaderboardWithCategory
 );
 
@@ -172,25 +172,8 @@ communitiesRouter.get(
  * @swagger
  * /custom-random-category:
  *  get:
- *      summary: Return a listing of random communities with random category
+ *      summary: Returns the top 5 subreddits of 2 random categories
  *      tags: [Subreddit]
- *      parameters:
- *       - in: query
- *         name: before
- *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
- *         schema:
- *           type: string
- *       - in: query
- *         name: after
- *         description: Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
- *         schema:
- *           type: string
- *       - in: query
- *         name: limit
- *         description: Maximum number of items desired [Maximum = 100]
- *         schema:
- *           type: integer
- *           default: 25
  *      responses:
  *          200:
  *              description: Returned successfully
@@ -199,35 +182,54 @@ communitiesRouter.get(
  *                      schema:
  *                        type: object
  *                        properties:
- *                          before:
- *                           type: string
- *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the previous things.
- *                          after:
- *                           type: string
- *                           description:  Only one of after/before should be specified. The id of last item in the listing to use as the anchor point of the slice and get the next things.
- *                          children:
- *                            type: array
- *                            description: List of [Things] to return
- *                            items:
- *                              properties:
- *                               id:
- *                                type: string
- *                                description: id of the subreddit
- *                               data:
- *                                type: object
- *                                properties:
- *                                 title:
- *                                  type: string
- *                                  description: Name of the community
- *                                 members:
- *                                  type: number
- *                                  description: number of members of the community
- *                                description:
- *                                 type: string
- *                                 description: A brief description of the community
- *                                isMember:
- *                                  type: boolean
- *                                  description: True if you are a member of the community , False if you are not a member of the community
+ *                          first:
+ *                            type: object
+ *                            properties:
+ *                                category:
+ *                                    type: string
+ *                                    description: Name of the first category
+ *                                subreddits:
+ *                                 type: array
+ *                                 description: List of top subreddits from the first random category
+ *                                 items:
+ *                                   type: object
+ *                                   properties:
+ *                                    id:
+ *                                     type: string
+ *                                     description: id of the subreddit
+ *                                    title:
+ *                                     type: string
+ *                                     description: Name of the community
+ *                                    members:
+ *                                     type: number
+ *                                     description: number of members of the community
+ *                                    joined:
+ *                                     type: boolean
+ *                                     description: Indicates whether the logged in user joined this subreddit or not
+ *                          second:
+ *                            type: object
+ *                            properties:
+ *                                category:
+ *                                    type: string
+ *                                    description: Name of the second category
+ *                                subreddits:
+ *                                 type: array
+ *                                 description: List of top subreddits from the second random category
+ *                                 items:
+ *                                   type: object
+ *                                   properties:
+ *                                    id:
+ *                                     type: string
+ *                                     description: id of the subreddit
+ *                                    title:
+ *                                     type: string
+ *                                     description: Name of the community
+ *                                    members:
+ *                                     type: number
+ *                                     description: number of members of the community
+ *                                    joined:
+ *                                     type: boolean
+ *                                     description: Indicates whether the logged in user joined this subreddit or not
  *          404:
  *              description: Page not found
  *          401:
@@ -315,7 +317,7 @@ communitiesRouter.get(
 
 communitiesRouter.get(
   "/trending-communities",
-  verifyAuthToken,
+  optionalToken,
   subredditController.trendingSubreddits
 );
 
@@ -403,7 +405,7 @@ communitiesRouter.get(
 
 communitiesRouter.get(
   "/random-category",
-  verifyAuthToken,
+  optionalToken,
   subredditController.randomCategories
 );
 

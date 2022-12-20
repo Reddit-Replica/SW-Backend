@@ -138,7 +138,7 @@ export async function searchPosts(query, listingParams, user) {
  * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements
-export async function searchComments(query, listingParams) {
+export async function searchComments(query, listingParams, user) {
   // Prepare Listing Parameters
   const listingResult = await commentTreeListing(listingParams);
 
@@ -155,6 +155,9 @@ export async function searchComments(query, listingParams) {
       },
     },
   ];
+  listingResult.find["moderation.remove.removedBy"] = undefined;
+  listingResult.find["moderation.spam.spammedBy"] = undefined;
+  user && (listingResult.find["nsfw"] = user.userSettings.nsfw);
 
   const result = await Comment.find(listingResult.find)
     .sort(listingResult.sort)

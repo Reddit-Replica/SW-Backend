@@ -2,7 +2,6 @@
 /* eslint-disable max-statements */
 import User from "../models/User.js";
 import {
-  messageListing,
   mentionListing,
   conversationListing,
   splitterOnType,
@@ -15,6 +14,8 @@ import {
 import { searchForComment, searchForPost } from "./PostActions.js";
 import Message from "../models/Message.js";
 import { prepareLimit } from "../utils/prepareLimit.js";
+import Post from "../models/Post.js";
+import Comment from "../models/Comment.js";
 
 /**
  * Function that get the posts that we want to list from a certain user
@@ -35,22 +36,32 @@ export async function userMessageListing(
   listingParams,
   isUnread
 ) {
-  // prepare the listing parameters
-  const listingResult = await messageListing(listingParams);
-  if (isUnread) {
-    listingResult.find.isRead = false;
-  }
   const result = await User.findOne({ username: user.username })
     .select(typeOfListing)
     .populate({
       path: typeOfListing,
-      match: listingResult.find,
+      match: { createdAt: { $lte: Date.now() } },
       options: {
-        sort: listingResult.sort,
+        sort: { createdAt: -1, text: 1 },
       },
     });
-  console.log(listingResult);
-  let limit = listingResult.limit;
+  if (listingParams.before) {
+    const getMsg = await Message.findById(listingParams.before);
+    result[typeOfListing] = result[typeOfListing].filter((msg) => {
+      return getMsg.createdAt < msg.createdAt;
+    });
+  } else if (listingParams.after) {
+    const getMsg = await Message.findById(listingParams.after);
+    result[typeOfListing] = result[typeOfListing].filter((msg) => {
+      return getMsg.createdAt > msg.createdAt;
+    });
+  }
+  if (isUnread) {
+    result[typeOfListing] = result[typeOfListing].filter((msg) => {
+      return msg.isRead === false;
+    });
+  }
+  let limit = await prepareLimit(listingParams.limit);
   if (result[typeOfListing].length < limit) {
     limit = result[typeOfListing].length;
   }
@@ -60,7 +71,6 @@ export async function userMessageListing(
   //IN CASE OF BEFORE THEN WE WILL START FROM BEFORE INDEX-LIMIT TO THE BEFORE INDEX
   if (listingParams.before) {
     startingIndex = result[typeOfListing].length - limit;
-    console.log(result[typeOfListing].length, limit);
     finishIndex = result[typeOfListing].length;
   }
   if (startingIndex < 0) {
@@ -140,7 +150,6 @@ export async function userMentionsListing(
         sort: listingResult.sort,
       },
     });
-  console.log(result);
   let limit = listingResult.limit;
   if (result[typeOfListing].length < limit) {
     limit = result[typeOfListing].length;
@@ -151,7 +160,6 @@ export async function userMentionsListing(
   //IN CASE OF BEFORE THEN WE WILL START FROM BEFORE INDEX-LIMIT TO THE BEFORE INDEX
   if (listingParams.before) {
     startingIndex = result[typeOfListing].length - limit;
-    console.log(result[typeOfListing].length, limit);
     finishIndex = result[typeOfListing].length;
   }
   if (startingIndex < 0) {
@@ -163,8 +171,16 @@ export async function userMentionsListing(
     // lOOPING OVER EACH MENTION OF THAT THE USER HAD RECEIVED
     const mention = result[typeOfListing][startingIndex];
     // AS THIS MENTION IS RETURNED THEN IT SHOULD BE MARKED AS READ
-    const post = await searchForPost(mention.postId);
-    const comment = await searchForComment(mention.commentId);
+    const post = await Post.findById(mention.postId);
+    const comment = await Comment.findById(mention.commentId);
+    if (!post || !comment){
+      let err=new Error("This post or comment has not found");
+      err.statusCode=400;
+      throw err;
+    }
+    if (post.deletedAt||comment.deletedAt){
+      continue;
+    }
     let vote = 0;
     if (checkForUpVotedComments(comment, user)) {
       vote = 1;
@@ -268,7 +284,6 @@ export async function userConversationListing(
   //IN CASE OF BEFORE THEN WE WILL START FROM BEFORE INDEX-LIMIT TO THE BEFORE INDEX
   if (listingParams.before) {
     startingIndex = result[typeOfListing].length - limit;
-    console.log(result[typeOfListing].length, limit);
     finishIndex = result[typeOfListing].length;
   }
   if (startingIndex < 0) {
@@ -276,13 +291,19 @@ export async function userConversationListing(
   }
   //OUR CHILDREN ARRAY THAT WE WILL SEND AS RESPONSE
   const children = [];
+  let skipConv;
   for (startingIndex; startingIndex < finishIndex; startingIndex++) {
+    skipConv = false;
     const conversation = result[typeOfListing][startingIndex];
     const messages = [];
     for (const smallMessage of conversation.messages) {
       const message = await Message.findById(smallMessage);
       if (message.receiverUsername === user.username && message.deletedAt) {
         continue;
+      }
+      if (message.createdAt > Date.now()) {
+        skipConv = true;
+        break;
       }
       const messageData = {
         msgID: message.id.toString(),
@@ -300,6 +321,9 @@ export async function userConversationListing(
         message.isRead = true;
         await message.save();
       }
+    }
+    if (skipConv) {
+      continue;
     }
     messages.sort(compareMsgs);
     // GETTING THE DATA THAT WE NEED TO RETURN TO THE USERS , FIRST WE WILL ADD THE ID OF EACH MENTION
@@ -350,9 +374,14 @@ export async function userConversationListing(
 
 export async function userInboxListing(user, listingParams) {
   //GETTING RECEIVED MESSAGES
+  let date = new Date();
+  date.setHours(date.getHours() - 1);
   const { receivedMessages } = await User.findOne({ username: user.username })
     .select("receivedMessages")
-    .populate({ path: "receivedMessages", match: { deletedAt: null } });
+    .populate({
+      path: "receivedMessages",
+      match: { deletedAt: null, createdAt: { $lte: Date.now() } },
+    });
   //GETTING USERNAME MENTIONS
   const { usernameMentions } = await User.findOne({ username: user.username })
     .select("usernameMentions")
@@ -411,10 +440,16 @@ export async function userInboxListing(user, listingParams) {
     await totalInbox[startingIndex].save();
     //DEPENDING ON THE TYPE OF ELEMENT WE WILL SEND DIFFERENT DATA
     if (totalInbox[startingIndex].type !== "Message") {
-      const post = await searchForPost(totalInbox[startingIndex].postId);
-      const comment = await searchForComment(
-        totalInbox[startingIndex].commentId
-      );
+      const post = await Post.findById(totalInbox[startingIndex].postId);
+      const comment = await Comment.findById(totalInbox[startingIndex].commentId);
+      if (!post || !comment){
+        let err=new Error("This post or comment has not found");
+        err.statusCode=400;
+        throw err;
+      }
+      if (post.deletedAt||comment.deletedAt){
+        continue;
+      }
       let vote = 0;
       if (checkForUpVotedComments(comment, user)) {
         vote = 1;

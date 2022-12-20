@@ -164,7 +164,7 @@ describe("Testing user services functions", () => {
 
   it("try to let the user follow himself", async () => {
     try {
-      await followUserService(mainUser, userToAction, true);
+      await followUserService(mainUser, mainUser, true);
     } catch (error) {
       expect(error.statusCode).toEqual(400);
       expect(error.message).toEqual("User can not follow himself");
@@ -179,8 +179,7 @@ describe("Testing user services functions", () => {
 
   it("try to follow the same user again", async () => {
     const result = await followUserService(mainUser, userToAction, true);
-    expect(result.statusCode).toEqual(200);
-    expect(result.message).toEqual("User followed successfully");
+    expect(result.statusCode).toEqual(400);
   });
 
   it("try to unfollow user", async () => {
@@ -191,8 +190,7 @@ describe("Testing user services functions", () => {
 
   it("try to unfollow the same user again", async () => {
     const result = await followUserService(mainUser, userToAction, false);
-    expect(result.statusCode).toEqual(200);
-    expect(result.message).toEqual("User unfollowed successfully");
+    expect(result.statusCode).toEqual(400);
   });
 
   it("should have clearHistoyService function", () => {
