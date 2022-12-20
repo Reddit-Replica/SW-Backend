@@ -78,21 +78,37 @@ export async function getSortedCategories() {
  *
  * @returns {object} Object containing the two random categories together
  */
+// eslint-disable-next-line max-statements
 export async function getTwoRandomCategories() {
   const len = Categories.length;
-  let firstIndex, secondIndex, count;
+  let firstIndex, secondIndex, visited;
+  if ((await Subreddit.countDocuments({})) === 0) {
+    const error = new Error("There are no subreddits found");
+    error.statusCode = 404;
+    throw error;
+  }
+  const categoryCount = await Category.countDocuments({ visited: true });
+  if (categoryCount === 0) {
+    const error = new Error("There are no visited categories");
+    error.statusCode = 404;
+    throw error;
+  }
   do {
     firstIndex = Math.floor(Math.random() * len);
-    count = await Subreddit.countDocuments({
-      category: Categories[firstIndex],
-    });
-  } while (count === 0);
-  do {
-    secondIndex = Math.floor(Math.random() * len);
-    count = await Subreddit.countDocuments({
-      category: Categories[secondIndex],
-    });
-  } while (firstIndex === secondIndex || count === 0);
+    visited = await Category.findOne({ randomIndex: firstIndex }).select(
+      "visited"
+    );
+  } while (!visited["visited"]);
+  if (categoryCount >= 2) {
+    do {
+      secondIndex = Math.floor(Math.random() * len);
+      visited = await Category.findOne({ randomIndex: secondIndex }).select(
+        "visited"
+      );
+    } while (firstIndex === secondIndex || !visited["visited"]);
+  } else {
+    secondIndex = firstIndex;
+  }
   return {
     firstCategory: Categories[firstIndex],
     secondCategory: Categories[secondIndex],
@@ -106,27 +122,40 @@ export async function getTwoRandomCategories() {
  *
  * @returns {Array} Array of objects containing random subreddits
  */
+// eslint-disable-next-line max-statements
 export async function getRandomSubreddits() {
   const { firstCategory, secondCategory } = await getTwoRandomCategories();
 
   let subreddits = [
-    await Subreddit.find({ category: firstCategory }),
-    await Subreddit.find({ category: secondCategory }),
+    await Subreddit.find({ category: firstCategory, deletedAt: null }).sort({
+      members: -1,
+    }),
+    await Subreddit.find({ category: secondCategory, deletedAt: null }).sort({
+      members: -1,
+    }),
   ];
-  let randomSubreddits = [];
+  let topSubreddits = [[], []];
   for (let i = 0; i < 2; i++) {
-    let limit = 25;
-    if (subreddits[i].length < 25) {
+    let limit = 5;
+    if (subreddits[i].length < 5) {
       limit = subreddits[i].length;
     }
-    while (limit--) {
-      const randIndex = Math.floor(Math.random() * subreddits[i].length);
-      randomSubreddits.push({
-        title: subreddits[i][randIndex].title,
-        members: subreddits[i][randIndex].members,
+    for (let j = 0; j < limit; j++) {
+      topSubreddits[i].push({
+        id: subreddits[i][j].id,
+        title: subreddits[i][j].title,
+        members: subreddits[i][j].members,
       });
-      subreddits[i].splice(randIndex, 1);
+    }
+    if (firstCategory === secondCategory) {
+      break;
     }
   }
-  return randomSubreddits;
+  return {
+    first: { category: firstCategory, subreddits: topSubreddits[0] },
+    second:
+      topSubreddits[1].length > 0
+        ? { category: secondCategory, subreddits: topSubreddits[1] }
+        : {},
+  };
 }
