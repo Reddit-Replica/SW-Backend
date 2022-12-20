@@ -40,7 +40,7 @@ describe("Testing Search in Subreddit Service functions", () => {
         username: "hamdy",
         userID: user.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     post1 = new Post({

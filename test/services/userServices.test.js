@@ -46,7 +46,7 @@ describe("Testing user services functions", () => {
         username: mainUser.username,
         userID: mainUser._id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     });
     subreddit.moderators.push({
       username: mainUser.username,

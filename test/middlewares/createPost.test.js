@@ -39,7 +39,8 @@ describe("Testing createPost middleware", () => {
       owner: {
         username: "hamdy",
       },
-      createdAt: Date.now(),
+
+      dateOfCreation: Date.now(),
     }).save();
 
     flair = await new Flair({

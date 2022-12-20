@@ -166,7 +166,7 @@ const signinWithGoogleFacebook = async (req, res) => {
   try {
     const type = req.params.type.trim();
     if (type !== "google" && type !== "facebook") {
-      res.statu(400).json({ error: "Invalid type" });
+      res.status(400).json({ error: "Invalid type" });
     }
     // get the token and decode it
     let decodedToken;
