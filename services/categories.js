@@ -123,7 +123,7 @@ export async function getTwoRandomCategories() {
  * @returns {Array} Array of objects containing random subreddits
  */
 // eslint-disable-next-line max-statements
-export async function getRandomSubreddits() {
+export async function getRandomSubreddits(loggedInUser) {
   const { firstCategory, secondCategory } = await getTwoRandomCategories();
 
   let subreddits = [
@@ -141,10 +141,24 @@ export async function getRandomSubreddits() {
       limit = subreddits[i].length;
     }
     for (let j = 0; j < limit; j++) {
+      let joined = undefined;
+      if (loggedInUser) {
+        // eslint-disable-next-line max-depth
+        if (
+          loggedInUser.joinedSubreddits.find(
+            (sr) => sr.name === subreddits[i][j].title
+          )
+        ) {
+          joined = true;
+        } else {
+          joined = false;
+        }
+      }
       topSubreddits[i].push({
         id: subreddits[i][j].id,
         title: subreddits[i][j].title,
         members: subreddits[i][j].members,
+        joined: joined,
       });
     }
     if (firstCategory === secondCategory) {
