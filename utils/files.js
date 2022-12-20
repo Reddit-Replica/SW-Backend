@@ -1,4 +1,5 @@
 import multer from "multer";
+/* istanbul ignore file */
 export const fileStorage = multer.diskStorage({
   destination: (_req, file, cb) => {
     if (file.mimetype.split("/")[0] === "video") {

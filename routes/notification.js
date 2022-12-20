@@ -65,6 +65,9 @@ const notificationRouter = express.Router();
  *                               title:
  *                                 type: string
  *                                 description: title of the notification
+ *                               photo:
+ *                                 type: string
+ *                                 description: the photo of the following user if follow type or the photo of the comment owner in case of comment (maybe empty if the owner didn't have a photo)
  *                               type:
  *                                 type: string
  *                                 description: type of the notification
