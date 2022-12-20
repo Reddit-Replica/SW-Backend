@@ -152,10 +152,8 @@ export async function createCommentNotification(comment) {
     title3 += " replied to a comment in your post!";
     title4 += " replied to a comment in a post you are following!";
     parent = await Comment.findById(comment.parentId);
-    console.log(parent);
   } else {
     parent = await Post.findById(comment.parentId);
-    console.log(parent);
     title1 += " commented on your post!";
     title2 += " commented on a post you are following!";
   }
