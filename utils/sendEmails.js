@@ -470,7 +470,7 @@ export async function sendPostReplyMail(user, post, comment) {
     mg.messages().send({
       from: SENDER_EMAIL,
       to: user.email,
-      subject: `${comment.ownerUsername}replied to your post in r/${postPlace}`,
+      subject: `${comment.ownerUsername} replied to your post in r/${postPlace}`,
       html: `
 	  <div class=""><div class="aHl"></div><div id=":17s" tabindex="-1"></div><div id=":17h" class="ii gt" jslog="20277; u014N:xr6bB; 4:W251bGwsbnVsbCxbXV0."><div id=":17g" class="a3s aiL msg8901276260374497905"><u></u>
 	  <div class="m_8901276260374497905body" style="padding:0!important;margin:0 auto!important;display:block!important;min-width:100%!important;width:100%!important;background:#ffffff">
@@ -527,7 +527,7 @@ export async function sendPostReplyMail(user, post, comment) {
 	  <tr>
 
 	  <td style="font-size:0pt;line-height:0pt;text-align:center;padding-bottom:14px">
-	  <a href="${FRONT_BASE}/user/${user.username}" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fuser%252FBlaze428%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/1/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/flTjhGvGA4fnhI9sqvIhslzIR-3h67gEyE2FTqlDImg%3D279&amp;source=gmail&amp;ust=1671629384633000&amp;usg=AOvVaw14qJr-anatvmW32y-yjXlc">
+	  <a href="${FRONT_BASE}/user/${comment.ownerUsername}" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fuser%252FBlaze428%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/1/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/flTjhGvGA4fnhI9sqvIhslzIR-3h67gEyE2FTqlDImg%3D279&amp;source=gmail&amp;ust=1671629384633000&amp;usg=AOvVaw14qJr-anatvmW32y-yjXlc">
 	  <div style="border:1px solid #edeff1;border-radius:50%;margin:auto;width:88px;height:88px;background-position:center;background-repeat:no-repeat;background-size:100% 100%;background-image:url('${FRONT_BASE}/api/${picture}')">
 	  <img src="https://ci6.googleusercontent.com/proxy/iuhg8zCc6K93xMCoXYzpm5jR51yKpy9uKpRsT7qWtS_aYc3WZ4lPuOe9vjV24PYBDCui4LB2ZiYXS8Ccr6zrqBF0SsFfUZy4ZL1eaFSCS2Zdvg=s0-d-e1-ft#https://www.redditstatic.com/emaildigest/post_reply_icon@4x.png" alt="" style="border:0;width:41px;height:41px;padding-top:56px;padding-left:56px" class="CToWUd" data-bit="iit">
     </div>
@@ -632,7 +632,7 @@ export async function sendPostReplyMail(user, post, comment) {
 	  <table width="180" border="0" cellspacing="0" cellpadding="0">
 	  <tbody><tr>
 	  <td class="m_8901276260374497905btn-14" bgcolor="#0079d3" style="border-radius:4px;font-size:14px;line-height:18px;color:#ffffff;font-family:Helvetica,Arial,sans-serif;text-align:center;min-width:auto!important">
-	  <a style="display:block;padding:8px;text-decoration:none;color:#ffffff" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Fu_RequirementOrnery717%252Fcomments%252Fzmlbfs%252Fnmnm%252Fj0bkrs5%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/3/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/aWOaHB3N9P2ZsKnhguwIskSGCJvqJ1ezn1wMR0TkqqQ%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw0TTHAAcaOCB6UreGcXpSg3">
+	  <a href="${FRONT_BASE}/message/selfreply" style="display:block;padding:8px;text-decoration:none;color:#ffffff"  target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Fu_RequirementOrnery717%252Fcomments%252Fzmlbfs%252Fnmnm%252Fj0bkrs5%252F%253F$deep_link%3Dtrue%2526correlation_id%3D2c447f12-3bc5-44bb-9f43-9109fe4facf2%2526ref%3Demail_post_reply%2526ref_campaign%3Demail_post_reply%2526ref_source%3Demail/3/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/aWOaHB3N9P2ZsKnhguwIskSGCJvqJ1ezn1wMR0TkqqQ%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw0TTHAAcaOCB6UreGcXpSg3">
 	  <span style="text-decoration:none;color:#ffffff">
 	  <strong>
 	  View Reply
@@ -660,7 +660,7 @@ export async function sendPostReplyMail(user, post, comment) {
 	  <table width="100%" cellspacing="0" cellpadding="0" border="0">
 	  <tbody>
 	  <tr>
-	  <td class="m_8901276260374497905w-104 m_8901276260374497905mpb-20" style="font-size:0pt;line-height:0pt;text-align:center;padding-bottom:28px"><a href="https://click.redditmail.com/CL0/https:%2F%2Fwww.reddit.com%2F/2/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/5wnSmpQZ-3rLOvb7Wj9Zkst9sMn9PTQr9K1Z-4jJ8DM=279" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252F/2/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/5wnSmpQZ-3rLOvb7Wj9Zkst9sMn9PTQr9K1Z-4jJ8DM%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw0BV12vbvk4ZXXBcwiyt0CA"><img src="https://ci4.googleusercontent.com/proxy/ek_YRst9zhrJAPOUNmdD7HcqXKAwKpnhjx-qvaID79g0_xu34epyVQCXQT76z3cp3KKi-COutsgegnXI5R4rXZNNhwb5HDo=s0-d-e1-ft#https://www.redditstatic.com/emaildigest/logo@2x.png" alt="" width="115" height="40" border="0" class="CToWUd" data-bit="iit"></a></td>
+	  <td class="m_8901276260374497905w-104 m_8901276260374497905mpb-20" style="font-size:0pt;line-height:0pt;text-align:center;padding-bottom:28px"><a target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252F/2/0100018516049010-d6d334e3-db70-4b59-9658-dfccda093d98-000000/5wnSmpQZ-3rLOvb7Wj9Zkst9sMn9PTQr9K1Z-4jJ8DM%3D279&amp;source=gmail&amp;ust=1671629384634000&amp;usg=AOvVaw0BV12vbvk4ZXXBcwiyt0CA"><img src="https://ci4.googleusercontent.com/proxy/ek_YRst9zhrJAPOUNmdD7HcqXKAwKpnhjx-qvaID79g0_xu34epyVQCXQT76z3cp3KKi-COutsgegnXI5R4rXZNNhwb5HDo=s0-d-e1-ft#https://www.redditstatic.com/emaildigest/logo@2x.png" alt="" width="115" height="40" border="0" class="CToWUd" data-bit="iit"></a></td>
 	  </tr>
 	  <tr>
 	  <td style="padding-bottom:20px" align="center">
@@ -913,7 +913,7 @@ export async function sendMentionMail(user, post, comment) {
         <table width="180" border="0" cellspacing="0" cellpadding="0">
         <tbody><tr>
         <td bgcolor="#0079d3" style="border-radius:4px;font-size:14px;line-height:18px;color:#ffffff;font-family:Helvetica,Arial,sans-serif;text-align:center;min-width:auto!important">
-        <a href="${FRONT_BASE}" style="display:block;padding:8px;text-decoration:none;color:#ffffff" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Flearnprogramming%252Fcomments%252Fzltmxa%252Fschool_offers_a_cc_path_and_a_java_path_which_one%252Fj0bl83f%252F%253F$deep_link%3Dtrue%2526correlation_id%3D101e32a6-615c-49ee-a9de-ca773b6d724c%2526ref%3Demail_username_mention%2526ref_campaign%3Demail_username_mention%2526ref_source%3Demail/6/010001851607fcfd-b5ed1c5b-ecc5-4e9a-a879-1c014a7c0445-000000/45txkkwd4NLUtcm8e7TLsBL_YRpCJWeGAewDEcOvDeQ%3D279&amp;source=gmail&amp;ust=1671639394564000&amp;usg=AOvVaw05T71sUR9qXuWuUb7WNeRR">
+        <a href="${FRONT_BASE}/message/mentions" style="display:block;padding:8px;text-decoration:none;color:#ffffff" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fr%252Flearnprogramming%252Fcomments%252Fzltmxa%252Fschool_offers_a_cc_path_and_a_java_path_which_one%252Fj0bl83f%252F%253F$deep_link%3Dtrue%2526correlation_id%3D101e32a6-615c-49ee-a9de-ca773b6d724c%2526ref%3Demail_username_mention%2526ref_campaign%3Demail_username_mention%2526ref_source%3Demail/6/010001851607fcfd-b5ed1c5b-ecc5-4e9a-a879-1c014a7c0445-000000/45txkkwd4NLUtcm8e7TLsBL_YRpCJWeGAewDEcOvDeQ%3D279&amp;source=gmail&amp;ust=1671639394564000&amp;usg=AOvVaw05T71sUR9qXuWuUb7WNeRR">
         <span style="text-decoration:none;color:#ffffff">
         <strong>Reply</strong>
 	  </span>
@@ -1091,7 +1091,7 @@ export async function sendMessageMail(user, message) {
 	  <table width="180" border="0" cellspacing="0" cellpadding="0">
 	  <tbody><tr>
 	  <td class="m_8747937118570989382btn-14" bgcolor="#0079d3" style="border-radius:4px;font-size:14px;line-height:18px;color:#ffffff;font-family:Helvetica,Arial,sans-serif;text-align:center;min-width:auto!important">
-	  <a href="${FRONT_BASE}/" style="display:block;padding:8px;text-decoration:none;color:#ffffff" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fmessage%252Fmessages%252F1o1r83a%253F$deep_link%3Dtrue%2526correlation_id%3Dd9140790-189b-4c6a-90f7-50c47b819b5f%2526ref%3Demail_private_message%2526ref_campaign%3Demail_private_message%2526ref_source%3Demail/2/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/vFO5Ny5C9PsSvcs1SfcONLFsYiTo3UwL0hojv0spI7Y%3D279&amp;source=gmail&amp;ust=1671649120785000&amp;usg=AOvVaw2dfN4rPTFYY32vZXaGkiGV"><span style="text-decoration:none;color:#ffffff"><strong>View Message</strong></span></a></td>
+	  <a href="${FRONT_BASE}/message/inbox" style="display:block;padding:8px;text-decoration:none;color:#ffffff" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.redditmail.com/CL0/https:%252F%252Fwww.reddit.com%252Fmessage%252Fmessages%252F1o1r83a%253F$deep_link%3Dtrue%2526correlation_id%3Dd9140790-189b-4c6a-90f7-50c47b819b5f%2526ref%3Demail_private_message%2526ref_campaign%3Demail_private_message%2526ref_source%3Demail/2/010001850ff34349-1e31b7d6-9b09-4ff3-8da1-5311b07711d0-000000/vFO5Ny5C9PsSvcs1SfcONLFsYiTo3UwL0hojv0spI7Y%3D279&amp;source=gmail&amp;ust=1671649120785000&amp;usg=AOvVaw2dfN4rPTFYY32vZXaGkiGV"><span style="text-decoration:none;color:#ffffff"><strong>View Message</strong></span></a></td>
 	  </tr>
 	  </tbody></table>
 	  </td>
