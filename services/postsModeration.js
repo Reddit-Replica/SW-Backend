@@ -1,4 +1,5 @@
 import Subreddit from "../models/Community.js";
+import { addMessage } from "./messageServices.js";
 
 /**
  * This function removes a post from the list of unmoderated posts in a subreddit and adds
@@ -59,7 +60,7 @@ export async function removeFromSpammedComments(id, subredditName) {
  * @param {object} user User object
  * @returns {void}
  */
-export async function addToApprovedUsers(subreddit, user) {
+export async function addToApprovedUsers(subreddit, user, payload) {
   if (!user.joinedSubreddits.find((sr) => sr.name === subreddit.title)) {
     user.joinedSubreddits.push({
       subredditId: subreddit.id,
@@ -90,6 +91,20 @@ export async function addToApprovedUsers(subreddit, user) {
   subreddit.approvedUsers.push({
     userID: user.id,
     dateOfApprove: Date.now(),
+  });
+  await addMessage({
+    msg: {
+      subredditName: subreddit.title,
+      createdAt: Date.now(),
+      receiverId: user.id,
+      receiverUsername: user.username,
+      senderUsername: payload.username,
+      isSenderUser: true,
+      isReceiverUser: true,
+      subject: "You are an approved user",
+      // eslint-disable-next-line max-len
+      text: `You have been added as an approved user to /r/${subreddit.title}: ${subreddit.viewName}`,
+    },
   });
   await subreddit.save();
 }
