@@ -81,6 +81,15 @@ const notificationRouter = express.Router();
  *                                 type: string
  *                                 format: date-time
  *                                 description: time of sending the notification
+ *                               followingUsername:
+ *                                 type: string
+ *                                 description: the following username in case of type Follow
+ *                               postId:
+ *                                 type: string
+ *                                 description: the post id in case of type comment
+ *                               commentId:
+ *                                 type: string
+ *                                 description: the comment id in case of type comment
  *                               isRead:
  *                                type: boolean
  *                                description: true if notification is read false if it's not
