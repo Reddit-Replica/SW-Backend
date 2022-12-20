@@ -14,6 +14,8 @@ import {
 import { searchForComment, searchForPost } from "./PostActions.js";
 import Message from "../models/Message.js";
 import { prepareLimit } from "../utils/prepareLimit.js";
+import Post from "../models/Post.js";
+import Comment from "../models/Comment.js";
 
 /**
  * Function that get the posts that we want to list from a certain user
@@ -174,8 +176,16 @@ export async function userMentionsListing(
     // lOOPING OVER EACH MENTION OF THAT THE USER HAD RECEIVED
     const mention = result[typeOfListing][startingIndex];
     // AS THIS MENTION IS RETURNED THEN IT SHOULD BE MARKED AS READ
-    const post = await searchForPost(mention.postId);
-    const comment = await searchForComment(mention.commentId);
+    const post = await Post.findById(mention.postId);
+    const comment = await Comment.findById(mention.commentId);
+    if (!post || !comment){
+      let err=new Error("This post or comment has not found");
+      err.statusCode=400;
+      throw err;
+    }
+    if (post.deletedAt||comment.deletedAt){
+      continue;
+    }
     let vote = 0;
     if (checkForUpVotedComments(comment, user)) {
       vote = 1;
@@ -436,10 +446,16 @@ export async function userInboxListing(user, listingParams) {
     await totalInbox[startingIndex].save();
     //DEPENDING ON THE TYPE OF ELEMENT WE WILL SEND DIFFERENT DATA
     if (totalInbox[startingIndex].type !== "Message") {
-      const post = await searchForPost(totalInbox[startingIndex].postId);
-      const comment = await searchForComment(
-        totalInbox[startingIndex].commentId
-      );
+      const post = await Post.findById(totalInbox[startingIndex].postId);
+      const comment = await Comment.findById(totalInbox[startingIndex].commentId);
+      if (!post || !comment){
+        let err=new Error("This post or comment has not found");
+        err.statusCode=400;
+        throw err;
+      }
+      if (post.deletedAt||comment.deletedAt){
+        continue;
+      }
       let vote = 0;
       if (checkForUpVotedComments(comment, user)) {
         vote = 1;
