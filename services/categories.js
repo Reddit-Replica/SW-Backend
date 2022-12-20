@@ -1,7 +1,7 @@
 import Category from "../models/Category.js";
 import Subreddit from "../models/Community.js";
 
-let Categories = [
+export let Categories = [
   "Sports",
   "Gaming",
   "News",

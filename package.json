@@ -14,7 +14,8 @@
     "prettier": "prettier ./**/*.js --write",
     "jsdoc": "jsdoc -c jsdoc.json",
     "test-jasmine": "set NODE_ENV=testing && jasmine",
-    "coverage-jest": "npm run test -- --coverage"
+    "coverage-jest": "npm run test -- --coverage",
+    "seed": "node ./seeds/seeder.js"
   },
   "repository": {
     "type": "git",
@@ -49,6 +50,7 @@
     "unique-username-generator": "^1.1.3"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "eslint": "^8.25.0",
     "eslint-plugin-prettier": "^4.2.1",
     "istanbul": "^0.4.5",
