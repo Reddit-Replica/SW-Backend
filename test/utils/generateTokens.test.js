@@ -18,6 +18,14 @@ describe("Testing generate tokens", () => {
     expect(generateJWT).toBeDefined();
   });
 
+  it("try to let generateJWT to throw an error", () => {
+    try {
+      generateJWT();
+    } catch (err) {
+      expect(err).toBeDefined();
+    }
+  });
+
   it("check if generateJWT returns a valid jwt", () => {
     const user = {
       userId: "mongodbId",
@@ -45,6 +53,14 @@ describe("Testing generate tokens", () => {
 
   it("should have generateVerifyToken method", () => {
     expect(generateVerifyToken).toBeDefined();
+  });
+
+  it("try to let generateVerifyToken to throw an error", async () => {
+    try {
+      await generateVerifyToken();
+    } catch (err) {
+      expect(err).toBeDefined();
+    }
   });
 
   // eslint-disable-next-line max-len
