@@ -360,7 +360,7 @@ describe("Testing subreddit actions services functions", () => {
   // eslint-disable-next-line max-len
   it("try to accept an invitation by a user who was invited to be a moderator and is a member in the subreddit", async () => {
     await inviteToModerateService(moderator, normalUser1, subreddit, {
-      permissionToEverything: false,
+      permissionToEverything: true,
       permissionToManageUsers: true,
       permissionToManageSettings: true,
       permissionToManageFlair: true,
