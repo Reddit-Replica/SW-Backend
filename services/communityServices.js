@@ -44,8 +44,10 @@ export async function searchForSubreddit(subredditName) {
  */
 //ADD EXTRA CHECK ON REGULAR EXPRESSIONS
 export async function subredditNameAvailable(subredditName) {
-  if (!subredditName.match(/^[A-Za-z0-9\-\_]+$/)){
-    let error = new Error("subreddit name can only contain letters, numbers, or underscores.");
+  if (!subredditName.match(/^[A-Za-z0-9\-\_]+$/)) {
+    let error = new Error(
+      "subreddit name can only contain letters, numbers, or underscores."
+    );
     error.statusCode = 400;
     throw error;
   }
@@ -305,8 +307,10 @@ export async function addSubreddit(req, authPayload) {
   const creatorId = authPayload.userId;
   const moderator = await searchForUserService(creatorUsername);
   const { subredditName, category, type, nsfw } = req.body;
-  if (!subredditName.match(/^[A-Za-z0-9\-\_]+$/)){
-    let error = new Error("subreddit name can only contain letters, numbers, or underscores.");
+  if (!subredditName.match(/^[A-Za-z0-9\-\_]+$/)) {
+    let error = new Error(
+      "subreddit name can only contain letters, numbers, or underscores."
+    );
     error.statusCode = 400;
     throw error;
   }
@@ -398,6 +402,7 @@ export async function moderateSubreddit(username, subredditName) {
  * @param {String} category username of the user
  * @returns {Object} error object that contains the msg describing what happened and its status code
  */
+//DONE
 export async function checkOnCategory(category) {
   await insertCategoriesIfNotExists();
   const categories = await getSortedCategories();
@@ -414,7 +419,7 @@ export async function checkOnCategory(category) {
     throw error;
   }
 }
-
+//DONE
 export async function checkJoining(user, subredditName) {
   for (const subreddit of user.joinedSubreddits) {
     if (subreddit.name === subredditName) {
@@ -427,7 +432,7 @@ export async function checkJoining(user, subredditName) {
   error.statusCode = 401;
   throw error;
 }
-
+//DONE
 export async function checkForPrivateSubreddits(user, subreddit) {
   if (subreddit.type === "Private") {
     for (const smallSubreddit of user.joinedSubreddits) {
@@ -444,7 +449,7 @@ export async function checkForPrivateSubreddits(user, subreddit) {
   error.statusCode = 401;
   throw error;
 }
-
+//DONE
 export async function checkForFavoriteSubreddits(user, subreddit) {
   for (const smallSubreddit of user.favoritesSubreddits) {
     if (smallSubreddit.name === subreddit.title) {
@@ -453,7 +458,7 @@ export async function checkForFavoriteSubreddits(user, subreddit) {
   }
   return false;
 }
-
+//DONE
 export async function makeSubredditFavorite(user, subredditName, subredditId) {
   user.favoritesSubreddits.push({
     subredditId: subredditId,
@@ -465,7 +470,7 @@ export async function makeSubredditFavorite(user, subredditName, subredditId) {
     message: "subreddit is now favorite",
   };
 }
-
+//DONE
 export async function removeSubredditFromFavorite(user, subredditName) {
   user.favoritesSubreddits = user.favoritesSubreddits.filter(
     (smallSubreddit) => {
