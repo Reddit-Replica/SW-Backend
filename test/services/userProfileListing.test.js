@@ -7,6 +7,7 @@ import {
 import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
 import Comment from "./../../models/Comment.js";
+import Subreddit from "../../models/Community.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing user profile listing services functions", () => {
@@ -16,7 +17,8 @@ describe("Testing user profile listing services functions", () => {
     comment1 = {},
     comment2 = {},
     post2 = {},
-    post3 = {};
+    post3 = {},
+    subreddit = {};
   // eslint-disable-next-line max-statements
   beforeAll(async () => {
     await connectDatabase();
@@ -50,6 +52,7 @@ describe("Testing user profile listing services functions", () => {
       parentId: post1._id,
       postId: post1._id,
       parentType: "post",
+      subredditName: "subreddit",
       level: 1,
       content: { text: "Comment 1" },
       ownerId: user._id,
@@ -63,6 +66,7 @@ describe("Testing user profile listing services functions", () => {
       parentId: comment1._id,
       postId: post1._id,
       parentType: "comment",
+      subredditName: "subreddit",
       level: 2,
       content: { text: "Inner Comment 1" },
       ownerId: user._id,
@@ -94,14 +98,35 @@ describe("Testing user profile listing services functions", () => {
     });
     await post3.save();
 
+    subreddit = await new Subreddit({
+      title: "subreddit",
+      viewName: "MangaReddit",
+      category: "Art",
+      type: "Public",
+      nsfw: false,
+      owner: {
+        username: user.username,
+        userID: user._id,
+      },
+    }).save();
+
     user.posts.push(post1._id, post2._id, post3._id);
     user.commentedPosts.push(post1._id, post2._id, post3._id);
     await user.save();
+
+    loggedInUser.posts.push(post3._id);
+    loggedInUser.moderatedSubreddits.push({
+      subredditId: subreddit._id,
+      name: subreddit.title,
+    });
+    loggedInUser.savedPostsOnly.push(post1._id);
+    await loggedInUser.save();
   });
   afterAll(async () => {
     await User.deleteMany({});
     await Comment.deleteMany({});
     await Post.deleteMany({});
+    await Subreddit.deleteMany({});
     await closeDatabaseConnection();
   });
 
@@ -110,12 +135,15 @@ describe("Testing user profile listing services functions", () => {
   });
 
   it("try to get the posts of a user who have no posts", async () => {
-    const result = await listingUserProfileService(
-      loggedInUser,
-      user,
-      "posts",
-      { sort: "new" }
-    );
+    const noPostsUser = new User({
+      username: "noPosts",
+      email: "noposts@gmail.com",
+      createdAt: Date.now(),
+    });
+    await noPostsUser.save();
+    const result = await listingUserProfileService(noPostsUser, user, "posts", {
+      sort: "new",
+    });
     expect(result).toEqual({
       statusCode: 200,
       data: { before: "", after: "", children: [] },
@@ -235,6 +263,21 @@ describe("Testing user profile listing services functions", () => {
   });
 
   // eslint-disable-next-line max-len
+  it("try to get the posts of a user and let other users down vote it", async () => {
+    loggedInUser.upvotedPosts = [];
+    loggedInUser.downvotedPosts.push(post1._id);
+    await loggedInUser.save();
+
+    const result = await listingUserProfileService(
+      user,
+      loggedInUser,
+      "posts",
+      { sort: "top" }
+    );
+    expect(result.data.children[0].data.votingType).toEqual(-1);
+  });
+
+  // eslint-disable-next-line max-len
   it("try to get the posts of a user and let other users save it", async () => {
     loggedInUser.savedPosts.push(post1._id);
     await loggedInUser.save();
@@ -334,10 +377,10 @@ describe("Testing user profile listing services functions", () => {
       { sort: "top" }
     );
 
-    expect(result.data.children[0].data.post.inYourSubreddit).toBeFalsy();
+    expect(result.data.children[0].data.post.inYourSubreddit).toBeTruthy();
     expect(
       result.data.children[0].data.comments[0].inYourSubreddit
-    ).toBeFalsy();
+    ).toBeTruthy();
   });
 
   // eslint-disable-next-line max-len
