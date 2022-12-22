@@ -13,6 +13,7 @@ describe("Testing item actions services functions", () => {
     postComment = {},
     comment = {},
     innerComment = {},
+    innerComment1 = {},
     message = {};
 
   // eslint-disable-next-line max-statements
@@ -72,14 +73,33 @@ describe("Testing item actions services functions", () => {
     innerComment = new Comment({
       parentId: comment._id,
       postId: post._id,
-      parentType: "post",
-      level: 1,
+      parentType: "comment",
+      level: 2,
       content: { text: "Inner comment" },
       ownerId: user._id,
       ownerUsername: user.username,
       numberOfVotes: 10,
       createdAt: Date.now(),
     });
+    await innerComment.save();
+
+    comment.children.push(innerComment._id);
+    await comment.save();
+
+    innerComment1 = new Comment({
+      parentId: innerComment._id,
+      postId: post._id,
+      parentType: "comment",
+      level: 3,
+      content: { text: "Inner comment1" },
+      ownerId: user._id,
+      ownerUsername: user.username,
+      numberOfVotes: 10,
+      createdAt: Date.now(),
+    });
+    await innerComment1.save();
+
+    innerComment.children.push(innerComment1._id);
     await innerComment.save();
 
     message = new Message({
@@ -177,6 +197,18 @@ describe("Testing item actions services functions", () => {
       await deleteItems(user._id, message._id, "message");
     } catch (error) {
       expect(error).toBeDefined();
+    }
+  });
+
+  it("try to delete a comment with deleted parent post", async () => {
+    try {
+      post.deletedAt = Date.now();
+      await post.save();
+      await deleteItems(user._id, comment._id, "comment");
+    } catch (error) {
+      expect(error).toBeDefined();
+      post.deletedAt = null;
+      await post.save();
     }
   });
 
