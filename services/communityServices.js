@@ -1,12 +1,14 @@
 /* eslint-disable max-len */
 /* eslint-disable max-statements */
 import Subreddit from "./../models/Community.js";
+import Category from "./../models/Category.js";
 import { searchForUserService } from "../services/userServices.js";
 import {
   getSortedCategories,
   insertCategoriesIfNotExists,
 } from "../services/categories.js";
 import { checkIfModerator } from "./subredditActionsServices.js";
+import { addMessage } from "./messageServices.js";
 /**
  * This function is used to search for a subreddit with its name
  * it gets the subreddit from the database then it checks about it's validity
@@ -40,7 +42,18 @@ export async function searchForSubreddit(subredditName) {
  * @param {String} subredditName subreddit Name
  * @returns {Object} error object that contains the msg describing why there is an error and its status code , or if there is no error then it returns the subreddit itself
  */
+//ADD EXTRA CHECK ON REGULAR EXPRESSIONS
 export async function subredditNameAvailable(subredditName) {
+  if (!subredditName.match(/^[A-Za-z0-9\-\_]+$/)){
+    let error = new Error("subreddit name can only contain letters, numbers, or underscores.");
+    error.statusCode = 400;
+    throw error;
+  }
+  if (subredditName.length < 3 || subredditName.length > 21) {
+    let error = new Error("Community names must be between 3–21 characters");
+    error.statusCode = 409;
+    throw error;
+  }
   const subreddit = await Subreddit.findOne({ title: subredditName });
   if (!subreddit) {
     return {
@@ -80,26 +93,7 @@ export async function searchForSubredditById(subredditId) {
   }
   return subreddit;
 }
-/**
- * This function is used to add a user to the waiting list of a subreddit if the requested subreddit was private
- * @param {Object} subreddit object that contains the data of the subreddit that we will push the user into its waited list
- * @param {String} username username of the user that wants to join the subreddit
- * @param {String} message message that the user sent while joining the subreddit
- * @returns {Object} success object that contains the msg describing what happened and its status code
- */
-export async function addUserToWaitingList(subreddit, username, message = "") {
-  const user1 = await searchForUserService(username);
-  subreddit.waitedUsers.push({
-    username: username,
-    userID: user1.id,
-    message: message,
-  });
-  await subreddit.save();
-  return {
-    statusCode: 200,
-    message: "Your request is sent successfully",
-  };
-}
+
 /**
  * This function is used to add a subreddit to the ones that the user joined
  * it adds the subreddit to joinedSubreddit list then increment the number of members of the subreddit
@@ -108,6 +102,27 @@ export async function addUserToWaitingList(subreddit, username, message = "") {
  * @returns {Object} success objects that contains the msg describing what happened and its status code
  */
 export async function addToJoinedSubreddit(user, subreddit) {
+  if (subreddit.subredditSettings.sendWelcomeMessage) {
+    if (subreddit.subredditSettings.welcomeMessage) {
+      let sendingDate = new Date();
+      sendingDate.setHours(sendingDate.getHours() + 1);
+      let smallreq = {};
+      smallreq.msg = {
+        senderUsername: subreddit.title,
+        isSenderUser: false,
+        receiverUsername: user.username,
+        isReceiverUser: true,
+        receiverId: user.id,
+        text:
+          subreddit.subredditSettings.welcomeMessage +
+          ` This message can not be replied to. If you have questions for the moderators of r/${subreddit.title} you can message them here.`,
+        subject: `Welcome to r/${subreddit.title}!`,
+        isReply: false,
+        createdAt: sendingDate,
+      };
+      addMessage(smallreq);
+    }
+  }
   user.joinedSubreddits.push({
     subredditId: subreddit.id,
     name: subreddit.title,
@@ -290,6 +305,11 @@ export async function addSubreddit(req, authPayload) {
   const creatorId = authPayload.userId;
   const moderator = await searchForUserService(creatorUsername);
   const { subredditName, category, type, nsfw } = req.body;
+  if (!subredditName.match(/^[A-Za-z0-9\-\_]+$/)){
+    let error = new Error("subreddit name can only contain letters, numbers, or underscores.");
+    error.statusCode = 400;
+    throw error;
+  }
   await checkOnCategory(category);
   const owner = {
     username: creatorUsername,
@@ -300,6 +320,11 @@ export async function addSubreddit(req, authPayload) {
     userId: owner.userID,
     joinDate: Date.now(),
   });
+  const approvedUsers = [];
+  approvedUsers.push({
+    userID: owner.userID,
+    dateOfApprove: Date.now(),
+  });
   const subreddit = await new Subreddit({
     title: subredditName,
     viewName: subredditName,
@@ -307,9 +332,11 @@ export async function addSubreddit(req, authPayload) {
     type: type,
     nsfw: nsfw,
     owner: owner,
-    createdAt: Date.now(),
+    dateOfCreation: Date.now(),
     joinedUsers: joinedUsers,
+    approvedUsers: approvedUsers,
   }).save();
+  await Category.updateOne({ name: category }, { $set: { visited: true } });
   const addedSubreddit = {
     subredditId: subreddit.id,
     name: subredditName,
@@ -378,6 +405,7 @@ export async function checkOnCategory(category) {
   for (const smallCategory of categories) {
     if (smallCategory.name === category) {
       includes = true;
+      break;
     }
   }
   if (!includes) {

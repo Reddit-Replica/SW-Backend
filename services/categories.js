@@ -1,6 +1,7 @@
 import Category from "../models/Category.js";
+import Subreddit from "../models/Community.js";
 
-let Categories = [
+export let Categories = [
   "Sports",
   "Gaming",
   "News",
@@ -23,7 +24,7 @@ let Categories = [
   "Health & Fitness",
   "Learning",
   "Mindblowing",
-  "ourdoors",
+  "Outdoors",
   "parenting",
   "Photography",
   "Relationships",
@@ -69,4 +70,108 @@ export async function getSortedCategories() {
       name: category.name,
     };
   });
+}
+
+/**
+ * This function is used to get two random categories from the array of
+ * Categories we have in read-it
+ *
+ * @returns {object} Object containing the two random categories together
+ */
+// eslint-disable-next-line max-statements
+export async function getTwoRandomCategories() {
+  const len = Categories.length;
+  let firstIndex, secondIndex, visited;
+  if ((await Subreddit.countDocuments({ deletedAt: null })) === 0) {
+    return {};
+  }
+  const categoryCount = await Category.countDocuments({ visited: true });
+  if (categoryCount === 0) {
+    return {};
+  }
+  do {
+    firstIndex = Math.floor(Math.random() * len);
+    visited = await Category.findOne({ randomIndex: firstIndex }).select(
+      "visited"
+    );
+  } while (!visited["visited"]);
+  if (categoryCount >= 2) {
+    do {
+      secondIndex = Math.floor(Math.random() * len);
+      visited = await Category.findOne({ randomIndex: secondIndex }).select(
+        "visited"
+      );
+    } while (firstIndex === secondIndex || !visited["visited"]);
+  } else {
+    secondIndex = firstIndex;
+  }
+  return {
+    firstCategory: Categories[firstIndex],
+    secondCategory: Categories[secondIndex],
+  };
+}
+
+/**
+ * This function gets random subreddits from two random categories
+ * from, sets a limit for both and inserts them in an array with only the
+ * title and number of members to be displayed
+ *
+ * @returns {Array} Array of objects containing random subreddits
+ */
+// eslint-disable-next-line max-statements
+export async function getRandomSubreddits(loggedInUser) {
+  const { firstCategory, secondCategory } = await getTwoRandomCategories();
+  if (!firstCategory && !secondCategory) {
+    return {};
+  }
+
+  let subreddits = [
+    await Subreddit.find({ category: firstCategory, deletedAt: null }).sort({
+      members: -1,
+    }),
+    await Subreddit.find({ category: secondCategory, deletedAt: null }).sort({
+      members: -1,
+    }),
+  ];
+  let topSubreddits = [[], []];
+  for (let i = 0; i < 2; i++) {
+    let limit = 5;
+    if (subreddits[i].length < 5) {
+      limit = subreddits[i].length;
+    }
+    for (let j = 0; j < limit; j++) {
+      let joined = undefined;
+      if (loggedInUser) {
+        // eslint-disable-next-line max-depth
+        if (
+          loggedInUser.joinedSubreddits.find(
+            (sr) => sr.name === subreddits[i][j].title
+          )
+        ) {
+          joined = true;
+        } else {
+          joined = false;
+        }
+      }
+      topSubreddits[i].push({
+        id: subreddits[i][j].id.toString(),
+        data: {
+          title: subreddits[i][j].title,
+          picture: subreddits[i][j].picture,
+          members: subreddits[i][j].members,
+          isMember: joined,
+        },
+      });
+    }
+    if (firstCategory === secondCategory) {
+      break;
+    }
+  }
+  return {
+    first: { category: firstCategory, subreddits: topSubreddits[0] },
+    second:
+      topSubreddits[1].length > 0
+        ? { category: secondCategory, subreddits: topSubreddits[1] }
+        : undefined,
+  };
 }

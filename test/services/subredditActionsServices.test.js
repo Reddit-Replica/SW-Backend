@@ -82,7 +82,7 @@ describe("Testing subreddit actions services functions", () => {
           dateOfMute: Date.now(),
         },
       ],
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
   });
   afterAll(async () => {

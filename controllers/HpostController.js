@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-import User from "../models/User.js";
 import { body, check, query } from "express-validator";
 import {
   checkSameUserEditing,
@@ -156,7 +155,6 @@ const getNewPosts = async (req, res) => {
     );
     res.status(result.statusCode).json(result.data);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       res.status(err.statusCode).json({ error: err.message });
     } else {
@@ -180,7 +178,6 @@ const getHotPosts = async (req, res) => {
     );
     res.status(result.statusCode).json(result.data);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       res.status(err.statusCode).json({ error: err.message });
     } else {
@@ -204,7 +201,6 @@ const getBestPosts = async (req, res) => {
     );
     res.status(result.statusCode).json(result.data);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       res.status(err.statusCode).json({ error: err.message });
     } else {
@@ -228,7 +224,6 @@ const getTopPosts = async (req, res) => {
     );
     res.status(result.statusCode).json(result.data);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       res.status(err.statusCode).json({ error: err.message });
     } else {
@@ -252,7 +247,6 @@ const getTrendingPosts = async (req, res) => {
     );
     res.status(result.statusCode).json(result.data);
   } catch (err) {
-    console.log(err);
     if (err.statusCode) {
       res.status(err.statusCode).json({ error: err.message });
     } else {

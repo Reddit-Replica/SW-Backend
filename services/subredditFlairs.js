@@ -161,12 +161,16 @@ export async function deleteFlair(flair, subreddit) {
   flair.deletedAt = new Date().toISOString();
   subreddit.numberOfFlairs--;
   const flairToDeleteOrder = flair.flairOrder;
-  subreddit.flairs.forEach((flairEl) => {
-    if (Number(flairEl.flairOrder) > Number(flairToDeleteOrder)) {
-      flairEl.flairOrder--;
-      flairEl.save();
-    }
-  });
+  const result = await Flair.updateMany(
+    { subreddit: subreddit._id, flairOrder: { $gt: flairToDeleteOrder } },
+    { $inc: { flairOrder: -1 } }
+  );
+
+  console.log(
+    // eslint-disable-next-line max-len
+    `Matched ${result.matchedCount} document, updated ${result.modifiedCount} document`
+  );
+
   await flair.save();
   await subreddit.save();
   // await subreddit.populate("flairs");

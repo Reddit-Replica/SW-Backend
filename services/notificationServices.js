@@ -95,6 +95,16 @@ export async function createFollowUserNotification(
   followingUsername,
   followedUserId
 ) {
+  const followingUser = await User.findOne({
+    username: followingUsername,
+    deletedAt: null,
+  });
+  if (!followingUser) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
   const neededUser = await User.findById(followedUserId);
   if (!neededUser || neededUser.deletedAt) {
     const error = new Error("User not found");
@@ -108,6 +118,8 @@ export async function createFollowUserNotification(
     data: title,
     link: `${process.env.FRONT_BASE}/user/${followingUsername}`,
     date: Date.now(),
+    sendingUserId: followingUser._id,
+    followingUsername: followingUsername,
   }).save();
   const data = {
     data: title,
@@ -164,6 +176,9 @@ export async function createCommentNotification(comment) {
           data: title1,
           link: link1,
           date: Date.now(),
+          sendingUserId: comment.ownerId,
+          commentId: comment._id,
+          postId: comment.parentId,
         }).save();
 
         const data1 = {
@@ -182,6 +197,10 @@ export async function createCommentNotification(comment) {
         data: title1,
         link: link1,
         date: Date.now(),
+        sendingUserId: comment.ownerId,
+        sendingUserId: comment.ownerId,
+        commentId: comment._id,
+        postId: comment.parentId,
       }).save();
 
       const data1 = {
@@ -204,6 +223,9 @@ export async function createCommentNotification(comment) {
       data: title2,
       link: link1,
       date: Date.now(),
+      sendingUserId: comment.ownerId,
+      commentId: comment._id,
+      postId: comment.parentId,
     }).save();
     const data2 = {
       data: title2,
@@ -227,6 +249,9 @@ export async function createCommentNotification(comment) {
           data: title3,
           link: link1,
           date: Date.now(),
+          sendingUserId: comment.ownerId,
+          commentId: comment._id,
+          postId: comment.parentId,
         }).save();
         const data3 = {
           data: title3,
@@ -248,6 +273,9 @@ export async function createCommentNotification(comment) {
         data: title4,
         link: link1,
         date: Date.now(),
+        sendingUserId: comment.ownerId,
+        commentId: comment._id,
+        postId: comment.parentId,
       }).save();
       const data4 = {
         data: title4,
@@ -365,8 +393,6 @@ export async function getUserNotifications(
     }
   }
 
-  console.log(skipValue, limit);
-
   const notifcations = await Notification.find({
     ownerId: userId,
     hidden: false,
@@ -377,7 +403,8 @@ export async function getUserNotifications(
 
   preparedResponse.after = notifcations.length + skipValue;
 
-  notifcations.forEach((notification) => {
+  for (const notification of notifcations) {
+    const user = await User.findById(notification.sendingUserId);
     preparedResponse.children.push({
       id: notification._id,
       title: notification.data,
@@ -385,11 +412,15 @@ export async function getUserNotifications(
       link: notification.link,
       sendAt: notification.date,
       isRead: notification.read,
+      photo: user.avatar,
+      followingUsername: notification.followingUsername,
+      postId: notification.postId,
+      commentId: notification.commentId,
     });
-    if (notifcations.read === false) {
+    if (notification.read === false) {
       preparedResponse.unreadCount++;
     }
-  });
+  }
 
   return preparedResponse;
 }

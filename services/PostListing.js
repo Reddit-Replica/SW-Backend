@@ -1,70 +1,9 @@
 /* eslint-disable max-len */
 /* eslint-disable max-statements */
 import User from "../models/User.js";
-import Subreddit from "../models/Community.js";
 import Post from "../models/Post.js";
-import { searchForComment, searchForPost } from "./PostActions.js";
 import { prepareLimit } from "../utils/prepareLimit.js";
-import { postListing } from "../utils/preparePostListing.js";
-import { extraPostsListing } from "../utils/prepareSubreddit.js";
-import { MinKey } from "mongodb";
 
-function compareNew(post1, post2) {
-  if (post1.createdAt < post2.createdAt) {
-    return 1;
-  }
-  if (post1.createdAt > post2.createdAt) {
-    return -1;
-  }
-  return 0;
-}
-
-function compareBest(post1, post2) {
-  if (post1.bestScore < post2.bestScore) {
-    return 1;
-  }
-  if (post1.bestScore > post2.bestScore) {
-    return -1;
-  }
-  return 0;
-}
-
-function compareHot(post1, post2) {
-  if (post1.hotScore < post2.hotScore) {
-    return 1;
-  }
-  if (post1.hotScore > post2.hotScore) {
-    return -1;
-  }
-  return 0;
-}
-
-function compareTop(post1, post2) {
-  if (post1.numberOfVotes < post2.numberOfVotes) {
-    return 1;
-  }
-  if (post1.numberOfVotes > post2.numberOfVotes) {
-    return -1;
-  }
-  return 0;
-}
-
-function compareTrending(post1, post2) {
-  if (post1.numberOfViews < post2.numberOfViews) {
-    return 1;
-  }
-  if (post1.numberOfViews > post2.numberOfViews) {
-    return -1;
-  }
-  return 0;
-}
-
-//GET THE MOST IMPORTANT POSTS
-//FILTER THEM DEPENDING ON BEFORE AND AFTER
-//IF THEY ARE NOT ENOUGH
-//GET MORE FROM POSTS
-//THEN SORT ALL OF THE POSTS
-//THEN RETURN THEM
 export async function homePostsListing(
   user,
   listingParams,
@@ -72,162 +11,118 @@ export async function homePostsListing(
   isLoggedIn
 ) {
   let posts = [];
+  const filteringProperties = await prepareFiltering(
+    typeOfSorting,
+    listingParams
+  );
+  let extraPostsIndex = filteringProperties.skip;
+  let extraPostsLimit = filteringProperties.limit;
+  let extraPostsUsersFilter, extraPostsSubredditFilter,hiddenPostsFilter;
   //WE WILL GET THE MOST IMPORTANT POSTS FIRST WHICH ARE SUBREDDIT POSTS AND FOLLOWING POSTS
   //GETTING SUBREDDIT POSTS
   if (isLoggedIn) {
-    const { joinedSubreddits } = await User.findOne({ username: user.username })
+    var { joinedSubreddits } = await User.findOne({ username: user.username })
       .select("joinedSubreddits")
       .populate({
         path: "joinedSubreddits",
         match: { deletedAt: null },
       });
-
-    //GETTING POSTS FROM SUBREDDITS
-    for (const subreddit of joinedSubreddits) {
-      const { subredditPosts } = await Subreddit.findById(subreddit.subredditId)
-        .select("subredditPosts")
-        .populate({
-          path: "subredditPosts",
-          match: { deletedAt: null },
-        });
-      if (subredditPosts.length !== 0) {
-        posts = [...posts, ...subredditPosts];
-      }
-    }
     //GETTING FOLLOWED PEOPLE NEEDS TO BE EDITED TO FOLLOWING WHEN
-    const { followedUsers } = await User.findOne({ username: user.username })
+    var { followedUsers } = await User.findOne({ username: user.username })
       .select("followedUsers")
       .populate({
         path: "followedUsers",
         match: { deletedAt: null },
       });
-    //GETTING POSTS FROM FOLLOWING PEOPLE
-    for (const user of followedUsers) {
-      const userPosts = await User.findById(user)
-        .select("posts")
-        .populate({
-          path: "posts",
-          match: { deletedAt: null },
-        });
-      if (userPosts.length !== 0) {
-        posts = [...posts, ...userPosts.posts];
-      }
-    }
-  }
-  const uniquePosts = new Set();
-  posts = posts.filter((post) => {
-    const isDuplicate = uniquePosts.has(post.id);
-    uniquePosts.add(post.id);
-    if (!isDuplicate) {
-      return true;
-    }
-    return false;
-  });
 
-  if (typeOfSorting === "top") {
-    let filteringDate = new Date();
-    let changed = false;
-    if (listingParams.time === "year") {
-      filteringDate.setFullYear(filteringDate.getFullYear() - 1);
-      changed = true;
-    } else if (listingParams.time === "month") {
-      filteringDate.setFullYear(
-        filteringDate.getFullYear(),
-        filteringDate.getMonth() - 1
-      );
-      changed = true;
-    } else if (listingParams.time === "week") {
-      filteringDate.setFullYear(
-        filteringDate.getFullYear(),
-        filteringDate.getMonth(),
-        filteringDate.getDate() - 7
-      );
-      changed = true;
-    } else if (listingParams.time === "day") {
-      filteringDate.setFullYear(
-        filteringDate.getFullYear(),
-        filteringDate.getMonth(),
-        filteringDate.getDate() - 1
-      );
-      changed = true;
-    } else if (listingParams.time === "hour") {
-      filteringDate.setHours(filteringDate.getHours() - 1);
-      changed = true;
-    }
-    if (changed) {
-      posts = posts.filter(function (post) {
-        return post.createdAt >= filteringDate;
-      });
-    }
-  }
-  //THEN WE WILL GET OUR LIMIT
-  let limit = await prepareLimit(listingParams.limit);
-  //WE WILL GET EXTRA POSTS TO FILL THE GAP THAT IS BETWEEN THE FOLLOWED ONES AND THE LIMIT
-  const extraPosts = await Post.find({});
-
-  if (typeOfSorting === "new") {
-    posts.sort(compareNew);
-    extraPosts.sort(compareNew);
-  } else if (typeOfSorting === "best") {
-    posts.sort(compareBest);
-    extraPosts.sort(compareBest);
-  } else if (typeOfSorting === "hot") {
-    posts.sort(compareHot);
-    extraPosts.sort(compareHot);
-  } else if (typeOfSorting === "top") {
-    posts.sort(compareTop);
-    extraPosts.sort(compareTop);
-  } else if (typeOfSorting === "trending") {
-    posts.sort(compareTrending);
-    extraPosts.sort(compareTrending);
-  }
-  posts = [...posts, ...extraPosts];
-
-  const unique = new Set();
-  posts = posts.filter((post) => {
-    const isDuplicate = unique.has(post.id);
-    unique.add(post.id);
-    if (!isDuplicate) {
-      return true;
-    }
-    return false;
-  });
-
-  if (posts.length < limit) {
-    limit = posts.length;
-  }
-  let start, end, secondStart;
-  if (listingParams.before) {
-    end = posts.findIndex(
-      (post) => post.id.toString() === listingParams.before.toString()
+    let userJoinedSubreddits = joinedSubreddits.map(
+      (subreddit) => subreddit.name
     );
-    start = end - limit;
-  } else if (listingParams.after && !listingParams.before) {
-    start =
-      posts.findIndex(
-        (post) => post.id.toString() === listingParams.after.toString()
-      ) + 1;
-    end = start + limit;
-  } else {
-    start = 0;
-    end = limit;
-  }
-  if (start < 0) {
-    start = 0;
-  }
-  if (end > posts.length) {
-    end = posts.length;
-  }
-  secondStart = start;
+    var hiddenArr=[];
+    var { hiddenPosts }=await User.findOne({ username:user.username }).select("hiddenPosts");
+    for (let i=0;i<hiddenPosts.length;i++){
+      hiddenArr.push(hiddenPosts[i].toString());
+    }
 
-  console.log(start, end);
+    extraPostsUsersFilter = followedUsers;
+    extraPostsSubredditFilter = userJoinedSubreddits;
+    hiddenPostsFilter=hiddenArr;
+
+    const importantPosts = await Post.find({
+      $or: [
+        {
+          $and: [
+            { subredditName: { $in: userJoinedSubreddits } },
+            { ownerId: { $nin: [...followedUsers] } },
+          ],
+        },
+        { ownerId: { $in: [...followedUsers] } },
+      ],
+      deletedAt: null,
+      createdAt: { $gt: filteringProperties.filteringDate },
+      _id:{ $nin:[...hiddenArr] },
+    }).sort(filteringProperties.sort);
+    if (
+      importantPosts.length >=
+      filteringProperties.skip + filteringProperties.limit
+    ) {
+      extraPostsLimit = 0;
+      posts = [
+        ...importantPosts.slice(
+          filteringProperties.skip,
+          filteringProperties.skip + filteringProperties.limit
+        ),
+      ];
+    } else if (importantPosts.length <= filteringProperties.skip) {
+      extraPostsIndex = filteringProperties.skip - importantPosts.length;
+    } else if (
+      importantPosts.length > filteringProperties.skip &&
+      importantPosts.length <
+        filteringProperties.skip + filteringProperties.limit
+    ) {
+      extraPostsIndex = 0;
+      extraPostsLimit =
+        filteringProperties.limit -
+        (importantPosts.length - filteringProperties.skip);
+      posts = [
+        ...importantPosts.slice(
+          filteringProperties.skip,
+          importantPosts.length
+        ),
+      ];
+    }
+  }
+  let extraPosts;
+  if (extraPostsLimit !== 0) {
+    if (isLoggedIn) {
+      extraPosts = await Post.find({
+        subredditName: { $nin: extraPostsSubredditFilter },
+        ownerId: { $nin: [...extraPostsUsersFilter] },
+        deletedAt: null,
+        createdAt: { $gt: filteringProperties.filteringDate },
+        _id:{ $nin:[...hiddenPostsFilter] },
+      })
+        .sort(filteringProperties.sort)
+        .limit(extraPostsLimit)
+        .skip(extraPostsIndex);
+    } else {
+      extraPosts = await Post.find({
+        deletedAt: null,
+        createdAt: { $gt: filteringProperties.filteringDate },
+      })
+        .sort(filteringProperties.sort)
+        .limit(extraPostsLimit)
+        .skip(extraPostsIndex);
+    }
+    posts = [...posts, ...extraPosts];
+  }
 
   //OUR CHILDREN ARRAY THAT WE WILL SEND AS RESPONSE
   const children = [];
-  for (start; start < end; start++) {
+  for (let i = 0; i < posts.length; i++) {
     //EACH ELEMENT THAT IS RETURNED MUST BE MARKED AS READ
     //NEED TO BE EDITED
-    const post = posts[start];
+    const post = posts[i];
     post.numberOfViews++;
     post.save();
     const postId = post.id.toString();
@@ -258,6 +153,10 @@ export async function homePostsListing(
         spammed = true;
       }
     }
+    let flair;
+    if (post.flair) {
+      flair = await flair.findById(post.flair);
+    }
     let postData = { id: postId };
     postData.data = {
       id: postId,
@@ -273,7 +172,7 @@ export async function homePostsListing(
       spoiler: post.spoiler,
       votes: post.numberOfVotes,
       comments: post.numberOfComments,
-      flair: post.flair,
+      flair: flair,
       postedAt: post.createdAt,
       editedAt: post.editedAt,
       sharePostId: post.sharePostId,
@@ -291,9 +190,23 @@ export async function homePostsListing(
   }
   let after = "",
     before = "";
-  if (posts.length && secondStart < posts.length && end > 0) {
-    after = posts[end - 1].id.toString();
-    before = posts[secondStart].id.toString();
+  if (!listingParams.after) {
+    listingParams.after = 0;
+  }
+  if (!listingParams.before) {
+    listingParams.before = 0;
+  }
+  if (posts.length) {
+    if (listingParams.after) {
+      after = parseInt(filteringProperties.skip) + posts.length;
+      before = parseInt(filteringProperties.skip);
+    } else if (listingParams.before) {
+      after = parseInt(listingParams.before);
+      before = parseInt(listingParams.before) - posts.length;
+    } else {
+      after = parseInt(listingParams.after) + posts.length;
+      before = parseInt(listingParams.after);
+    }
   }
   return {
     statusCode: 200,
@@ -304,4 +217,89 @@ export async function homePostsListing(
       children: children,
     },
   };
+}
+
+async function prepareFiltering(typeOfSorting, listingParams) {
+  const result = {};
+  result.sort = {};
+  if (typeOfSorting === "new") {
+    result.sort = { createdAt: -1, title: 1 };
+  } else if (typeOfSorting === "best") {
+    result.sort = { bestScore: -1, title: 1 };
+  } else if (typeOfSorting === "hot") {
+    result.sort = { hotScore: -1, title: 1 };
+  } else if (typeOfSorting === "top") {
+    result.sort = { numberOfVotes: -1, title: 1 };
+  } else if (typeOfSorting === "trending") {
+    result.sort = { numberOfViews: -1, title: 1 };
+  }
+
+  result.query = { deletedAt: null };
+
+  let filteringDate = new Date();
+
+  let changed = false;
+  if (typeOfSorting === "top") {
+    if (listingParams.time === "year") {
+      filteringDate.setFullYear(filteringDate.getFullYear() - 1);
+      changed = true;
+    } else if (listingParams.time === "month") {
+      filteringDate.setFullYear(
+        filteringDate.getFullYear(),
+        filteringDate.getMonth() - 1
+      );
+      changed = true;
+    } else if (listingParams.time === "week") {
+      filteringDate.setFullYear(
+        filteringDate.getFullYear(),
+        filteringDate.getMonth(),
+        filteringDate.getDate() - 7
+      );
+      changed = true;
+    } else if (listingParams.time === "day") {
+      filteringDate.setFullYear(
+        filteringDate.getFullYear(),
+        filteringDate.getMonth(),
+        filteringDate.getDate() - 1
+      );
+      changed = true;
+    } else if (listingParams.time === "hour") {
+      filteringDate.setHours(filteringDate.getHours() - 1);
+      changed = true;
+    }
+  }
+  if (!changed) {
+    filteringDate.setFullYear(1970);
+  }
+  result.filteringDate = filteringDate;
+
+  result.limit = prepareLimit(parseInt(listingParams.limit));
+
+  result.skip = 0;
+  if (listingParams.after) {
+    if (parseInt(listingParams.after) < 0) {
+      listingParams.after = 0;
+    }
+    if (!isNaN(parseInt(listingParams.after))) {
+    result.skip = parseInt(listingParams.after);
+    }
+
+  } else if (listingParams.before) {
+    if (parseInt(listingParams.before) < 0) {
+      listingParams.before = 0;
+    }
+    if (!isNaN(parseInt(listingParams.before))&&!isNaN(parseInt(listingParams.limit))) {
+result.skip =
+      parseInt(listingParams.before) - parseInt(listingParams.limit);
+}
+  }
+
+  if (result.skip < 0) {
+    result.skip = 0;
+  }
+  if (listingParams.before < result.limit) {
+    result.limit = listingParams.before;
+  }
+
+  return result;
 }
