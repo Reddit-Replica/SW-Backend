@@ -7,7 +7,7 @@ import Topics from "./../../models/Topics.js";
 import Subreddit from "./../../models/Community.js";
 import User from "../../models/User.js";
 
-describe("Testing Category services", () => {
+describe("Testing Topics services", () => {
   let user = {},
     subreddit = {};
   beforeAll(async () => {
