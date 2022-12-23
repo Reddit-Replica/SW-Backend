@@ -6,7 +6,7 @@ import Comment from "../models/Comment.js";
  * @param {ObjectId} commentId the id of the comment
  * @returns {Comment} the neededComment
  */
-async function validateExistingComment(commentId) {
+export async function validateExistingComment(commentId) {
   const neededComment = await Comment.findById(commentId);
   if (!neededComment || neededComment.deletedAt) {
     const error = new Error("Comment not found");
@@ -22,6 +22,7 @@ async function validateExistingComment(commentId) {
  * @param {ObjectId} commentId the id of the comment
  * @returns {Object} the neededComment and user to make the next step easier
  */
+/* istanbul ignore next */
 export async function addToUserFollowedComments(userId, commentId) {
   const neededUser = await User.findById(userId);
   const neededComment = await validateExistingComment(commentId);
@@ -58,6 +59,7 @@ export async function addToCommentFollowedUsers(user, comment) {
  * @param {ObjectId} commentId the id of the comment
  * @returns {Object} the neededComment and user to make the next step easier
  */
+/* istanbul ignore next */
 export async function removeFromUserFollowedComments(userId, commentId) {
   const neededUser = await User.findById(userId);
   const neededComment = await validateExistingComment(commentId);
