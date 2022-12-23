@@ -32,7 +32,7 @@ describe("Testing community service functions", () => {
     privateSubreddit = {},
     publicSubreddit = {},
     subredditForNu3mn = {},
-    user={};
+    user = {};
   beforeAll(async () => {
     await connectDatabase();
 
@@ -700,6 +700,4 @@ describe("Testing community service functions", () => {
   it("should have leaveSubredditService function", () => {
     expect(leaveSubredditService).toBeDefined();
   });
-
-
 });
