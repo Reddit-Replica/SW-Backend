@@ -87,7 +87,9 @@ const subredditValidator = [
     .isEmpty()
     .withMessage("Subreddit name can not be empty")
     .isLength({ min: 3, max: 23 })
-    .withMessage("Subreddit name must be less than 23 character and more than 3 characters"),
+    .withMessage(
+      "Subreddit name must be less than 23 character and more than 3 characters"
+    ),
   body("category")
     .trim()
     .not()
