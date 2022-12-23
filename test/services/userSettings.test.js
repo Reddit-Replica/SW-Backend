@@ -10,10 +10,13 @@ import {
   deleteFile,
   connectToGoogle,
   connectToFacebook,
+  deletePostsAndComments,
 } from "../../services/userSettings";
 
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
+import Comment from "./../../models/Comment.js";
+import Post from "./../../models/Post.js";
 import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
@@ -25,6 +28,13 @@ import { hashPassword, comparePasswords } from "../../utils/passwordUtils.js";
 describe("Testing User settings Service functions", () => {
   let user1 = {},
     user2 = {},
+    post = {},
+    post2 = {},
+    post3 = {},
+    comment1 = {},
+    comment2 = {},
+    comment3 = {},
+    comment4 = {},
     user3 = {};
   beforeAll(async () => {
     await connectDatabase();
@@ -49,10 +59,100 @@ describe("Testing User settings Service functions", () => {
       password: hashPassword("1234567890"),
       createdAt: Date.now(),
     }).save();
+
+    post = new Post({
+      title: "First post",
+      ownerUsername: user1.username,
+      ownerId: user1._id,
+      kind: "hybrid",
+      numberOfVotes: 5,
+      hotScore: 10,
+      numberOfViews: 10,
+      createdAt: Date.now(),
+    });
+    await post.save();
+
+    post2 = new Post({
+      title: "Second post",
+      ownerUsername: user1.username,
+      ownerId: user1._id,
+      kind: "hybrid",
+      numberOfVotes: 5,
+      hotScore: 10,
+      numberOfViews: 10,
+      createdAt: Date.now(),
+    });
+    await post2.save();
+
+    post3 = new Post({
+      title: "Third post",
+      ownerUsername: user2.username,
+      ownerId: user2._id,
+      kind: "hybrid",
+      numberOfVotes: 5,
+      hotScore: 10,
+      numberOfViews: 10,
+      createdAt: Date.now(),
+    });
+    await post3.save();
+
+    comment1 = new Comment({
+      parentId: post._id,
+      postId: post._id,
+      parentType: "post",
+      level: 1,
+      content: [{ insert: "Comment 1" }],
+      ownerId: user2._id,
+      ownerUsername: user2.username,
+      numberOfVotes: 5,
+      createdAt: Date.now(),
+    });
+    await comment1.save();
+
+    comment2 = new Comment({
+      parentId: mongoose.Types.ObjectId.generate(10),
+      postId: mongoose.Types.ObjectId.generate(10),
+      parentType: "post",
+      level: 1,
+      content: [{ insert: "Comment 2" }],
+      ownerId: user1._id,
+      ownerUsername: user1.username,
+      numberOfVotes: 5,
+      createdAt: Date.now(),
+    });
+    await comment2.save();
+
+    comment3 = new Comment({
+      parentId: mongoose.Types.ObjectId.generate(10),
+      postId: mongoose.Types.ObjectId.generate(10),
+      parentType: "post",
+      level: 1,
+      content: [{ insert: "Comment 3" }],
+      ownerId: user1._id,
+      ownerUsername: user1.username,
+      numberOfVotes: 5,
+      createdAt: Date.now(),
+    });
+    await comment3.save();
+
+    comment4 = new Comment({
+      parentId: mongoose.Types.ObjectId.generate(10),
+      postId: mongoose.Types.ObjectId.generate(10),
+      parentType: "post",
+      level: 1,
+      content: [{ insert: "Comment 4" }],
+      ownerId: user2._id,
+      ownerUsername: user2.username,
+      numberOfVotes: 5,
+      createdAt: Date.now(),
+    });
+    await comment4.save();
   });
 
   afterAll(async () => {
     await User.deleteMany({});
+    await Post.deleteMany({});
+    await Comment.deleteMany({});
     await closeDatabaseConnection();
   });
 
@@ -321,5 +421,29 @@ describe("Testing User settings Service functions", () => {
       expect(err.statusCode).toEqual(400);
       expect(err.message).toEqual("Facebook Email already set");
     }
+  });
+
+  it("Should have deletePostsAndComments defined", () => {
+    expect(deletePostsAndComments).toBeDefined();
+  });
+
+  it("Test deletePostsAndComments", async () => {
+    user1.posts = [post.id, post2.id];
+    await user1.save();
+    await deletePostsAndComments(user1);
+    post = await Post.findById(post.id);
+    post2 = await Post.findById(post2.id);
+    post3 = await Post.findById(post3.id);
+    comment1 = await Comment.findById(comment1.id);
+    comment2 = await Comment.findById(comment2.id);
+    comment3 = await Comment.findById(comment3.id);
+    comment4 = await Comment.findById(comment4.id);
+    expect(post.deletedAt).toBeDefined();
+    expect(post2.deletedAt).toBeDefined();
+    expect(post3.deletedAt).toBeUndefined();
+    expect(comment1.deletedAt).toBeDefined();
+    expect(comment2.deletedAt).toBeDefined();
+    expect(comment3.deletedAt).toBeDefined();
+    expect(comment4.deletedAt).toBeUndefined();
   });
 });
