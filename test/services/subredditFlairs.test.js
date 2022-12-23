@@ -7,6 +7,7 @@ import {
   editFlair,
 } from "../../services/subredditFlairs.js";
 import Subreddit from "../../models/Community.js";
+import Flair from "../../models/Flair.js";
 import { jest } from "@jest/globals";
 
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
@@ -173,12 +174,15 @@ describe("Testing subreddit flairs services", () => {
   describe("Testing create flair function", () => {
     it("Create a valid flair", async () => {
       await connectDatabase();
-      const subredditObject = new Subreddit({
+      const subredditObject = await new Subreddit({
         title: "title",
         viewName: "title",
         category: "Sports",
         type: "Public",
-      });
+        owner: {
+          username: "zeyad",
+        },
+      }).save();
       const saveFunction = jest.fn();
       const flair = {
         flairName: "Test flair",
@@ -202,7 +206,9 @@ describe("Testing subreddit flairs services", () => {
 
       await createFlair(flair, subreddit);
       expect(saveFunction).toHaveBeenCalled();
-      closeDatabaseConnection();
+      await Subreddit.deleteMany({});
+      await Flair.deleteMany({});
+      await closeDatabaseConnection();
     });
   });
 
