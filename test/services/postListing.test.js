@@ -1,7 +1,11 @@
 /* eslint-disable max-len */
 /* eslint-disable max-statements */
 /* eslint-disable max-len */
-import { subredditCategoryListing,twoRandomCategories,subredditTrendingListing } from "../../services/subredditListing.js";
+import {
+  subredditCategoryListing,
+  twoRandomCategories,
+  subredditTrendingListing,
+} from "../../services/subredditListing.js";
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "../../models/User.js";
 import Subreddit from "../../models/Community.js";
@@ -11,10 +15,10 @@ describe("Testing subreddit service functions", () => {
   let userOne = {},
     userTwo = {},
     userThree = {},
-    postOne={},
-    postTwo={},
-    postThree={},
-    postFour={},
+    postOne = {},
+    postTwo = {},
+    postThree = {},
+    postFour = {},
     subredditOne = {};
   beforeAll(async () => {
     await connectDatabase();
@@ -41,22 +45,22 @@ describe("Testing subreddit service functions", () => {
         username: "Noaman",
       },
       members: 20,
-      numberOfViews:63,
+      numberOfViews: 63,
     }).save();
 
     userTwo = await new User({
-        username: "Hamdy",
-        email: "bodynoaman1996@gmail.com",
-        createdAt: Date.now(),
-        joinedSubreddits: [
-          {
-            subredditId: subredditOne._id,
-            name: subredditOne.title,
-          },
-        ],
-      }).save();
-    });
-    
+      username: "Hamdy",
+      email: "bodynoaman1996@gmail.com",
+      createdAt: Date.now(),
+      joinedSubreddits: [
+        {
+          subredditId: subredditOne._id,
+          name: subredditOne.title,
+        },
+      ],
+    }).save();
+  });
+
   afterAll(async () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
@@ -80,5 +84,4 @@ describe("Testing subreddit service functions", () => {
     expect(result.statusCode).toEqual(200);
     expect(result.data.length).toEqual(30);
   });
-
 });
