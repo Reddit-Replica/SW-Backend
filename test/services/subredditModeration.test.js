@@ -6,7 +6,10 @@ import {
   getModeratedSubredditsService,
   getJoinedSubredditsService,
   getFavoriteSubredditsService,
+  getSubredditPostSettingsService,
+  setSubredditPostSettingsService,
 } from "../../services/subredditModerationServices.js";
+import { jest } from "@jest/globals";
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "../../models/User.js";
 import Subreddit from "../../models/Community.js";
@@ -2449,10 +2452,7 @@ describe("Testing subredditModerationServices", () => {
         subredditId: subredditObject2._id,
         name: subredditObject2.title,
       });
-      user.favoritesSubreddits.push({
-        subredditId: subredditObject2._id,
-        name: subredditObject2.title,
-      });
+
       await user.save();
       const favoritesSubreddits = await getFavoriteSubredditsService(
         user._id.toString()
@@ -2503,6 +2503,39 @@ describe("Testing subredditModerationServices", () => {
       await expect(getFavoriteSubredditsService(id)).rejects.toThrow(
         "User not found"
       );
+    });
+  });
+
+  describe("Testing getSubredditPostSettingsService", () => {
+    it("Testing subreddit post settings", () => {
+      const subreddit = {
+        subredditPostSettings: {
+          enableSpoiler: false,
+          suggestedSort: false,
+          allowImagesInComment: true,
+        },
+      };
+      expect(getSubredditPostSettingsService(subreddit)).toMatchObject({
+        enableSpoiler: false,
+        suggestedSort: false,
+        allowImagesInComment: true,
+      });
+    });
+  });
+  describe("Testing setSubredditPostSettingsService", () => {
+    it("Testing set subreddit post settings", () => {
+      const saveFunction = jest.fn();
+      const subreddit = {
+        save: saveFunction,
+        subredditPostSettings: {
+          enableSpoiler: false,
+          suggestedSort: false,
+          allowImagesInComment: true,
+        },
+      };
+
+      setSubredditPostSettingsService(subreddit);
+      expect(saveFunction).toHaveBeenCalled();
     });
   });
 });
