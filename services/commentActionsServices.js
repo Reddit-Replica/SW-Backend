@@ -22,7 +22,6 @@ export async function validateExistingComment(commentId) {
  * @param {ObjectId} commentId the id of the comment
  * @returns {Object} the neededComment and user to make the next step easier
  */
-/* istanbul ignore next */
 export async function addToUserFollowedComments(userId, commentId) {
   const neededUser = await User.findById(userId);
   const neededComment = await validateExistingComment(commentId);

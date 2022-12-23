@@ -2,6 +2,7 @@ import {
   validateExistingComment,
   addToCommentFollowedUsers,
   removeFromCommentFollowedUsers,
+  addToUserFollowedComments,
 } from "../../services/commentActionsServices.js";
 import Comment from "../../models/Comment.js";
 import Post from "../../models/Post.js";
@@ -133,6 +134,71 @@ describe("Testing comment actions services", () => {
 
       await removeFromCommentFollowedUsers({ _id: user._id }, comment);
       expect(saveFunction).toHaveBeenCalled();
+    });
+  });
+
+  describe("addToUserFollowedComments", () => {
+    it("Adding success", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+
+      const post = await new Post({
+        title: "Without subreddit post",
+        ownerUsername: user.username,
+        ownerId: user._id,
+        kind: "hybrid",
+        createdAt: Date.now(),
+      }).save();
+
+      const comment = await new Comment({
+        parentId: post.id,
+        postId: post.id,
+        parentType: "post",
+        content: "Post Comment",
+        ownerId: user.id,
+        ownerUsername: user.username,
+        level: 1,
+        createdAt: Date.now(),
+      }).save();
+
+      const object = await addToUserFollowedComments(user._id, comment._id);
+      expect(object.comment.content).toEqual("Post Comment");
+      // await expect(async () => {
+      // }).not.toThrowError();
+    });
+    it("Adding not success", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+
+      const post = await new Post({
+        title: "Without subreddit post",
+        ownerUsername: user.username,
+        ownerId: user._id,
+        kind: "hybrid",
+        createdAt: Date.now(),
+      }).save();
+
+      const comment = await new Comment({
+        parentId: post.id,
+        postId: post.id,
+        parentType: "post",
+        content: "Post Comment",
+        ownerId: user.id,
+        ownerUsername: user.username,
+        level: 1,
+        createdAt: Date.now(),
+      }).save();
+
+      user.followedComments.push(comment._id);
+      await user.save();
+
+      await expect(
+        addToUserFollowedComments(user._id.toString(), comment._id.toString())
+      ).rejects.toThrow("You are following this comment");
     });
   });
 });
