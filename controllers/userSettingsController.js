@@ -9,6 +9,7 @@ import {
   setNewEmail,
   setNewPassword,
   verifyCredentials,
+  deletePostsAndComments,
 } from "../services/userSettings.js";
 import { listingBlockedUsers } from "../services/userListing.js";
 
@@ -187,6 +188,7 @@ const editAccountSettings = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line max-statements
 const deleteAccount = async (req, res) => {
   const userId = req.payload.userId;
   try {
@@ -196,6 +198,7 @@ const deleteAccount = async (req, res) => {
       return res.status(401).json("Account is already deleted");
     }
     user.deletedAt = Date.now();
+    await deletePostsAndComments(user);
     await user.save();
     return res.status(204).json("Account deleted successfully");
   } catch (error) {

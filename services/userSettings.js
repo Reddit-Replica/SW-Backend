@@ -1,5 +1,7 @@
 import jwtDecode from "jwt-decode";
 import User from "../models/User.js";
+import Post from "../models/Post.js";
+import Comment from "../models/Comment.js";
 import fs from "fs";
 import { comparePasswords, hashPassword } from "../utils/passwordUtils.js";
 import { sendVerifyEmail } from "../utils/sendEmails.js";
@@ -205,4 +207,28 @@ export function connectToFacebook(user, accessToken) {
     throw error;
   }
   user.facebookEmail = email;
+}
+
+/**
+ * This function deletes the user's posts and comments by setting the
+ * deletedAt paramter of each and also deletes all comments of each post
+ * that was deleted.
+ * @param {object} user User object
+ * @returns {void}
+ */
+export async function deletePostsAndComments(user) {
+  await Post.updateMany(
+    { ownerId: user._id },
+    { $set: { deletedAt: Date.now() } }
+  );
+
+  await Comment.updateMany(
+    { ownerId: user._id },
+    { $set: { deletedAt: Date.now() } }
+  );
+
+  await Comment.updateMany(
+    { postId: { $in: user.posts } },
+    { $set: { deletedAt: Date.now() } }
+  );
 }
