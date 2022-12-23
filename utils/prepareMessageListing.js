@@ -266,7 +266,13 @@ export async function conversationListing(listingParams) {
   }
   return result;
 }
-
+/**
+ * Function to create the exact condition that will be used by mongoose directly to list posts.
+ * Used to map every listing parameter to the exact query that mongoose will use later
+ *
+ * @param {Object} listingParams Listing parameters sent in the request query [sort, time, before, after, limit]
+ * @returns {Object} The final results that will be used by mongoose to list posts
+ */
 export async function inboxListing(listingParams) {
   let result = {};
   result.query = {};
@@ -287,7 +293,12 @@ export async function inboxListing(listingParams) {
   }
   return result;
 }
-
+/**
+ * Function is used to get either message,mention or post reply for the inbox listing as they are all returned
+ *if there is none of them then the id is not valid
+ * @param {String} Id full name of the object if it's a message , mention , post reply
+ * @returns {Object} The final results that will be used by mongoose to list posts
+ */
 export async function splitterOnType(Id) {
   let splitter;
   splitter = await Message.findById(Id);
@@ -304,7 +315,13 @@ export async function splitterOnType(Id) {
   }
   return splitter;
 }
-
+/**
+ * Function to create the exact condition that will be used by mongoose directly to list posts.
+ * Used to map every listing parameter to the exact query that mongoose will use later
+ *
+ * @param {Object} listingParams Listing parameters sent in the request query [sort, time, before, after, limit]
+ * @returns {Object} The final results that will be used by mongoose to list posts
+ */
 export function setResult(listingParams) {
   const result = {};
   result.find = { deletedAt: null };

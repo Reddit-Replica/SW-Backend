@@ -401,7 +401,7 @@ export async function unhideAPost(post, user) {
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //MARk POSTS AS SPAM
 /**
- * This function is used to check if the given post exists in user's hidden posts
+ * This function is used to check if the given post exists in user's spammed posts
  * @param {Object} post the post object that we will check for
  * @param {Object} user the user object that we will search in
  * @returns {Boolean} detects if the post exists or not
@@ -481,10 +481,10 @@ export async function unmarkPostAsSpam(post, user) {
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //MARK COMMENTS AS SPAM
 /**
- * This function is used to check if the given post exists in user's hidden posts
- * @param {Object} post the post object that we will check for
+ * This function is used to check if the given comment exists in user's spammed comments
+ * @param {Object} comment the comment object that we will check for
  * @param {Object} user the user object that we will search in
- * @returns {Boolean} detects if the post exists or not
+ * @returns {Boolean} detects if the comment exists or not
  */
 function checkForSpammedComments(comment, user) {
   //CHECK IF THE POST IS ALREADY HIDDEN
@@ -497,8 +497,8 @@ function checkForSpammedComments(comment, user) {
 }
 
 /**
- * This function is used to mark a post as a spam from a user
- * @param {Object} post the post object that we will mark as spam
+ * This function is used to mark a comment as a spam from a user
+ * @param {Object} comment the comment object that we will mark as spam
  * @param {Object} user the user object that will mark the post as spam
  * @returns {Object} success object that contains the message and status code
  */
@@ -529,8 +529,8 @@ export async function markCommentAsSpam(comment, user) {
 }
 
 /**
- * This function is used to unmark a post as a spam from a user
- * @param {Object} post the post object that we will ummark as spam
+ * This function is used to unmark a comment as a spam from a user
+ * @param {Object} comment the comment object that we will ummark as spam
  * @param {Object} user the user object that will ummark the post as spam
  * @returns {Object} success object that contains the message and status code
  */
@@ -708,10 +708,10 @@ export async function downVoteAPost(post, user) {
 //------------------------------------------------------------------------------------------------------------------------------------------------
 //UPVOTING AND DOWNVOTING A Comment
 /**
- * This function is used to check if the given post exists in user's upVoted comments
+ * This function is used to check if the given comment exists in user's upVoted comments
  * @param {Object} comment the comment object that we will check for
  * @param {Object} user the user object that we will search in
- * @returns {Boolean} detects if the post exists or not
+ * @returns {Boolean} detects if the comment exists or not
  */
 export function checkForUpVotedComments(comment, user) {
   for (const smallComment of user.upvotedComments) {
@@ -722,10 +722,10 @@ export function checkForUpVotedComments(comment, user) {
   return false;
 }
 /**
- * This function is used to check if the given post exists in user's downVoted comments
+ * This function is used to check if the given comment exists in user's downVoted comments
  * @param {Object} comment the comment object that we will check for
  * @param {Object} user the user object that we will search in
- * @returns {Boolean} detects if the post exists or not
+ * @returns {Boolean} detects if the comment exists or not
  */
 export function checkForDownVotedComments(comment, user) {
   for (const smallComment of user.downvotedComments) {

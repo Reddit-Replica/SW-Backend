@@ -61,7 +61,7 @@ export async function addMessage(req) {
 }
 /**
  * This function is used to add a mention
- * it add the mention to the receiver mention list
+ * it adds the mention to the receiver mention list
  * Also sends an email to the receiver if he enables sending emails
  * @param {Object} req req object from which we get our data
  * @returns {String} indicates if the message was sent successfully or not
