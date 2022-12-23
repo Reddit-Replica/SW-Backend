@@ -18,15 +18,14 @@ import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 
 /**
- * Function that get the posts that we want to list from a certain user
+ * Function that get the messages that we want to list from a certain user
  * then sort, match, and limit them, then finally save the last id so that it can
  * be used next time to get different results.
- * Function also check each post if it was followed or saved or spammed by the logged in user.
  *
  * @param {Object} user User that we want to list his posts
- * @param {Object} loggedInUser Logged in user that did the request
  * @param {String} typeOfListing Name of the list in the user model that we want to list
  * @param {Object} listingParams Listing parameters that was in the query of the request
+ * @param {Boolean} isUnread defines if we need unread msgs or not
  * @returns {Object} The response to that request containing [statusCode, data]
  */
 // eslint-disable-next-line max-statements
@@ -126,7 +125,17 @@ export async function userMessageListing(
     },
   };
 }
-
+/**
+ * Function that get the mentions that we want to list from a certain user
+ * then sort, match, and limit them, then finally save the last id so that it can
+ * be used next time to get different results.
+ *
+ * @param {Object} user User that we want to list his posts
+ * @param {String} typeOfListing Name of the list in the user model that we want to list
+ * @param {Object} listingParams Listing parameters that was in the query of the request
+ * @param {Boolean} isPostReply defines if we will insert a mention or a post reply
+ * @returns {Object} The response to that request containing [statusCode, data]
+ */
 export async function userMentionsListing(
   user,
   typeOfListing,
@@ -235,7 +244,13 @@ export async function userMentionsListing(
     },
   };
 }
-
+/**
+ * Function is used to compare two msgs with sendAt property
+ *
+ * @param {Object} msg1 first msg
+ * @param {Object} msg2 second msg
+ * @returns {Number} defines which one is larger
+ */
 export function compareMsgs(msg1, msg2) {
   if (msg1.sendAt < msg2.sendAt) {
     return 1;
@@ -245,7 +260,13 @@ export function compareMsgs(msg1, msg2) {
   }
   return 0;
 }
-
+/**
+ * Function is used to compare two msgs with createdAt property
+ *
+ * @param {Object} msg1 first msg
+ * @param {Object} msg2 second msg
+ * @returns {Number} defines which one is larger
+ */
 export function compareMsgs2(msg1, msg2) {
   if (msg1.createdAt < msg2.createdAt) {
     return 1;
@@ -255,7 +276,16 @@ export function compareMsgs2(msg1, msg2) {
   }
   return 0;
 }
-
+/**
+ * Function that get the conversation that we want to list from a certain user
+ * then sort, match, and limit them, then finally save the last id so that it can
+ * be used next time to get different results.
+ *
+ * @param {Object} user User that we want to list his posts
+ * @param {String} typeOfListing Name of the list in the user model that we want to list
+ * @param {Object} listingParams Listing parameters that was in the query of the request
+ * @returns {Object} The response to that request containing [statusCode, data]
+ */
 export async function userConversationListing(
   user,
   typeOfListing,
@@ -370,7 +400,15 @@ export async function userConversationListing(
     },
   };
 }
-
+/**
+ * Function that get the mentions,post replies and received messages that we want to list from a certain user
+ * then sort, match, and limit them, then finally save the last id so that it can
+ * be used next time to get different results.
+ *
+ * @param {Object} user User that we want to list his posts
+ * @param {Object} listingParams Listing parameters that was in the query of the request
+ * @returns {Object} The response to that request containing [statusCode, data]
+ */
 export async function userInboxListing(user, listingParams) {
   //GETTING RECEIVED MESSAGES
   let date = new Date();
