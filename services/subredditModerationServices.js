@@ -733,6 +733,9 @@ export function getSubredditPostSettingsService(subreddit) {
 /**
  * A Service function used to set the subreddit post settings
  * @param {Subreddit} subreddit The subreddit object
+ * @param {Boolean} enableSpoiler Boolean indicated to allow the spoiler tag or not
+ * @param {String} suggestedSort The suggested sort
+ * @param {Boolean} allowImagesInComment Boolean indicated to allow the images in comments or not
  * @returns {void}
  */
 export async function setSubredditPostSettingsService(
