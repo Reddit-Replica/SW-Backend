@@ -28,6 +28,10 @@ describe("Testing Search Service functions", () => {
   // eslint-disable-next-line max-statements
   beforeAll(async () => {
     await connectDatabase();
+    await User.deleteMany({});
+    await Comment.deleteMany({});
+    await Subreddit.deleteMany({});
+    await Post.deleteMany({});
 
     user1 = await new User({
       username: "hamdy",
@@ -125,7 +129,7 @@ describe("Testing Search Service functions", () => {
       ownerUsername: user1.username,
       subredditName: "subreddit1",
       numberOfVotes: 4,
-      createdAt: Date.now() + 10,
+      createdAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
     });
     await comment2.save();
 
@@ -138,7 +142,7 @@ describe("Testing Search Service functions", () => {
       ownerId: user1._id,
       ownerUsername: user1.username,
       numberOfVotes: 4,
-      createdAt: Date.now() + 20,
+      createdAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
     });
     await comment3.save();
 

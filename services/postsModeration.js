@@ -2,8 +2,9 @@ import Subreddit from "../models/Community.js";
 import { addMessage } from "./messageServices.js";
 
 /**
- * This function removes a post from the list of unmoderated posts in a subreddit and adds
- * it to spammed posts if the type is "spam"
+ * This function removes a post from the list of unmoderated posts in all cases. If the type
+ * of moderation given is 'approve' then the post is also removed from the list of spammed posts.
+ * If the type is 'spam' then it is added to the list of spammed posts of this subreddit.
  * @param {string} id Post ID
  * @param {string} type Type of moderation
  * @param {string} subredditName Title of the subreddit
@@ -55,9 +56,12 @@ export async function removeFromSpammedComments(id, subredditName) {
 /**
  * This function checks if a user already exists in the subreddit's
  * list of approved users and adds it if not. It also adds the subreddit
- * to the user's list of joined subreddits
+ * to the user's list of joined subreddits and the user to the list
+ * of joined users of this subreddit. Then, a message is sent to the user
+ * who was just approved.
  * @param {object} subreddit Subreddit object
  * @param {object} user User object
+ * @param {object} payload Moderator userID and username
  * @returns {void}
  */
 export async function addToApprovedUsers(subreddit, user, payload) {
@@ -112,7 +116,8 @@ export async function addToApprovedUsers(subreddit, user, payload) {
 /**
  * This function checks if a user is already removed from the subreddit's
  * list of approved users and removes it if not. It also removes the subreddit from
- * user's list of joined subreddits
+ * user's list of joined subreddits and removes the user from the list of joined users
+ * of this subreddit.
  * @param {object} subreddit Subreddit object
  * @param {object} user User object
  * @returns {void}
@@ -148,9 +153,10 @@ export async function removeFromApprovedUsers(subreddit, user) {
 
 /**
  * This function checks if a user already exists in the subreddit's
- * list of muted users and adds it if not.
+ * list of muted users and adds it if not, with the mute date and reason.
  * @param {object} subreddit Subreddit object
  * @param {object} user User object
+ * @param {string} muteReason Reason for muting this user
  * @returns {void}
  */
 export async function addToMutedUsers(subreddit, user, muteReason) {
@@ -172,7 +178,8 @@ export async function addToMutedUsers(subreddit, user, muteReason) {
 }
 
 /**
- * This function removes a user from the subreddit's list of muted users
+ * This function removes a user from the subreddit's list of muted users if
+ * it wasn't already removed
  * @param {object} subreddit Subreddit object
  * @param {object} user User object
  * @returns {void}
@@ -194,7 +201,8 @@ export async function removeFromMutedUsers(subreddit, user) {
 }
 
 /**
- * This function checks if a user is in the given subreddit
+ * This function checks if a user is in the given subreddit by finding the
+ * subreddit name in the list of joined subreddits of the user
  * @param {object} subreddit Subreddit object
  * @param {object} user User object
  * @returns {void}

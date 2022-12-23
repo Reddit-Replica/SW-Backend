@@ -236,7 +236,7 @@ export async function userMentionsListing(
   };
 }
 
-function compareMsgs(msg1, msg2) {
+export function compareMsgs(msg1, msg2) {
   if (msg1.sendAt < msg2.sendAt) {
     return 1;
   }
@@ -246,7 +246,7 @@ function compareMsgs(msg1, msg2) {
   return 0;
 }
 
-function compareMsgs2(msg1, msg2) {
+export function compareMsgs2(msg1, msg2) {
   if (msg1.createdAt < msg2.createdAt) {
     return 1;
   }
@@ -273,7 +273,6 @@ export async function userConversationListing(
         sort: listingResult.sort,
       },
     });
-
   let limit = listingResult.limit;
   if (result[typeOfListing].length < limit) {
     limit = result[typeOfListing].length;

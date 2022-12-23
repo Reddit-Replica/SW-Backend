@@ -3,11 +3,13 @@ import User from "../models/User.js";
 /**
  * This function is used to check if there is a loggedIn user and if yes, it makes another
  * check of whether there is a username sent with the query parameters to determine whether
- * the loggedIn user is viewing his pinned posts or someone else.
+ * the loggedIn user is viewing his own pinned posts or someone else. If there is no logged
+ * in user, then a username has to be sent in the query or else there is no user to get his
+ * pinned posts. In this case the logged in user is the same as the other user object.
  * @param {boolean} loggedIn True if there's a logged in user
  * @param {string} userId LoggedIn user ID
  * @param {string} username Username of the user's pinned posts if found
- * @returns {object} The logged in user and the user if not the same
+ * @returns {object} The logged in user and the other user if not the same
  */
 // eslint-disable-next-line max-statements
 export async function checkUserPinnedPosts(loggedIn, userId, username) {
@@ -98,6 +100,7 @@ export function setPinnedPostsFlags(loggedInUser, post) {
 
 /**
  * This function returns a pinned post details along with the flags associated with it
+ * which were set in the setPinnedPostFlags middleware
  * @param {object} post Pinned post object
  * @param {object} params three flags: vote, yourPost and inYourSubreddit
  * @return {object} Post details object

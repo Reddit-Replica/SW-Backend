@@ -17,7 +17,7 @@ export async function homePostsListing(
   );
   let extraPostsIndex = filteringProperties.skip;
   let extraPostsLimit = filteringProperties.limit;
-  let extraPostsUsersFilter, extraPostsSubredditFilter,hiddenPostsFilter;
+  let extraPostsUsersFilter, extraPostsSubredditFilter, hiddenPostsFilter;
   //WE WILL GET THE MOST IMPORTANT POSTS FIRST WHICH ARE SUBREDDIT POSTS AND FOLLOWING POSTS
   //GETTING SUBREDDIT POSTS
   if (isLoggedIn) {
@@ -34,19 +34,20 @@ export async function homePostsListing(
         path: "followedUsers",
         match: { deletedAt: null },
       });
-
     let userJoinedSubreddits = joinedSubreddits.map(
       (subreddit) => subreddit.name
     );
-    var hiddenArr=[];
-    var { hiddenPosts }=await User.findOne({ username:user.username }).select("hiddenPosts");
-    for (let i=0;i<hiddenPosts.length;i++){
+    var hiddenArr = [];
+    var { hiddenPosts } = await User.findOne({
+      username: user.username,
+    }).select("hiddenPosts");
+    for (let i = 0; i < hiddenPosts.length; i++) {
       hiddenArr.push(hiddenPosts[i].toString());
     }
 
     extraPostsUsersFilter = followedUsers;
     extraPostsSubredditFilter = userJoinedSubreddits;
-    hiddenPostsFilter=hiddenArr;
+    hiddenPostsFilter = hiddenArr;
 
     const importantPosts = await Post.find({
       $or: [
@@ -60,7 +61,7 @@ export async function homePostsListing(
       ],
       deletedAt: null,
       createdAt: { $gt: filteringProperties.filteringDate },
-      _id:{ $nin:[...hiddenArr] },
+      _id: { $nin: [...hiddenArr] },
     }).sort(filteringProperties.sort);
     if (
       importantPosts.length >=
@@ -100,7 +101,7 @@ export async function homePostsListing(
         ownerId: { $nin: [...extraPostsUsersFilter] },
         deletedAt: null,
         createdAt: { $gt: filteringProperties.filteringDate },
-        _id:{ $nin:[...hiddenPostsFilter] },
+        _id: { $nin: [...hiddenPostsFilter] },
       })
         .sort(filteringProperties.sort)
         .limit(extraPostsLimit)
@@ -219,7 +220,7 @@ export async function homePostsListing(
   };
 }
 
-async function prepareFiltering(typeOfSorting, listingParams) {
+export async function prepareFiltering(typeOfSorting, listingParams) {
   const result = {};
   result.sort = {};
   if (typeOfSorting === "new") {
@@ -274,24 +275,25 @@ async function prepareFiltering(typeOfSorting, listingParams) {
   result.filteringDate = filteringDate;
 
   result.limit = prepareLimit(parseInt(listingParams.limit));
-
   result.skip = 0;
   if (listingParams.after) {
     if (parseInt(listingParams.after) < 0) {
       listingParams.after = 0;
     }
     if (!isNaN(parseInt(listingParams.after))) {
-    result.skip = parseInt(listingParams.after);
+      result.skip = parseInt(listingParams.after);
     }
-
   } else if (listingParams.before) {
     if (parseInt(listingParams.before) < 0) {
       listingParams.before = 0;
     }
-    if (!isNaN(parseInt(listingParams.before))&&!isNaN(parseInt(listingParams.limit))) {
-result.skip =
-      parseInt(listingParams.before) - parseInt(listingParams.limit);
-}
+    if (
+      !isNaN(parseInt(listingParams.before)) &&
+      !isNaN(parseInt(listingParams.limit))
+    ) {
+      result.skip =
+        parseInt(listingParams.before) - parseInt(listingParams.limit);
+    }
   }
 
   if (result.skip < 0) {

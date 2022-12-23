@@ -303,7 +303,9 @@ export async function checkSubredditFlair(subreddit, flairId) {
 /**
  * This function returns all the subreddit's posts with a certain limit
  * and either after or before to cut form. It can also filter according to
- * a given flair.
+ * a given flair. Removed and spammed posts are not returned and the subreddit has to exist.
+ * If the user's settings are set not to view nsfw content then they aren't returned. A logged
+ * in user won't see his hidden posts as well.
  *
  * @param {object} user User Object
  * @param {string} subredditName Subreddit Name

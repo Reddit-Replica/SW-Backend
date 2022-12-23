@@ -52,6 +52,7 @@ export async function listingBannedUsers(
 
 /**
  * A Service helper function used to get the banned users for the main service function in case of first time
+ * which means without receiving after or before
  * @param {Subreddit} subreddit The subreddit object
  * @param {Number} limit the limit identified in the request
  * @returns {response} the prepared response for the main service function

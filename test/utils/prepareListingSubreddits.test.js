@@ -6,6 +6,7 @@ import {
 } from "../../utils/prepareSubredditListing";
 import User from "./../../models/User.js";
 import Subreddit from "./../../models/Community.js";
+import mongoose from "mongoose";
 
 // eslint-disable-next-line max-statements
 describe("Testing Listing Subreddits Utilities", () => {
@@ -96,6 +97,14 @@ describe("Testing Listing Subreddits Utilities", () => {
     expect(result.listing).toBeNull();
   });
 
+  it("Test prepareListingSubreddits with no after & before", async () => {
+    const result = await prepareListingSubreddits({
+      limit: 10,
+    });
+    expect(result.limit).toEqual(10);
+    expect(result.listing).toBeNull();
+  });
+
   it("Test prepareListingSubreddits with after", async () => {
     const result = await prepareListingSubreddits({
       limit: 15,
@@ -106,6 +115,49 @@ describe("Testing Listing Subreddits Utilities", () => {
       type: "_id",
       value: { $gt: subreddit1.id.toString() },
     });
+  });
+
+  it("Test prepareListingSubreddits with a not-found before id", async () => {
+    const result = await prepareListingSubreddits({
+      limit: 15,
+      before: mongoose.Types.ObjectId.generate(10),
+    });
+    expect(result.limit).toEqual(15);
+    expect(result.listing).toBeNull();
+  });
+
+  it("Test prepareListingSubreddits with an invalid before id", async () => {
+    const result = await prepareListingSubreddits({
+      limit: 15,
+      before: "invalidID",
+    });
+    expect(result.limit).toEqual(15);
+    expect(result.listing).toBeNull();
+  });
+
+  it("Test prepareListingSubreddits with an invalid after id", async () => {
+    const result = await prepareListingSubreddits({
+      limit: 15,
+      after: "invalidID",
+    });
+    expect(result.limit).toEqual(15);
+    expect(result.listing).toBeNull();
+  });
+
+  it("Test prepareListingSubreddits with no limit", async () => {
+    const result = await prepareListingSubreddits({
+      before: subreddit1.id.toString(),
+    });
+    expect(result.limit).toEqual(25);
+  });
+
+  it("Test prepareListingSubreddits with an invalid after id", async () => {
+    const result = await prepareListingSubreddits({
+      limit: 15,
+      after: mongoose.Types.ObjectId.generate(10),
+    });
+    expect(result.limit).toEqual(15);
+    expect(result.listing).toBeNull();
   });
 
   it("Test prepareListingSubreddits with before", async () => {
@@ -149,6 +201,16 @@ describe("Testing Listing Subreddits Utilities", () => {
     expect(result.find).toEqual({
       deletedAt: null,
       _id: { $gt: subreddit1.id.toString() },
+    });
+  });
+
+  it("Test subredditListing with no listing", async () => {
+    const result = await subredditListing({
+      limit: 30,
+    });
+    expect(result.limit).toEqual(30);
+    expect(result.find).toEqual({
+      deletedAt: null,
     });
   });
 });

@@ -13,7 +13,7 @@ import { subredditListing } from "../utils/prepareSubredditListing.js";
  *
  * @param {Array} result Search query
  * @param {object} user Logged in user object
- * @returns {Array} Contains the new filtered results
+ * @returns {Array} Contains the new filtered listing results
  */
 // eslint-disable-next-line max-statements
 export function filterHiddenPosts(result, user) {
@@ -27,12 +27,15 @@ export function filterHiddenPosts(result, user) {
 }
 
 /**
- * Search for a post given a query in the whole of read-it
+ * Search for a post given a query in the whole of read-it. It ensures that hidden, removed, spammed,
+ * and nsfw (in case settings are set to not view nsfw content) posts are not shown to the user. The search
+ * is checked on the post title only.
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
  * @param {object} user User object in case there's a logged in user
- * @returns {object} Result containing statusCode and data
+ * @returns {object} Result containing statusCode and data. The data consists of
+ * the new after & before and children which hold search results.
  */
 // eslint-disable-next-line max-statements
 export async function searchPosts(query, listingParams, user) {
@@ -131,11 +134,15 @@ export async function searchPosts(query, listingParams, user) {
 }
 
 /**
- * Search for a comment given a query in the whole of read-it
+ * Search for a comment given a query in the whole of read-it. It ensures that removed, spammed,
+ * and nsfw (in case settings are set to not view nsfw content) comments are not shown to the user.
+ * The search is checked on comment content only.
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
- * @returns {object} Result containing statusCode and data
+ * @param {object} user Logged in user object
+ * @returns {object} Result containing statusCode and data. The data consists of
+ * the new after & before and children which hold search results.
  */
 // eslint-disable-next-line max-statements
 export async function searchComments(query, listingParams, user) {
@@ -227,7 +234,8 @@ export async function searchComments(query, listingParams, user) {
 }
 
 /**
- * Search for a user given a query in the whole of read-it
+ * Search for a user by the username or display name given a query in the whole of read-it. It filters
+ * out if there are any blocked users as well.
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
@@ -323,10 +331,13 @@ export async function searchUsers(query, listingParams, loggedInUser) {
 }
 
 /**
- * Search for a subreddit given a query in the whole of read-it
+ * Search for a subreddit using the title or view name given a query in the whole of read-it.
+ * Private subreddits do not appear in search and nsfw subreddits are also not shown in case
+ * the user settings are set not to view nsfw content.
  *
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
+ * @param {object} loggedInUser Logged in user
  * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements

@@ -438,6 +438,50 @@ describe("Testing User Listing Service functions", () => {
     });
   });
 
+  it("Test prepareListingUsers with an invalid before ID", async () => {
+    const result = await prepareListingUsers({
+      limit: 20,
+      before: "invalidID",
+    });
+    expect(result.limit).toEqual(20);
+    expect(result.listing).toBeNull();
+  });
+
+  it("Test prepareListingUsers with a not-found before ID", async () => {
+    const result = await prepareListingUsers({
+      limit: 20,
+      before: mongoose.Types.ObjectId.generate(10),
+    });
+    expect(result.limit).toEqual(20);
+    expect(result.listing).toBeNull();
+  });
+
+  it("Test prepareListingUsers with a not-found after ID", async () => {
+    const result = await prepareListingUsers({
+      limit: 20,
+      after: mongoose.Types.ObjectId.generate(10),
+    });
+    expect(result.limit).toEqual(20);
+    expect(result.listing).toBeNull();
+  });
+
+  it("Test prepareListingUsers with no limit", async () => {
+    const result = await prepareListingUsers({
+      before: "invalidID",
+    });
+    expect(result.limit).toEqual(25);
+    expect(result.listing).toBeNull();
+  });
+
+  it("Test prepareListingUsers with an invalid after ID", async () => {
+    const result = await prepareListingUsers({
+      limit: 20,
+      after: "invalidID",
+    });
+    expect(result.limit).toEqual(20);
+    expect(result.listing).toBeNull();
+  });
+
   it("Test prepareListingUsers with over-limit", async () => {
     const result = await prepareListingUsers({
       limit: 200,
@@ -467,6 +511,16 @@ describe("Testing User Listing Service functions", () => {
     expect(result.find).toEqual({
       deletedAt: null,
       _id: { $gt: user1.id.toString() },
+    });
+  });
+
+  it("Test userListing with no listing", async () => {
+    const result = await userListing({
+      limit: 30,
+    });
+    expect(result.limit).toEqual(30);
+    expect(result.find).toEqual({
+      deletedAt: null,
     });
   });
 });

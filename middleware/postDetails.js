@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import Post from "../models/Post.js";
 
 /**
- * Middleware used to check if a post exists given it's id. It also populates
+ * Middleware used to check if a post exists given its id. It also populates
  * the flair object in case there's a post because the post flair parameters
  * will be returned along with the other post details. The post is passed with the
  * request to the next middleware.
@@ -31,7 +31,7 @@ export async function checkPostExistence(req, res, next) {
  * of posts which include whether it's saved, followed, hidden, spammed,
  * upvoted, downvoted and if it's in the user's subreddit by checking the
  * moderators of that subreddit. These checks are made only if the user is
- * logged in, otherwise all area false and the voting is 0.
+ * logged in, otherwise all ara false and the voting is 0.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
