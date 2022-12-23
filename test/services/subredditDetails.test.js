@@ -9,7 +9,9 @@ describe("testing subreddit details file", () => {
       await connectDatabase();
     });
 
-    afterAll(() => {
+    afterAll(async () => {
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
       closeDatabaseConnection();
     });
 
