@@ -178,6 +178,7 @@ describe("Testing message service functions", () => {
     await Post.deleteMany({});
     await Comment.deleteMany({});
     await Subreddit.deleteMany({});
+    await Mention.deleteMany({});
     await closeDatabaseConnection();
   });
 

@@ -34,7 +34,6 @@ export async function homePostsListing(
         path: "followedUsers",
         match: { deletedAt: null },
       });
-
     let userJoinedSubreddits = joinedSubreddits.map(
       (subreddit) => subreddit.name
     );
@@ -221,7 +220,7 @@ export async function homePostsListing(
   };
 }
 
-async function prepareFiltering(typeOfSorting, listingParams) {
+export async function prepareFiltering(typeOfSorting, listingParams) {
   const result = {};
   result.sort = {};
   if (typeOfSorting === "new") {
@@ -276,7 +275,6 @@ async function prepareFiltering(typeOfSorting, listingParams) {
   result.filteringDate = filteringDate;
 
   result.limit = prepareLimit(parseInt(listingParams.limit));
-
   result.skip = 0;
   if (listingParams.after) {
     if (parseInt(listingParams.after) < 0) {

@@ -90,7 +90,7 @@ export async function validateHidePost(req) {
  * @param {Object} user the user object that we will search in
  * @returns {Boolean} detects if the post exists or not
  */
-async function checkForSavedPosts(post, user) {
+export async function checkForSavedPosts(post, user) {
   //CHECK IF THE POST IS ALREADY SAVED
   for (const smallPost of user.savedPosts) {
     if (post.id === smallPost.toString()) {
@@ -567,7 +567,7 @@ export async function unmarkCommentAsSpam(comment, user) {
  * @param {Object} user the user object that we will search in
  * @returns {Boolean} detects if the post exists or not
  */
-function checkForUpVotedPosts(post, user) {
+export function checkForUpVotedPosts(post, user) {
   //CHECK IF THE POST IS ALREADY HIDDEN
   for (const smallPost of user.upvotedPosts) {
     if (post.id === smallPost.toString()) {
@@ -582,7 +582,7 @@ function checkForUpVotedPosts(post, user) {
  * @param {Object} user the user object that we will search in
  * @returns {Boolean} detects if the post exists or not
  */
-function checkForDownVotedPosts(post, user) {
+export function checkForDownVotedPosts(post, user) {
   //CHECK IF THE POST IS ALREADY HIDDEN
   for (const smallPost of user.downvotedPosts) {
     if (post.id === smallPost.toString()) {
