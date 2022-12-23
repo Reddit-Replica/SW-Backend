@@ -488,7 +488,7 @@ export async function userInboxListing(user, listingParams) {
     }
     children.push(messageData);
   }
-
+  
   let after = "",
     before = "";
   if (totalInbox.length) {

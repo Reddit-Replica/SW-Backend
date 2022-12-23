@@ -402,7 +402,6 @@ export async function moderateSubreddit(username, subredditName) {
  * @param {String} category username of the user
  * @returns {Object} error object that contains the msg describing what happened and its status code
  */
-//DONE
 export async function checkOnCategory(category) {
   await insertCategoriesIfNotExists();
   const categories = await getSortedCategories();
@@ -419,7 +418,13 @@ export async function checkOnCategory(category) {
     throw error;
   }
 }
-//DONE
+/**
+ * This function is used to check if the user joined the subreddit to do any action in it or not
+ * it searches for the subreddit in the users joined subreddits
+ * @param {Object} user user object containing information about him
+ * @param {String} subredditName subreddit name
+ * @returns {Boolean} Indicates if the user is in the subreddit or not
+ */
 export async function checkJoining(user, subredditName) {
   for (const subreddit of user.joinedSubreddits) {
     if (subreddit.name === subredditName) {
@@ -432,7 +437,12 @@ export async function checkJoining(user, subredditName) {
   error.statusCode = 401;
   throw error;
 }
-//DONE
+/**
+ * This function is used to check if the subreddit is private or not and if it was then does the user a part of it or not
+ * @param {Object} user user object containing information about him
+ * @param {Object} subreddit subreddit object containing information about it
+ * @returns {Boolean} Indicates if the user is in the subreddit or not
+ */
 export async function checkForPrivateSubreddits(user, subreddit) {
   if (subreddit.type === "Private") {
     for (const smallSubreddit of user.joinedSubreddits) {
@@ -449,7 +459,12 @@ export async function checkForPrivateSubreddits(user, subreddit) {
   error.statusCode = 401;
   throw error;
 }
-//DONE
+/**
+ * This function is used to check if the subreddit is favorite to the user or not
+ * @param {Object} user user object containing information about him
+ * @param {Object} subreddit subreddit object containing information about it
+ * @returns {Boolean} Indicates if the subreddit is favorite or not
+ */
 export async function checkForFavoriteSubreddits(user, subreddit) {
   for (const smallSubreddit of user.favoritesSubreddits) {
     if (smallSubreddit.name === subreddit.title) {
@@ -458,7 +473,13 @@ export async function checkForFavoriteSubreddits(user, subreddit) {
   }
   return false;
 }
-//DONE
+/**
+ * This function is used to make the subreddit favorite
+ * @param {Object} user user object containing information about him
+ * @param {String} subredditName name of the subreddit
+ * @param {String} subredditId name of the subreddit
+ * @returns {Boolean} Indicates if the subreddit is favorite or not
+ */
 export async function makeSubredditFavorite(user, subredditName, subredditId) {
   user.favoritesSubreddits.push({
     subredditId: subredditId,
@@ -470,7 +491,12 @@ export async function makeSubredditFavorite(user, subredditName, subredditId) {
     message: "subreddit is now favorite",
   };
 }
-//DONE
+/**
+ * This function is used to remove the subreddit from favorites
+ * @param {Object} user user object containing information about him
+ * @param {String} subredditName name of the subreddit
+ * @returns {Boolean} Indicates if the subreddit is favorite or not
+ */
 export async function removeSubredditFromFavorite(user, subredditName) {
   user.favoritesSubreddits = user.favoritesSubreddits.filter(
     (smallSubreddit) => {
