@@ -11,6 +11,10 @@ import {
   prepareFlairsSettings,
   prepareFlairs,
   validateFlairSettingsBody,
+  editFlairsSettingsService,
+  checkEditFlairsOrderService,
+  checkDublicateFlairOrderService,
+  editFlairsOrderService,
 } from "../../services/subredditFlairs.js";
 import Subreddit from "../../models/Community.js";
 import Flair from "../../models/Flair.js";
@@ -439,6 +443,177 @@ describe("Testing subreddit flairs services", () => {
       expect(() => {
         validateFlairSettingsBody(req);
       }).not.toThrowError();
+    });
+  });
+
+  describe("testing editFlairsSettingsService", () => {
+    it("Testing updating flair settings", () => {
+      const saveFunction = jest.fn();
+      const subreddit = {
+        flairSettings: {},
+        save: saveFunction,
+      };
+      const flairSettings = {
+        enablePostFlairInThisCommunity: true,
+        allowUsersToAssignTheirOwn: true,
+      };
+      editFlairsSettingsService(subreddit, flairSettings);
+      expect(saveFunction).toHaveBeenCalled();
+    });
+  });
+
+  describe("testing checkEditFlairsOrderService", () => {
+    it("Testing invalid flairs order", () => {
+      const subreddit = {
+        numberOfFlairs: 2,
+      };
+      const req = {
+        subreddit: subreddit,
+        body: {
+          flairsOrder: [1],
+        },
+      };
+      expect(() => {
+        checkEditFlairsOrderService(req);
+      }).toThrow("Number of flairs doesn't match");
+    });
+    it("Testing valid flairs order", () => {
+      const subreddit = {
+        numberOfFlairs: 2,
+      };
+      const req = {
+        subreddit: subreddit,
+        body: {
+          flairsOrder: [1, 2],
+        },
+      };
+      expect(() => {
+        checkEditFlairsOrderService(req);
+      }).not.toThrowError();
+    });
+  });
+
+  describe("Testing checkDublicateFlairOrderService all cases", () => {
+    it("Testing dublicate flair id", () => {
+      expect(() => {
+        const req = {
+          body: {
+            flairsOrder: [
+              {
+                flairId: 2,
+                flairOrder: 0,
+              },
+              {
+                flairId: 2,
+                flairOrder: 1,
+              },
+            ],
+          },
+        };
+        checkDublicateFlairOrderService(req);
+      }).toThrow("dublicate flair id");
+    });
+    it("Testing dublicate flair order", () => {
+      expect(() => {
+        const req = {
+          body: {
+            flairsOrder: [
+              {
+                flairId: 2,
+                flairOrder: 1,
+              },
+              {
+                flairId: 1,
+                flairOrder: 1,
+              },
+            ],
+          },
+        };
+        checkDublicateFlairOrderService(req);
+      }).toThrow("dublicate flair order");
+    });
+  });
+
+  describe("Testing editFlairsOrderService all cases", () => {
+    it("Testing valid flairs order", () => {
+      const saveFunction = jest.fn();
+
+      const req = {
+        body: {
+          flairsOrder: [
+            {
+              flairId: 2,
+              flairOrder: 1,
+            },
+            {
+              flairId: 1,
+              flairOrder: 2,
+            },
+          ],
+        },
+        subreddit: {
+          flairs: [
+            {
+              _id: 1,
+              flairOrder: 1,
+            },
+            {
+              _id: 2,
+              flairOrder: 2,
+            },
+          ],
+          save: saveFunction,
+        },
+      };
+      editFlairsOrderService(req);
+      expect(saveFunction).toHaveBeenCalled();
+    });
+    it("Testing deleted flairs order", async () => {
+      const saveFunction = jest.fn();
+      const req = {
+        body: {
+          flairsOrder: [
+            {
+              flairId: "2",
+              flairOrder: 2,
+            },
+            {
+              flairId: "1",
+              flairOrder: 0,
+            },
+            {
+              flairId: "0",
+              flairOrder: 1,
+            },
+          ],
+        },
+        subreddit: {
+          flairs: [
+            {
+              _id: 2,
+              flairOrder: 2,
+              deletedAt: false,
+              save: saveFunction,
+            },
+            {
+              _id: 0,
+              flairOrder: 0,
+              deletedAt: true,
+              save: saveFunction,
+            },
+            {
+              _id: 1,
+              flairOrder: 1,
+              deletedAt: false,
+              save: saveFunction,
+            },
+          ],
+          save: saveFunction,
+        },
+      };
+      await expect(editFlairsOrderService(req)).rejects.toThrow(
+        "Flair not found"
+      );
     });
   });
 });

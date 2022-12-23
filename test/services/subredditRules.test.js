@@ -151,7 +151,7 @@ describe("Testing Subreddit rules services", () => {
           save: saveFunction,
         },
       };
-      await expect(editRulesOrderService(req, false)).rejects.toThrow(
+      await expect(editRulesOrderService(req)).rejects.toThrow(
         "Rule not found"
       );
     });
