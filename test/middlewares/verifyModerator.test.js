@@ -9,7 +9,7 @@ import Subreddit from "../../models/Community.js";
 import Token from "../../models/VerifyToken.js";
 import crypto from "crypto";
 import { hashPassword } from "../../utils/passwordUtils.js";
-import {checkModerator} from "../../middleware/NverifyModerator.js";
+import { checkModerator } from "../../middleware/NverifyModerator.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing Login middleware", () => {
@@ -19,7 +19,7 @@ describe("Testing Login middleware", () => {
 
   let user1 = {};
   let user2 = {};
-  let user3={};
+  let user3 = {};
   let subreddit1 = {};
   let subreddit2 = {};
   let verifyToken = {};
@@ -34,11 +34,11 @@ describe("Testing Login middleware", () => {
     }).save();
 
     user3 = await new User({
-        username: "Beshoy",
-        email: "Beshoy@gmail.com",
-        createdAt: Date.now(),
-        password: hashPassword("87654321"),
-      }).save();
+      username: "Beshoy",
+      email: "Beshoy@gmail.com",
+      createdAt: Date.now(),
+      password: hashPassword("87654321"),
+    }).save();
 
     subreddit1 = await new Subreddit({
       title: "SportsSubreddit",
@@ -51,12 +51,12 @@ describe("Testing Login middleware", () => {
       },
       members: 20,
       numberOfViews: 63,
-      moderators:[
+      moderators: [
         {
-        userID:user2.id,
-        dateOfModeration:Date.now(),
-        }
-      ]
+          userID: user2.id,
+          dateOfModeration: Date.now(),
+        },
+      ],
     }).save();
 
     user1 = await new User({
@@ -106,41 +106,40 @@ describe("Testing Login middleware", () => {
   });
   //----------------------------------------------------------------------
   it("Test checkModerator without req.params", async () => {
-      mockRequest = {
-        payload: {
-          username: user1.username,
-          userId: user1.id,
-        },
-      };
-      await checkModerator(mockRequest, mockResponse, nextFunction);
-      expect(nextFunction).not.toHaveBeenCalled();
+    mockRequest = {
+      payload: {
+        username: user1.username,
+        userId: user1.id,
+      },
+    };
+    await checkModerator(mockRequest, mockResponse, nextFunction);
+    expect(nextFunction).not.toHaveBeenCalled();
   });
 
   it("Test checkModerator with a not moderator user", async () => {
     mockRequest = {
-        payload: {
-          username: user1.username,
-          userId: user1.id,
-        },
-        params:{
-            subreddit:subreddit1.title
-        }
-      };
-      await checkModerator(mockRequest, mockResponse, nextFunction);
-      expect(nextFunction).not.toHaveBeenCalled();
+      payload: {
+        username: user1.username,
+        userId: user1.id,
+      },
+      params: {
+        subreddit: subreddit1.title,
+      },
+    };
+    await checkModerator(mockRequest, mockResponse, nextFunction);
+    expect(nextFunction).not.toHaveBeenCalled();
   });
   it("Test checkModerator with a moderator user", async () => {
     mockRequest = {
-        payload: {
-          username: user2.username,
-          userId: user2.id,
-        },
-        params:{
-            subreddit:subreddit1.title
-        }
-      };
-      await checkModerator(mockRequest, mockResponse, nextFunction);
-      expect(nextFunction).toHaveBeenCalled();
-});
-
+      payload: {
+        username: user2.username,
+        userId: user2.id,
+      },
+      params: {
+        subreddit: subreddit1.title,
+      },
+    };
+    await checkModerator(mockRequest, mockResponse, nextFunction);
+    expect(nextFunction).toHaveBeenCalled();
+  });
 });

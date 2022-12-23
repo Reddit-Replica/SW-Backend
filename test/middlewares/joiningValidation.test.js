@@ -18,7 +18,7 @@ describe("Testing Login middleware", () => {
 
   let user1 = {};
   let user2 = {};
-  let user3={};
+  let user3 = {};
   let subreddit1 = {};
   let subreddit2 = {};
   let verifyToken = {};
@@ -33,11 +33,11 @@ describe("Testing Login middleware", () => {
     }).save();
 
     user3 = await new User({
-        username: "Beshoy",
-        email: "Beshoy@gmail.com",
-        createdAt: Date.now(),
-        password: hashPassword("87654321"),
-      }).save();
+      username: "Beshoy",
+      email: "Beshoy@gmail.com",
+      createdAt: Date.now(),
+      password: hashPassword("87654321"),
+    }).save();
 
     subreddit1 = await new Subreddit({
       title: "SportsSubreddit",
@@ -105,31 +105,31 @@ describe("Testing Login middleware", () => {
   });
   //----------------------------------------------------------------------
   it("Test checkJoinedBefore with an already joined user", async () => {
-      mockRequest = {
-        payload: {
-          username: user1.username,
-          userId: user1.id,
-        },
-        body:{
-            subredditId:subreddit1.id,
-        }
-      };
-      await checkJoinedBefore(mockRequest, mockResponse, nextFunction);
-      expect(nextFunction).not.toHaveBeenCalled();
+    mockRequest = {
+      payload: {
+        username: user1.username,
+        userId: user1.id,
+      },
+      body: {
+        subredditId: subreddit1.id,
+      },
+    };
+    await checkJoinedBefore(mockRequest, mockResponse, nextFunction);
+    expect(nextFunction).not.toHaveBeenCalled();
   });
 
   it("Test checkJoinedBefore with an already waited user", async () => {
-      mockRequest = {
-        payload: {
-          username: user2.username,
-          userId: user2.id,
-        },
-        body:{
-            subredditId:subreddit1.id,
-        }
-      };
-      await checkJoinedBefore(mockRequest, mockResponse, nextFunction);
-      expect(nextFunction).not.toHaveBeenCalled();
+    mockRequest = {
+      payload: {
+        username: user2.username,
+        userId: user2.id,
+      },
+      body: {
+        subredditId: subreddit1.id,
+      },
+    };
+    await checkJoinedBefore(mockRequest, mockResponse, nextFunction);
+    expect(nextFunction).not.toHaveBeenCalled();
   });
   it("Test checkJoinedBefore with no req.body", async () => {
     mockRequest = {
@@ -137,23 +137,22 @@ describe("Testing Login middleware", () => {
         username: user2.username,
         userId: user2.id,
       },
-
     };
     await checkJoinedBefore(mockRequest, mockResponse, nextFunction);
     expect(nextFunction).not.toHaveBeenCalled();
-});
+  });
 
   it("Test checkJoinedBefore with a normal user", async () => {
-      mockRequest = {
-        payload: {
-          username: user3.username,
-          userId: user3.id,
-        },
-        body:{
-            subredditId:subreddit1.id,
-        }
-      };
-      await checkJoinedBefore(mockRequest, mockResponse, nextFunction);
-      expect(nextFunction).toHaveBeenCalled();
+    mockRequest = {
+      payload: {
+        username: user3.username,
+        userId: user3.id,
+      },
+      body: {
+        subredditId: subreddit1.id,
+      },
+    };
+    await checkJoinedBefore(mockRequest, mockResponse, nextFunction);
+    expect(nextFunction).toHaveBeenCalled();
   });
 });

@@ -6,7 +6,7 @@ import Subreddit from "../../models/Community.js";
 import Token from "../../models/VerifyToken.js";
 import crypto from "crypto";
 import { hashPassword } from "../../utils/passwordUtils.js";
-import {checkDuplicateSubredditTitle} from "../../middleware/NverifySubredditName.js";
+import { checkDuplicateSubredditTitle } from "../../middleware/NverifySubredditName.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing Login middleware", () => {
@@ -38,14 +38,13 @@ describe("Testing Login middleware", () => {
       },
       members: 20,
       numberOfViews: 63,
-      moderators:[
+      moderators: [
         {
-        userID:user2.id,
-        dateOfModeration:Date.now(),
-        }
-      ]
+          userID: user2.id,
+          dateOfModeration: Date.now(),
+        },
+      ],
     }).save();
-
 
     verifyToken = await new Token({
       userId: user2._id,
@@ -81,29 +80,27 @@ describe("Testing Login middleware", () => {
   });
   //----------------------------------------------------------------------
   it("Test checkDuplicateSubredditTitle without req.body", async () => {
-      mockRequest = {
-      };
-      await checkDuplicateSubredditTitle(mockRequest, mockResponse, nextFunction);
-      expect(nextFunction).not.toHaveBeenCalled();
+    mockRequest = {};
+    await checkDuplicateSubredditTitle(mockRequest, mockResponse, nextFunction);
+    expect(nextFunction).not.toHaveBeenCalled();
   });
 
   it("Test checkDuplicateSubredditTitle with a repeated subreddit name", async () => {
     mockRequest = {
-        body:{
-            subredditName:subreddit1.title
-        }
-      };
-      await checkDuplicateSubredditTitle(mockRequest, mockResponse, nextFunction);
-      expect(nextFunction).not.toHaveBeenCalled();
+      body: {
+        subredditName: subreddit1.title,
+      },
+    };
+    await checkDuplicateSubredditTitle(mockRequest, mockResponse, nextFunction);
+    expect(nextFunction).not.toHaveBeenCalled();
   });
   it("Test checkDuplicateSubredditTitle with a moderator user", async () => {
     mockRequest = {
-        body:{
-            subredditName:"no3manYgd3an"
-        }
-      };
-      await checkDuplicateSubredditTitle(mockRequest, mockResponse, nextFunction);
-      expect(nextFunction).toHaveBeenCalled();
-});
-
+      body: {
+        subredditName: "no3manYgd3an",
+      },
+    };
+    await checkDuplicateSubredditTitle(mockRequest, mockResponse, nextFunction);
+    expect(nextFunction).toHaveBeenCalled();
+  });
 });
