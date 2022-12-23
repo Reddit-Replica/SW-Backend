@@ -1,32 +1,5 @@
 import Subreddit from "../models/Community.js";
 
-const createSubreddit = async (req, _res, next) => {
-  const subreddit = req.params.subreddit;
-  const newSubreddit = new Subreddit({
-    title: subreddit,
-    category: "Test Category" + subreddit,
-    numberOfMembers: 1,
-    primaryTopic: "test",
-    type: "Private",
-    image: "test.png",
-    owner: "zedyad",
-    description: "This is new subreddit",
-    owner: {
-      username: "zeyadtarekk",
-      userID: "6368f28e311af194fd6285a4",
-    },
-    moderators: [
-      {
-        username: "zeyadtarekk",
-        userID: "6368f28e311af194fd6285a4",
-        nickname: "anything",
-      },
-    ],
-  });
-  await newSubreddit.save();
-  next();
-};
-
 /**
  * A middleware used to make sure that the provided subreddit name exists
  * If that subreddit exists it adds it to the request object to make the next middleware access it
@@ -55,6 +28,5 @@ const checkSubreddit = async (req, res, next) => {
 };
 
 export default {
-  createSubreddit,
   checkSubreddit,
 };
