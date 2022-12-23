@@ -77,27 +77,27 @@ describe("Testing message service functions", () => {
     }).save();
 
     privateSubreddit = await new Subreddit({
-        title: "privateSubreddit",
-        viewName: "privateSubreddit",
-        category: "Art",
-        type: "Public",
-        nsfw: false,
-        owner: {
-          username: "Noaman",
-          userID: userOne.Id,
+      title: "privateSubreddit",
+      viewName: "privateSubreddit",
+      category: "Art",
+      type: "Public",
+      nsfw: false,
+      owner: {
+        username: "Noaman",
+        userID: userOne.Id,
+      },
+      moderators: [
+        {
+          userId: userOne._id,
+          dateOfModeration: Date.now(),
         },
-        moderators:[
-            {
-                userId:userOne._id,
-                dateOfModeration: Date.now(),
-            }
-        ],
-        dateOfCreation: Date.now(),
-        subredditSettings: {
-          sendWelcomeMessage: true,
-          welcomeMessage: "ahlann w sahlan",
-        },
-      }).save();
+      ],
+      dateOfCreation: Date.now(),
+      subredditSettings: {
+        sendWelcomeMessage: true,
+        welcomeMessage: "ahlann w sahlan",
+      },
+    }).save();
 
     postTwo = await new Post({
       title: "Noaman post2",
@@ -105,8 +105,8 @@ describe("Testing message service functions", () => {
       ownerId: userOne.id,
       createdAt: Date.now(),
       usersCommented: [userOne.id],
-      subredditName:"privateSubreddit",
-      subredditId:privateSubreddit._id,
+      subredditName: "privateSubreddit",
+      subredditId: privateSubreddit._id,
     }).save();
 
     commentTwo = await new Comment({
@@ -354,10 +354,10 @@ describe("Testing message service functions", () => {
       expect(e.message).toEqual("This Comment is already spammed");
     }
   });
-    //-------------------------------------------------------------------------------------------------------
-    it("should have isUserMod function", () => {
-        expect(isUserMod).toBeDefined();
-      });
+  //-------------------------------------------------------------------------------------------------------
+  it("should have isUserMod function", () => {
+    expect(isUserMod).toBeDefined();
+  });
   //-------------------------------------------------------------------------------------------------------
   it("should have unmarkCommentAsSpam function", () => {
     expect(unmarkCommentAsSpam).toBeDefined();
@@ -630,7 +630,4 @@ describe("Testing message service functions", () => {
       expect(e.message).toEqual("This comment isn't found");
     }
   });
-
-
-
 });

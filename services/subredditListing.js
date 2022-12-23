@@ -168,7 +168,6 @@ export async function twoRandomCategories(user, isLoggedIn) {
     };
     childrenTwo.push(subredditData);
   }
-
   return {
     statusCode: 200,
     data: {
