@@ -3,6 +3,7 @@ import {
   getSubredditInvitedModerators,
   getSubredditApproved,
   getSubredditMuted,
+  getModeratedSubredditsService,
 } from "../../services/subredditModerationServices.js";
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "../../models/User.js";
@@ -2188,6 +2189,110 @@ describe("Testing subredditModerationServices", () => {
       expect(mutedUsers.children.length).toBe(2);
       await Subreddit.deleteMany({});
       await User.deleteMany({});
+    });
+  });
+
+  describe("Testing getModeratedSubredditsService", () => {
+    it("Get moderated subreddits", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject1 = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+      }).save();
+      const subredditObject2 = await new Subreddit({
+        title: "title2",
+        viewName: "title2",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+      }).save();
+      const subredditObject4 = await new Subreddit({
+        title: "title2",
+        viewName: "title2",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        deletedAt: Date.now(),
+      }).save();
+
+      user.moderatedSubreddits.push({
+        subredditId: subredditObject1._id,
+        name: subredditObject1.title,
+      });
+      user.moderatedSubreddits.push({
+        subredditId: subredditObject4._id,
+        name: subredditObject4.title,
+      });
+      user.moderatedSubreddits.push({
+        subredditId: subredditObject2._id,
+        name: subredditObject2.title,
+      });
+      user.favoritesSubreddits.push({
+        subredditId: subredditObject2._id,
+        name: subredditObject2.title,
+      });
+      await user.save();
+      const moderatedSubreddits = await getModeratedSubredditsService(
+        user._id.toString()
+      );
+
+      expect(moderatedSubreddits.length).toBe(2);
+    });
+    it("Get moderated subreddits deleted user", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject1 = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+      }).save();
+      const subredditObject2 = await new Subreddit({
+        title: "title2",
+        viewName: "title2",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+      }).save();
+
+      user.moderatedSubreddits.push({
+        subredditId: subredditObject1._id,
+        name: subredditObject1.title,
+      });
+      user.moderatedSubreddits.push({
+        subredditId: subredditObject2._id,
+        name: subredditObject2.title,
+      });
+      user.favoritesSubreddits.push({
+        subredditId: subredditObject2._id,
+        name: subredditObject2.title,
+      });
+      await user.save();
+      const id = user._id;
+      await user.delete();
+
+      await expect(getModeratedSubredditsService(id)).rejects.toThrow(
+        "User not found"
+      );
     });
   });
 });
