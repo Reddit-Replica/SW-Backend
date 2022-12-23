@@ -86,4 +86,12 @@ describe("Testing checkDuplicateUsernameOrEmail middleware", () => {
     );
     expect(nextFunction).toHaveBeenCalled();
   });
+
+  it("try to let checkDuplicateUsernameOrEmail throw an error", async () => {
+    try {
+      await checkDuplicateUsernameOrEmail({}, mockResponse, nextFunction);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
 });

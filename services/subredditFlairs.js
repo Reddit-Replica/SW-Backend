@@ -37,7 +37,7 @@ export function validateCreateOrEditFlair(req) {
  * @param {Object} req Request object
  * @returns {void}
  */
-function validateFlairType(flairType) {
+export function validateFlairType(flairType) {
   if (
     flairType !== "Text and emojis" &&
     flairType !== "Text only" &&

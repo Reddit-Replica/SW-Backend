@@ -17,6 +17,8 @@ describe("Testing comment services functions", () => {
   let user = {},
     loggedInUser = {},
     subreddit = {},
+    privateSubreddit = {},
+    privatePost = {},
     post = {},
     post1 = {},
     post2 = {},
@@ -73,6 +75,16 @@ describe("Testing comment services functions", () => {
     });
     await post2.save();
 
+    privatePost = new Post({
+      title: "Private post",
+      ownerUsername: user.username,
+      ownerId: user._id,
+      kind: "hybrid",
+      subredditName: "privateSR",
+      createdAt: Date.now(),
+    });
+    await privatePost.save();
+
     subreddit = new Subreddit({
       type: "public",
       title: "subreddit",
@@ -85,6 +97,25 @@ describe("Testing comment services functions", () => {
       createdAt: Date.now(),
     });
     await subreddit.save();
+
+    privateSubreddit = new Subreddit({
+      type: "Private",
+      title: "privateSR",
+      category: "fun",
+      viewName: "LOL",
+      owner: {
+        username: user.username,
+        userID: user._id,
+      },
+      approvedUsers: [
+        {
+          userID: user._id,
+          dateOfApprove: Date.now(),
+        },
+      ],
+      createdAt: Date.now(),
+    });
+    await privateSubreddit.save();
 
     firstLevelComment1 = new Comment({
       parentId: post1._id,
@@ -163,6 +194,9 @@ describe("Testing comment services functions", () => {
       createdAt: Date.now(),
     });
     await secondLevelComment3.save();
+
+    user.commentedPosts.push(post1._id);
+    await user.save();
   });
   afterAll(async () => {
     await User.deleteMany({});
@@ -189,6 +223,18 @@ describe("Testing comment services functions", () => {
     expect(result.title).toEqual("First post");
   });
 
+  it("try to use checkPostId function with deleted post id", async () => {
+    try {
+      post1.deletedAt = Date.now();
+      await post1.save();
+      await checkPostId(post1._id);
+    } catch (error) {
+      expect(error).toBeDefined();
+      post1.deletedAt = null;
+      await post1.save();
+    }
+  });
+
   it("should have checkCommentId function", () => {
     expect(checkCommentId).toBeDefined();
   });
@@ -204,6 +250,18 @@ describe("Testing comment services functions", () => {
   it("try to use checkCommentId function with valid comment id", async () => {
     const result = await checkCommentId(firstLevelComment1._id);
     expect(result.content).toEqual({ text: "Comment 1" });
+  });
+
+  it("try to use checkCommentId function with deleted comment id", async () => {
+    try {
+      firstLevelComment1.deletedAt = Date.now();
+      await firstLevelComment1.save();
+      await checkCommentId(firstLevelComment1._id);
+    } catch (error) {
+      expect(error).toBeDefined();
+      firstLevelComment1.deletedAt = null;
+      await firstLevelComment1.save();
+    }
   });
 
   it("should have checkloggedInUser function", () => {
@@ -288,6 +346,30 @@ describe("Testing comment services functions", () => {
       );
     } catch (error) {
       expect(error).toBeDefined();
+    }
+  });
+  it("try to create comment with a user that does not exist", async () => {
+    try {
+      user.deletedAt = Date.now();
+      await user.save();
+
+      await createCommentService(
+        {
+          content: { text: "Comment for testing" },
+          parentId: post1._id,
+          postId: post1._id,
+          parentType: "post",
+          level: 1,
+          haveSubreddit: false,
+          username: user.username,
+          userId: user._id,
+        },
+        post1
+      );
+    } catch (error) {
+      expect(error).toBeDefined();
+      user.deletedAt = null;
+      await user.save();
     }
   });
 
@@ -401,6 +483,76 @@ describe("Testing comment services functions", () => {
     );
     expect(result.statusCode).toEqual(201);
     await Comment.deleteOne({ content: { text: "Comment for testing" } });
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to create comment to post in a deleted subreddit", async () => {
+    try {
+      subreddit.deletedAt = Date.now();
+      await subreddit.save();
+
+      await createCommentService(
+        {
+          content: { text: "Comment for testing" },
+          parentId: post1._id,
+          postId: post1._id,
+          parentType: "post",
+          level: 1,
+          haveSubreddit: true,
+          subredditName: "subreddit",
+          username: user.username,
+          userId: user._id,
+        },
+        post1
+      );
+    } catch (error) {
+      expect(error).toBeDefined();
+      subreddit.deletedAt = null;
+      await subreddit.save();
+    }
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to create comment without subreddit to post with subreddit", async () => {
+    try {
+      await createCommentService(
+        {
+          content: { text: "Comment for testing" },
+          parentId: post1._id,
+          postId: post1._id,
+          parentType: "post",
+          level: 1,
+          haveSubreddit: false,
+          username: user.username,
+          userId: user._id,
+        },
+        post1
+      );
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to create comment to private subreddit", async () => {
+    try {
+      await createCommentService(
+        {
+          content: { text: "Comment for testing" },
+          parentId: privatePost._id,
+          postId: privatePost._id,
+          parentType: "post",
+          level: 1,
+          haveSubreddit: true,
+          subredditName: "privateSR",
+          username: loggedInUser.username,
+          userId: loggedInUser._id,
+        },
+        privatePost
+      );
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
   });
 
   // eslint-disable-next-line max-len
