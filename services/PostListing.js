@@ -4,6 +4,18 @@ import User from "../models/User.js";
 import Post from "../models/Post.js";
 import { prepareLimit } from "../utils/prepareLimit.js";
 
+/**
+ * This function is list the posts of the home page to the users
+ * it takes different type of sorting and depending on it, it sort the posts and filter them then limit them with the needed limit
+ * it gives a priority to the posts of the joined subreddits and the followed users
+ * then it adds the needed posts to fulfill the limit from extra random posts but they are sorted with the type
+ * @param {Object} user user object that we will get the posts to
+ * @param {Object} listingParams parameters like after , before ,limit that decides from where to start and where to end
+ * @param {String} typeOfSorting describes it we want to sort by hot best new trending and top
+ * @param {Boolean} isLoggedIn indicates if the user is logged in or not
+ * @returns {Object} object that contains posts and after and before values that will be used in the next operation
+ */
+
 export async function homePostsListing(
   user,
   listingParams,
@@ -219,6 +231,14 @@ export async function homePostsListing(
     },
   };
 }
+/**
+ * This function is used to prepare filtering to our posts depending on the type of sorting and after and before values
+ * it chooses how much we will skip to get our next posts and the limit that we will take
+ * then it adds the needed posts to fulfill the limit from extra random posts but they are sorted with the type
+ * @param {Object} listingParams parameters like after , before ,limit that decides from where to start and where to end
+ * @param {String} typeOfSorting describes it we want to sort by hot best new trending and top
+ * @returns {Object} object that contains skip limit sort values that we will use to get our posts
+ */
 
 export async function prepareFiltering(typeOfSorting, listingParams) {
   const result = {};
