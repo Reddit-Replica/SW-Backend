@@ -2,6 +2,7 @@ import {
   getSubredditModerators,
   getSubredditInvitedModerators,
   getSubredditApproved,
+  getSubredditMuted,
 } from "../../services/subredditModerationServices.js";
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "../../models/User.js";
@@ -1644,6 +1645,547 @@ describe("Testing subredditModerationServices", () => {
         subredditObject
       );
       expect(approvedUsers.children.length).toBe(2);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+  });
+  describe("Testing getSubredditMuted", () => {
+    it("Setting after and before", async () => {
+      await expect(
+        getSubredditMuted(2, true, true, { populate: () => {} })
+      ).rejects.toThrow("Can't set before and after");
+    });
+    it("Didn't set neither after nor before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      const mutedUsers = await getSubredditMuted(
+        2,
+        false,
+        false,
+        subredditObject
+      );
+      expect(mutedUsers.children.length).toBe(1);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Didn't set neither after nor before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      const mutedUsers = await getSubredditMuted(
+        0,
+        false,
+        false,
+        subredditObject
+      );
+      expect(mutedUsers.children.length).toBe(1);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      const mutedUsers = await getSubredditMuted(
+        2,
+        user._id.toString(),
+        false,
+        subredditObject
+      );
+      expect(mutedUsers.children.length).toBe(0);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set after", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      const mutedUsers = await getSubredditMuted(
+        0,
+        false,
+        user._id.toString(),
+        subredditObject
+      );
+      expect(mutedUsers.children.length).toBe(0);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Invalid modetaor id after", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad2",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      await expect(
+        getSubredditMuted(0, false, user2._id.toString(), subredditObject)
+      ).rejects.toThrow("invalid muted user id");
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Invalid modetaor id before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad2",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      await expect(
+        getSubredditMuted(0, user2._id.toString(), false, subredditObject)
+      ).rejects.toThrow("invalid muted user  id");
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set after", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      const mutedUsers = await getSubredditMuted(
+        1,
+        false,
+        user._id.toString(),
+        subredditObject
+      );
+      expect(mutedUsers.children.length).toBe(1);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set nothing", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      const mutedUsers = await getSubredditMuted(
+        1,
+        false,
+        false,
+        subredditObject
+      );
+      expect(mutedUsers.children.length).toBe(1);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set after", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user4 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user4._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      const mutedUsers = await getSubredditMuted(
+        1,
+        false,
+        user._id.toString(),
+        subredditObject
+      );
+      expect(mutedUsers.children.length).toBe(1);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user4 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user4._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      const mutedUsers = await getSubredditMuted(
+        1,
+        user._id.toString(),
+        false,
+        subredditObject
+      );
+      expect(mutedUsers.children.length).toBe(0);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user4 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user4._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      const mutedUsers = await getSubredditMuted(
+        1,
+        user2._id.toString(),
+        false,
+        subredditObject
+      );
+      expect(mutedUsers.children.length).toBe(1);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      const mutedUsers = await getSubredditMuted(
+        2,
+        user3._id.toString(),
+        false,
+        subredditObject
+      );
+      expect(mutedUsers.children.length).toBe(2);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user4 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        mutedUsers: [
+          {
+            userID: user._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfMute: Date.now(),
+          },
+          {
+            userID: user4._id,
+            dateOfMute: Date.now(),
+          },
+        ],
+      }).save();
+      const mutedUsers = await getSubredditMuted(
+        2,
+        user4._id.toString(),
+        false,
+        subredditObject
+      );
+      expect(mutedUsers.children.length).toBe(2);
       await Subreddit.deleteMany({});
       await User.deleteMany({});
     });
