@@ -4,6 +4,7 @@ import {
   getSubredditApproved,
   getSubredditMuted,
   getModeratedSubredditsService,
+  getJoinedSubredditsService,
 } from "../../services/subredditModerationServices.js";
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "../../models/User.js";
@@ -2291,6 +2292,110 @@ describe("Testing subredditModerationServices", () => {
       await user.delete();
 
       await expect(getModeratedSubredditsService(id)).rejects.toThrow(
+        "User not found"
+      );
+    });
+  });
+
+  describe("Testing getJoinedSubredditsService", () => {
+    it("Get moderated subreddits", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject1 = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+      }).save();
+      const subredditObject2 = await new Subreddit({
+        title: "title2",
+        viewName: "title2",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+      }).save();
+      const subredditObject4 = await new Subreddit({
+        title: "title2",
+        viewName: "title2",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        deletedAt: Date.now(),
+      }).save();
+
+      user.joinedSubreddits.push({
+        subredditId: subredditObject1._id,
+        name: subredditObject1.title,
+      });
+      user.joinedSubreddits.push({
+        subredditId: subredditObject4._id,
+        name: subredditObject4.title,
+      });
+      user.joinedSubreddits.push({
+        subredditId: subredditObject2._id,
+        name: subredditObject2.title,
+      });
+      user.favoritesSubreddits.push({
+        subredditId: subredditObject2._id,
+        name: subredditObject2.title,
+      });
+      await user.save();
+      const joinedSubreddits = await getJoinedSubredditsService(
+        user._id.toString()
+      );
+
+      expect(joinedSubreddits.length).toBe(2);
+    });
+    it("Get moderated subreddits deleted user", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject1 = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+      }).save();
+      const subredditObject2 = await new Subreddit({
+        title: "title2",
+        viewName: "title2",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+      }).save();
+
+      user.joinedSubreddits.push({
+        subredditId: subredditObject1._id,
+        name: subredditObject1.title,
+      });
+      user.joinedSubreddits.push({
+        subredditId: subredditObject2._id,
+        name: subredditObject2.title,
+      });
+      user.favoritesSubreddits.push({
+        subredditId: subredditObject2._id,
+        name: subredditObject2.title,
+      });
+      await user.save();
+      const id = user._id;
+      await user.delete();
+
+      await expect(getJoinedSubredditsService(id)).rejects.toThrow(
         "User not found"
       );
     });
