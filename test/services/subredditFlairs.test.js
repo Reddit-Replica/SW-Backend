@@ -228,7 +228,7 @@ describe("Testing subreddit flairs services", () => {
   });
 
   describe("Testing validate id ", () => {
-    it("Valid it", () => {
+    it("Valid id", () => {
       expect(() => {
         validateId("63a369a66b86de91f5534d3f");
       }).not.toThrowError();
