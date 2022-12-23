@@ -73,6 +73,7 @@ describe("Testing user services functions", () => {
   });
   afterAll(async () => {
     await User.deleteMany({});
+    await Post.deleteMany({});
     await Subreddit.deleteMany({});
     await closeDatabaseConnection();
   });
