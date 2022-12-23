@@ -56,10 +56,22 @@ describe("Testing user services functions", () => {
     });
     await subreddit.save();
 
+    mainUser.moderatedSubreddits.push({
+      subredditId: subreddit._id,
+      name: subreddit.title,
+    });
+    await mainUser.save();
+
     userToAction = new User({
       username: "UserToAction",
       email: "haha@gmail.com",
       createdAt: Date.now(),
+      joinedSubreddits: [
+        {
+          subredditId: subreddit._id,
+          name: subreddit.title,
+        },
+      ],
     });
     await userToAction.save();
 
