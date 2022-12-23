@@ -27,7 +27,8 @@ describe("Testing subreddit flairs services", () => {
     await connectDatabase();
   });
 
-  afterAll(() => {
+  afterAll(async () => {
+    await Flair.deleteMany({});
     closeDatabaseConnection();
   });
   describe("testing validateCreateOrEditFlair method", () => {

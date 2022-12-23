@@ -6,6 +6,7 @@ import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "../../models/User.js";
 import Post from "../../models/Post.js";
 import Subreddit from "../../models/Community.js";
+import Notification from "../../models/Notification.js";
 import { jest } from "@jest/globals";
 describe("Testing postServices file", () => {
   beforeAll(async () => {
@@ -15,6 +16,7 @@ describe("Testing postServices file", () => {
     await User.deleteMany({});
     await Post.deleteMany({});
     await Subreddit.deleteMany({});
+    await Notification.deleteMany({});
     closeDatabaseConnection();
   });
   describe("Testing checkSameUserEditing function", () => {
