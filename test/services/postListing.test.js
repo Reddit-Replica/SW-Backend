@@ -22,6 +22,9 @@ describe("Testing subreddit service functions", () => {
     subredditOne = {};
   beforeAll(async () => {
     await connectDatabase();
+    await User.deleteMany({});
+    await Subreddit.deleteMany({});
+    await Post.deleteMany({});
 
     userOne = await new User({
       username: "Noaman",
