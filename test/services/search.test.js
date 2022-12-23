@@ -125,7 +125,7 @@ describe("Testing Search Service functions", () => {
       ownerUsername: user1.username,
       subredditName: "subreddit1",
       numberOfVotes: 4,
-      createdAt: Date.now() + 10,
+      createdAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
     });
     await comment2.save();
 
@@ -138,7 +138,7 @@ describe("Testing Search Service functions", () => {
       ownerId: user1._id,
       ownerUsername: user1.username,
       numberOfVotes: 4,
-      createdAt: Date.now() + 20,
+      createdAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
     });
     await comment3.save();
 

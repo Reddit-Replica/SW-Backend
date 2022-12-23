@@ -206,10 +206,12 @@ describe("Testing Login middleware", () => {
   });
 
   it("Test verifyUsernameAndEmail with an incorrect username", async () => {
+    user1.deletedAt = undefined;
+    await user1.save();
     mockRequest = {
       body: {
         username: "invalidUsername",
-        email: "abdelrahman@gmail.com",
+        email: user1.email,
       },
     };
     await verifyUsernameAndEmail(mockRequest, mockResponse, nextFunction);
@@ -305,11 +307,23 @@ describe("Testing Login middleware", () => {
     expect(verifyResetToken).toBeDefined();
   });
 
+  it("Test verifyResetToken with a server error", async () => {
+    mockRequest = {
+      params: {
+        token: "invalidToken",
+      },
+    };
+    await verifyResetToken(mockRequest, mockResponse, nextFunction);
+    expect(nextFunction).not.toHaveBeenCalled();
+    expect(mockRequest.token).toBeUndefined();
+  });
+
   it("Test verifyResetToken with an invaid token", async () => {
     mockRequest = {
       params: {
         token: "invalidToken",
       },
+      user: user1,
     };
     await verifyResetToken(mockRequest, mockResponse, nextFunction);
     expect(nextFunction).not.toHaveBeenCalled();

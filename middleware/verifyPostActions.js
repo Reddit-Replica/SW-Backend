@@ -45,7 +45,9 @@ export async function verifyPostActions(req, res, next) {
 
 /**
  * Middleware used to check the user seeing the post insights is the
- * owner or mod of the post subreddit.
+ * owner or mod of the post subreddit. If it's not a subreddit post, then
+ * the logged in user has to be the owner of the post or else an error response
+ * is returned
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
