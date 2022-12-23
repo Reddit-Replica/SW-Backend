@@ -23,6 +23,10 @@ describe("Testing Search in Subreddit Service functions", () => {
   // eslint-disable-next-line max-statements
   beforeAll(async () => {
     await connectDatabase();
+    await User.deleteMany({});
+    await Comment.deleteMany({});
+    await Subreddit.deleteMany({});
+    await Post.deleteMany({});
 
     user = await new User({
       username: "hamdy",
