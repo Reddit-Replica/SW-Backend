@@ -555,4 +555,555 @@ describe("Testing subredditModerationServices", () => {
       await User.deleteMany({});
     });
   });
+  describe("Testing getSubredditInvitedModerators", () => {
+    it("Setting after and before", async () => {
+      await expect(
+        getSubredditInvitedModerators(2, true, true, { populate: () => {} })
+      ).rejects.toThrow("Can't set before and after");
+    });
+    it("Didn't set neither after nor before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      const invitedModerators = await getSubredditInvitedModerators(
+        2,
+        false,
+        false,
+        subredditObject
+      );
+      expect(invitedModerators.children.length).toBe(1);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Didn't set neither after nor before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      const invitedModerators = await getSubredditInvitedModerators(
+        0,
+        false,
+        false,
+        subredditObject
+      );
+      expect(invitedModerators.children.length).toBe(1);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      const invitedModerators = await getSubredditInvitedModerators(
+        2,
+        user._id.toString(),
+        false,
+        subredditObject
+      );
+      expect(invitedModerators.children.length).toBe(0);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set after", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      const invitedModerators = await getSubredditInvitedModerators(
+        0,
+        false,
+        user._id.toString(),
+        subredditObject
+      );
+      expect(invitedModerators.children.length).toBe(0);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Invalid modetaor id after", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad2",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      await expect(
+        getSubredditInvitedModerators(
+          0,
+          false,
+          user2._id.toString(),
+          subredditObject
+        )
+      ).rejects.toThrow("invalid moderator id");
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Invalid modetaor id before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad2",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      await expect(
+        getSubredditInvitedModerators(
+          0,
+          user2._id.toString(),
+          false,
+          subredditObject
+        )
+      ).rejects.toThrow("invalid moderator id");
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set after", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      const invitedModerators = await getSubredditInvitedModerators(
+        1,
+        false,
+        user._id.toString(),
+        subredditObject
+      );
+      expect(invitedModerators.children.length).toBe(1);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set nothing", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      const invitedModerators = await getSubredditInvitedModerators(
+        1,
+        false,
+        false,
+        subredditObject
+      );
+      expect(invitedModerators.children.length).toBe(1);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set after", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user4 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user4._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      const invitedModerators = await getSubredditInvitedModerators(
+        1,
+        false,
+        user._id.toString(),
+        subredditObject
+      );
+      expect(invitedModerators.children.length).toBe(1);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user4 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user4._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      const invitedModerators = await getSubredditInvitedModerators(
+        1,
+        user._id.toString(),
+        false,
+        subredditObject
+      );
+      expect(invitedModerators.children.length).toBe(0);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user4 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user4._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      const invitedModerators = await getSubredditInvitedModerators(
+        1,
+        user2._id.toString(),
+        false,
+        subredditObject
+      );
+      expect(invitedModerators.children.length).toBe(1);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      const invitedModerators = await getSubredditInvitedModerators(
+        2,
+        user3._id.toString(),
+        false,
+        subredditObject
+      );
+      expect(invitedModerators.children.length).toBe(2);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+    it("Set before", async () => {
+      const user = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user2 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user3 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const user4 = await new User({
+        username: "zeyad",
+        createdAt: Date.now(),
+      }).save();
+      const subredditObject = await new Subreddit({
+        title: "title",
+        viewName: "title",
+        category: "Sports",
+        type: "Public",
+        owner: {
+          username: "zeyad",
+        },
+        invitedModerators: [
+          {
+            userID: user._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user2._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user3._id,
+            dateOfInvitation: Date.now(),
+          },
+          {
+            userID: user4._id,
+            dateOfInvitation: Date.now(),
+          },
+        ],
+      }).save();
+      const invitedModerators = await getSubredditInvitedModerators(
+        2,
+        user4._id.toString(),
+        false,
+        subredditObject
+      );
+      expect(invitedModerators.children.length).toBe(2);
+      await Subreddit.deleteMany({});
+      await User.deleteMany({});
+    });
+  });
 });
