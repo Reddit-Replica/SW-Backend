@@ -38,7 +38,7 @@ import Comment from "./../../models/Comment.js";
 import Subreddit from "../../models/Community.js";
 
 // eslint-disable-next-line max-statements
-describe("Testing message service functions", () => {
+describe("Testing post actions functions", () => {
   let userOne = {},
     userTwo = {},
     userThree = {},

@@ -12,7 +12,7 @@ import { hashPassword } from "../../utils/passwordUtils.js";
 import { checkModerator } from "../../middleware/NverifyModerator.js";
 
 // eslint-disable-next-line max-statements
-describe("Testing Login middleware", () => {
+describe("Testing verify moderator middleware", () => {
   let mockRequest;
   let mockResponse;
   let nextFunction;

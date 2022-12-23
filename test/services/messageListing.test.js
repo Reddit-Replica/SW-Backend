@@ -23,7 +23,7 @@ import {
 } from "../../services/messageServices.js";
 
 // eslint-disable-next-line max-statements
-describe("Testing subreddit service functions", () => {
+describe("Testing message listing functions", () => {
   let userOne = {},
     userTwo = {},
     userThree = {},

@@ -11,7 +11,7 @@ import crypto from "crypto";
 import { hashPassword } from "../../utils/passwordUtils.js";
 
 // eslint-disable-next-line max-statements
-describe("Testing Login middleware", () => {
+describe("Testing Joining validation middleware", () => {
   let mockRequest;
   let mockResponse;
   let nextFunction;

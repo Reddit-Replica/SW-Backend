@@ -11,7 +11,7 @@ import Subreddit from "../../models/Community.js";
 import Post from "../../models/Post.js";
 
 // eslint-disable-next-line max-statements
-describe("Testing subreddit service functions", () => {
+describe("Testing post listing functions", () => {
   let userOne = {},
     userTwo = {},
     userThree = {},
@@ -22,6 +22,9 @@ describe("Testing subreddit service functions", () => {
     subredditOne = {};
   beforeAll(async () => {
     await connectDatabase();
+    await User.deleteMany({});
+    await Subreddit.deleteMany({});
+    await Post.deleteMany({});
 
     userOne = await new User({
       username: "Noaman",

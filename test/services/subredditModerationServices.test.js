@@ -4,7 +4,7 @@ import Subreddit from "./../../models/Community.js";
 import { getTrafficService } from "../../services/subredditModerationServices";
 
 // eslint-disable-next-line max-statements
-describe("Testing subreddit actions services functions", () => {
+describe("Testing subreddit moderation actions services functions", () => {
   let owner = {},
     normalUser1 = {},
     normalUser2 = {},
