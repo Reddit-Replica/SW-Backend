@@ -27,12 +27,16 @@ import Category from "./../../models/Category.js";
 describe("Testing community service functions", () => {
   let normalUser = {},
     subreddit = {},
+    owner = {},
     moderatorUser = {},
+    leftUser = {},
+    approvedUser = {},
+    waitedUser = {},
     subredditToJoin = {},
     privateSubreddit = {},
     publicSubreddit = {},
     subredditForNu3mn = {},
-    user={};
+    user = {};
   beforeAll(async () => {
     await connectDatabase();
 
@@ -48,9 +52,33 @@ describe("Testing community service functions", () => {
       createdAt: Date.now(),
     }).save();
 
+    owner = await new User({
+      username: "owner",
+      email: "beshoy@gmail.com",
+      createdAt: Date.now(),
+    }).save();
+
     moderatorUser = await new User({
       username: "Moderator",
       email: "Abelrahman@gmail.com",
+      createdAt: Date.now(),
+    }).save();
+
+    waitedUser = await new User({
+      username: "waitedUser",
+      email: "waitedUser@gmail.com",
+      createdAt: Date.now(),
+    }).save();
+
+    approvedUser = await new User({
+      username: "approvedUser",
+      email: "approvedUser@gmail.com",
+      createdAt: Date.now(),
+    }).save();
+
+    leftUser = await new User({
+      username: "leftUser",
+      email: "leftUser@gmail.com",
       createdAt: Date.now(),
     }).save();
 
@@ -128,9 +156,47 @@ describe("Testing community service functions", () => {
       type: "Public",
       nsfw: false,
       owner: {
-        username: moderatorUser.username,
-        userID: moderatorUser._id,
+        username: owner.username,
+        userID: owner._id,
       },
+      moderators: [
+        {
+          userID: moderatorUser._id,
+          dateOfModeration: Date.now(),
+        },
+      ],
+      leftUsers: [
+        {
+          userId: leftUser._id,
+          leaveDate: Date.now(),
+        },
+      ],
+      waitedUsers: [
+        {
+          username: waitedUser.username,
+          userID: waitedUser._id,
+        },
+      ],
+      approvedUsers: [
+        {
+          userID: approvedUser._id,
+          dateOfApprove: Date.now(),
+        },
+      ],
+      joinedUsers: [
+        {
+          userId: approvedUser._id,
+          joinDate: Date.now(),
+        },
+        {
+          userId: waitedUser._id,
+          joinDate: Date.now(),
+        },
+        {
+          userId: leftUser._id,
+          joinDate: Date.now(),
+        },
+      ],
       dateOfCreation: Date.now(),
     }).save();
 
@@ -146,7 +212,7 @@ describe("Testing community service functions", () => {
       },
       moderators: [
         {
-          userId: normalUser._id,
+          userID: normalUser._id,
           dateOfModeration: Date.now(),
         },
       ],
@@ -472,6 +538,13 @@ describe("Testing community service functions", () => {
     expect(leaveSubredditService).toBeDefined();
   });
 
+  it("try to to let the owner leave the subreddit", async () => {
+    try {
+      await leaveSubredditService(owner, subredditToJoin);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
   it("try to to let the moderator leave the subreddit", async () => {
     try {
       await leaveSubredditService(moderatorUser, subredditToJoin);
@@ -498,9 +571,35 @@ describe("Testing community service functions", () => {
       name: subredditToJoin.title,
     });
     await userJoined.save();
+    subredditToJoin.joinedUsers.push({
+      joinDate: Date.now(),
+      userId: userJoined._id,
+    });
+    await subredditToJoin.save();
 
     const result = await leaveSubredditService(userJoined, subredditToJoin);
     expect(result.statusCode).toEqual(200);
+  });
+  it("try to let a user left again from the same subreddit", async () => {
+    try {
+      await leaveSubredditService(leftUser, subredditToJoin);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it("try to let a waited user leave a subreddit", async () => {
+    try {
+      await leaveSubredditService(waitedUser, subredditToJoin);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it("try to let an approved user leave a subreddit", async () => {
+    try {
+      await leaveSubredditService(approvedUser, subredditToJoin);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
   });
 
   it("should have makeSubredditFavorite function", () => {
@@ -696,10 +795,4 @@ describe("Testing community service functions", () => {
   it("should have searchForSubreddit function", () => {
     expect(searchForSubreddit).toBeDefined();
   });
-
-  it("should have leaveSubredditService function", () => {
-    expect(leaveSubredditService).toBeDefined();
-  });
-
-
 });
