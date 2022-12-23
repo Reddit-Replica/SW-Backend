@@ -11,7 +11,7 @@ import { faker } from "@faker-js/faker";
 import { categories } from "./categories.js";
 import Message from "../models/Message.js";
 const DB_URL = process.env.MONGO_URL_SEED.trim();
-
+import { hashPassword } from "../utils/passwordUtils.js";
 const USERS_NUMBER = 5;
 const POSTS_NUMBER = 200;
 const MESSAGES_NUMBER = 200;
@@ -38,6 +38,7 @@ function createRandomUser() {
     username: faker.internet.userName(),
     email: faker.internet.email(),
     createdAt: faker.date.past(),
+    password: hashPassword("12345678"),
   };
 }
 function createUsers() {
