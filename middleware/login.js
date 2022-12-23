@@ -102,7 +102,7 @@ export async function verifyUsernameAndEmail(req, res, next) {
 /**
  * Middleware used to generate a crypto token using the generateVerifyToken
  * utility function passing in the userId and the token type to be "forgetPassword".
- * The token returned is sent with the email, username and if of the user to the
+ * The token returned is sent with the email, username and id of the user to the
  * sendResetPasswordEmail function to send this user an email. It returns true if the
  * email is sent successfully and false otherwise. This boolean is passed with the request
  * to the controller to make a decision and return a response.
@@ -123,7 +123,7 @@ export async function ResetPasswordEmail(req, res, next) {
 }
 
 /**
- * Middleware used to verify if a user exists by it's id and pass this
+ * Middleware used to verify if a user exists by its id and pass this
  * user with the request if it exists, otherwise, returns a 403 error response
  * with a message
  *

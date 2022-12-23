@@ -7,7 +7,8 @@ import Subreddit from "../models/Community.js";
  * Middleware used to check if a thing (post/comment) and their subreddit
  * are not found (404). If they are, we check for the user requesting to
  * change mod settings of this thing if he is a moderator in the
- * subreddit containing this thing or not (401)
+ * subreddit containing this thing or not with the appropriate permissions
+ * for managing posts and comments in this subreddit (401)
  *
  * @param {Object} req Request object
  * @param {Object} res Response object

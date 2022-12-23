@@ -83,7 +83,8 @@ export async function setNewPassword(user, newPassword, confirmNewPassword) {
 
 /**
  * This function sets a new email for the user but first sends
- * a verification email
+ * a verification email and disables the verified email flag in the
+ * user settings
  * @param {object} user User object
  * @param {string} userId user ID
  * @param {string} toEmail New email to be verified
@@ -105,7 +106,8 @@ export async function setNewEmail(user, userId, toEmail) {
 }
 
 /**
- * A function used to check whether a social link exists or not
+ * A function used to check whether a social link exists or not or if there
+ * are no social links found for this user
  * @param {object} user User object
  * @param {string} type Social Link type
  * @param {string} displayText Display text in the link
@@ -173,7 +175,8 @@ export function deleteFile(pathToFile) {
 
 /**
  * This function gets the google email from the decoded access token
- * and checks if it's already found or not.
+ * and checks if it's already found or not. Then sets the googleEmail of
+ * the user with the email given in the token.
  * @param {object} user User object
  * @param {string} accessToken Google access token
  * @returns {void}
@@ -191,7 +194,8 @@ export function connectToGoogle(user, accessToken) {
 
 /**
  * This function gets the facebook email from the decoded access token
- * and checks if it's already found or not.
+ * and checks if it's already found or not. Then sets the facebookEmail of
+ * the user with the email given in the token.
  * @param {object} user User object
  * @param {string} accessToken Facebook access token
  * @returns {void}

@@ -4,7 +4,8 @@ import Mention from "../models/Mention.js";
 import PostReplies from "../models/PostReplies.js";
 
 /**
- * A function used to mark all username mentions of the user's collection as read
+ * A function used to mark all username mentions of the user's collection as read but
+ * first checks if the userId is found in the database.
  * @param {string} userId User ID
  * @returns {void}
  */
@@ -23,7 +24,8 @@ export async function readUsernameMentions(userId) {
 }
 
 /**
- * A function used to mark all post replies of the user's collection as read
+ * A function used to mark all post replies of the user's collection as read but
+ * first checks if the userId is found in the database.
  * @param {string} userId User ID
  * @returns {void}
  */
@@ -42,7 +44,8 @@ export async function readPostReplies(userId) {
 }
 
 /**
- * A function used to mark all received messages of the user's collection as read
+ * A function used to mark all received messages of the user's collection as read but
+ * first checks if the userId is found in the database.
  * @param {string} userId User ID
  * @returns {void}
  */

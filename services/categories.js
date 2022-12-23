@@ -56,7 +56,7 @@ export async function insertCategoriesIfNotExists() {
 /**
  * This function gets all the categories stored in the database and
  * sorts them ascendingly with the random index. Each category object is
- * then transformed into just an id and the name displayed.
+ * then transformed into just an id and the name displayed to be returned.
  *
  * @returns {Array} Array of category objects consisting of id and name
  */
@@ -74,9 +74,12 @@ export async function getSortedCategories() {
 
 /**
  * This function is used to get two random categories from the array of
- * Categories we have in read-it
+ * Categories we have in read-it. It returns an empty object in case there are
+ * no subreddits stored or that the count of total visited categories is zero.
+ * A visited category is one which has subreddits made out from it. If there is only
+ * one visited category then the first and second categories returned are the same.
  *
- * @returns {object} Object containing the two random categories together
+ * @returns {object} Object containing the two random categories together as strings
  */
 // eslint-disable-next-line max-statements
 export async function getTwoRandomCategories() {
@@ -113,10 +116,15 @@ export async function getTwoRandomCategories() {
 
 /**
  * This function gets random subreddits from two random categories
- * from, sets a limit for both and inserts them in an array with only the
- * title and number of members to be displayed
+ * that are obtained from the getTwoRandomCategories function. It then
+ * sets a limit for both (max 5) and inserts them in an array with only the
+ * title, numberOfMembers, subreddit picture, and an extra flag which indicates
+ * whether the logged in user is a member of this subreddit or not. The array is
+ * returned for the response in the controller. If both categories are the same then
+ * only the first object is returned and the second is set to undefined.
  *
- * @returns {Array} Array of objects containing random subreddits
+ * @returns {Object} An object containing both the first and second random subreddit info in
+ * a separate key.
  */
 // eslint-disable-next-line max-statements
 export async function getRandomSubreddits(loggedInUser) {
