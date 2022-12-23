@@ -55,7 +55,8 @@ export async function unsubscribeNotification(userId, type) {
  * @param {String} data the data of the notification
  * @returns {void}
  */
-async function sendNotification(user, title, data) {
+/* istanbul ignore next */
+export async function sendNotification(user, title, data) {
   const message = {
     notification: {
       title: title,
@@ -135,6 +136,7 @@ export async function createFollowUserNotification(
  * @param {Comment} comment The created comment
  * @returns {void}
  */
+/* istanbul ignore next */
 // eslint-disable-next-line max-statements
 export async function createCommentNotification(comment) {
   await comment.populate("parentId");

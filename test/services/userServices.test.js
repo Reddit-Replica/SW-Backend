@@ -10,6 +10,7 @@ import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
 import Subreddit from "./../../models/Community.js";
+import Notification from "../../models/Notification.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing user services functions", () => {
@@ -74,6 +75,7 @@ describe("Testing user services functions", () => {
   afterAll(async () => {
     await User.deleteMany({});
     await Subreddit.deleteMany({});
+    await Notification.deleteMany({});
     await closeDatabaseConnection();
   });
 
