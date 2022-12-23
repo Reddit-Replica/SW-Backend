@@ -9,7 +9,7 @@ import User from "../../models/User.js";
 import Post from "../../models/Post.js";
 
 // eslint-disable-next-line max-statements
-describe("Testing Login middleware", () => {
+describe("Testing Pinned posts middleware", () => {
   let mockRequest;
   let mockResponse;
   let nextFunction;

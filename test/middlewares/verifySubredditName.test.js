@@ -9,7 +9,7 @@ import { hashPassword } from "../../utils/passwordUtils.js";
 import { checkDuplicateSubredditTitle } from "../../middleware/NverifySubredditName.js";
 
 // eslint-disable-next-line max-statements
-describe("Testing Login middleware", () => {
+describe("Testing verifySubredditName middleware", () => {
   let mockRequest;
   let mockResponse;
   let nextFunction;

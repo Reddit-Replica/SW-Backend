@@ -17,7 +17,7 @@ import {prepareMessageBeforeAfter,prepareMentionBeforeAfter,mentionListing,postR
 import PostReplies from "../../models/PostReplies.js";
   
   // eslint-disable-next-line max-statements
-  describe("Testing prepare subreddit listing service functions", () => {
+  describe("Testing prepare message listing service functions", () => {
     let userOne = {},
     userTwo = {},
     userThree = {},

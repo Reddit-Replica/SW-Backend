@@ -5,7 +5,7 @@ import {
   getUserFollowedUsersService,
 } from "../../services/userServices.js";
 
-describe("Testing user services", () => {
+describe("Testing user details services", () => {
   beforeAll(async () => {
     await connectDatabase();
   });

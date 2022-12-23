@@ -4,7 +4,7 @@ import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
 
 // eslint-disable-next-line max-statements
-describe("Testing checkDuplicateUsernameOrEmail middleware", () => {
+describe("Testing verifySignUp middleware", () => {
   let mockRequest;
   let mockResponse;
   let nextFunction = jest.fn();

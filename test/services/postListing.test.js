@@ -11,7 +11,7 @@ import Subreddit from "../../models/Community.js";
 import Post from "../../models/Post.js";
 
 // eslint-disable-next-line max-statements
-describe("Testing subreddit service functions", () => {
+describe("Testing post listing functions", () => {
   let userOne = {},
     userTwo = {},
     userThree = {},

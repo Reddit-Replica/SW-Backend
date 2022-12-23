@@ -7,7 +7,7 @@ import Subreddit from "./../../models/Community.js";
 import mongoose from "mongoose";
 
 // eslint-disable-next-line max-statements
-describe("Testing verifyPostActions middleware", () => {
+describe("Testing verifyPostInsights middleware", () => {
   let mockRequest;
   let mockResponse;
   let nextFunction;
