@@ -39,19 +39,19 @@ describe("Testing User Listing Service functions", () => {
     user2 = await new User({
       username: "ahmed",
       email: "ahmed@gmail.com",
-      createdAt: Date.now(),
+      createdAt: Date.now() + 100,
     }).save();
 
     user3 = await new User({
       username: "mohamed",
       email: "mohamed@gmail.com",
-      createdAt: Date.now(),
+      createdAt: Date.now() + 200,
     }).save();
 
     user4 = await new User({
       username: "ziad",
       email: "ziad@gmail.com",
-      createdAt: Date.now(),
+      createdAt: Date.now() + 30,
     }).save();
 
     subreddit = await new Subreddit({
@@ -64,7 +64,7 @@ describe("Testing User Listing Service functions", () => {
         username: "hamdy",
         userID: user1.id,
       },
-      createdAt: Date.now(),
+      dateOfCreation: Date.now(),
     }).save();
 
     subreddit.bannedUsers.push(

@@ -5,6 +5,7 @@ import Flair from "../models/Flair.js";
 import { commentTreeListing } from "../utils/prepareCommentListing.js";
 import { postListing } from "../utils/preparePostListing.js";
 import mongoose from "mongoose";
+import { filterHiddenPosts } from "./search.js";
 
 /**
  * This function returns the subreddit's typeOfListing posts with a given
@@ -44,6 +45,7 @@ export async function listingSubredditPosts(
         sort: listingResult.sort,
       },
     });
+
   const mod = await User.findById(modId);
   if (!mod || mod.deletedAt) {
     return {
@@ -64,9 +66,6 @@ export async function listingSubredditPosts(
   if (listingParams.before && !listingParams.after) {
     start = result[typeOfListing].length - limit;
     finish = result[typeOfListing].length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
   let children = [];
@@ -198,9 +197,6 @@ export async function listingSubredditComments(
   if (listingParams.before && !listingParams.after) {
     start = result[typeOfListing].length - limit;
     finish = result[typeOfListing].length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -305,69 +301,6 @@ export async function checkSubredditFlair(subreddit, flairId) {
 }
 
 /**
- * This function fixes the sort according to it's type. It means that it includes
- * the parameter which is going to be used as a condition in the find key as an
- * "or equal" behaviour
- *
- * @param {object} listingResult Listing Result to be filtered
- * @param {string} listingParams Listing Parameters (after, before, sort, time)
- * @returns {object} New listing results
- */
-// eslint-disable-next-line max-statements
-export async function fixSort(listingResult, listingParams) {
-  if (listingResult.find.hotScore) {
-    const score = listingParams.after
-      ? { $lte: listingResult.find.hotScore["$lt"] }
-      : { $gte: listingResult.find.hotScore["$gt"] };
-    listingResult.find["$or"] = [
-      {
-        hotScore: listingResult.find.hotScore,
-      },
-      {
-        hotScore: score,
-      },
-    ];
-    delete listingResult.find.hotScore;
-  } else if (listingResult.find.numberOfVotes) {
-    const score = listingParams.after
-      ? { $lte: listingResult.find.numberOfVotes["$lt"] }
-      : { $gte: listingResult.find.numberOfVotes["$gt"] };
-    listingResult.find["$or"] = [
-      {
-        numberOfVotes: listingResult.find.numberOfVotes,
-      },
-      {
-        numberOfVotes: score,
-      },
-    ];
-    delete listingResult.find.numberOfVotes;
-  } else if (listingParams.sort === "trending") {
-    listingResult.sort = { numberOfViews: -1 };
-    if (listingParams.after || listingParams.before) {
-      const id = listingParams.after ?? listingParams.before;
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        const error = new Error("Invalid ID");
-        error.statusCode = 400;
-        throw error;
-      }
-      const post = await Post.findById(id);
-      if (!post) {
-        const error = new Error("Invalid ID");
-        error.statusCode = 400;
-        throw error;
-      }
-      if (listingParams.after) {
-        listingResult.find = { $lte: post.numberOfViews };
-      } else if (listingParams.before) {
-        listingResult.find = { $gte: post.numberOfViews };
-      }
-      delete listingResult.find.createdAt;
-    }
-  }
-  return listingResult;
-}
-
-/**
  * This function returns all the subreddit's posts with a certain limit
  * and either after or before to cut form. It can also filter according to
  * a given flair.
@@ -382,7 +315,6 @@ export async function fixSort(listingResult, listingParams) {
 export async function subredditHome(user, subredditName, flair, listingParams) {
   // Prepare Listing Parameters
   let listingResult = await postListing(listingParams);
-  listingResult = await fixSort(listingResult, listingParams);
 
   const subreddit = await Subreddit.findOne({ title: subredditName });
   if (!subreddit || subreddit.deletedAt) {
@@ -392,6 +324,9 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     };
   }
   listingResult.find["subredditName"] = subredditName;
+  listingResult.find["moderation.remove.removedBy"] = undefined;
+  listingResult.find["moderation.spam.spammedBy"] = undefined;
+  user && (listingResult.find["nsfw"] = user.userSettings.nsfw);
 
   if (flair) {
     listingResult.find["flair"] = flair.id;
@@ -411,6 +346,13 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     });
 
   let limit = listingResult.limit;
+
+  if (user) {
+    result["subredditPosts"] = filterHiddenPosts(
+      result["subredditPosts"],
+      user
+    );
+  }
 
   if (
     (!listingParams.after && listingParams.before) ||
@@ -445,9 +387,6 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
   if (listingParams.before && !listingParams.after) {
     start = result["subredditPosts"].length - limit;
     finish = result["subredditPosts"].length;
-    if (start < 0) {
-      start = 0;
-    }
   }
   let i = start;
 
@@ -460,15 +399,11 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     const postId = post.id.toString();
     let vote = 0,
       saved = false,
-      hidden = false,
       spammed = false,
       inYourSubreddit = false;
     if (user) {
       if (user.savedPosts?.find((id) => id.toString() === postId)) {
         saved = true;
-      }
-      if (user.hiddenPosts?.find((id) => id.toString() === postId)) {
-        hidden = true;
       }
       if (user.upvotedPosts?.find((id) => id.toString() === postId)) {
         vote = 1;
@@ -486,6 +421,7 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
     let postData = { id: result["subredditPosts"][i]._id.toString() };
     postData.data = {
       id: post.id.toString(),
+      kind: post.kind,
       subreddit: post.subredditName,
       postedBy: post.ownerUsername,
       title: post.title,
@@ -503,7 +439,6 @@ export async function subredditHome(user, subredditName, flair, listingParams) {
       sharePostId: post.sharePostId,
       sendReplies: post.sendReplies,
       saved: saved,
-      hidden: hidden,
       votingType: vote,
       moderation: post.moderation,
       markedSpam: post.markedSpam,

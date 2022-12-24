@@ -84,7 +84,7 @@ const signup = async (req, res) => {
     });
     await user.save();
 
-    const result = await finalizeCreateUser(user);
+    const result = await finalizeCreateUser(user, true);
     res.status(result.statusCode).json(result.body);
   } catch (err) {
     console.log(err);
@@ -166,20 +166,40 @@ const signinWithGoogleFacebook = async (req, res) => {
   try {
     const type = req.params.type.trim();
     if (type !== "google" && type !== "facebook") {
-      res.statu(400).json({ error: "Invalid type" });
+      res.status(400).json({ error: "Invalid type" });
     }
     // get the token and decode it
-    const decodedToken = jwtDecode(req.body.accessToken);
-    const email = decodedToken.email;
+    let decodedToken;
+    try {
+      decodedToken = jwtDecode(req.body.accessToken);
+    } catch (error) {
+      return res.status(400).json({ error: "Invalid token" });
+    }
 
     let user = null;
+    let email = "";
+    let sendEmail = false;
+    let verifiedEmail = false;
     let emailType = "googleEmail";
     if (type === "google") {
+      sendEmail = true;
+      email = decodedToken.email;
+
       // check if the email was used before then login
-      user = await User.findOne({ googleEmail: email, deletedAt: null });
+      user = await User.findOne({
+        googleEmail: email,
+        deletedAt: null,
+      });
     } else {
+      sendEmail = false;
+      verifiedEmail = true;
+      email = decodedToken["user_id"];
       emailType = "facebookEmail";
-      user = await User.findOne({ facebookEmail: email, deletedAt: null });
+
+      user = await User.findOne({
+        facebookEmail: email,
+        deletedAt: null,
+      });
     }
 
     if (user) {
@@ -201,9 +221,10 @@ const signinWithGoogleFacebook = async (req, res) => {
       createdAt: Date.now(),
     });
     newUser[emailType] = email;
+    newUser.userSettings.verifiedEmail = verifiedEmail;
     await newUser.save();
 
-    const result = await finalizeCreateUser(newUser);
+    const result = await finalizeCreateUser(newUser, sendEmail);
     res.status(result.statusCode).json(result.body);
   } catch (error) {
     console.log(error);

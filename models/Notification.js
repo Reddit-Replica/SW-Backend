@@ -7,6 +7,20 @@ const notificationSchema = mongoose.Schema({
     ref: "User",
     required: true,
   },
+  sendingUserId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  followingUsername: {
+    type: String,
+  },
+  postId: {
+    type: Schema.Types.ObjectId,
+  },
+  commentId: {
+    type: Schema.Types.ObjectId,
+  },
   type: {
     type: String,
     required: true,

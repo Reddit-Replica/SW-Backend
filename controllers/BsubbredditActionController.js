@@ -110,7 +110,7 @@ const banUser = async (req, res) => {
   try {
     const moderator = await getUserFromJWTService(req.payload.userId);
     const userToBan = await searchForUserService(req.body.username);
-    const subreddit = await getSubredditService(req.body.subreddit);
+    const subreddit = req.subreddit;
 
     const result = await banUserService(moderator, userToBan, subreddit, {
       banPeriod: req.body.banPeriod,
@@ -133,7 +133,7 @@ const unbanUser = async (req, res) => {
   try {
     const moderator = await getUserFromJWTService(req.payload.userId);
     const userToBan = await searchForUserService(req.body.username);
-    const subreddit = await getSubredditService(req.body.subreddit);
+    const subreddit = req.subreddit;
 
     const result = await unbanUserService(moderator, userToBan, subreddit);
     res.status(result.statusCode).json(result.message);
@@ -151,7 +151,7 @@ const inviteModerators = async (req, res) => {
   try {
     const moderator = await getUserFromJWTService(req.payload.userId);
     const userToInvite = await searchForUserService(req.body.username);
-    const subreddit = await getSubredditService(req.body.subreddit);
+    const subreddit = req.subreddit;
 
     const result = await inviteToModerateService(
       moderator,
@@ -181,7 +181,7 @@ const cancelInvitation = async (req, res) => {
   try {
     const moderator = await getUserFromJWTService(req.payload.userId);
     const invitedUser = await searchForUserService(req.body.username);
-    const subreddit = await getSubredditService(req.body.subreddit);
+    const subreddit = req.subreddit;
 
     const result = await cancelInvitationService(
       moderator,

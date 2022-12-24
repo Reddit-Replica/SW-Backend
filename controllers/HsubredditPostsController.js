@@ -26,6 +26,9 @@ const usernameValidator = [
 const getSpammedItems = async (req, res) => {
   try {
     let { sort, only, before, after, limit } = req.query;
+    if (!sort) {
+      sort = "new";
+    }
     let result;
     if (!only) {
       only = "posts";
@@ -60,6 +63,9 @@ const getSpammedItems = async (req, res) => {
 const getEditedItems = async (req, res) => {
   try {
     let { sort, only, before, after, limit } = req.query;
+    if (!sort) {
+      sort = "new";
+    }
     let result;
     if (!only) {
       only = "posts";
@@ -94,6 +100,9 @@ const getEditedItems = async (req, res) => {
 const getUnmoderatedPosts = async (req, res) => {
   try {
     const { sort, before, after, limit } = req.query;
+    if (!sort) {
+      sort = "new";
+    }
     let result;
     result = await listingSubredditPosts(
       req.payload.userId,
@@ -231,7 +240,7 @@ const approveUser = async (req, res) => {
   try {
     const subreddit = req.subreddit;
     const user = await getUserByUsername(req.body.username);
-    await addToApprovedUsers(subreddit, user);
+    await addToApprovedUsers(subreddit, user, req.payload);
     return res.status(200).json("User successfully approved");
   } catch (error) {
     console.log(error.message);

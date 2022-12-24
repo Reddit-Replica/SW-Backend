@@ -18,9 +18,6 @@ import {
   userInboxListing,
 } from "../services/messageListing.js";
 import { searchForUserService } from "../services/userServices.js";
-import { ConsoleReporter } from "jasmine";
-import Mention from "../models/Mention.js";
-import Message from "../models/Message.js";
 //CHECKING ON MESSAGE CONTENT
 const messageValidator = [
   body("text")
@@ -119,30 +116,17 @@ const getSentMsg = async (req, res) => {
   try {
     let { before, after, limit } = req.query;
     const user = await searchForUserService(req.payload.username);
-    if (!before && !after) {
-      for (const msgId of user.sentMessages) {
-        const msg = await Message.findById(msgId);
-        if (msg && !msg.deletedAt) {
-          before = msgId;
-          break;
-        }
-      }
-    }
-    if (!before && !after) {
-      res.status(200).json({ before: "", after: "", children: [] });
-    } else {
-      const result = await userMessageListing(
-        user,
-        "sentMessages",
-        {
-          before,
-          after,
-          limit,
-        },
-        false
-      );
-      res.status(result.statusCode).json(result.data);
-    }
+    const result = await userMessageListing(
+      user,
+      "sentMessages",
+      {
+        before,
+        after,
+        limit,
+      },
+      false
+    );
+    res.status(result.statusCode).json(result.data);
   } catch (error) {
     console.log(error);
     if (error.statusCode) {
@@ -157,31 +141,19 @@ const getUnreadMsg = async (req, res) => {
   try {
     let { before, after, limit } = req.query;
     const user = await searchForUserService(req.payload.username);
-    if (!before && !after) {
-      for (const msgId of user.receivedMessages) {
-        const msg = await Message.findById(msgId);
-        if (msg && !msg.deletedAt) {
-          before = msgId;
-          break;
-        }
-      }
-    }
-    if (!before && !after) {
-      res.status(200).json({ before: "", after: "", children: [] });
-    } else {
-      const result = await userMessageListing(
-        user,
-        "receivedMessages",
-        {
-          before,
-          after,
-          limit,
-        },
-        true
-      );
-      res.status(result.statusCode).json(result.data);
-    }
+    const result = await userMessageListing(
+      user,
+      "receivedMessages",
+      {
+        before,
+        after,
+        limit,
+      },
+      true
+    );
+    res.status(result.statusCode).json(result.data);
   } catch (error) {
+    console.log(error);
     if (error.statusCode) {
       res.status(error.statusCode).json({ error: error.message });
     } else {

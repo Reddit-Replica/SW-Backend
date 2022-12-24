@@ -119,8 +119,80 @@ export async function banUserService(moderator, userToBan, subreddit, data) {
       modNote: data.modNote,
       noteInclude: data.noteInclude,
     };
-
     subreddit.bannedUsers.push(bannedUser);
+    let decreaseMembers = false;
+
+    const invitedIndex = subreddit.invitedModerators.findIndex(
+      (elem) => elem.userID.toString() === userToBan._id.toString()
+    );
+    if (invitedIndex !== -1) {
+      subreddit.invitedModerators.splice(invitedIndex, 1);
+    }
+
+    const mutedIndex = subreddit.mutedUsers.findIndex(
+      (elem) => elem.userID.toString() === userToBan._id.toString()
+    );
+    if (mutedIndex !== -1) {
+      subreddit.mutedUsers.splice(mutedIndex, 1);
+    }
+
+    const approvedIndex = subreddit.approvedUsers.findIndex(
+      (elem) => elem.userID.toString() === userToBan._id.toString()
+    );
+    if (approvedIndex !== -1) {
+      subreddit.approvedUsers.splice(approvedIndex, 1);
+      decreaseMembers = true;
+    }
+
+    const waitedIndex = subreddit.waitedUsers.findIndex(
+      (elem) => elem.userID.toString() === userToBan._id.toString()
+    );
+    if (waitedIndex !== -1) {
+      subreddit.waitedUsers.splice(waitedIndex, 1);
+    }
+
+    const joinedIndex = subreddit.joinedUsers.findIndex(
+      (elem) => elem.userId.toString() === userToBan._id.toString()
+    );
+    if (joinedIndex !== -1) {
+      subreddit.joinedUsers.splice(joinedIndex, 1);
+      decreaseMembers = true;
+    }
+
+    const modeIndex = subreddit.moderators.findIndex(
+      (elem) => elem.userID.toString() === userToBan._id.toString()
+    );
+    if (modeIndex !== -1) {
+      subreddit.moderators.splice(modeIndex, 1);
+      decreaseMembers = true;
+    }
+
+    if (decreaseMembers) {
+      subreddit.members = subreddit.members - 1;
+    }
+
+    const joinedUserIndex = userToBan.joinedSubreddits.findIndex(
+      (elem) => elem.subredditId.toString() === subreddit._id.toString()
+    );
+    if (joinedUserIndex !== -1) {
+      userToBan.joinedSubredditss.splice(joinedUserIndex, 1);
+    }
+
+    const favIndex = userToBan.favoritesSubreddits.findIndex(
+      (elem) => elem.subredditId.toString() === subreddit._id.toString()
+    );
+    if (favIndex !== -1) {
+      userToBan.favoritesSubreddits.splice(favIndex, 1);
+    }
+
+    const modUserIndex = userToBan.moderatedSubreddits.findIndex(
+      (elem) => elem.subredditId.toString() === subreddit._id.toString()
+    );
+    if (modUserIndex !== -1) {
+      userToBan.moderatedSubreddits.splice(modUserIndex, 1);
+    }
+
+    await userToBan.save();
     await subreddit.save();
   } else {
     // user was blocked before and need to edit his data

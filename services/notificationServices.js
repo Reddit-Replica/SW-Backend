@@ -3,39 +3,7 @@ import User from "../models/User.js";
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 import Notification from "../models/Notification.js";
-import { validateId } from "./subredditFlairs.js";
 import { prepareLimit } from "../utils/prepareLimit.js";
-
-export const sendMessage = () => {
-  const message1 = {
-    to: token,
-
-    notification: {
-      title: "Zeyad from nodeeee",
-      data: JSON.stringify({ Link: "Test again Link" }),
-    },
-  };
-  const message = {
-    to: token,
-    data: {
-      val: JSON.stringify({
-        title: "Test notification from node",
-        body: "Test body from node again newwwww",
-        sound: "default",
-        click_action: "FCM_PLUGIN_ACTIVITY",
-        icon: "fcm_push_icon",
-      }),
-    },
-  };
-
-  fcm.send(message1, (err, response) => {
-    if (err) {
-      console.log(err.message);
-    } else {
-      console.log(response);
-    }
-  });
-};
 
 /**
  * A service function used to add the access token to user to subscribe at the notifications
@@ -127,6 +95,16 @@ export async function createFollowUserNotification(
   followingUsername,
   followedUserId
 ) {
+  const followingUser = await User.findOne({
+    username: followingUsername,
+    deletedAt: null,
+  });
+  if (!followingUser) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
   const neededUser = await User.findById(followedUserId);
   if (!neededUser || neededUser.deletedAt) {
     const error = new Error("User not found");
@@ -140,6 +118,8 @@ export async function createFollowUserNotification(
     data: title,
     link: `${process.env.FRONT_BASE}/user/${followingUsername}`,
     date: Date.now(),
+    sendingUserId: followingUser._id,
+    followingUsername: followingUsername,
   }).save();
   const data = {
     data: title,
@@ -196,6 +176,9 @@ export async function createCommentNotification(comment) {
           data: title1,
           link: link1,
           date: Date.now(),
+          sendingUserId: comment.ownerId,
+          commentId: comment._id,
+          postId: comment.parentId,
         }).save();
 
         const data1 = {
@@ -204,8 +187,6 @@ export async function createCommentNotification(comment) {
           link: notification.link,
           createdAt: notification.date,
         };
-        console.log("Entered 2");
-        console.log("Data1");
         // send the notification to the owner of the parent
         await sendNotification(user, title1, JSON.stringify(data1));
       }
@@ -216,6 +197,10 @@ export async function createCommentNotification(comment) {
         data: title1,
         link: link1,
         date: Date.now(),
+        sendingUserId: comment.ownerId,
+        sendingUserId: comment.ownerId,
+        commentId: comment._id,
+        postId: comment.parentId,
       }).save();
 
       const data1 = {
@@ -224,7 +209,6 @@ export async function createCommentNotification(comment) {
         link: notification.link,
         createdAt: notification.date,
       };
-      console.log("Data1");
       // send the notification to the owner of the parent
       await sendNotification(user, title1, JSON.stringify(data1));
     }
@@ -239,6 +223,9 @@ export async function createCommentNotification(comment) {
       data: title2,
       link: link1,
       date: Date.now(),
+      sendingUserId: comment.ownerId,
+      commentId: comment._id,
+      postId: comment.parentId,
     }).save();
     const data2 = {
       data: title2,
@@ -246,7 +233,6 @@ export async function createCommentNotification(comment) {
       link: notification2.link,
       createdAt: notification2.date,
     };
-    console.log("Data2");
     await sendNotification(
       parent.followingUsers[i].userId,
       title2,
@@ -263,6 +249,9 @@ export async function createCommentNotification(comment) {
           data: title3,
           link: link1,
           date: Date.now(),
+          sendingUserId: comment.ownerId,
+          commentId: comment._id,
+          postId: comment.parentId,
         }).save();
         const data3 = {
           data: title3,
@@ -272,7 +261,6 @@ export async function createCommentNotification(comment) {
         };
 
         const postOwnerUser = await User.findById(comment.postId.ownerId);
-        console.log("Data3");
         await sendNotification(postOwnerUser, title3, JSON.stringify(data3));
       }
     }
@@ -285,6 +273,9 @@ export async function createCommentNotification(comment) {
         data: title4,
         link: link1,
         date: Date.now(),
+        sendingUserId: comment.ownerId,
+        commentId: comment._id,
+        postId: comment.parentId,
       }).save();
       const data4 = {
         data: title4,
@@ -292,7 +283,6 @@ export async function createCommentNotification(comment) {
         link: notification4.link,
         createdAt: notification4.date,
       };
-      console.log("Data4");
       await sendNotification(
         comment.postId.followingUsers[i].userId,
         title4,
@@ -374,166 +364,63 @@ export async function markNotificationHidden(userId, notificationId) {
  * @param {Subreddit} subreddit The subreddit object
  * @returns {preparedResponse} the prepared response for the controller
  */
+// eslint-disable-next-line max-statements
 export async function getUserNotifications(
   limitReq,
   beforeReq,
   afterReq,
   userId
 ) {
-  let preparedResponse;
+  let preparedResponse = {
+    unreadCount: 0,
+    children: [],
+  };
+  let skipValue;
   let limit = prepareLimit(limitReq);
-  const notifcations = await Notification.find({
-    ownerId: userId,
-    hidden: false,
-  }).sort({ date: 1 });
 
   if (!beforeReq && !afterReq) {
-    preparedResponse = getUserNotificationsFirstTime(notifcations, limit);
+    skipValue = 0;
   } else if (beforeReq && afterReq) {
     const error = new Error("Can't set before and after");
     error.statusCode = 400;
     throw error;
   } else if (beforeReq) {
-    validateId(beforeReq);
-    preparedResponse = getUserNotificationsBefore(
-      notifcations,
-      limit,
-      beforeReq
-    );
+    skipValue = 0;
   } else {
-    validateId(afterReq);
-    preparedResponse = getUserNotificationsAfter(notifcations, limit, afterReq);
+    skipValue = parseInt(afterReq);
+    if (isNaN(skipValue)) {
+      skipValue = 0;
+    }
+  }
+
+  const notifcations = await Notification.find({
+    ownerId: userId,
+    hidden: false,
+  })
+    .sort({ date: -1 })
+    .skip(skipValue)
+    .limit(limit);
+
+  preparedResponse.after = notifcations.length + skipValue;
+
+  for (const notification of notifcations) {
+    const user = await User.findById(notification.sendingUserId);
+    preparedResponse.children.push({
+      id: notification._id,
+      title: notification.data,
+      type: notification.type,
+      link: notification.link,
+      sendAt: notification.date,
+      isRead: notification.read,
+      photo: user.avatar,
+      followingUsername: notification.followingUsername,
+      postId: notification.postId,
+      commentId: notification.commentId,
+    });
+    if (notification.read === false) {
+      preparedResponse.unreadCount++;
+    }
   }
 
   return preparedResponse;
-}
-
-/**
- * A Service helper function used to get the subreddit muted for the main service function in case of first time
- * @param {Subreddit} subreddit The subreddit object
- * @param {Number} limit the limit identified in the request
- * @returns {response} the prepared response for the main service function
- */
-function getUserNotificationsFirstTime(notifcations, limit) {
-  const response = { children: [], unreadCount: 0 };
-  const numberOfNotifications = notifcations.length;
-  let myLimit;
-  if (numberOfNotifications > limit) {
-    myLimit = limit;
-  } else {
-    myLimit = numberOfNotifications;
-  }
-  for (let i = 0; i < myLimit; i++) {
-    response.children.push({
-      id: notifcations[i]._id,
-      title: notifcations[i].data,
-      type: notifcations[i].type,
-      link: notifcations[i].link,
-      sendAt: notifcations[i].date,
-      isRead: notifcations[i].read,
-    });
-    if (notifcations[i].read === false) {
-      response.unreadCount++;
-    }
-  }
-  if (myLimit !== numberOfNotifications) {
-    response.after = notifcations[myLimit - 1]._id;
-  }
-  return response;
-}
-
-/**
- * A Service helper function used to get the subreddit muted users for the main service function in case of before
- * @param {Subreddit} subreddit The subreddit object
- * @param {Number} limit the limit identified in the request
- * @returns {response} the prepared response for the main service function
- */
-// eslint-disable-next-line max-statements
-function getUserNotificationsBefore(notifcations, limit, before) {
-  const response = { children: [], unreadCount: 0 };
-  let myStart;
-  const numberOfNotifications = notifcations.length;
-  const neededIndex = notifcations.findIndex(
-    (not) => not._id.toString() === before
-  );
-  if (neededIndex === -1) {
-    const error = new Error("invalid notification id");
-    error.statusCode = 400;
-    throw error;
-  }
-
-  if (neededIndex - limit < 0) {
-    myStart = 0;
-  } else {
-    myStart = neededIndex - limit;
-  }
-  for (let i = myStart; i < neededIndex; i++) {
-    response.children.push({
-      id: notifcations[i]._id,
-      title: notifcations[i].data,
-      type: notifcations[i].type,
-      link: notifcations[i].link,
-      sendAt: notifcations[i].date,
-      isRead: notifcations[i].read,
-    });
-    if (notifcations[i].read === false) {
-      response.unreadCount++;
-    }
-  }
-  if (response.children.length >= 1) {
-    if (myStart !== 0) {
-      response.before = notifcations[myStart]._id;
-    }
-    if (neededIndex !== numberOfNotifications - 1) {
-      response.after = notifcations[neededIndex - 1]._id;
-    }
-  }
-  return response;
-}
-
-/**
- * A Service helper function used to get the subreddit muted users for the main service function in case of after
- * @param {Subreddit} subreddit The subreddit object
- * @param {Number} limit the limit identified in the request
- * @returns {response} the prepared response for the main service function
- */
-// eslint-disable-next-line max-statements
-function getUserNotificationsAfter(notifcations, limit, after) {
-  const response = { children: [], unreadCount: 0 };
-  let myLimit;
-  const numberOfNotifications = notifcations.length;
-  const neededIndex = notifcations.findIndex(
-    (not) => not._id.toString() === after
-  );
-  if (neededIndex === -1) {
-    const error = new Error("invalid notification id");
-    error.statusCode = 400;
-    throw error;
-  }
-
-  if (neededIndex + limit + 1 >= numberOfNotifications) {
-    myLimit = numberOfNotifications;
-  } else {
-    myLimit = neededIndex + limit + 1;
-  }
-  for (let i = neededIndex + 1; i < myLimit; i++) {
-    response.children.push({
-      id: notifcations[i]._id,
-      title: notifcations[i].data,
-      type: notifcations[i].type,
-      link: notifcations[i].link,
-      sendAt: notifcations[i].date,
-      isRead: notifcations[i].read,
-    });
-    if (notifcations[i].read === false) {
-      response.unreadCount++;
-    }
-  }
-  if (response.children.length >= 1) {
-    if (myLimit !== numberOfNotifications) {
-      response.after = notifcations[myLimit - 1]._id;
-    }
-    response.before = notifcations[neededIndex + 1]._id;
-  }
-  return response;
 }

@@ -1,4 +1,3 @@
-import User from "../models/User.js";
 import { searchForUserService } from "../services/userServices.js";
 import { searchForSubredditById } from "./../services/communityServices.js";
 
