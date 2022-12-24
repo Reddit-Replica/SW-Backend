@@ -9,6 +9,7 @@ pipeline {
 	}
 
   stages{
+    
     stage("unit test"){
       agent {
         docker {
@@ -27,9 +28,20 @@ pipeline {
       }
   }
 
+  stage('Build') {
+
+    steps {
+      sh 'docker build -t waer/backend:latest .'
+    }
+  }
+
   stage("intgration testing"){
     steps {
-              echo "till get its comdmddgitadnddsnndsddddddder"
+          sh """
+            cd /Read-it-testing/deployment-testing
+            docker-compose up --exit-code-from cypress
+            docker wait cypress
+           """
       }
   }
 
@@ -40,12 +52,6 @@ pipeline {
 			}
 		}
 
-    stage('Build') {
-
-			steps {
-				sh 'docker build -t waer/backend:latest .'
-			}
-		}
 
     stage('Push') {
 			steps {
@@ -58,6 +64,11 @@ pipeline {
 	post {
 		always {
 			sh 'docker logout'
+      echo "------------------------------ down the Testing enviroment ---------------------------------------------"
+      sh"""
+        cd /Read-it-testing/deployment-testing
+        docker-compose down
+      """
 		}
 	}
 
