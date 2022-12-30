@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<testsuites disabled="0" errors="0" failures="0" tests="1" time="0.009">
- <testsuite name="Dummy test" timestamp="2022-11-12T18:46:55" hostname="localhost" time="0.009" errors="0" tests="1" skipped="0" disabled="0" failures="0">
-  <testcase classname="Dummy test" name="1 should equal 1" time="0.005" />
- </testsuite>
-</testsuites>
