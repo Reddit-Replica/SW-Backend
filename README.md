@@ -136,7 +136,7 @@
 
 
 
-#### *🔒 User Authentication*
+### *🔒 User Authentication*
 
 - Login using Google
 - Login using Facebook
@@ -145,11 +145,15 @@
 - Forget password
 - Forget username
 - Change password
+
 https://user-images.githubusercontent.com/88618793/210153405-c8d45f3a-6a4c-4a6a-a5d5-91ff5dc1b05a.mp4
 
 https://user-images.githubusercontent.com/88618793/210153668-db11ae16-188b-43a8-a3f5-17949b38392b.mp4
 
-#### *🙍‍♂️ User Profile*
+---
+
+
+### *🙍‍♂️ User Profile*
 - Profile overview (posts, comments, upvotes, downvotes, etc.)
 - Your Posts
 - Your Comment
@@ -164,7 +168,9 @@ https://user-images.githubusercontent.com/88618793/210153575-2b2c5f6e-8eba-490d-
 
 https://user-images.githubusercontent.com/88618793/210153668-db11ae16-188b-43a8-a3f5-17949b38392b.mp4
 
-#### *📰 Post*
+---
+
+### *📰 Post*
 
 - Create rich text post
 - Create image and video post
@@ -184,14 +190,18 @@ https://user-images.githubusercontent.com/88618793/210153555-d5283185-20b8-40de-
 
 https://user-images.githubusercontent.com/88618793/210153805-8f874bc8-8c21-4c57-94bf-7d72acf11bff.mp4
 
-#### *🔎 Search*
+---
+
+### *🔎 Search*
 - Search by post
 - Search by comment
 - Search by community
 - Search by people
 https://user-images.githubusercontent.com/88618793/210153925-f6c00aaf-66cf-497f-9b37-c0cd01920228.mp4
 
-#### *🗨️ Comment*
+---
+
+### *🗨️ Comment*
 - Create rich text comment
 - Nested comments up to any level
 - Upvote and downvote comment
@@ -202,11 +212,15 @@ https://user-images.githubusercontent.com/88618793/210153925-f6c00aaf-66cf-497f-
 
 https://user-images.githubusercontent.com/88618793/210153474-68039103-262f-4482-b93f-74b337430675.mp4
 
-#### *🔔 Notifications*
+---
+
+### *🔔 Notifications*
 - Push notifications
 - All notifications
 
-#### *✉️ Messages*
+---
+
+### *✉️ Messages*
 - Send a private message
 - All messages
 - Unread messages
@@ -218,7 +232,9 @@ https://user-images.githubusercontent.com/88618793/210153474-68039103-262f-4482-
 - Reply to message
 
 https://user-images.githubusercontent.com/88618793/210153718-1a4ef8e2-6e1b-4c75-b213-6409129fa2f0.mp4
-#### *🤵 Moderator*
+
+---
+### *🤵 Moderator*
 - Queues
   - Spamed (posts only, comments only, posts and comments)
   - Edited  (posts only, comments only, posts and comments)
