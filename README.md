@@ -281,7 +281,7 @@ https://user-images.githubusercontent.com/88618793/210153879-2ba60a63-663a-426a-
     <a href="https://github.com/AbdelrahmanHamdyy" target="_black">
     <img src="https://avatars.githubusercontent.com/u/67989900?v=4" width="150px;" alt="Ziad Sherif"/>
     <br />
-    <sub><b>Abdelrahman Hamdyy</b></sub></a>
+    <sub><b>Abdelrahman Hamdy</b></sub></a>
     </td>
     <td align="center">
     <a href="https://github.com/AbdelrahmanNoaman" target="_black">
