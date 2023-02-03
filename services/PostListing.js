@@ -3,6 +3,7 @@
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import { prepareLimit } from "../utils/prepareLimit.js";
+import Flair from "../models/Flair.js";
 
 /**
  * This function is list the posts of the home page to the users
@@ -168,7 +169,7 @@ export async function homePostsListing(
     }
     let flair;
     if (post.flair) {
-      flair = await flair.findById(post.flair);
+      flair = await Flair.findById(post.flair);
     }
     let postData = { id: postId };
     postData.data = {
