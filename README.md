@@ -197,6 +197,7 @@ https://user-images.githubusercontent.com/88618793/210153805-8f874bc8-8c21-4c57-
 - Search by comment
 - Search by community
 - Search by people
+
 https://user-images.githubusercontent.com/88618793/210153925-f6c00aaf-66cf-497f-9b37-c0cd01920228.mp4
 
 ---
@@ -271,6 +272,7 @@ https://user-images.githubusercontent.com/88618793/210153718-1a4ef8e2-6e1b-4c75-
   - Page views
   - Members joined
   - Members left
+  
 https://user-images.githubusercontent.com/88618793/210153879-2ba60a63-663a-426a-a1da-c29be8e5c280.mp4
 
 ## Coverage Report <a name = "covreport"></a>
