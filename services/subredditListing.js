@@ -16,6 +16,7 @@ import { prepareLimit } from "../utils/prepareLimit.js";
  * @param {Object} after Name of the last element of the list
  * @param {Number} limit Number of subreddits needed
  * @param {Boolean} withCategory identifies if we will sort with category or not
+ * @param {Boolean} isLoggedIn identifies if the user is logged in or not
  * @returns {Object} The response to that request containing [statusCode, data]
  */
 // eslint-disable-next-line max-statements
@@ -106,7 +107,13 @@ export async function subredditCategoryListing(
     },
   };
 }
-
+/**
+ * Function that gets two random categories and returns the best 5 subreddits of them depending on members
+ * the categories and changed every time we call the function
+ * @param {Object} user User that we want to see the subreddits
+ * @param {Boolean} isLoggedIn identifies if the user is logged in or not
+ * @returns {Object} The response to that request containing [statusCode, data]
+ */
 export async function twoRandomCategories(user, isLoggedIn) {
   const randomOne = Math.floor(Math.random() * 29);
   let randomTwo = Math.floor(Math.random() * 29);
@@ -168,7 +175,6 @@ export async function twoRandomCategories(user, isLoggedIn) {
     };
     childrenTwo.push(subredditData);
   }
-
   return {
     statusCode: 200,
     data: {
@@ -179,7 +185,19 @@ export async function twoRandomCategories(user, isLoggedIn) {
     },
   };
 }
-
+/**
+ * Function that get the subreddit that we want to list
+ * then sort, match, and limit them, then finally save the last id so that it can
+ * be used next time to get different results.
+ * it sorts them depending on number of views of the subreddit
+ *
+ * @param {Object} user User that we want to see the subreddits
+ * @param {String} before Name of the first element of the list
+ * @param {Object} after Name of the last element of the list
+ * @param {Number} limit Number of subreddits needed
+ * @param {Boolean} isLoggedIn identifies if the user is logged in or not
+ * @returns {Object} The response to that request containing [statusCode, data]
+ */
 export async function subredditTrendingListing(
   user,
   before,

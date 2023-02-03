@@ -16,7 +16,7 @@ import { searchForComment, searchForPost } from "./PostActions.js";
 import { sendMentionMail, sendMessageMail } from "../utils/sendEmails.js";
 /**
  * This function is used to add a message
- * it add the msg to sender's sent messages and to the receiver's received messages
+ * it adds the msg to sender's sent messages and to the receiver's received messages
  * then it's responsible for calling the functions that are used to handling the conversations
  * @param {Object} req req object from which we get our data
  * @returns {String} indicates if the message was sent successfully or not
@@ -39,10 +39,11 @@ export async function addMessage(req) {
     addReceivedMessages(receiver.id, message);
     if (
       !receiver.userSettings.unsubscribeFromEmails &&
-      !receiver.facebookEmail&& receiver.username !== message.senderUsername
+      !receiver.facebookEmail &&
+      receiver.username !== message.senderUsername
     ) {
       console.log("sent");
-      sendMessageMail(receiver,message);
+      sendMessageMail(receiver, message);
       console.log("sent");
     }
   }
@@ -60,7 +61,8 @@ export async function addMessage(req) {
 }
 /**
  * This function is used to add a mention
- * it add the mention to the receiver mention list
+ * it adds the mention to the receiver mention list
+ * Also sends an email to the receiver if he enables sending emails
  * @param {Object} req req object from which we get our data
  * @returns {String} indicates if the message was sent successfully or not
  */
@@ -109,11 +111,8 @@ export async function addMention(req) {
 }
 /**
  * This function is used to create a new conversation
- * firstly we check if there was an existing one with the same users and subject
- * if there is then we won't create a new one but we will return the id of that old conversation
- * so we will be able to add more messages to this conversation
- * @param {Object} msg msg object from which we will get our data to check if the conversation was created before or not
- * @returns {String} it return the id of the created conversation or the already existing one
+ * @param {Object} msg msg object that will create the new conversation
+ * @returns {String} it return the id of the created conversation
  */
 //DONE
 export async function createNewConversation(msg) {
@@ -130,12 +129,10 @@ export async function createNewConversation(msg) {
   return createdConversation.id;
 }
 /**
- * This function is used to create a new conversation
- * firstly we check if there was an existing one with the same users and subject
- * if there is then we won't create a new one but we will return the id of that old conversation
- * so we will be able to add more messages to this conversation
- * @param {Object} msg msg object from which we will get our data to check if the conversation was created before or not
- * @returns {String} it return the id of the created conversation or the already existing one
+ * This function is used to get an existing conversation
+ * it checks if the msg id is available then it returns the conversation that has this message
+ * @param {Object} repliedMsgId Id of the msg that is in the conversation
+ * @returns {String} it returns the id of the conversation that the replied message belongs to
  */
 
 //DONE
@@ -160,9 +157,10 @@ export async function getExistingConversation(repliedMsgId) {
 /**
  * This function is used to add new messages to the conversation
  * at each time we send a message then this message will be added to a conversation throw this function
+ * this conversation may be new or may be an existed one
  * @param {Object} msg msg object to add it to the conversation
  * @param {Object} conversationId the id of the conversation we want to add that message to
- * @returns {Object} defines if there is an error or not and specifies the kind of the error if there was
+ * @returns {Boolean} defines if there is job was done successfully or not
  */
 //DONE
 export async function addToConversation(msg, conversationId) {
@@ -208,9 +206,8 @@ export async function checkExistingConversation(user, conversationId) {
 }
 /**
  * This function is used to add the conversation to the users in case that they don't have it
- * @param {String} senderUsername the username of the sender user
- * @param {String} receiverUsername the username of the receiver user
- * @param {Object} convId the id of the conversation we want to check if the user had it or not
+ * @param {Object} message the object of the msg from which we will get the sender and receiver data
+ * @param {String} convId the id of the conversation we want to check if the user had it or not
  * @returns {string} defines if the conversation was added successfully or not
  */
 //DONE
@@ -369,6 +366,7 @@ export async function validateMessage(req) {
  * @param {Object} req req object from which we get our data
  * @returns {boolean} defines if the data is valid or not
  */
+//DONE
 export async function validateMention(req) {
   if (!req.body.postId || !req.body.commentId) {
     let err = new Error("Post Id and Comment Id is needed");
@@ -391,7 +389,12 @@ export async function validateMention(req) {
   mention.createdAt = Date.now();
   req.mention = mention;
 }
-
+/**
+ * This function is used to check if the message exists or not
+ * @param {String} messageId id of the message that we will check for
+ * @returns {Object} contains the data of the message if we found it, otherwise it will send an error message
+ */
+//DONE
 export async function searchForMessage(messageId) {
   const msg = await Message.findById(messageId);
   if (!msg || msg.deletedAt) {
@@ -401,8 +404,14 @@ export async function searchForMessage(messageId) {
   }
   return msg;
 }
-
-async function checkForMsgReceiver(message, user) {
+/**
+ * This function is used to check if the receiver of the message is the one who does the action
+ * @param {Object} message contains the data of the message that we will check for
+ * @param {Object} user contains the data of the user that did the action
+ * @returns {Object} contains the possibility of an error
+ */
+//NOT DONE YET
+export async function checkForMsgReceiver(message, user) {
   if (message.isReceiverUser) {
     if (!(message.receiverUsername === user.username)) {
       let err = new Error(
@@ -419,7 +428,13 @@ async function checkForMsgReceiver(message, user) {
     throw err;
   }
 }
-
+/**
+ * This function is used to mark a message as a spam
+ * @param {Object} message contains the data of the message that we will check for
+ * @param {Object} user contains the data of the user that did the action
+ * @returns {Object} contains the possibility of an error
+ */
+//DONE
 export async function markMessageAsSpam(message, user) {
   await checkForMsgReceiver(message, user);
   //SHOULD BE ADDED TO SPAMMED MESSAGES LIST TO THE ADMIN
@@ -435,7 +450,12 @@ export async function markMessageAsSpam(message, user) {
     message: "Message has been spammed successfully",
   };
 }
-
+/**
+ * This function is used to unmark a message as a spam
+ * @param {Object} message contains the data of the message that we will check for
+ * @param {Object} user contains the data of the user that did the action
+ * @returns {Object} contains the possibility of an error
+ */
 export async function unmarkMessageAsSpam(message, user) {
   await checkForMsgReceiver(message, user);
   //SHOULD BE REMOVED FROM SPAMMED MESSAGES LIST OF THE ADMIN
@@ -451,7 +471,13 @@ export async function unmarkMessageAsSpam(message, user) {
     message: "Message has been unspammed successfully",
   };
 }
-
+/**
+ * This function is used to unread a message
+ * @param {Object} message contains the data of the message that we will check for
+ * @param {Object} user contains the data of the user that did the action
+ * @returns {Object} contains the action that happened
+ */
+//DONE
 export async function unreadMessage(message, user) {
   await checkForMsgReceiver(message, user);
   if (!message.isRead) {

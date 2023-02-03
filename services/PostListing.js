@@ -3,6 +3,19 @@
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import { prepareLimit } from "../utils/prepareLimit.js";
+import Flair from "../models/Flair.js";
+
+/**
+ * This function is list the posts of the home page to the users
+ * it takes different type of sorting and depending on it, it sort the posts and filter them then limit them with the needed limit
+ * it gives a priority to the posts of the joined subreddits and the followed users
+ * then it adds the needed posts to fulfill the limit from extra random posts but they are sorted with the type
+ * @param {Object} user user object that we will get the posts to
+ * @param {Object} listingParams parameters like after , before ,limit that decides from where to start and where to end
+ * @param {String} typeOfSorting describes it we want to sort by hot best new trending and top
+ * @param {Boolean} isLoggedIn indicates if the user is logged in or not
+ * @returns {Object} object that contains posts and after and before values that will be used in the next operation
+ */
 
 export async function homePostsListing(
   user,
@@ -17,7 +30,7 @@ export async function homePostsListing(
   );
   let extraPostsIndex = filteringProperties.skip;
   let extraPostsLimit = filteringProperties.limit;
-  let extraPostsUsersFilter, extraPostsSubredditFilter,hiddenPostsFilter;
+  let extraPostsUsersFilter, extraPostsSubredditFilter, hiddenPostsFilter;
   //WE WILL GET THE MOST IMPORTANT POSTS FIRST WHICH ARE SUBREDDIT POSTS AND FOLLOWING POSTS
   //GETTING SUBREDDIT POSTS
   if (isLoggedIn) {
@@ -34,19 +47,20 @@ export async function homePostsListing(
         path: "followedUsers",
         match: { deletedAt: null },
       });
-
     let userJoinedSubreddits = joinedSubreddits.map(
       (subreddit) => subreddit.name
     );
-    var hiddenArr=[];
-    var { hiddenPosts }=await User.findOne({ username:user.username }).select("hiddenPosts");
-    for (let i=0;i<hiddenPosts.length;i++){
+    var hiddenArr = [];
+    var { hiddenPosts } = await User.findOne({
+      username: user.username,
+    }).select("hiddenPosts");
+    for (let i = 0; i < hiddenPosts.length; i++) {
       hiddenArr.push(hiddenPosts[i].toString());
     }
 
     extraPostsUsersFilter = followedUsers;
     extraPostsSubredditFilter = userJoinedSubreddits;
-    hiddenPostsFilter=hiddenArr;
+    hiddenPostsFilter = hiddenArr;
 
     const importantPosts = await Post.find({
       $or: [
@@ -60,7 +74,7 @@ export async function homePostsListing(
       ],
       deletedAt: null,
       createdAt: { $gt: filteringProperties.filteringDate },
-      _id:{ $nin:[...hiddenArr] },
+      _id: { $nin: [...hiddenArr] },
     }).sort(filteringProperties.sort);
     if (
       importantPosts.length >=
@@ -100,7 +114,7 @@ export async function homePostsListing(
         ownerId: { $nin: [...extraPostsUsersFilter] },
         deletedAt: null,
         createdAt: { $gt: filteringProperties.filteringDate },
-        _id:{ $nin:[...hiddenPostsFilter] },
+        _id: { $nin: [...hiddenPostsFilter] },
       })
         .sort(filteringProperties.sort)
         .limit(extraPostsLimit)
@@ -155,7 +169,7 @@ export async function homePostsListing(
     }
     let flair;
     if (post.flair) {
-      flair = await flair.findById(post.flair);
+      flair = await Flair.findById(post.flair);
     }
     let postData = { id: postId };
     postData.data = {
@@ -218,8 +232,16 @@ export async function homePostsListing(
     },
   };
 }
+/**
+ * This function is used to prepare filtering to our posts depending on the type of sorting and after and before values
+ * it chooses how much we will skip to get our next posts and the limit that we will take
+ * then it adds the needed posts to fulfill the limit from extra random posts but they are sorted with the type
+ * @param {Object} listingParams parameters like after , before ,limit that decides from where to start and where to end
+ * @param {String} typeOfSorting describes it we want to sort by hot best new trending and top
+ * @returns {Object} object that contains skip limit sort values that we will use to get our posts
+ */
 
-async function prepareFiltering(typeOfSorting, listingParams) {
+export async function prepareFiltering(typeOfSorting, listingParams) {
   const result = {};
   result.sort = {};
   if (typeOfSorting === "new") {
@@ -274,24 +296,25 @@ async function prepareFiltering(typeOfSorting, listingParams) {
   result.filteringDate = filteringDate;
 
   result.limit = prepareLimit(parseInt(listingParams.limit));
-
   result.skip = 0;
   if (listingParams.after) {
     if (parseInt(listingParams.after) < 0) {
       listingParams.after = 0;
     }
     if (!isNaN(parseInt(listingParams.after))) {
-    result.skip = parseInt(listingParams.after);
+      result.skip = parseInt(listingParams.after);
     }
-
   } else if (listingParams.before) {
     if (parseInt(listingParams.before) < 0) {
       listingParams.before = 0;
     }
-    if (!isNaN(parseInt(listingParams.before))&&!isNaN(parseInt(listingParams.limit))) {
-result.skip =
-      parseInt(listingParams.before) - parseInt(listingParams.limit);
-}
+    if (
+      !isNaN(parseInt(listingParams.before)) &&
+      !isNaN(parseInt(listingParams.limit))
+    ) {
+      result.skip =
+        parseInt(listingParams.before) - parseInt(listingParams.limit);
+    }
   }
 
   if (result.skip < 0) {

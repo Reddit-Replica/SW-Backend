@@ -14,7 +14,7 @@ import { prepareLimit } from "./prepareLimit.js";
  * @returns {Object} Object that will be used by mongoose to match the results
  */
 // eslint-disable-next-line max-statements
-async function prepareMessageBeforeAfter(before, after) {
+export async function prepareMessageBeforeAfter(before, after) {
   let result = null;
   if (!after && !before) {
     return null;
@@ -58,7 +58,7 @@ async function prepareMessageBeforeAfter(before, after) {
  * @returns {Object} Object that will be used by mongoose to match the results
  */
 // eslint-disable-next-line max-statements
-async function prepareMentionBeforeAfter(before, after) {
+export async function prepareMentionBeforeAfter(before, after) {
   let result = null;
   if (!after && !before) {
     return null;
@@ -66,6 +66,7 @@ async function prepareMentionBeforeAfter(before, after) {
     if (mongoose.Types.ObjectId.isValid(before)) {
       // get the wanted value that we will split from
       const mention = await Mention.findById(before);
+
       if (!mention || mention.deletedAt) {
         return null;
       }
@@ -78,6 +79,7 @@ async function prepareMentionBeforeAfter(before, after) {
     if (mongoose.Types.ObjectId.isValid(after)) {
       // get the wanted value that we will split from
       const mention = await Mention.findById(after);
+
       if (!mention || mention.deletedAt) {
         return null;
       }
@@ -123,7 +125,7 @@ export async function prepareListingMsgs(listingParams) {
  * @param {Object} listingParams Listing parameters sent in the request query [before, after, limit]
  * @returns {Object} Result object containing the final results after listing [listing, limit]
  */
-export async function prepareListingMentions(listingParams) {
+export async function prepareListingcMentions(listingParams) {
   const result = {};
   result.sort = { createdAt: -1, text: 1 };
 
@@ -264,7 +266,13 @@ export async function conversationListing(listingParams) {
   }
   return result;
 }
-
+/**
+ * Function to create the exact condition that will be used by mongoose directly to list posts.
+ * Used to map every listing parameter to the exact query that mongoose will use later
+ *
+ * @param {Object} listingParams Listing parameters sent in the request query [sort, time, before, after, limit]
+ * @returns {Object} The final results that will be used by mongoose to list posts
+ */
 export async function inboxListing(listingParams) {
   let result = {};
   result.query = {};
@@ -285,7 +293,12 @@ export async function inboxListing(listingParams) {
   }
   return result;
 }
-
+/**
+ * Function is used to get either message,mention or post reply for the inbox listing as they are all returned
+ *if there is none of them then the id is not valid
+ * @param {String} Id full name of the object if it's a message , mention , post reply
+ * @returns {Object} The final results that will be used by mongoose to list posts
+ */
 export async function splitterOnType(Id) {
   let splitter;
   splitter = await Message.findById(Id);
@@ -302,8 +315,14 @@ export async function splitterOnType(Id) {
   }
   return splitter;
 }
-
-function setResult(listingParams) {
+/**
+ * Function to create the exact condition that will be used by mongoose directly to list posts.
+ * Used to map every listing parameter to the exact query that mongoose will use later
+ *
+ * @param {Object} listingParams Listing parameters sent in the request query [sort, time, before, after, limit]
+ * @returns {Object} The final results that will be used by mongoose to list posts
+ */
+export function setResult(listingParams) {
   const result = {};
   result.find = { deletedAt: null };
   result.find[listingParams.listing.type] = listingParams.listing.value;

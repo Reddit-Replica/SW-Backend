@@ -1,18 +1,13 @@
-// import {
-//   sendResetPasswordEmail,
-//   sendVerifyEmail,
-//   sendUsernameEmail,
-// } from "../../utils/sendEmails.js";
-// import User from "../../models/User.js";
-// import Token from "./../../models/VerifyToken.js";
-// import { connectDatabase, closeDatabaseConnection } from "./../database.js";
+import {
+  sendResetPasswordEmail,
+  sendVerifyEmail,
+  sendUsernameEmail,
+} from "../../utils/sendEmails.js";
+import User from "../../models/User.js";
+import Token from "./../../models/VerifyToken.js";
+import { connectDatabase, closeDatabaseConnection } from "./../database.js";
 
 describe("Testing send emails functions", () => {
-  test("Testing jsend emailsest", () => {
-    expect(2 + 5).toBe(7);
-
-    expect(1 + 2).not.toBe(5);
-  });
   //   let user = {},
   //     token = {};
   //   beforeAll(async () => {
@@ -20,7 +15,8 @@ describe("Testing send emails functions", () => {
 
   //     user = new User({
   //       username: "Beshoy",
-  //       email: "beshoy@gmail.com",createdAt: Date.now(),
+  //       email: "beshoy@gmail.com",
+  //       createdAt: Date.now(),
   //     });
   //     await user.save();
 
@@ -43,17 +39,23 @@ describe("Testing send emails functions", () => {
   //   });
 
   //   it("try to send reset password email", async () => {
-  //     expect(
-  //       sendResetPasswordEmail(user, token.token)
-  //     ).toBeTruthy();
+  //     expect(await sendResetPasswordEmail(user, token.token)).toBeTruthy();
   //   });
 
-  //   it("should have sendVerifyEmail method", () => {
-  //     expect(sendVerifyEmail).toBeDefined();
+  //   it("try let sendResetPasswordEmail throw an error", async () => {
+  //     expect(await sendResetPasswordEmail(null, token.token)).toBeFalsy();
   //   });
+
+  it("should have sendVerifyEmail method", () => {
+    expect(sendVerifyEmail).toBeDefined();
+  });
 
   //   it("try to send verify email", () => {
   //     expect(sendVerifyEmail(user, token.token)).toBeTruthy();
+  //   });
+
+  //   it("try let sendVerifyEmail throw an error", () => {
+  //     expect(sendVerifyEmail(null, token.token)).toBeFalsy();
   //   });
 
   //   it("should have sendUsernameEmail method", () => {
@@ -62,5 +64,9 @@ describe("Testing send emails functions", () => {
 
   //   it("try to send forget username email", () => {
   //     expect(sendUsernameEmail(user)).toBeTruthy();
+  //   });
+
+  //   it("try let sendUsernameEmail throw an error", () => {
+  //     expect(sendUsernameEmail(null)).toBeFalsy();
   //   });
 });

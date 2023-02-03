@@ -181,4 +181,12 @@ describe("Testing verifyPostActions middleware", () => {
     await verifyPostActions(mockRequest, mockResponse, nextFunction);
     expect(nextFunction).toHaveBeenCalled();
   });
+
+  it("try to let verifyPostActions throw an error", async () => {
+    try {
+      await verifyPostActions({}, mockResponse, nextFunction);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
 });

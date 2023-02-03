@@ -6,6 +6,7 @@ import {
   prepareListingCommentTree,
   commentTreeListing,
 } from "../../utils/prepareCommentListing.js";
+import { prepareLimit } from "./../../utils/prepareLimit";
 
 import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
@@ -75,6 +76,11 @@ describe("Testing prepare listing functions", () => {
     expect(result.sort).toEqual({ createdAt: -1 });
   });
 
+  it("try to set sort = new in prepareListingPosts", async () => {
+    const result = await prepareListingPosts({ sort: "best" });
+    expect(result.sort).toEqual({ bestScore: -1 });
+  });
+
   it("try to set sort = hot in prepareListingPosts", async () => {
     const result = await prepareListingPosts({ sort: "hot" });
     expect(result.sort).toEqual({ hotScore: -1 });
@@ -125,6 +131,11 @@ describe("Testing prepare listing functions", () => {
   it("try to set sort = top with time = invalid in prepareListingPosts", async () => {
     const result = await prepareListingPosts({ sort: "top", time: "invalid" });
     expect(result.time).toBeNull();
+  });
+
+  it("try to set limit with NaN in prepareListingPosts", async () => {
+    const result = await prepareListingPosts({ limit: "invalid" });
+    expect(result.limit).toEqual(25);
   });
 
   it("try to set limit bigger than 100 in prepareListingPosts", async () => {

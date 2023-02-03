@@ -5,8 +5,8 @@ import { commentTreeListing } from "../utils/prepareCommentListing.js";
 import { filterHiddenPosts } from "./search.js";
 
 /**
- * Search for a post given a query in a subreddit
- *
+ * Search for a post in a subreddit given a query in the whole of read-it. It ensures that hidden,
+ * removed, spammed, and nsfw (in case settings are set to not view nsfw content) posts are not shown to the user. The search is checked on the post title only.
  * @param {string} subreddit Subreddit name
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
@@ -138,11 +138,13 @@ export async function searchForPosts(subreddit, query, listingParams, user) {
 }
 
 /**
- * Search for a comment given a query in a subreddit
- *
+ * Search for a comment in a subreddit given a query in the whole of read-it. It ensures that removed
+ * spammed, and nsfw (in case settings are set to not view nsfw content) comments are not shown to the user.
+ * The search is checked on comment content only.
  * @param {string} subreddit Subreddit name
  * @param {string} query Search query
  * @param {object} listingParams Listing parameters for listing
+ * @param {object} user Logged In user
  * @returns {object} Result containing statusCode and data
  */
 // eslint-disable-next-line max-statements

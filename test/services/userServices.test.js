@@ -10,6 +10,7 @@ import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
 import Post from "./../../models/Post.js";
 import Subreddit from "./../../models/Community.js";
+import Notification from "../../models/Notification.js";
 
 // eslint-disable-next-line max-statements
 describe("Testing user services functions", () => {
@@ -55,10 +56,22 @@ describe("Testing user services functions", () => {
     });
     await subreddit.save();
 
+    mainUser.moderatedSubreddits.push({
+      subredditId: subreddit._id,
+      name: subreddit.title,
+    });
+    await mainUser.save();
+
     userToAction = new User({
       username: "UserToAction",
       email: "haha@gmail.com",
       createdAt: Date.now(),
+      joinedSubreddits: [
+        {
+          subredditId: subreddit._id,
+          name: subreddit.title,
+        },
+      ],
     });
     await userToAction.save();
 
@@ -73,7 +86,9 @@ describe("Testing user services functions", () => {
   });
   afterAll(async () => {
     await User.deleteMany({});
+    await Post.deleteMany({});
     await Subreddit.deleteMany({});
+    await Notification.deleteMany({});
     await closeDatabaseConnection();
   });
 

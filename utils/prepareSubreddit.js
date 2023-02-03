@@ -6,6 +6,16 @@ import Post from "../models/Post.js";
 import { searchForSubredditById } from "../services/communityServices.js";
 import { searchForPost } from "../services/PostActions.js";
 
+/**
+ * This function is used to prepare the subreddit for being listed
+ *
+ * @param {string} category the category that we will filter with
+ * @param {string} before the name of the first element that returned before
+ * @param {string} after the name of the latest element that returned before
+ * @param {string} limit The maximum value that they need to get
+ * @param {Boolean} withCategory defines if we want to filter with category or not
+ * @returns {Object} contains the results of the listing that we will use
+ */
 export async function subredditListing(
   category,
   before,

@@ -4,7 +4,7 @@ import { connectDatabase, closeDatabaseConnection } from "../database.js";
 import User from "./../../models/User.js";
 
 // eslint-disable-next-line max-statements
-describe("Testing checkDuplicateUsernameOrEmail middleware", () => {
+describe("Testing verifySignUp middleware", () => {
   let mockRequest;
   let mockResponse;
   let nextFunction = jest.fn();
@@ -85,5 +85,13 @@ describe("Testing checkDuplicateUsernameOrEmail middleware", () => {
       nextFunction
     );
     expect(nextFunction).toHaveBeenCalled();
+  });
+
+  it("try to let checkDuplicateUsernameOrEmail throw an error", async () => {
+    try {
+      await checkDuplicateUsernameOrEmail({}, mockResponse, nextFunction);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
   });
 });

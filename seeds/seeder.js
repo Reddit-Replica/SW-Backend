@@ -18,9 +18,6 @@ const MESSAGES_NUMBER = 200;
 const SUBREDDITS_NUMBER = 20;
 const COMMENTS_NUMBER = 200;
 
-export let userIds;
-export let subredditsId;
-
 async function connectDatabase() {
   try {
     await mongoose.connect(DB_URL, { useNewUrlParser: true });

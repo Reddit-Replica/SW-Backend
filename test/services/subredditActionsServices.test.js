@@ -19,6 +19,7 @@ describe("Testing subreddit actions services functions", () => {
   let owner = {},
     moderator = {},
     normalUser = {},
+    normalUser1 = {},
     userToBan = {},
     userToMute = {},
     subreddit = {};
@@ -41,6 +42,12 @@ describe("Testing subreddit actions services functions", () => {
     normalUser = await new User({
       username: "Normal",
       email: "normal@gmail.com",
+      createdAt: Date.now(),
+    }).save();
+
+    normalUser1 = await new User({
+      username: "Normal1",
+      email: "normal1@gmail.com",
       createdAt: Date.now(),
     }).save();
 
@@ -75,15 +82,61 @@ describe("Testing subreddit actions services functions", () => {
           userID: moderator._id,
           dateOfModeration: Date.now(),
         },
+        {
+          userID: userToBan._id,
+          dateOfModeration: Date.now(),
+        },
       ],
       mutedUsers: [
         {
           userID: userToMute._id,
           dateOfMute: Date.now(),
         },
+        {
+          userID: userToBan._id,
+          dateOfMute: Date.now(),
+        },
+      ],
+      invitedModerators: [
+        {
+          userID: userToBan._id,
+          dateOfInvitation: Date.now(),
+        },
+      ],
+      approvedUsers: [
+        {
+          userID: userToBan._id,
+          dateOfApprove: Date.now(),
+        },
+      ],
+      waitedUsers: [
+        {
+          userID: userToBan._id,
+          username: userToBan.username,
+        },
+      ],
+      joinedUsers: [
+        {
+          userId: userToBan._id,
+          joinDate: Date.now(),
+        },
+        {
+          userId: normalUser1._id,
+          joinDate: Date.now(),
+        },
       ],
       dateOfCreation: Date.now(),
     }).save();
+
+    userToBan.favoritesSubreddits.push({
+      subredditId: subreddit._id,
+      name: subreddit.title,
+    });
+    userToBan.moderatedSubreddits.push({
+      subredditId: subreddit._id,
+      name: subreddit.title,
+    });
+    await userToBan.save();
   });
   afterAll(async () => {
     await User.deleteMany({});
@@ -110,7 +163,7 @@ describe("Testing subreddit actions services functions", () => {
     expect(checkIfModerator).toBeDefined();
   });
   it("check that normal user is not a moderator in subreddit", async () => {
-    const index = await checkIfModerator(userToBan._id, subreddit);
+    const index = await checkIfModerator(normalUser._id, subreddit);
     expect(index).toEqual(-1);
   });
   it("check that owner is a moderator in subreddit", async () => {
@@ -122,7 +175,7 @@ describe("Testing subreddit actions services functions", () => {
     expect(checkIfMuted).toBeDefined();
   });
   it("check that unmuted user returns false with checkIfMuted", async () => {
-    const index = await checkIfMuted(userToBan._id, subreddit);
+    const index = await checkIfMuted(normalUser._id, subreddit);
     expect(index).toBeFalsy();
   });
   it("check that muted user returns true with checkIfMuted", async () => {
@@ -257,6 +310,11 @@ describe("Testing subreddit actions services functions", () => {
     expect(result.statusCode).toEqual(200);
   });
   it("try to cancel the invitation by the owner", async () => {
+    subreddit.invitedModerators.push({
+      userID: userToBan._id,
+      dateOfInvitation: Date.now(),
+    });
+    await subreddit.save();
     const result = await cancelInvitationService(owner, userToBan, subreddit);
     expect(result.statusCode).toEqual(200);
   });
@@ -296,6 +354,19 @@ describe("Testing subreddit actions services functions", () => {
       permissionToManagePostsComments: true,
     });
     const result = await acceptModerationInviteService(normalUser, subreddit);
+    expect(result.statusCode).toEqual(200);
+  });
+
+  // eslint-disable-next-line max-len
+  it("try to accept an invitation by a user who was invited to be a moderator and is a member in the subreddit", async () => {
+    await inviteToModerateService(moderator, normalUser1, subreddit, {
+      permissionToEverything: true,
+      permissionToManageUsers: true,
+      permissionToManageSettings: true,
+      permissionToManageFlair: true,
+      permissionToManagePostsComments: true,
+    });
+    const result = await acceptModerationInviteService(normalUser1, subreddit);
     expect(result.statusCode).toEqual(200);
   });
 

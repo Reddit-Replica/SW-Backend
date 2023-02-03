@@ -11,7 +11,7 @@ import {
 import mongoose from "mongoose";
 
 /**
- * Middleware used to check the post is being submitted in a subreddit
+ * Middleware used to check if the post is being submitted in a subreddit
  * and if yes, it verifies the subreddit exists and that the user
  * is either a member of it or a moderator. Then checks for the ability to post in it,
  * the spoiler enabled, suggested sort, and if the user is banned/muted.
@@ -170,7 +170,8 @@ export async function checkHybridPost(req, res, next) {
  * Middleware used to check if the post kind is image/video, if yes then
  * verify that files are given in both cases. An images array is also made with
  * each element object containing the image path, its caption and a link only when
- * the kind is image and then pass the array in the request.
+ * the kind is image and then pass the array in the request. In case of kind = video,
+ * only a single video can be submitted in a post
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
@@ -242,8 +243,9 @@ export function checkImagesAndVideos(req, res, next) {
 /**
  * Middleware used to verify that if the id of the post being shared exists, if yes
  * then it verifies that the kind is 'post'. The shared post is obtained from the DB
- * to increment it's totalShares in the insights then save it. An extra check is also made
- * in case there is an original shared post (stemmed from it)
+ * to increment its totalShares in the insights then save it. An extra check is also made
+ * in case there is an original shared post (stemmed from it) so then we will need to
+ * increase the original post's total shares and not the parent one.
  *
  * @param {Object} req Request object
  * @param {Object} res Response object
