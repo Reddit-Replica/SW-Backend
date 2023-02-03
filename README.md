@@ -46,52 +46,37 @@
 ## 🏁 Getting Started <a name = "get-started"></a>
 > This is an list of needed instructions to set up your project locally, to get a local copy up and running follow these
 > instructuins.
-<ol>
-  <li><strong><em>Clone the repository</em></strong>
-    <div>
-        <code>$ git clone https://github.com/Reddit-Replica/SW-Backend.git</code>
-    </div>
-  </li>
-  <li><strong><em>Navigate to project folder and create file named ".env"</em></strong>
-    <div>
-        <code>$ cd SW-Backend & touch .env</code>
-    </div>
-  </li>
-  <li><strong><em>Fill ".env" file</em></strong>
+
+1. ***Clone the repository***
+        `$ git clone https://github.com/Reddit-Replica/SW-Backend.git`
+  
+2. ***Navigate to project folder and create file named ".env"***
+ `$ cd SW-Backend & touch .env`
+
+3. ***Fill ".env" file***
     <div><blockquote> <p> 
         BCRYPT_PASSWORD = your password to encrypt passwords <br>
         SALT_ROUNDS = salt rounds needed to encrypt passwords <br>
         TOKEN_SECRET = your JWT token secret <br>
         MONGO_URL = your database connection string like:<code> mongodb://localhost:27017/Read-it </code><br>
-        MONGO_URL_TESTING = your testing database connection string like: <code>mongodb://localhost:27017/Read-it-test </code><br>
+        MONGO_URL_TESTING = your testing database connection string like:<code>mongodb://localhost:27017/Read-it-test </code><br>
         FRONT_BASE= the frontend base url like:<code> http://localhost:8081</code> (used in sending emails) <br>
         MAILGUN_API_KEY = your mailgun api key <br>
         SENDER_EMAIL = your sender email <br>
         DOMAIN= your domain <br>
         REQUEST_LIMIT= number of requests allowed in 15 minutes <br>
-        MONGO_URL_SEED = your database connection string like: <code>mongodb://localhost:27017/Read-it-seed </code>(data will be seeded in that database)<br> </p> </blockquote>
+        MONGO_URL_SEED = your database connection string like:<code>mongodb://localhost:27017/Read-it-seed </code>(data will be seeded in that database)<br> </p> </blockquote>
     </div>
-  <li><strong><em>Install dependencies</em></strong>
-    <div>
-        <code>$ npm install</code>
-    </div>
-  </li>
-  <li><strong><em>Run seeder</em></strong>
-    <div>
-        From that <a href="seederscript">script</a>
-    </div>
-  </li>
-  <li><strong><em>start application in development mode</em></strong>
-    <div>
-        <code>$ npm run dev</code>
-    </div>
-  </li>
-  <li><strong><em>Login</em></strong>
-    <div>
-        You can login by any username and password: <code>12345678</code>
-    </div>
-  </li>
-</ol>
+4. ***Install dependencies***
+`$ npm install`
+5. ***Run seeder***
+    From that [script](#seederscript)
+6. ***start application in development mode***
+    `$ npm run dev`
+7. ***Login***
+        You can login by any username and password:`12345678`
+
+
 
 ## API Documentation <a name = "apidoc"></a>
 - A live version <a href="https://zeyadtarekk.github.io/Read-it-API-Documentation/">here</a>
@@ -104,33 +89,33 @@
 ## Useful Scripts <a name = "scripts"></a>
 
 #### Run in development mode 
-<code>$ npm run dev</code>
+`$ npm run dev`
 
 #### Run in deployment mode 
-<code>$ npm start</code>
+`$ npm start`
 
 #### Run unit tests
-<code>$ npm run test</code> You will find the test report in `test-report.html`
+`$ npm run test` You will find the test report in `test-report.html`
 
 #### Generate coverage report
-<code>$ npm run coverage</code> you will find it in `coverage/index.html`
+`$ npm run coverage` you will find it in `coverage/index.html`
 
 
 #### Generate OpenAPI specification <a name = "apiscript"></a>
-<code>$ npm run doc</code> you will find it in `documentation.json`
+`$ npm run doc` you will find it in `documentation.json`
 
 #### Generate Functional Documentation report <a name = "funcscript"></a>
-<code>$ npm run jsdoc</code> you will find it in `docs/index.html`
+`$ npm run jsdoc` you will find it in `docs/index.html`
 
 #### Run seeder <a name = "seederscript"></a>
 - Change the number of needed users, posts, messages, sunreddits, comments from `seeds/seeder.js` file in line 15, 16, 17, 18, 19
-- Then run <code>$ npm run seed</code>
+- Then run `$ npm run seed`
 
 #### Run linter
-<code>$ npm run lint</code>
+`$ npm run lint`
 
 #### Run prettier
-<code>$ npm run prettier</code>
+`$ npm run prettier`
 
 ## 📷 Some Features and Demo videos <a name = "feat"></a>
 
@@ -272,7 +257,7 @@ https://user-images.githubusercontent.com/88618793/210153718-1a4ef8e2-6e1b-4c75-
   - Page views
   - Members joined
   - Members left
-  
+
 https://user-images.githubusercontent.com/88618793/210153879-2ba60a63-663a-426a-a1da-c29be8e5c280.mp4
 
 ## Coverage Report <a name = "covreport"></a>
