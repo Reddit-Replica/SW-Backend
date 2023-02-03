@@ -260,8 +260,12 @@ https://user-images.githubusercontent.com/88618793/210153718-1a4ef8e2-6e1b-4c75-
 
 https://user-images.githubusercontent.com/88618793/210153879-2ba60a63-663a-426a-a1da-c29be8e5c280.mp4
 
+---
+
 ## Coverage Report <a name = "covreport"></a>
 <div align="center"><img src="assets/coverage.png" draggable="false" ></div>
+
+---
 
 ## Contributors <a name = "Contributors"></a>
 
@@ -294,6 +298,7 @@ https://user-images.githubusercontent.com/88618793/210153879-2ba60a63-663a-426a-
   </tr>
  </table>
 
+---
 
 ## License <a name = "license"></a>
 
